@@ -1,0 +1,89 @@
+struct Input {
+	float4 position : SV_POSITION;
+	float2 uv : TEXCOORD;
+};
+
+struct PaintStyle {
+	matrix paintMat;
+	float4 innerColor;
+	float4 outerColor;
+	float2 extent;
+	float radius;
+	float feather;
+	float texid;
+	int pad1, pad2, pad3;
+};
+
+cbuffer CB_Data : register(b1)
+{
+	float4 scissor;
+	PaintStyle style;
+	float texid;
+	float strokeMul;
+	float pad4, pad5;
+};
+
+Texture2D textures[16];
+SamplerState samplers[16];
+
+float calcScissor(float2 p) {
+	float2 pos = scissor.xy;
+	float2 size = scissor.zw;
+	float2 halfSize = size * 0.5f;
+
+	float2 sc = abs(p - pos - halfSize) - halfSize + 0.5;
+	return 1.0f - length(max(sc, 0.0));
+}
+
+float strokeMask(float2 uv, float strokeMul) {
+	return min(1.0, (1.0 - abs(uv.x*2.0 - 1.0)) * strokeMul) * min(1.0, uv.y);
+}
+
+float sdroundrect(float2 pt, float2 ext, float rad) {
+	float2 ext2 = ext - float2(rad, rad);
+	float2 d = abs(pt) - ext2;
+	return min(max(d.x, d.y), 0.0) + length(max(d, 0.0)) - rad;
+}
+
+float4 resolveTexture2DArr(float texid, float2 uv) {
+	// Waterfall code incoming
+	if (texid == 1) return textures[0].Sample(samplers[0], uv);
+	else if (texid == 2) return textures[1].Sample(samplers[1], uv);
+	else if (texid == 3) return textures[2].Sample(samplers[2], uv);
+	else if (texid == 4) return textures[3].Sample(samplers[3], uv);
+	else if (texid == 5) return textures[4].Sample(samplers[4], uv);
+	else if (texid == 6) return textures[5].Sample(samplers[5], uv);
+	else if (texid == 7) return textures[6].Sample(samplers[6], uv);
+	else if (texid == 8) return textures[7].Sample(samplers[7], uv);
+	else if (texid == 9) return textures[8].Sample(samplers[8], uv);
+	else if (texid == 10) return textures[9].Sample(samplers[9], uv);
+	else if (texid == 11) return textures[10].Sample(samplers[10], uv);
+	else if (texid == 12) return textures[11].Sample(samplers[11], uv);
+	else if (texid == 13) return textures[12].Sample(samplers[12], uv);
+	else if (texid == 14) return textures[13].Sample(samplers[13], uv);
+	else if (texid == 15) return textures[14].Sample(samplers[14], uv);
+	else if (texid == 16) return textures[15].Sample(samplers[15], uv);
+	return float4(1, 0, 1, 1);
+}
+
+float4 main(Input input) : SV_TARGET{
+	float2 transformedPos = mul(style.paintMat, float4(input.position.xy, 0, 1));
+	float scissor = calcScissor(input.position);
+
+	float d = clamp((sdroundrect(transformedPos, style.extent, style.radius) + style.feather*0.5) / style.feather, 0.0, 1.0);
+	float4 color = lerp(style.innerColor, style.outerColor, d);
+
+	if (style.texid > 0) {
+		float2 pt = transformedPos / style.extent;
+		pt.y = 1.0f - pt.y;
+		color *= resolveTexture2DArr(style.texid, pt);
+	}
+
+	if (texid > 0)
+		color *= resolveTexture2DArr(texid, input.uv);
+	else
+		color *= strokeMask(input.uv, strokeMul);
+
+	color *= scissor;
+	return color;
+}

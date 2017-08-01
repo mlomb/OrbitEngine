@@ -1,0 +1,28 @@
+#ifndef CONFIG_H
+#define CONFIG_H
+
+#cmakedefine01 OE_WINDOWS
+#cmakedefine01 OE_UNIX
+#cmakedefine01 OE_LINUX
+#cmakedefine01 OE_ANDROID
+#cmakedefine01 OE_EMSCRIPTEN
+#cmakedefine01 OE_OPENGL
+#cmakedefine01 OE_OPENGL_ES
+#cmakedefine01 OE_D3D
+#cmakedefine01 OE_VULKAN
+
+#if OE_OPENGL || OE_OPENGL_ES
+	#define OE_OPENGL_ANY 1
+#else
+	#define OE_OPENGL_ANY 0
+#endif
+
+#define OE_APPNAME "OrbitEngine-Application"
+
+#ifndef NDEBUG
+	#define OE_DEBUG 1
+#else
+	#define OE_DEBUG 0
+#endif
+
+#endif

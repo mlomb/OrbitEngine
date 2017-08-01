@@ -1,0 +1,6 @@
+[submodule "Dependencies/FreeType"]
+	path = Dependencies/FreeType
+	url = git://git.sv.nongnu.org/freetype/freetype2.git
+[submodule "Dependencies/FreeImage"]
+	path = Dependencies/FreeImage
+	url = https://github.com/mlomb/FreeImage.git
