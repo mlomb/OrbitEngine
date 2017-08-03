@@ -10,7 +10,7 @@
 namespace OrbitEngine { namespace Graphics {
 	class FrameBuffer {
 	public:
-		~FrameBuffer();
+		virtual ~FrameBuffer();
 
 		static void Push(FrameBuffer* frameBuffer);
 		static void Pop();
