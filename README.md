@@ -1,8 +1,8 @@
 # OrbitEngine
 OrbitEngine is a Cross-Platform and multi-API Graphics Engine.
-The main objective is that you can use the Engine in different ways and works in multiple platforms out of the box.
+The main objective is that you can use the Engine in different ways and different platforms and it just works.
 
-These layers are:
+These ways are:
 * API specific classes like `GLShader`, `D3DBuffer`, `GLTexture`, `D3DMesh`.
 * API agnostic interfaces like `Buffer`, `Mesh`, `Texture` that will instantiate the corresponding one depending on the active context.
 * Renderers like `BatchRenderer2D`, `PathRenderer2D`, `DeferredRenderer`, `ForwardRenderer`.
@@ -27,8 +27,9 @@ Currently we have none. This is something that take some time, but you can see s
 We're trying to have the least dependencies as possible, though we have some:
 * [FreeType](https://www.freetype.org/), an open source library to render fonts
 * [FreeImage](http://freeimage.sourceforge.net/), an open source library to manage popular graphics images formats
+* [XShaderCompiler](https://github.com/LukasBanana/XShaderCompiler/), an open source library to cross compiler shaders
 
-Both are included as submodules.
+All are included as submodules.
 
 ## Building
 OrbitEngine relies on the [CMake build system](https://cmake.org/) and requires a CXX11 compiler.
@@ -67,7 +68,7 @@ Now you run CMake with the Android toolchain. For example:
 cmake -GNinja -DANDROID_TOOLCHAIN=gcc -DCMAKE_TOOLCHAIN_FILE="%ANDROID_NDK%\build\cmake\android.toolchain.cmake"
       -DANDROID_ABI=armeabi-v7a -DANDROID_PLATFORM=android-21
 ```
-The entry point is handled by the Engine, you should use the common `main`. This allows the code the code only be written once between platforms.
+The entry point is handled by the Engine, you should use the common `main`. This allows the code only be written once between platforms.
 
 ### Linux
 This is not yet well tested but you can use CMake with Make.

@@ -17,6 +17,8 @@ configure_file(${INC_DIR}/OE/Config.hpp.in
 # - Dependencies -
 add_subdirectory(Dependencies/FreeType)
 add_subdirectory(Dependencies/FreeImage)
+option(XSC_BUILD_SHELL "" OFF)
+add_subdirectory(Dependencies/XShaderCompiler)
 
 # - Code -
 # General code
@@ -120,10 +122,12 @@ endif()
 list(APPEND OE_LIBRARIES
 	freetype
 	freeimage
+	xsc_core
 )
 list(APPEND OE_LIBRARIES_INC
 	${freetype_SOURCE_DIR}/include
     ${FREEIMAGE_SOURCE_DIR}
+    ${XShaderCompiler_SOURCE_DIR}/inc
 )
 
 target_compile_definitions(freeimage PUBLIC FREEIMAGE_LIB)

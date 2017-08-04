@@ -1,6 +1,7 @@
 #include "OE/Graphics/2D/PathRenderer.hpp"
 
 #include <stdlib.h>
+#include <cstring>
 
 #include "OE/Math/Math.hpp"
 
@@ -186,7 +187,7 @@ namespace OrbitEngine { namespace Graphics {
 
 	void PathRenderer::pushCommands(float* data, int size)
 	{
-		memcpy(&m_CommandsBuffer[m_CommandsSize], data, size * sizeof(float));
+		std::memcpy(&m_CommandsBuffer[m_CommandsSize], data, size * sizeof(float));
 		m_CommandsSize += size;
 	}
 
@@ -469,7 +470,7 @@ namespace OrbitEngine { namespace Graphics {
 	void PathRenderer::__addPath()
 	{
 		Path* path = &m_Paths[m_NPaths];
-		memset(path, 0, sizeof(*path));
+		std::memset(path, 0, sizeof(*path));
 		path->offset = m_NPoints;
 
 		m_CurrentPath = path;
@@ -480,7 +481,7 @@ namespace OrbitEngine { namespace Graphics {
 	{
 		PathPoint* point = &m_Points[m_NPoints];
 
-		memset(point, 0, sizeof(*point));
+		std::memset(point, 0, sizeof(*point));
 		point->position = position;
 
 		m_CurrentPath->count++;
