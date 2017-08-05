@@ -24,7 +24,8 @@ namespace OrbitEngine { namespace Application { namespace priv {
 		virtual const RenderAPI getAPI() override = 0;
 		virtual void setDefaultBackbuffer() override;
 
-		const char* getName() override { return "OpenGL"; }
+		const std::string getName() override;
+		const RenderAPI getAPI() override;
 		const GLContextInfo& getInfo() { return p_ContextInfo; }
 
 		static GLContext* GetCurrent() { return (GLContext*)ContextImpl::GetCurrent(); };

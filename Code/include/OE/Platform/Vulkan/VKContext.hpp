@@ -36,7 +36,7 @@ namespace OrbitEngine { namespace Application { namespace priv {
 		const VkRenderPass getRenderPass() { return m_RenderPass; }
 
 		const RenderAPI getAPI() override { return RenderAPI::VULKAN; };
-		const char* getName() override { return "OpenGL"; }
+		const std::string getName() override { return "Vulkan"; }
 
 		static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugReportFlagsEXT flags, VkDebugReportObjectTypeEXT objType, uint64_t obj, size_t location, int32_t code, const char* layerPrefix, const char* msg, void* userData);
 

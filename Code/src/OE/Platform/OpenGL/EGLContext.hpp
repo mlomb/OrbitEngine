@@ -17,8 +17,6 @@ namespace OrbitEngine { namespace Application { namespace priv {
 
 		void createSurface(WindowNativeHandle handle);
 		void destroySurface();
-
-		const RenderAPI getAPI() override { return RenderAPI::OPENGL_ES; };
 		
 	private:
 		::EGLConfig m_EGLConfig;

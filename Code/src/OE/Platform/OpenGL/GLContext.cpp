@@ -19,6 +19,20 @@ namespace OrbitEngine { namespace Application { namespace priv {
 		setViewport();
 	}
 
+	const std::string GLContext::getName()
+	{
+		return std::string("OpenGL") + (p_ContextInfo.ES ? " ES" : "");
+	}
+
+	const RenderAPI GLContext::getAPI()
+	{
+#if OE_OPENGL_ES
+		if (p_ContextInfo.ES)
+			return RenderAPI::OPENGL_ES;
+#endif
+		return RenderAPI::OPENGL;
+	}
+
 	void GLContext::contextInitialized()
 	{
 		// Just to be sure

@@ -26,8 +26,8 @@ namespace OrbitEngine {
 		virtual void resizeContext(Math::Vec2i size);
 
 		virtual bool isReady() { return true; };
-		virtual const char* getName() = 0;
-		virtual const RenderAPI getAPI() { return (RenderAPI)0 /* NONE */; };
+		virtual const std::string getName() = 0;
+		virtual const RenderAPI getAPI() = 0;
 
 		WindowImpl* getWindow();
 		/*

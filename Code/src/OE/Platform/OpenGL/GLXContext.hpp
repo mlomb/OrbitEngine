@@ -17,8 +17,6 @@ namespace OrbitEngine { namespace Application { namespace priv {
 		void present() override;
 		void makeCurrent(bool active = true) override;
 		GLXFBConfig* getFBConfigFromVisual(XVisualInfo* visual);
-
-		const RenderAPI getAPI() override { return RenderAPI::OPENGL; };
 	private:
 		::Display* m_Display;
 		::GLXContext m_Context;

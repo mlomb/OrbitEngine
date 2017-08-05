@@ -16,9 +16,6 @@ namespace OrbitEngine { namespace Application { namespace priv {
 		bool setUpPixelFormat();
 		void makeCurrent(bool active = true) override;
 		void present() override;
-
-		const RenderAPI getAPI() override { return RenderAPI::OPENGL; }
-
 	private:
 		HGLRC m_RenderContext;
 		HDC m_DeviceContext;

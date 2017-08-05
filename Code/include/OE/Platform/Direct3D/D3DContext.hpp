@@ -19,7 +19,7 @@ namespace OrbitEngine { namespace Application { namespace priv {
 		void resizeContext(Math::Vec2i size) override;
 		void setDefaultBackbuffer() override;
 
-		const char* getName() override { return "Direct3D 11"; }
+		const std::string getName() override { return "Direct3D 11"; }
 		const RenderAPI getAPI() override { return RenderAPI::DIRECT3D; }
 
 		ID3D11Device* getDevice();
