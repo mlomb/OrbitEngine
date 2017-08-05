@@ -26,6 +26,7 @@ namespace OrbitEngine {
 		VULKAN,
 #endif
 #if OE_D3D
+		// For now, D3D11
 		DIRECT3D,
 #endif
 	};

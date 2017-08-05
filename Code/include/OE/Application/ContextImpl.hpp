@@ -49,6 +49,9 @@ namespace OrbitEngine {
 		Math::Vec2i p_Size;
 		WindowImpl* p_Window;
 
+		// Should be called right after the context was created
+		virtual void contextInitialized() {};
+
 		// TODO Make this per-context
 		static ContextImpl* s_CurrentContext;
 

@@ -5,6 +5,14 @@
 #include "OE/Application/ContextImpl.hpp"
 
 namespace OrbitEngine { namespace Application { namespace priv {
+	struct GLContextInfo {
+		GLint major, minor;
+		bool ES = false;
+		std::string vendor;
+		std::string renderer;
+		std::string version;
+		std::vector<std::string> extensions;
+	};
 
 	class GLContext : public ContextImpl {
 	public:
@@ -17,10 +25,15 @@ namespace OrbitEngine { namespace Application { namespace priv {
 		virtual void setDefaultBackbuffer() override;
 
 		const char* getName() override { return "OpenGL"; }
+		const GLContextInfo& getInfo() { return p_ContextInfo; }
 
 		static GLContext* GetCurrent() { return (GLContext*)ContextImpl::GetCurrent(); };
 	protected:
 		GLContext(WindowImpl* window) : ContextImpl(window) {};
+
+		void contextInitialized() override;
+
+		GLContextInfo p_ContextInfo;
 
 	private:
 

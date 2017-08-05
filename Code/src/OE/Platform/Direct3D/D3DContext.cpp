@@ -85,9 +85,10 @@ namespace OrbitEngine { namespace Application { namespace priv {
 		OE_D3D_RELEASE(adapter);
 		OE_D3D_RELEASE(factory);
 
-		initializeDeviceAndSwapChain(window);
-
 		makeCurrent();
+		contextInitialized();
+
+		initializeDeviceAndSwapChain(window);
 	}
 
 	void D3DContext::initializeDeviceAndSwapChain(WindowWindows* window)

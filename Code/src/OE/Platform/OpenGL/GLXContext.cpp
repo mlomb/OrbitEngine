@@ -46,6 +46,7 @@ namespace OrbitEngine { namespace Application { namespace priv {
 		
 		makeCurrent();
 		OpenGLEXTENSIONS_Load();
+		contextInitialized();
 	}
 
 	GLXContext::~GLXContext()

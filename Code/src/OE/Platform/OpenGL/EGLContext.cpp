@@ -73,10 +73,12 @@ namespace OrbitEngine { namespace Application { namespace priv {
 		}
 		
 		makeCurrent();
-
 #if OE_OPENGL
 		// If not GLES...
 		OpenGLEXTENSIONS_Load();
+#endif
+#if !OE_ANDROID
+		contextInitialized();
 #endif
 	}
 

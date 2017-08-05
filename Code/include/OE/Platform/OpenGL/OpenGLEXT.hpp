@@ -57,6 +57,7 @@
 #define GL_MAX_TEXTURE_IMAGE_UNITS        0x8872
 #define GL_INCR_WRAP                      0x8507
 #define GL_DECR_WRAP                      0x8508
+#define GL_SHADING_LANGUAGE_VERSION       0x8B8C
 
 typedef char GLchar;
 typedef ptrdiff_t GLintptr;
