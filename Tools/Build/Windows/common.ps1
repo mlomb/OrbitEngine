@@ -1,5 +1,5 @@
-$basePath = (Get-Item ../../..).FullName
-$buildPath = $basePath + "\Build\" + $targetSystem
+$basePath = (Get-Item $ScriptRoot/../../../).FullName
+$buildPath = $basePath + "Build\" + $targetSystem
 
 New-Item -ItemType Directory -Force -Path $buildPath | Out-Null
 
