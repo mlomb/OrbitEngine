@@ -21,6 +21,9 @@ namespace OrbitEngine { namespace Application { namespace priv {
 
 	void GLContext::contextInitialized()
 	{
+		// Just to be sure
+		makeCurrent(true);
+
 		ContextImpl::contextInitialized();
 
 		p_ContextInfo.vendor = glGetString(GL_VENDOR) ? std::string(reinterpret_cast<const char*>(glGetString(GL_VENDOR))) : "";
@@ -40,8 +43,9 @@ namespace OrbitEngine { namespace Application { namespace priv {
 
 		// Extract version
 		if (p_ContextInfo.ES) {
+			char skipDot;
 			std::istringstream iss(p_ContextInfo.version.substr(versionPos));
-			iss >> p_ContextInfo.major >> p_ContextInfo.minor;
+			iss >> p_ContextInfo.major >> skipDot >> p_ContextInfo.minor;
 		} else {
 			// OpenGL way
 			glGetIntegerv(GL_MAJOR_VERSION, &p_ContextInfo.major);

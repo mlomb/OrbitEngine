@@ -6,7 +6,7 @@
 
 namespace OrbitEngine { namespace Application { namespace priv {
 	struct GLContextInfo {
-		GLint major, minor;
+		GLint major = -1, minor = -1;
 		bool ES = false;
 		std::string vendor;
 		std::string renderer;

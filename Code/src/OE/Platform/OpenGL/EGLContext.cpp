@@ -104,6 +104,11 @@ namespace OrbitEngine { namespace Application { namespace priv {
 		m_EGLSurface = eglCreateWindowSurface(m_EGLDisplay, m_EGLConfig, handle, NULL);
 		if (m_EGLSurface == EGL_NO_SURFACE)
 			OE_LOG_FATAL("Can't create EGL surface")
+
+#if OE_ANDROID
+		if(p_ContextInfo.major == -1)
+			contextInitialized();
+#endif
 	}
 
 	void EGLContext::destroySurface()
