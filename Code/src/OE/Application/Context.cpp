@@ -106,7 +106,7 @@ namespace OrbitEngine {	namespace Application {
 		return p_Pimpl->isReady();
 	}
 
-	const char* Context::getName()
+	const std::string Context::getName()
 	{
 		return p_Pimpl->getName();
 	}

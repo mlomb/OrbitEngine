@@ -21,7 +21,6 @@ namespace OrbitEngine { namespace Application { namespace priv {
 		void prepare() override;
 		virtual void present() override {};
 		virtual void makeCurrent(bool active) override;
-		virtual const RenderAPI getAPI() override = 0;
 		virtual void setDefaultBackbuffer() override;
 
 		const std::string getName() override;

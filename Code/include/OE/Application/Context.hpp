@@ -1,6 +1,8 @@
 #ifndef APPLICATION_CONTEXT_HPP
 #define APPLICATION_CONTEXT_HPP
 
+#include <string>
+
 #include "OE/Config.hpp"
 #include "OE/Misc/Pimpl.hpp"
 #include "OE/Math/Vec2.hpp"
@@ -50,7 +52,7 @@ namespace OrbitEngine {
 
 			void resizeContext(Math::Vec2i size);
 
-			const char* getName();
+			const std::string getName();
 			const RenderAPI getAPI();
 
 		public:
