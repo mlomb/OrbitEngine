@@ -6,4 +6,4 @@
 	url = https://github.com/mlomb/FreeImage.git
 [submodule "Dependencies/XShaderCompiler"]
 	path = Dependencies/XShaderCompiler
-	url = https://github.com/mlomb/XShaderCompiler.git
+	url = https://github.com/LukasBanana/XShaderCompiler.git

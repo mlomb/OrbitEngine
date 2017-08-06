@@ -1,9 +1,14 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.2)
 
 project(OrbitEngine CXX)
 
 include(CMake/Config.cmake)
 include(CMake/Tools.cmake)
+
+# Workaround with clang
+if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+	set(CMAKE_CXX_FLAGS "-stdlib=libc++")
+endif()
 
 set(INC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Code/include)
 set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Code/src)

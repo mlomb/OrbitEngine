@@ -1,0 +1,9 @@
+version: v{build}
+image: Visual Studio 2017
+install:
+- cmd: git submodule update --init --recursive
+before_build:
+- ps: . "Tools/Build/Windows/build_windows.ps1"
+build:
+  project: Build/Windows/OrbitEngine.sln
+  verbosity: minimal

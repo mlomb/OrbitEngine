@@ -1,3 +1,6 @@
+[![Build Status](https://img.shields.io/travis/mlomb/OrbitEngine.svg?label=Linux/OSX/Android%20builds)](https://travis-ci.org/mlomb/OrbitEngine)
+[![Build Status](https://img.shields.io/appveyor/ci/mlomb/OrbitEngine.svg?label=Windows%20build)](https://travis-ci.org/mlomb/OrbitEngine)
+
 # OrbitEngine
 OrbitEngine is a Cross-Platform and multi-API Graphics Engine.
 The main objective is that you can use the Engine in different ways and different platforms and it just works.
@@ -17,7 +20,7 @@ And we have plans to implement Vulkan and maybe Direct3D12.
 The current supported platforms are:
 * Android
 * Emscripten
-* Linux (*not well tested*)
+* Linux
 * Windows
 
 ## Documentation
@@ -70,7 +73,7 @@ cmake -GNinja -DCMAKE_TOOLCHAIN_FILE="%ANDROID_NDK%\build\cmake\android.toolchai
 The entry point is handled by the Engine, you should use the common `main`. This allows the code only be written once between platforms.
 
 ### Linux
-This is not yet well tested but you can use CMake with Make.
+You can use CMake with Make.
 
 Don't forget to download these packages:
 ```shell

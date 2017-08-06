@@ -1,0 +1,85 @@
+language: cpp
+sudo: false
+os:
+  - linux
+  - osx
+
+compiler:
+  - gcc
+  - clang
+
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r-test
+      - llvm-toolchain-trusty
+    packages:
+      - mesa-utils-extra
+      - libgles1-mesa
+      - libgles2-mesa-dev
+      - g++-5
+      - clang-3.9
+      - libc++-dev
+
+before_install:
+  # Update the CMake version to 3.9 (no sudo)
+  - cd $HOME
+  - CMAKE_DOWNLOAD_TARGET="cmake-3.9.0-Linux-x86_64"
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then CMAKE_DOWNLOAD_TARGET="cmake-3.9.0-Darwin-x86_64"; fi
+  - wget -O cmake-3.9.0.tar.gz https://cmake.org/files/v3.9/${CMAKE_DOWNLOAD_TARGET}.tar.gz
+  - tar xf cmake-3.9.0.tar.gz
+  - cd ${CMAKE_DOWNLOAD_TARGET}/
+  - export CMAKE_ROOT=${PWD}/share/cmake-3.9
+  - export PATH=${PWD}/bin:$PATH
+  # Upgrade g++ if we are on Linux
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$CXX" == "g++" ]]; then CC=gcc-5 && CXX=g++-5; fi
+
+before_script:
+  - cd $TRAVIS_BUILD_DIR
+  - mkdir build
+  - cd build
+  - cmake --version
+
+script:
+  - cmake ..
+  - make
+
+matrix:
+  allow_failures:
+    - os: osx
+    # I can't get Android to work
+    - env: CONFIG=Android
+  include:
+    - env: CONFIG=Android
+      language: generic
+      install:
+        # Download the NDK Tools
+        - wget -O android-ndk-tools.zip https://dl.google.com/android/repository/android-ndk-r15b-linux-x86_64.zip
+        - unzip -q android-ndk-tools.zip -d $HOME
+        - export ANDROID_NDK_HOME=$HOME/android-ndk-r15b
+      script:
+        - cmake -DCMAKE_TOOLCHAIN_FILE=$HOME/android-ndk-r15b/build/cmake/android.toolchain.cmake -DANDROID_ABI=armeabi-v7a -DANDROID_PLATFORM=android-21 -DANDROID_STL=c++_static ..
+        - make VERBOSE=1
+    - env: CONFIG=Emscripten
+      language: generic
+      install:
+        - cd $HOME
+        # Download the Emscripten SDK
+        - wget https://s3.amazonaws.com/mozilla-games/emscripten/releases/emsdk-portable.tar.gz
+        - tar xf emsdk-portable.tar.gz
+        - cd emsdk-portable
+        - ./emsdk update
+        - ./emsdk install latest
+        - ./emsdk activate latest
+        - source ./emsdk_env.sh
+        # Download libstdc++
+        - mkdir libstdc++
+        - cd libstdc++/
+        - wget http://ppa.launchpad.net/ubuntu-toolchain-r/test/ubuntu/pool/main/g/gcc-5/libstdc++6_5.1.0-0ubuntu11~10.04.2_amd64.deb
+        - ar xv libstdc++6_5.1.0-0ubuntu11~10.04.2_amd64.deb
+        - tar xf data.tar.gz
+        - cd usr/lib/
+        - export LD_LIBRARY_PATH=${PWD}
+      script:
+        - cmake -DCMAKE_TOOLCHAIN_FILE=$EMSCRIPTEN/cmake/Modules/Platform/Emscripten.cmake ..
+        - make
