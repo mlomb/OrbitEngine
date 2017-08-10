@@ -1,6 +1,7 @@
 #include "OE/Graphics/2D/PathRenderer2D.hpp"
 
 #include "OE/Graphics/API/FrameBuffer.hpp"
+#include "OE/Graphics/ShaderLoader.hpp"
 
 // TODO Get rid of this
 #include "OE/Application/ContextImpl.hpp"
@@ -14,7 +15,7 @@ namespace OrbitEngine { namespace Graphics {
 	{
 		//m_Verts = (PathRendererVertex*)malloc(sizeof(PathRendererVertex)*MAX_VERTEXS);
 
-		m_Shader = Shader::Vector2D();
+		m_Shader = ShaderLoader::Vector2D();
 
 		VertexLayout* layout = new VertexLayout();
 		layout->push<Math::Vec2f>("POSITION"); // Vertex position

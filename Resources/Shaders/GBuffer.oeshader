@@ -1,3 +1,48 @@
+#shadertype VERTEX
+cbuffer PVMatrices : register(b0)
+{
+    matrix pr_matrix;
+    matrix vw_matrix;
+};
+
+cbuffer MMatrix : register(b1)
+{
+    matrix ml_matrix;
+};
+
+struct Input {
+	float3 position : POSITION;
+	float3 normal : NORMAL;
+	float2 uv : TEXCOORD;
+	float3 tangent : TANGENT;
+};
+
+struct Output {
+	float4 position : SV_POSITION;
+	float3 normal : NORMAL;
+	float3 tangent : TANGENT;
+	float2 uv : TEXCOORD;
+	float3 fragPos : TEXCOORD1;
+};
+
+Output main(Input input) {
+	Output output;
+
+	float4x4 viewProj = mul(pr_matrix, vw_matrix);
+	float4 worldPos = mul(ml_matrix, float4(input.position.xyz, 1));
+
+	output.fragPos = float3(worldPos.x, worldPos.y, worldPos.z);
+    output.position = mul(viewProj, worldPos);
+	output.uv = input.uv;
+
+	float3x3 model = (float3x3)ml_matrix;
+	output.normal = normalize(mul(model, input.normal));
+	output.tangent = normalize(mul(model, input.tangent));
+
+	return output;
+}
+
+#shadertype FRAGMENT
 // blendOverlay() taken from https://github.com/jamieowen/glsl-blend/blob/master/overlay.glsl
 float blendOverlay(float base, float blend) { return base<0.5?(2.0*base*blend):(1.0-2.0*(1.0-base)*(1.0-blend)); }
 
@@ -13,7 +58,7 @@ struct Output
 {
 	float4 GPosition : SV_Target0;
 	float4 GNormalRoughness : SV_Target1;
-	float4 GAlbedoMetallic : SV_Target3;
+	float4 GAlbedoMetallic : SV_Target2;
 };
 
 Texture2D map_albedo : register(t0);
@@ -26,7 +71,7 @@ SamplerState sampler_metallic : register(s1);
 SamplerState sampler_roughness : register(s2);
 SamplerState sampler_normals : register(s3);
 
-cbuffer CB_material : register(b2)
+cbuffer MaterialUniforms : register(b2)
 {
     float4 baseColor;
     float metallic;
@@ -42,7 +87,7 @@ float3 normalMap(float3 T, float3 N, float2 normals_uv){
 	return normalMap;
 }
 
-Output main(Input input) : SV_TARGET {
+Output main(Input input) {
 	Output output;
 
 	output.GPosition = float4(input.fragPos, 1.0f);

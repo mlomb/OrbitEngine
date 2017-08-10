@@ -33,16 +33,11 @@ namespace OrbitEngine {	namespace Graphics {
 		Shader();
 
 	public:
-		static Shader* LoadInternalShader(const char* name);
+		static Shader* LoadShader(const char* name);
 
-		static Shader* Batch2D() { return LoadInternalShader("Batch2D"); };
-		static Shader* Vector2D() { return LoadInternalShader("Vector2D"); };
-		static Shader* GBuffer() { return LoadInternalShader("GBuffer"); };
-		static Shader* DeferredPBR() { return LoadInternalShader("DeferredPBR"); };
-		static Shader* Skybox() { return LoadInternalShader("Skybox"); };
-		static Shader* IntegrateBRDF() { return LoadInternalShader("IntegrateBRDF"); };
-		static Shader* PrefilterEnviromentPBR() { return LoadInternalShader("PrefilterEnvMap"); };
-		static Shader* HDRToCubemap() { return LoadInternalShader("HdrToCubemap"); };
+		static Shader* Skybox() { return LoadShader("Skybox"); };
+		static Shader* PrefilterEnviromentPBR() { return LoadShader("PrefilterEnvMap"); };
+		static Shader* HDRToCubemap() { return LoadShader("HdrToCubemap"); };
 	};
 } }
 

@@ -8,12 +8,18 @@
 #endif
 
 #include "OE/Misc/Log.hpp"
+#include "..\..\..\include\OE\System\File.hpp"
 
 namespace OrbitEngine { namespace System {
+	std::string LoadFileAsString(const std::string& path)
+	{
+		std::vector<char> data = LoadFile(path);
+		return std::string(data.begin(), data.end());
+	}
 
 	// TODO Optimize this, its slow as fuck
-	std::vector<char> LoadFile(const std::string& path, bool binary = false) {
-		OE_LOG_DEBUG("Loading file: " << path);
+	std::vector<char> LoadFile(const std::string& path, bool binary) {
+		OE_LOG_DEBUG("Loading file: (binary=" << binary << ") " << path);
 
 		std::vector<char> buffer;
 		bool success = false;

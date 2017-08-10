@@ -2,6 +2,7 @@
 
 #include "OE/Graphics/3D/Skybox.hpp"
 #include "OE/Graphics/2D/Renderer2D.hpp"
+#include "OE/Graphics/ShaderLoader.hpp"
 
 #if OE_OPENGL_ANY
 	#include "OE/Platform/OpenGL/GLShader.hpp"
@@ -17,17 +18,16 @@ namespace OrbitEngine { namespace Graphics {
 	DeferredRenderer::DeferredRenderer()
 		: m_GBuffer(0)
 	{
-		m_GBufferShader = Graphics::Shader::GBuffer();
-		m_LighPassShader = Graphics::Shader::DeferredPBR();
+		m_GBufferShader = Graphics::ShaderLoader::GBuffer();
+		m_LighPassShader = Graphics::ShaderLoader::DeferredPBR();
 		m_PVMatrices = Graphics::UniformsPack<PVMatrices>::Create();
 		m_MMatrix = Graphics::UniformsPack<MMatrix>::Create();
 
 		// Generate a look-up texture to cache the second sum of the split sum approximation used by Unreal (see notes)
 		if (s_IntegratedBRDFLUT == nullptr) {
-			/*
 			unsigned short integratedBRDFSize = 128;
 			Graphics::TextureFormatProperties props;
-			props.format = Graphics::TextureFormat::RG8;
+			props.format = Graphics::TextureFormat::RGB8;
 			props.dataType = Graphics::TextureDataType::UNSIGNED_BYTE;
 			props.width = props.height = integratedBRDFSize;
 			props.mipmapping = false;
@@ -36,7 +36,7 @@ namespace OrbitEngine { namespace Graphics {
 			s_IntegratedBRDFLUT->attachColorTexture(props);
 			s_IntegratedBRDFLUT->finalize();
 
-			Graphics::Shader* integrateBRDFShader = Graphics::Shader::IntegrateBRDF();
+			Graphics::Shader* integrateBRDFShader = Graphics::ShaderLoader::IntegrateBRDF();
 
 			FrameBuffer::Push(s_IntegratedBRDFLUT);
 			FrameBuffer::Prepare();
@@ -48,7 +48,6 @@ namespace OrbitEngine { namespace Graphics {
 			FrameBuffer::Pop();
 
 			delete integrateBRDFShader;
-			*/
 		}
 	}
 

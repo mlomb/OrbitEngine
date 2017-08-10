@@ -1,6 +1,7 @@
 #include "OE/Graphics/2D/Renderer2D.hpp"
 
 #include "OE/Graphics/API/Texture.hpp"
+#include "OE/Graphics/API/FrameBuffer.hpp"
 
 #include "OE/Misc/Log.hpp"
 
@@ -105,6 +106,7 @@ namespace OrbitEngine { namespace Graphics {
 
 	void Renderer2D::end()
 	{
+		FrameBuffer::Prepare();
 		for (unsigned int i = 0; i < p_Textures.size(); i++)
 			p_Textures[i]->bind(i);
 	}

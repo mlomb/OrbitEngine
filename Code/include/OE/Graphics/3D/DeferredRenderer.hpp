@@ -13,7 +13,8 @@ namespace OrbitEngine { namespace Graphics {
 
 		void end() override;
 
-		Graphics::FrameBuffer* getGBuffer() const { return m_GBuffer; };
+		FrameBuffer* getGBuffer() const { return m_GBuffer; };
+		static Texture* GetIntegratedBRDFLUT() { return s_IntegratedBRDFLUT->getColorTextures()[0]; }
 	protected:
 		void generateGBuffer();
 		void geometryPass();

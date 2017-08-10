@@ -56,12 +56,10 @@ namespace OrbitEngine {	namespace Graphics {
 		case VULKAN:
 			return new VKShader();
 #endif
-		default:
-			return 0;
 		}
 	}
 
-	Shader* Shader::LoadInternalShader(const char* name)
+	Shader* Shader::LoadShader(const char* name)
 	{
 		std::string patformId;
 
