@@ -1,12 +1,12 @@
 cmake_minimum_required(VERSION 3.2)
 
-project(OrbitEngine CXX)
+project(OrbitEngine)
 
 include(CMake/Config.cmake)
 include(CMake/Tools.cmake)
 
 # Workaround with clang
-if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" AND NOT("${CMAKE_SYSTEM_NAME}" STREQUAL "Android"))
 	set(CMAKE_CXX_FLAGS "-stdlib=libc++")
 endif()
 
@@ -59,7 +59,8 @@ elseif(OE_ANDROID)
 	
 	file(GLOB PLATFORM_SRC ${SRC_DIR}/OE/Platform/Android/*.*
 						   ${INC_DIR}/OE/Platform/Android/*.*
-						   ${ANDROID_NATIVE_APP_GLUE}/android_native_app_glue.c)
+						   ${ANDROID_NATIVE_APP_GLUE}/android_native_app_glue.c
+	)
 elseif(OE_UNIX)
 	file(GLOB PLATFORM_SRC ${SRC_DIR}/OE/Platform/X11/*.*
 						   ${INC_DIR}/OE/Platform/X11/*.*)
@@ -126,16 +127,16 @@ endif()
 # - Libraries -
 list(APPEND OE_LIBRARIES
 	freetype
-	freeimage
+	FreeImage
 	xsc_core
 )
 list(APPEND OE_LIBRARIES_INC
 	${freetype_SOURCE_DIR}/include
-    ${FREEIMAGE_SOURCE_DIR}
+    ${FreeImage_SOURCE_DIR}/Source
     ${XShaderCompiler_SOURCE_DIR}/inc
 )
 
-target_compile_definitions(freeimage PUBLIC FREEIMAGE_LIB)
+target_compile_definitions(FreeImage PUBLIC FREEIMAGE_LIB)
 target_compile_definitions(OrbitEngine PUBLIC FREEIMAGE_LIB)
 
 # Platform specific
@@ -172,9 +173,6 @@ if(OE_VULKAN)
     list(APPEND OE_LIBRARIES ${Vulkan_LIBRARIES})
     list(APPEND OE_LIBRARIES_INC ${Vulkan_INCLUDE_DIRS})	
 endif()
-
-# Better way of doing this?
-list(APPEND OE_LIBRARIES ${XMAKE_FREEIMAGE_LINK_TARGETS})
 
 target_link_libraries(OrbitEngine PUBLIC ${OE_LIBRARIES})
 target_include_directories(OrbitEngine PUBLIC ${OE_LIBRARIES_INC})

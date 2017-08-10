@@ -68,7 +68,7 @@ Don't forget to link it as a shared library!
 
 Now you run CMake with the Android toolchain. For example:
 ```shell
-cmake -GNinja -DCMAKE_TOOLCHAIN_FILE="%ANDROID_NDK%\build\cmake\android.toolchain.cmake" -DANDROID_ABI=armeabi-v7a -DANDROID_PLATFORM=android-21 -DANDROID_STL=c++_static -DANDROID_TOOLCHAIN=gcc
+cmake -GNinja -DCMAKE_TOOLCHAIN_FILE="%ANDROID_NDK%\build\cmake\android.toolchain.cmake" -DANDROID_ABI=armeabi-v7a -DANDROID_PLATFORM=android-21
 ```
 The entry point is handled by the Engine, you should use the common `main`. This allows the code only be written once between platforms.
 
