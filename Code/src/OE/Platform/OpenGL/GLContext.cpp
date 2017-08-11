@@ -46,12 +46,12 @@ namespace OrbitEngine { namespace Application { namespace priv {
 
 		// Detect if we are in OpenGLES
 		int versionPos = 0;
-		if ((versionPos = p_ContextInfo.version.find("WebGL")) != std::string::npos) {
-			versionPos += strlen("WebGL");
+		if ((versionPos = p_ContextInfo.version.find("OpenGL ES")) != std::string::npos) {
+			versionPos += strlen("OpenGL ES");
 			p_ContextInfo.ES = true;
 		}
-		else if ((versionPos = p_ContextInfo.version.find("OpenGL ES")) != std::string::npos) {
-			versionPos += strlen("OpenGL ES");
+		else if ((versionPos = p_ContextInfo.version.find("WebGL")) != std::string::npos) {
+			versionPos += strlen("WebGL");
 			p_ContextInfo.ES = true;
 		}
 

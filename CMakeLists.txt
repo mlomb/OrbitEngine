@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.2)
 
-project(OrbitEngine)
+project(OrbitEngine CXX)
 
 include(CMake/Config.cmake)
 include(CMake/Tools.cmake)

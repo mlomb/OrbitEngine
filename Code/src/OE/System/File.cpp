@@ -8,7 +8,7 @@
 #endif
 
 #include "OE/Misc/Log.hpp"
-#include "..\..\..\include\OE\System\File.hpp"
+#include "OE/System/File.hpp"
 
 namespace OrbitEngine { namespace System {
 	std::string LoadFileAsString(const std::string& path)

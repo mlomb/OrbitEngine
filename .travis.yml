@@ -20,6 +20,7 @@ addons:
       - g++-5
       - clang-3.9
       - libc++-dev
+      - libc6-dev-i386
 
 before_install:
   # Update the CMake version to 3.9 (no sudo)
@@ -52,16 +53,18 @@ matrix:
   include:
     - env: CONFIG=Android
       language: generic
+      compiler: clang
       install:
         # Download the NDK Tools
         - wget -O android-ndk-tools.zip https://dl.google.com/android/repository/android-ndk-r15b-linux-x86_64.zip
         - unzip -q android-ndk-tools.zip -d $HOME
         - export ANDROID_NDK_HOME=$HOME/android-ndk-r15b
       script:
-        - cmake -DCMAKE_TOOLCHAIN_FILE=$HOME/android-ndk-r15b/build/cmake/android.toolchain.cmake -DANDROID_ABI=armeabi-v7a -DANDROID_PLATFORM=android-21 -DANDROID_STL=c++_static ..
-        - make VERBOSE=1
+        - cmake -DCMAKE_TOOLCHAIN_FILE=$HOME/android-ndk-r15b/build/cmake/android.toolchain.cmake -DANDROID_ABI=armeabi-v7a -DANDROID_PLATFORM=android-21 ..
+        - make
     - env: CONFIG=Emscripten
       language: generic
+      compiler: clang
       install:
         - cd $HOME
         # Download the Emscripten SDK

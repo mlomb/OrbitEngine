@@ -3,8 +3,6 @@
 
 #include <string>
 
-#include <Xsc/Xsc.h>
-
 #include "OE/Graphics/API/Shader.hpp"
 
 namespace OrbitEngine { namespace Graphics {
@@ -32,9 +30,6 @@ namespace OrbitEngine { namespace Graphics {
 	private:
 		static Shader* LoadInternalShader(const std::string& name);
 		static std::string LoadFile(const std::string& path);
-
-		static Xsc::ShaderTarget ShaderToXSCShader(ShaderType shader);
-		static Xsc::OutputShaderVersion OutputShaderVersionFromCurrentContext();
 
 		~ShaderLoader() {};
 		ShaderLoader() {};
