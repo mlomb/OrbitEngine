@@ -58,8 +58,8 @@ namespace OrbitEngine { namespace Graphics {
 		}
 
 		geometryPass();
-		lightningPass();
 		skyboxPass();
+		lightningPass();
 	}
 
 	void DeferredRenderer::generateGBuffer()
@@ -147,7 +147,8 @@ namespace OrbitEngine { namespace Graphics {
 				command.material->use();
 
 			if(m_Skybox)
-				m_Skybox->getPrefilteredEnviromentMap()->bind(3);
+				if (m_Skybox->getPrefilteredEnviromentMap())
+					m_Skybox->getPrefilteredEnviromentMap()->bind(3);
 			//m_Skybox->getEnviromentMap()->bind(3);
 			//s_IntegratedBRDFLUT->getColorTextures()[0]->bind(4);
 
@@ -199,6 +200,6 @@ namespace OrbitEngine { namespace Graphics {
 		if (m_Skybox == nullptr)
 			return;
 
-		m_Skybox->render(m_GBuffer, p_Camera);
+		m_Skybox->render(p_Camera);
 	}
 } }

@@ -13,7 +13,6 @@ namespace OrbitEngine { namespace Graphics {
 		Skybox(Texture* texture);
 
 		void render(Misc::Camera* camera);
-		void render(FrameBuffer* buffer, Misc::Camera* camera);
 	private:
 		Shader* m_Shader;
 	};

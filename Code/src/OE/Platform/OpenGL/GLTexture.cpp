@@ -91,7 +91,7 @@ namespace OrbitEngine { namespace Graphics {
 			//glTexSubImage3D(m_Target, 0, 0, 0, 0, m_Properties.formatProperties.width, m_Properties.formatProperties.height, offset, m_Format, m_DataType, data);
 			break;
 		case CUBEMAP:
-			//glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + offset, 0, m_InternalFormat, m_Properties.formatProperties.width, m_Properties.formatProperties.height, 0, m_Format, m_DataType, data);
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + offset, 0, m_InternalFormat, m_Properties.formatProperties.width, m_Properties.formatProperties.height, 0, m_Format, m_DataType, data);
 			break;
 		}
 	}

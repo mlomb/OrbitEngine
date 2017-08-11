@@ -127,8 +127,10 @@ namespace OrbitEngine { namespace Graphics {
 			if (result) {
 				output = outputStream.str();
 			}
-			else
+			else {
 				OE_LOG_WARNING("Couldn't cross compile the shader!");
+				log.PrintAll();
+			}
 		}
 		catch (const std::exception& e)
 		{

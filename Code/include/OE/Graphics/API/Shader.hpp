@@ -35,7 +35,6 @@ namespace OrbitEngine {	namespace Graphics {
 	public:
 		static Shader* LoadShader(const char* name);
 
-		static Shader* Skybox() { return LoadShader("Skybox"); };
 		static Shader* PrefilterEnviromentPBR() { return LoadShader("PrefilterEnvMap"); };
 		static Shader* HDRToCubemap() { return LoadShader("HdrToCubemap"); };
 	};

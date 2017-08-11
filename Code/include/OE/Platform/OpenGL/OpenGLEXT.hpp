@@ -58,6 +58,12 @@
 #define GL_INCR_WRAP                      0x8507
 #define GL_DECR_WRAP                      0x8508
 #define GL_SHADING_LANGUAGE_VERSION       0x8B8C
+#define GL_TEXTURE_CUBE_MAP_POSITIVE_X    0x8515
+#define GL_TEXTURE_CUBE_MAP_NEGATIVE_X    0x8516
+#define GL_TEXTURE_CUBE_MAP_POSITIVE_Y    0x8517
+#define GL_TEXTURE_CUBE_MAP_NEGATIVE_Y    0x8518
+#define GL_TEXTURE_CUBE_MAP_POSITIVE_Z    0x8519
+#define GL_TEXTURE_CUBE_MAP_NEGATIVE_Z    0x851A
 
 typedef char GLchar;
 typedef ptrdiff_t GLintptr;

@@ -1,4 +1,4 @@
-[![Build Status](https://img.shields.io/travis/mlomb/OrbitEngine.svg?label=Linux/OSX/Android%20builds)](https://travis-ci.org/mlomb/OrbitEngine)
+[![Build Status](https://img.shields.io/travis/mlomb/OrbitEngine.svg?label=Linux/OSX/Android/Emscripten%20builds)](https://travis-ci.org/mlomb/OrbitEngine)
 [![Build Status](https://img.shields.io/appveyor/ci/mlomb/OrbitEngine.svg?label=Windows%20build)](https://ci.appveyor.com/project/mlomb/orbitengine)
 
 # OrbitEngine

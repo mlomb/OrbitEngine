@@ -23,7 +23,8 @@ namespace OrbitEngine { namespace Graphics {
 	};
 
 	EnviromentMap::EnviromentMap(Texture* texture)
-		: m_EnviromentMap(texture)
+		: m_EnviromentMap(texture),
+		m_PrefilteredEnvMap(0)
 	{
 		if (s_CaptureCube == nullptr)
 			s_CaptureCube = MeshGenerator::Box(10, 10, 10);
@@ -69,6 +70,8 @@ namespace OrbitEngine { namespace Graphics {
 
 	void EnviromentMap::precomputeEnvPBR()
 	{
+		return;
+
 		if (s_PrefilterCapture == nullptr) {
 			s_PrefilterCapture = Shader::PrefilterEnviromentPBR();
 			setViewMatrices(s_PrefilterCapture);

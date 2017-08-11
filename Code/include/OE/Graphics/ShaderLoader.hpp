@@ -27,6 +27,7 @@ namespace OrbitEngine { namespace Graphics {
 		static Shader* GBuffer() { return LoadInternalShader("GBuffer"); };
 		static Shader* DeferredPBR() { return LoadInternalShader("DeferredPBR"); };
 		static Shader* IntegrateBRDF() { return LoadInternalShader("IntegrateBRDF"); };
+		static Shader* Skybox() { return LoadInternalShader("Skybox"); };
 	private:
 		static Shader* LoadInternalShader(const std::string& name);
 		static std::string LoadFile(const std::string& path);

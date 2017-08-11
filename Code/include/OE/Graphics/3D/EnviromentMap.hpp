@@ -18,7 +18,7 @@ namespace OrbitEngine { namespace Graphics {
 		void precomputeEnvPBR();
 
 		inline Texture* getEnviromentMap() const { return m_EnviromentMap; };
-		inline Texture* getPrefilteredEnviromentMap() const { return m_PrefilteredEnvMap->getColorTextures()[0]; };
+		inline Texture* getPrefilteredEnviromentMap() const { return m_PrefilteredEnvMap ? m_PrefilteredEnvMap->getColorTextures()[0] : 0; };
 	protected:
 		static Mesh* s_CaptureCube;
 		static Shader* s_PrefilterCapture;
@@ -30,6 +30,7 @@ namespace OrbitEngine { namespace Graphics {
 		Graphics::Texture* m_EnviromentMap;
 
 		// IBL
+		// Move this from here
 		Graphics::FrameBuffer* m_PrefilteredEnvMap;
 	};
 } }
