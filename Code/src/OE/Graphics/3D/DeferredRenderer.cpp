@@ -6,6 +6,7 @@
 
 #if OE_OPENGL_ANY
 	#include "OE/Platform/OpenGL/GLShader.hpp"
+	#include "OE/Platform/OpenGL/GLFrameBuffer.hpp"
 #endif
 
 #include "OE/Application/ContextImpl.hpp"
@@ -22,6 +23,7 @@ namespace OrbitEngine { namespace Graphics {
 		m_LighPassShader = Graphics::ShaderLoader::DeferredPBR();
 		m_PVMatrices = Graphics::UniformsPack<PVMatrices>::Create();
 		m_MMatrix = Graphics::UniformsPack<MMatrix>::Create();
+		m_DeferredLightUniforms = Graphics::UniformsPack<DeferredLightUniforms>::Create();
 
 		// Generate a look-up texture to cache the second sum of the split sum approximation used by Unreal (see notes)
 		if (s_IntegratedBRDFLUT == nullptr) {
@@ -58,8 +60,8 @@ namespace OrbitEngine { namespace Graphics {
 		}
 
 		geometryPass();
-		skyboxPass();
 		lightningPass();
+		skyboxPass();
 	}
 
 	void DeferredRenderer::generateGBuffer()
@@ -146,13 +148,15 @@ namespace OrbitEngine { namespace Graphics {
 			if (command.material != nullptr)
 				command.material->use();
 
-			if(m_Skybox)
+			if (m_Skybox) {
 				if (m_Skybox->getPrefilteredEnviromentMap())
 					m_Skybox->getPrefilteredEnviromentMap()->bind(3);
-			//m_Skybox->getEnviromentMap()->bind(3);
-			//s_IntegratedBRDFLUT->getColorTextures()[0]->bind(4);
+				else
+					m_Skybox->getEnviromentMap()->bind(3);
+			}
+			s_IntegratedBRDFLUT->getColorTextures()[0]->bind(4);
 
-			command.mesh->drawIndexed(36);
+			command.mesh->drawIndexed(3000);
 		}
 
 		m_GBufferShader->unbind();
@@ -184,6 +188,10 @@ namespace OrbitEngine { namespace Graphics {
 		}
 #endif
 
+		m_DeferredLightUniform.camPosition = p_Camera->getPosition();
+		m_DeferredLightUniforms->setData(m_DeferredLightUniform);
+		m_DeferredLightUniforms->bind(0, ShaderType::FRAGMENT);
+
 		std::vector<Graphics::Texture*> colorBuffers = m_GBuffer->getColorTextures();
 		for (size_t i = 0; i < colorBuffers.size(); i++)
 			colorBuffers[i]->bind(i);
@@ -200,6 +208,10 @@ namespace OrbitEngine { namespace Graphics {
 		if (m_Skybox == nullptr)
 			return;
 
+		// Copy the GBuffer's depth texture into the output framebuffer
+		FrameBuffer::GetCurrent()->blit(m_GBuffer, BlitOperation::DEPTH);
+
 		m_Skybox->render(p_Camera);
+
 	}
 } }

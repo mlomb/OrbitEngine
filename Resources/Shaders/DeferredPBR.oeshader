@@ -19,18 +19,52 @@ Output main(Input input) {
 }
 
 #shadertype FRAGMENT
+
+#include PBR.oeshader
+
 struct Input {
 	float4 position : SV_POSITION;
 	float2 uv : TEXCOORD;
+};
+
+cbuffer DeferredLightUniforms : register(b0)
+{
+    float3 camPosition;
+	float pad0;
 };
 
 Texture2D GPosition : register(t0);
 Texture2D GNormalRoughness : register(t1);
 Texture2D GAlbedoMetallic : register(t2);
 
+TextureCube enviroment : register(t3);
+Texture2D preintegratedBRDFLUT : register(t4);
+
 SamplerState samplerType : register(s0);
 
 float4 main(Input input) : SV_TARGET {
 	//return float4(0,1,0,1);
-	return float4(GAlbedoMetallic.Sample(samplerType, input.uv).rgb, 1);
+	//return float4(GAlbedoMetallic.Sample(samplerType, input.uv).rgb, 1);
+	
+	float3 fragPos = GPosition.Sample(samplerType, input.uv).rgb;
+	float3 normal = GNormalRoughness.Sample(samplerType, input.uv).rgb;
+	float roughness = GNormalRoughness.Sample(samplerType, input.uv).a;
+	float3 albedo = GAlbedoMetallic.Sample(samplerType, input.uv).rgb;
+	float metallic = GAlbedoMetallic.Sample(samplerType, input.uv).a;
+
+	roughness = max(roughness, 2.0e-2); // Prevent zero
+
+	// PBR
+	float3 lightDir = normalize(float3(0.8, 0.8, 0.8));
+
+	float3 viewDir = normalize(camPosition - fragPos);
+	float3 halfwayDir = normalize(lightDir + viewDir);
+
+	// Directional BRDF
+	float3 spec = SpecularBRDF(float3(1,1,1), roughness, normal, halfwayDir, lightDir, viewDir);
+	
+	// IBL
+	float3 finalColor = spec + IBL(normal, viewDir, roughness, metallic, albedo, enviroment, preintegratedBRDFLUT);
+
+	return float4(finalColor, 1.0);
 }

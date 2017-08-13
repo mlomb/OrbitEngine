@@ -7,6 +7,11 @@
 #include "OE/Graphics/API/FrameBuffer.hpp"
 
 namespace OrbitEngine { namespace Graphics {
+	struct DeferredLightUniforms {
+		Math::Vec3f camPosition;
+		float pad0;
+	};
+
 	class DeferredRenderer : public Renderer3D {
 	public:
 		DeferredRenderer();
@@ -29,8 +34,10 @@ namespace OrbitEngine { namespace Graphics {
 
 		PVMatrices m_MatricesUniforms;
 		MMatrix m_MMatrixUniform;
+		DeferredLightUniforms m_DeferredLightUniform;
 		Graphics::UniformsPack<PVMatrices>* m_PVMatrices;
 		Graphics::UniformsPack<MMatrix>* m_MMatrix;
+		Graphics::UniformsPack<DeferredLightUniforms>* m_DeferredLightUniforms;
 
 		// PBR
 		static Graphics::FrameBuffer* s_IntegratedBRDFLUT;

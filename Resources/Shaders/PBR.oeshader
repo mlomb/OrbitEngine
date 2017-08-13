@@ -21,7 +21,6 @@ float2 Hammersley2D(uint i, uint N) {
 // http://blog.selfshadow.com/publications/s2013-shading-course/karis/s2013_pbs_epic_notes_v2.pdf
 // http://graphicrants.blogspot.com.ar/2013/08/specular-brdf-reference.html
 // http://tcantenot.com/portfolio/2015/04/28/towards-physically-based-rendering/
-/*
 // Normal distribution function D
 // Returns the ratio of microfacets aligned to h (the halfway)
 float D_TrowbridgeReitzGGX(float NoH, float r2) {
@@ -30,7 +29,7 @@ float D_TrowbridgeReitzGGX(float NoH, float r2) {
 	float denom = PI * pow(NoH2 * (r4 - 1.0) + 1.0, 2.0);
 	return r4 / denom;
 }
-*/
+
 // Geometric function G
 // Retruns the probability of a microsurface to be visible from the light direction and view direction
 float G_SchlickGGX(float NoL, float NoV, float r)
@@ -40,38 +39,33 @@ float G_SchlickGGX(float NoL, float NoV, float r)
 	float GV = NoV / (NoV * (1.0 - k) + k);
 	return GL * GV;
 }
-/*
 // Fresnel function F
 // Unreal Modification
 float3 F_Schlick(float3 F0, float LoH)
 {
 	return F0 + (1.0 - F0) * exp2((-5.55473 * LoH - 6.98316) * LoH);
 }
-*/
 
 // -------------- IBL --------------
-/*
-float3 IBL(float3 N, float3 V, float roughness, float metallic, float3 albedo, samplerCube env, sampler2D brdfLUT)
+float3 IBL(float3 N, float3 V, float roughness, float metallic, float3 albedo, TextureCube env, Texture2D brdfLUT)
 {
 	const float ENVIRONMENT_MIPS = 5.0;
 
 	float NoV = clamp(dot(N, V), 0.0, 1.0);
-	float3 R = reflect(-V, N);
-
-	float2 EnvBRDF = texture(brdfLUT, float2(max(NoV, 0.0), roughness)).rg;
-	float3 dielectricColor = float3(0.04);
+	float3 R = normalize(reflect(-V, N));
+	
+	float2 EnvBRDF = brdfLUT.Sample(sampler, float2(max(NoV, 0.0), roughness)).rg;
+	float3 dielectricColor = float3(0.04, 0.04, 0.04);
 	float3 diffColor = albedo.rgb * (1.0 - metallic);
-	float3 specColor = mix(dielectricColor, albedo, metallic); // * specularIntensity
+	float3 specColor = lerp(dielectricColor, albedo, metallic); // * specularIntensity
 
-	float3 PrefilteredColor = textureLod(env, R, roughness * ENVIRONMENT_MIPS).xyz;
-	float3 specIBL = PrefilteredColor * (specColor * EnvBRDF.x + EnvBRDF.y);
+	float3 PrefilteredColor = env.SampleLevel(sampler, R, roughness * ENVIRONMENT_MIPS).xyz;
+	float3 specIBL = PrefilteredColor * (specColor * EnvBRDF.x + float3(EnvBRDF.y, EnvBRDF.y, EnvBRDF.y));
 
 	return diffColor + specIBL;
 }
-*/
 
 // -------------- BRDF --------------
-/*
 float3 SpecularBRDF(float3 F0, float roughness, float3 N, float3 H, float3 L, float3 V) {
 	float NoL = clamp(dot(N, L), 0.0, 1.0);
 	float NoV = clamp(dot(N, V), 0.0, 1.0);
@@ -84,12 +78,11 @@ float3 SpecularBRDF(float3 F0, float roughness, float3 N, float3 H, float3 L, fl
 	float G = G_SchlickGGX(NoL, NoV, roughness);
 	float D = D_TrowbridgeReitzGGX(NoH, r2);
 	float3 F = F_Schlick(F0, LoH);
-
+	
 	return NoL * G * D * F;
 
 	return (D * F * G) / (4 * NoL * NoV);
 }
-*/
 
 float3 ImportanceSampleGGX(float2 Xi, float Roughness, float3 N)
 {

@@ -27,15 +27,6 @@ namespace OrbitEngine { namespace Graphics {
 
 	void Skybox::render(Misc::Camera* camera)
 	{
-		/*
-		if (buffer != nullptr) {
-			glViewport(0, 0, buffer->getWidth(), buffer->getHeight());
-
-			glBindFramebuffer(GL_READ_FRAMEBUFFER, ((GLFrameBuffer*)buffer)->getID());
-			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-			glBlitFramebuffer(0, 0, buffer->getWidth(), buffer->getHeight(), 0, 0, buffer->getWidth(), buffer->getHeight(), GL_DEPTH_BUFFER_BIT, GL_NEAREST);
-		}
-		*/
 		FrameBuffer::Prepare();
 
 		m_Shader->bind();
@@ -46,7 +37,14 @@ namespace OrbitEngine { namespace Graphics {
 		
 		PVMatrices m_MatricesUniforms;
 		m_MatricesUniforms.pmatrix.pr_matrix = camera->getProjectionMatrix();
-		m_MatricesUniforms.vmatrix.vw_matrix = camera->getViewMatrix();
+		Math::Mat4 view = camera->getViewMatrix();
+		/*
+		view._41 = 0;
+		view._42 = 0;
+		view._43 = 0;
+		*/
+
+		m_MatricesUniforms.vmatrix.vw_matrix = Math::Mat4::Inverse(Math::Mat4::Transpose(camera->getProjectionMatrix() * view));
 		m_PVMatrices->setData(m_MatricesUniforms);
 		m_PVMatrices->bind(0, Graphics::ShaderType::VERTEX);
 
@@ -54,6 +52,5 @@ namespace OrbitEngine { namespace Graphics {
 
 		states->setDepthTest(FunctionMode::LESS_EQUAL);
 		Renderer2D::RenderQuadScreen();
-		states->setDepthTest(FunctionMode::DISABLED);
 	}
 } }

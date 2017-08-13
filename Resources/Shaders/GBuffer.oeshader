@@ -19,39 +19,41 @@ struct Input {
 
 struct Output {
 	float4 position : SV_POSITION;
-	float3 normal : NORMAL;
-	float3 tangent : TANGENT;
 	float2 uv : TEXCOORD;
 	float3 fragPos : TEXCOORD1;
+	float3x3 TBN : TEXCOORD2;
 };
 
 Output main(Input input) {
 	Output output;
 
-	float4x4 viewProj = mul(pr_matrix, vw_matrix);
 	float4 worldPos = mul(ml_matrix, float4(input.position.xyz, 1));
 
-	output.fragPos = float3(worldPos.x, worldPos.y, worldPos.z);
-    output.position = mul(viewProj, worldPos);
+	output.fragPos = worldPos.xyz;
+    output.position = mul(mul(pr_matrix, vw_matrix), worldPos);
 	output.uv = input.uv;
 
 	float3x3 model = (float3x3)ml_matrix;
-	output.normal = normalize(mul(model, input.normal));
-	output.tangent = normalize(mul(model, input.tangent));
+	float3 T = normalize(mul(model, input.tangent));
+	float3 N = normalize(mul(model, input.normal));
+	float3 B = normalize(cross(N, T));
+	
+	output.TBN = float3x3(T, B, N);
 
 	return output;
 }
 
 #shadertype FRAGMENT
+#include Common.oeshader
+
 // blendOverlay() taken from https://github.com/jamieowen/glsl-blend/blob/master/overlay.glsl
 float blendOverlay(float base, float blend) { return base<0.5?(2.0*base*blend):(1.0-2.0*(1.0-base)*(1.0-blend)); }
 
 struct Input {
 	float4 position : SV_POSITION;
-	float3 normal : NORMAL;
-	float3 tangent : TANGENT;
 	float2 uv : TEXCOORD;
 	float3 fragPos : TEXCOORD1;
+	float3x3 TBN : TEXCOORD2;
 };
 
 struct Output
@@ -76,25 +78,49 @@ cbuffer MaterialUniforms : register(b2)
     float4 baseColor;
     float metallic;
     float roughness;
+	
+	float usingAlbedoMap;
+	float usingNormalMap;
+	float usingMetallicMap;
+	float usingRoughnessMap;
 };
 
-float3 normalMap(float3 T, float3 N, float2 normals_uv){
-    float3 B = -normalize(cross(N, T));
-	float3x3 TBN = float3x3(T, B, N);
-	TBN = transpose(TBN);
-	float3 normalMap = map_normals.Sample(sampler_normals, normals_uv).rgb * 2.0 - 1.0;
-	normalMap = normalize(mul(TBN, normalMap));
-	return normalMap;
+float3 getMap(Texture2D map, SamplerState _sampler, float2 texCoords) {
+	return map.Sample(_sampler, texCoords).rgb;
+}
+
+float3 getGammaCorrectedMap(Texture2D map, SamplerState _sampler, float2 texCoords)
+{
+	return pow(getMap(map, _sampler, texCoords), float3(GAMMA));
+}
+
+float3 getMap(Texture2D map, SamplerState _sampler, float2 texCoords, float usingMap, float3 tint) {
+	return (1 - usingMap) * tint + usingMap * tint * getGammaCorrectedMap(map, _sampler, texCoords);
+}
+
+float getMapOverlay(Texture2D map, SamplerState _sampler, float2 texCoords, float usingMap, float base) {
+	return (1 - usingMap) * base + usingMap * blendOverlay(base, getMap(map, _sampler, texCoords).r);
+}
+
+float3 getNormal(float3x3 TBN, float2 texCoords) {
+	float3 normal = TBN[2]; // TBN[2] = normalIn
+
+	if (usingNormalMap > 0.0) {
+		//float3 normalMap = getMap(map_normals, sampler_normals, texCoords) * 2.0 - 1.0;
+		//normal = normalize(TBN * normalMap);
+	}
+
+	return normal;
 }
 
 Output main(Input input) {
 	Output output;
 
 	output.GPosition = float4(input.fragPos, 1.0f);
-	output.GNormalRoughness.rgb = normalMap(input.tangent, input.normal, input.uv);
-	output.GNormalRoughness.a = blendOverlay(roughness, map_roughness.Sample(sampler_roughness, input.uv).r);
-	output.GAlbedoMetallic.rgb = map_albedo.Sample(sampler_albedo, input.uv).rgb;
-	output.GAlbedoMetallic.a = blendOverlay(metallic, map_metallic.Sample(sampler_metallic, input.uv).r);
+	output.GNormalRoughness.rgb = getNormal(input.TBN, input.uv);
+	output.GNormalRoughness.a = getMapOverlay(map_roughness, sampler_roughness, input.uv, usingRoughnessMap, roughness);
+	output.GAlbedoMetallic.rgb = getMap(map_albedo, sampler_albedo, input.uv, usingAlbedoMap, baseColor);
+	output.GAlbedoMetallic.a = getMapOverlay(map_metallic, sampler_metallic, input.uv, usingMetallicMap, metallic);
 
     return output;
 }
