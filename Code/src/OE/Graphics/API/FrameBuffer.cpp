@@ -23,6 +23,23 @@ namespace OrbitEngine { namespace Graphics {
 		delete m_DepthTexture;
 	}
 
+	void FrameBuffer::blit(FrameBuffer* source, BlitOperation operation)
+	{
+		if (!source)
+			return;
+
+		switch (operation)
+		{
+		case BlitOperation::DEPTH:
+			if (m_DepthTexture) {
+				Texture* depthSource = source->getDepthTexture();
+				if (depthSource)
+					m_DepthTexture->copy(depthSource);
+			}
+			break;
+		}
+	}
+
 	void FrameBuffer::Push(FrameBuffer* frameBuffer)
 	{
 		Application::priv::ContextImpl* currentContext = Application::priv::ContextImpl::GetCurrent();
@@ -49,15 +66,23 @@ namespace OrbitEngine { namespace Graphics {
 		}
 	}
 
-	Math::Vec2i FrameBuffer::GetCurrentSize()
+	FrameBuffer* FrameBuffer::GetCurrent()
 	{
 		Application::priv::ContextImpl* currentContext = Application::priv::ContextImpl::GetCurrent();
 		int size = currentContext->m_FrameBufferStack.size();
-		if (size != 0) {
-			FrameBuffer* currentFrameBuffer = currentContext->m_FrameBufferStack[size - 1];
+		if (size != 0)
+			return currentContext->m_FrameBufferStack[size - 1];
+		return nullptr;
+	}
+
+	Math::Vec2i FrameBuffer::GetCurrentSize()
+	{
+		FrameBuffer* currentFrameBuffer = GetCurrent();
+		if (currentFrameBuffer != nullptr) {
 			return Math::Vec2i(currentFrameBuffer->m_Width, currentFrameBuffer->m_Height);
 		}
 		else {
+			Application::priv::ContextImpl* currentContext = Application::priv::ContextImpl::GetCurrent();
 			return currentContext->GetCurrent()->p_Size;
 		}
 	}

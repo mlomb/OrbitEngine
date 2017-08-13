@@ -96,6 +96,11 @@ namespace OrbitEngine { namespace Graphics {
 		}
 	}
 
+	void GLTexture::copy(Texture* source)
+	{
+		//glCopyTexSubImage2D(m_Target, 0, 0, 0, 0, 0, m_Properties.formatProperties.width, m_Properties.formatProperties.height);
+	}
+
 	void GLTexture::bind(unsigned int slot)
 	{
 		glActiveTexture(GL_TEXTURE0 + slot);

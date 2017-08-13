@@ -22,6 +22,7 @@ namespace OrbitEngine { namespace Graphics {
 		void useMip(unsigned int mipLevel) override;
 		void unbind() const override;
 		void clear() const override;
+		void blit(FrameBuffer* source, BlitOperation operation);
 
 		inline GLuint getID() { return m_FBO; };
 

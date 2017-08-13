@@ -130,6 +130,11 @@ namespace OrbitEngine { namespace Graphics {
 		}
 	}
 
+	void D3DTexture::copy(Texture* source)
+	{
+		Application::priv::D3DContext::GetCurrent()->getDeviceContext()->CopyResource(m_pResource, ((D3DTexture*)source)->getD3DResource());
+	}
+
 	D3D11_FILTER D3DTexture::TextureFilterToD3D(TextureFilter filter)
 	{
 		switch (filter)

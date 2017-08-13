@@ -64,6 +64,8 @@
 #define GL_TEXTURE_CUBE_MAP_NEGATIVE_Y    0x8518
 #define GL_TEXTURE_CUBE_MAP_POSITIVE_Z    0x8519
 #define GL_TEXTURE_CUBE_MAP_NEGATIVE_Z    0x851A
+#define GL_READ_FRAMEBUFFER               0x8CA8
+#define GL_DRAW_FRAMEBUFFER               0x8CA9
 
 typedef char GLchar;
 typedef ptrdiff_t GLintptr;
@@ -77,6 +79,7 @@ typedef ptrdiff_t GLsizeiptr;
 #endif
 
 #define OE_OPENGL_EXTENSIONS \
+	GLE(void, BlitFramebuffer, GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1, GLbitfield mask, GLenum filter) \
 	GLE(void, StencilOpSeparate, GLenum face, GLenum sfail, GLenum dpfail, GLenum dppass) \
 	GLE(void, DrawBuffers, GLsizei n, const GLenum *bufs) \
 	GLE(void, DeleteFramebuffers, GLsizei n, GLuint *framebuffers) \

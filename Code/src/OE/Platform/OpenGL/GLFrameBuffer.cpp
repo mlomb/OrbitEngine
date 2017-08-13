@@ -73,6 +73,26 @@ namespace OrbitEngine {
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		}
 
+		void GLFrameBuffer::blit(FrameBuffer* source, BlitOperation operation)
+		{
+			GLbitfield mask = 0;
+
+			switch (operation) {
+			case BlitOperation::DEPTH:
+				mask = GL_DEPTH_BUFFER_BIT;
+				break;
+			}
+
+			if (mask == 0) {
+				FrameBuffer::blit(source, operation);
+				return;
+			}
+
+			glBindFramebuffer(GL_READ_FRAMEBUFFER, ((GLFrameBuffer*)source)->getID());
+			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_FBO);
+			glBlitFramebuffer(0, 0, source->getWidth(), source->getHeight(), 0, 0, m_Width, m_Height, mask, GL_NEAREST);
+		}
+
 		void GLFrameBuffer::attachColorTexture(Graphics::TextureFormatProperties format, int count)
 		{
 			bind();
@@ -119,7 +139,7 @@ namespace OrbitEngine {
 			properties.formatProperties.height = m_Height;
 			properties.sampleProperties.filter = TextureFilter::LINEAR;
 
-			Graphics::GLTexture* m_DepthTexture = static_cast<GLTexture*>(Texture::Create(properties));
+			m_DepthTexture = Texture::Create(properties);
 
 #if !OE_OPENGL_ES
 			m_DepthTexture->bind(0);
@@ -128,7 +148,7 @@ namespace OrbitEngine {
 			//m_DepthTexture->Unbind();
 #endif
 
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, m_DepthTexture->getID(), 0);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, static_cast<GLTexture*>(m_DepthTexture)->getID(), 0);
 
 			unbind();
 		}
