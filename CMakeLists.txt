@@ -9,6 +9,9 @@ include(CMake/Tools.cmake)
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" AND NOT("${CMAKE_SYSTEM_NAME}" STREQUAL "Android"))
 	set(CMAKE_CXX_FLAGS "-stdlib=libc++")
 endif()
+# This fixes some Emscripten cross-compilation problem with zlibstatic of Assimp
+include(CheckTypeSize)
+check_type_size(off64_t OFF64_T)
 
 set(INC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Code/include)
 set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Code/src)
@@ -22,8 +25,18 @@ configure_file(${INC_DIR}/OE/Config.hpp.in
 # - Dependencies -
 add_subdirectory(Dependencies/FreeType)
 add_subdirectory(Dependencies/FreeImage)
-option(XSC_BUILD_SHELL "" OFF)
+
+option(XSC_BUILD_SHELL "" OFF) # Don't build XSC shell
 add_subdirectory(Dependencies/XShaderCompiler)
+
+option(ASSIMP_BUILD_ASSIMP_TOOLS "" OFF) # Don't build Assimp tools
+option(BUILD_SHARED_LIBS "" OFF) # Build Assimp as a static lib
+option(ASSIMP_BUILD_TESTS "" OFF) # Don't build Assimp tests
+option(ASSIMP_NO_EXPORT "" ON) # Disable Assimp export feature
+option(ASSIMP_BUILD_ALL_IMPORTERS_BY_DEFAULT "" OFF) # Disable all import formats by default
+option(ASSIMP_BUILD_OBJ_IMPORTER "" ON)
+option(ASSIMP_BUILD_FBX_IMPORTER "" ON)
+add_subdirectory(Dependencies/Assimp)
 
 # - Code -
 # General code
@@ -129,11 +142,14 @@ list(APPEND OE_LIBRARIES
 	freetype
 	FreeImage
 	xsc_core
+	assimp
 )
 list(APPEND OE_LIBRARIES_INC
 	${freetype_SOURCE_DIR}/include
     ${FreeImage_SOURCE_DIR}/Source
     ${XShaderCompiler_SOURCE_DIR}/inc
+    ${Assimp_SOURCE_DIR}/include
+    ${Assimp_BINARY_DIR}/include
 )
 
 target_compile_definitions(FreeImage PUBLIC FREEIMAGE_LIB)

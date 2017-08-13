@@ -7,3 +7,6 @@
 [submodule "Dependencies/XShaderCompiler"]
 	path = Dependencies/XShaderCompiler
 	url = https://github.com/LukasBanana/XShaderCompiler.git
+[submodule "Dependencies/Assimp"]
+	path = Dependencies/Assimp
+	url = https://github.com/assimp/assimp.git

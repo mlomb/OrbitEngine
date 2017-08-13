@@ -27,10 +27,11 @@ The current supported platforms are:
 Currently we have none. This is something that take some time, but you can see some samples on the [samples repositry]().
 
 ## Dependencies
-We're trying to have the least dependencies as possible, though we have some:
+Currently, OrbitEngine is making use of this libraries:
 * [FreeType](https://www.freetype.org/), an open source library to render fonts
 * [FreeImage](http://freeimage.sourceforge.net/), an open source library to manage popular graphics images formats
 * [XShaderCompiler](https://github.com/LukasBanana/XShaderCompiler/), an open source library to cross compiler shaders
+* [Assimp](https://github.com/assimp/assimp/), an open source library to import and export 3d model formats
 
 All are included as submodules.
 
