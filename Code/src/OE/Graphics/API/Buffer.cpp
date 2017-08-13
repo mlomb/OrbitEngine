@@ -46,6 +46,11 @@ namespace OrbitEngine {	namespace Graphics {
 		return vertexBuffer;
 	}
 	
+	unsigned int Buffer::getSize()
+	{
+		return p_Size;
+	}
+
 	Buffer* Buffer::CreateIndexBuffer(const unsigned int size, const void* data)
 	{
 		switch (Application::Context::GetCurrentAPI())

@@ -1,16 +1,34 @@
 #include "OE/Graphics/3D/Model.hpp"
-/*
+
+#include "OE/System/File.hpp"
+
 #define ASSIMP_BUILD_BOOST_WORKAROUND
 #include <assimp/cimport.h>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
-*/
+
 namespace OrbitEngine { namespace Graphics {
 
-	Model::Model(std::string path)
+	static MaterialMapType AssimpTextureTypeToMaterialMap(aiTextureType textureType)
 	{
-		/*
-		m_Scene = aiImportFile(path.c_str(), aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_Triangulate | aiProcess_CalcTangentSpace);
+		switch (textureType) {
+		case aiTextureType_DIFFUSE: return ALBEDO;
+		case aiTextureType_SPECULAR: return METALLIC;
+		case aiTextureType_NORMALS: return NORMALS;
+		case aiTextureType_SHININESS: return ROUGHNESS;
+		}
+
+		return (MaterialMapType)-1;
+	}
+
+	Model::Model(std::string path)
+		: m_Scene(0)
+	{
+		OE_LOG_DEBUG("Loading model: " << path);
+
+		std::vector<char> file = System::LoadFile(path);
+
+		m_Scene = aiImportFileFromMemory(file.data(), file.size(), aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_Triangulate | aiProcess_CalcTangentSpace, 0);
 
 		if (!m_Scene)
 		{
@@ -26,7 +44,6 @@ namespace OrbitEngine { namespace Graphics {
 		m_Scene = NULL;
 
 		OE_LOG_DEBUG("Loaded '" + path + "' with " + std::to_string(m_Meshes.size()) + " meshes and " + std::to_string(m_TexturesMap.size()) + " textures.");
-		*/
 	}
 
 	Model::~Model() {
@@ -35,11 +52,9 @@ namespace OrbitEngine { namespace Graphics {
 
 	void Model::render(Renderer3D* r3d, const Math::Mat4& transform)
 	{
-		/*
 		for (MeshEntry* meshEntry : m_Meshes)
 			if (meshEntry != nullptr)
-				r3d->submitMesh(meshEntry->mesh, meshEntry->material, transform);
-				*/
+				r3d->submitMesh(meshEntry->mesh, meshEntry->count, meshEntry->material, transform);
 	}
 
 	MeshEntry* Model::getEntry(unsigned int i) const
@@ -49,7 +64,6 @@ namespace OrbitEngine { namespace Graphics {
 
 	void Model::processTextures()
 	{
-		/*
 		aiString path;
 		for (int i = aiTextureType_DIFFUSE; i != aiTextureType_REFLECTION; i++) {
 			aiTextureType type = static_cast<aiTextureType>(i);
@@ -86,23 +100,19 @@ namespace OrbitEngine { namespace Graphics {
 			(*itr).second = texture;
 			itr++;
 		}
-		*/
 	}
 
 	void Model::processNode(aiNode* node)
 	{
-		/*
 		for (size_t i = 0; i < node->mNumMeshes; i++)
 			m_Meshes.push_back(processMeshEntry(m_Scene->mMeshes[node->mMeshes[i]]));
 
 		for (size_t i = 0; i < node->mNumChildren; i++)
 			processNode(node->mChildren[i]);
-		*/
 	}
 
 	MeshEntry* Model::processMeshEntry(aiMesh* mesh)
 	{
-		/*
 		MeshEntry* meshEntry = new MeshEntry();
 
 		std::vector<Vertex3D> vertices(mesh->mNumVertices);
@@ -139,7 +149,7 @@ namespace OrbitEngine { namespace Graphics {
 			vertices[i].bitangent.x = mesh->mBitangents[i].x;
 			vertices[i].bitangent.y = mesh->mBitangents[i].y;
 			vertices[i].bitangent.z = mesh->mBitangents[i].z;
-			* /
+			*/
 		}
 
 		// Indices
@@ -184,28 +194,11 @@ namespace OrbitEngine { namespace Graphics {
 		meshEntry->material = material;
 
 		meshEntry->mesh = Mesh::Create<Vertex3D>(vertices, Renderer3D::GetVertex3DLayout(), indices);
+		meshEntry->count = indices.size();
 
 		vertices.clear();
 		indices.clear();
 
 		return meshEntry;
-		*/
-		return 0;
 	}
-	/*
-	MaterialMapType Model::AssimpTextureTypeToMaterialMap(aiTextureType textureType)
-	{
-		return ALBEDO;
-		/*
-		switch (textureType) {
-		case aiTextureType_DIFFUSE: return ALBEDO;
-		case aiTextureType_SPECULAR: return METALLIC;
-		case aiTextureType_NORMALS: return NORMALS;
-		case aiTextureType_SHININESS: return ROUGHNESS;
-		}
-
-		return (MaterialMapType)-1;
-		* /
-	}
-	*/
 } }

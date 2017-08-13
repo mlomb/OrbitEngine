@@ -15,6 +15,7 @@ namespace OrbitEngine { namespace Graphics {
 	struct MeshEntry {
 		Mesh* mesh;
 		Material* material;
+		unsigned int count;
 	};
 
 	class Model {
@@ -35,8 +36,6 @@ namespace OrbitEngine { namespace Graphics {
 		void processTextures();
 		void processNode(aiNode* node);
 		MeshEntry* processMeshEntry(aiMesh* mesh);
-
-		//static MaterialMapType AssimpTextureTypeToMaterialMap(aiTextureType textureType);
 	};
 } }
 

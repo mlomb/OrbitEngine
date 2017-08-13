@@ -23,6 +23,7 @@ namespace OrbitEngine {	namespace Graphics {
 		virtual void bind() const = 0;
 		virtual void resize(const unsigned int size) = 0;
 		virtual void setData(const unsigned int size, const void* data) = 0;
+		unsigned int getSize();
 
 		static Buffer* CreateIndexBuffer(const unsigned int size, const void* data = 0);
 		static VertexBuffer* CreateVertexBuffer(VertexLayout* layout, const unsigned int size, const void* data = 0);

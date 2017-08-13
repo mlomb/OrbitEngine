@@ -9,21 +9,17 @@ namespace OrbitEngine { namespace Graphics {
 		m_Commands.clear();
 	}
 
-	void Renderer3D::submitMesh(Mesh* mesh, Material* material, const Math::Mat4& transform)
+	void Renderer3D::submitMesh(Mesh* mesh, unsigned int count, Material* material, const Math::Mat4& transform)
 	{
 		Command command;
 		command.mesh = mesh;
+		command.count = count;
 		command.material = material;
 		command.transform = transform;
 
 		m_Commands.push_back(command);
 	}
-
-	void Renderer3D::submitMesh(Mesh* mesh)
-	{
-		submitMesh(mesh, 0, Math::Mat4::Identity());
-	}
-
+	
 	VertexLayout* Renderer3D::GetVertex3DLayout()
 	{
 		if (s_Vertex3DLayout == nullptr) {

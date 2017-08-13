@@ -25,12 +25,12 @@ namespace OrbitEngine { namespace Graphics {
 			Mesh* mesh;
 			Material* material;
 			Math::Mat4 transform;
+			unsigned int count;
 		};
 
 		void begin() override;
 
-		void submitMesh(Mesh* mesh);
-		void submitMesh(Mesh* mesh, Material* material, const Math::Mat4& transform);
+		void submitMesh(Mesh* mesh, unsigned int count, Material* material = 0, const Math::Mat4& transform = Math::Mat4::Identity());
 		inline void useSkybox(Skybox* skybox) { m_Skybox = skybox; }
 
 		static VertexLayout* GetVertex3DLayout();

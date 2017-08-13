@@ -156,7 +156,7 @@ namespace OrbitEngine { namespace Graphics {
 			}
 			s_IntegratedBRDFLUT->getColorTextures()[0]->bind(4);
 
-			command.mesh->drawIndexed(3000);
+			command.mesh->drawIndexed(command.count);
 		}
 
 		m_GBufferShader->unbind();
