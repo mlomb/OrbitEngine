@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.2)
 
-project(OrbitEngine CXX)
+project(OrbitEngine C CXX)
 
 include(CMake/Config.cmake)
 include(CMake/Tools.cmake)
@@ -37,6 +37,9 @@ option(ASSIMP_BUILD_ALL_IMPORTERS_BY_DEFAULT "" OFF) # Disable all import format
 option(ASSIMP_BUILD_OBJ_IMPORTER "" ON)
 option(ASSIMP_BUILD_FBX_IMPORTER "" ON)
 add_subdirectory(Dependencies/Assimp)
+
+# Reset some flags that some libraries modify
+set(CMAKE_DEBUG_POSTFIX "" CACHE STRING "" FORCE)
 
 # - Code -
 # General code
