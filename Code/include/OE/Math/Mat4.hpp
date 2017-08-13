@@ -14,6 +14,7 @@ namespace OrbitEngine { namespace Math {
 				float _41, _42, _43, _44;
 			};
 			float m[4][4];
+			float data[16];
 		};
 
 		Mat4(float d = 1.0f);
@@ -28,6 +29,7 @@ namespace OrbitEngine { namespace Math {
 		static Mat4 Rotation(float angle, const Vec3f& axis);
 		static Mat4 Scale(const Vec3f& scale);
 		static Mat4 Transpose(const Mat4& matrix);
+		static Mat4 Inverse(const Mat4& matrix);
 	};
 } }
 

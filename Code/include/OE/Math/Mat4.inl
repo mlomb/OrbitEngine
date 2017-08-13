@@ -197,6 +197,140 @@ namespace OrbitEngine { namespace Math {
 
 		return r;
 	}
+
+	inline Mat4 Mat4::Inverse(const Mat4& matrix)
+	{
+		// Taken from gluInvertMatrix
+
+		float inv[16], det;
+		int i;
+
+		inv[0] = matrix.data[5] * matrix.data[10] * matrix.data[15] -
+			matrix.data[5] * matrix.data[11] * matrix.data[14] -
+			matrix.data[9] * matrix.data[6] * matrix.data[15] +
+			matrix.data[9] * matrix.data[7] * matrix.data[14] +
+			matrix.data[13] * matrix.data[6] * matrix.data[11] -
+			matrix.data[13] * matrix.data[7] * matrix.data[10];
+
+		inv[4] = -matrix.data[4] * matrix.data[10] * matrix.data[15] +
+			matrix.data[4] * matrix.data[11] * matrix.data[14] +
+			matrix.data[8] * matrix.data[6] * matrix.data[15] -
+			matrix.data[8] * matrix.data[7] * matrix.data[14] -
+			matrix.data[12] * matrix.data[6] * matrix.data[11] +
+			matrix.data[12] * matrix.data[7] * matrix.data[10];
+
+		inv[8] = matrix.data[4] * matrix.data[9] * matrix.data[15] -
+			matrix.data[4] * matrix.data[11] * matrix.data[13] -
+			matrix.data[8] * matrix.data[5] * matrix.data[15] +
+			matrix.data[8] * matrix.data[7] * matrix.data[13] +
+			matrix.data[12] * matrix.data[5] * matrix.data[11] -
+			matrix.data[12] * matrix.data[7] * matrix.data[9];
+
+		inv[12] = -matrix.data[4] * matrix.data[9] * matrix.data[14] +
+			matrix.data[4] * matrix.data[10] * matrix.data[13] +
+			matrix.data[8] * matrix.data[5] * matrix.data[14] -
+			matrix.data[8] * matrix.data[6] * matrix.data[13] -
+			matrix.data[12] * matrix.data[5] * matrix.data[10] +
+			matrix.data[12] * matrix.data[6] * matrix.data[9];
+
+		inv[1] = -matrix.data[1] * matrix.data[10] * matrix.data[15] +
+			matrix.data[1] * matrix.data[11] * matrix.data[14] +
+			matrix.data[9] * matrix.data[2] * matrix.data[15] -
+			matrix.data[9] * matrix.data[3] * matrix.data[14] -
+			matrix.data[13] * matrix.data[2] * matrix.data[11] +
+			matrix.data[13] * matrix.data[3] * matrix.data[10];
+
+		inv[5] = matrix.data[0] * matrix.data[10] * matrix.data[15] -
+			matrix.data[0] * matrix.data[11] * matrix.data[14] -
+			matrix.data[8] * matrix.data[2] * matrix.data[15] +
+			matrix.data[8] * matrix.data[3] * matrix.data[14] +
+			matrix.data[12] * matrix.data[2] * matrix.data[11] -
+			matrix.data[12] * matrix.data[3] * matrix.data[10];
+
+		inv[9] = -matrix.data[0] * matrix.data[9] * matrix.data[15] +
+			matrix.data[0] * matrix.data[11] * matrix.data[13] +
+			matrix.data[8] * matrix.data[1] * matrix.data[15] -
+			matrix.data[8] * matrix.data[3] * matrix.data[13] -
+			matrix.data[12] * matrix.data[1] * matrix.data[11] +
+			matrix.data[12] * matrix.data[3] * matrix.data[9];
+
+		inv[13] = matrix.data[0] * matrix.data[9] * matrix.data[14] -
+			matrix.data[0] * matrix.data[10] * matrix.data[13] -
+			matrix.data[8] * matrix.data[1] * matrix.data[14] +
+			matrix.data[8] * matrix.data[2] * matrix.data[13] +
+			matrix.data[12] * matrix.data[1] * matrix.data[10] -
+			matrix.data[12] * matrix.data[2] * matrix.data[9];
+
+		inv[2] = matrix.data[1] * matrix.data[6] * matrix.data[15] -
+			matrix.data[1] * matrix.data[7] * matrix.data[14] -
+			matrix.data[5] * matrix.data[2] * matrix.data[15] +
+			matrix.data[5] * matrix.data[3] * matrix.data[14] +
+			matrix.data[13] * matrix.data[2] * matrix.data[7] -
+			matrix.data[13] * matrix.data[3] * matrix.data[6];
+
+		inv[6] = -matrix.data[0] * matrix.data[6] * matrix.data[15] +
+			matrix.data[0] * matrix.data[7] * matrix.data[14] +
+			matrix.data[4] * matrix.data[2] * matrix.data[15] -
+			matrix.data[4] * matrix.data[3] * matrix.data[14] -
+			matrix.data[12] * matrix.data[2] * matrix.data[7] +
+			matrix.data[12] * matrix.data[3] * matrix.data[6];
+
+		inv[10] = matrix.data[0] * matrix.data[5] * matrix.data[15] -
+			matrix.data[0] * matrix.data[7] * matrix.data[13] -
+			matrix.data[4] * matrix.data[1] * matrix.data[15] +
+			matrix.data[4] * matrix.data[3] * matrix.data[13] +
+			matrix.data[12] * matrix.data[1] * matrix.data[7] -
+			matrix.data[12] * matrix.data[3] * matrix.data[5];
+
+		inv[14] = -matrix.data[0] * matrix.data[5] * matrix.data[14] +
+			matrix.data[0] * matrix.data[6] * matrix.data[13] +
+			matrix.data[4] * matrix.data[1] * matrix.data[14] -
+			matrix.data[4] * matrix.data[2] * matrix.data[13] -
+			matrix.data[12] * matrix.data[1] * matrix.data[6] +
+			matrix.data[12] * matrix.data[2] * matrix.data[5];
+
+		inv[3] = -matrix.data[1] * matrix.data[6] * matrix.data[11] +
+			matrix.data[1] * matrix.data[7] * matrix.data[10] +
+			matrix.data[5] * matrix.data[2] * matrix.data[11] -
+			matrix.data[5] * matrix.data[3] * matrix.data[10] -
+			matrix.data[9] * matrix.data[2] * matrix.data[7] +
+			matrix.data[9] * matrix.data[3] * matrix.data[6];
+
+		inv[7] = matrix.data[0] * matrix.data[6] * matrix.data[11] -
+			matrix.data[0] * matrix.data[7] * matrix.data[10] -
+			matrix.data[4] * matrix.data[2] * matrix.data[11] +
+			matrix.data[4] * matrix.data[3] * matrix.data[10] +
+			matrix.data[8] * matrix.data[2] * matrix.data[7] -
+			matrix.data[8] * matrix.data[3] * matrix.data[6];
+
+		inv[11] = -matrix.data[0] * matrix.data[5] * matrix.data[11] +
+			matrix.data[0] * matrix.data[7] * matrix.data[9] +
+			matrix.data[4] * matrix.data[1] * matrix.data[11] -
+			matrix.data[4] * matrix.data[3] * matrix.data[9] -
+			matrix.data[8] * matrix.data[1] * matrix.data[7] +
+			matrix.data[8] * matrix.data[3] * matrix.data[5];
+
+		inv[15] = matrix.data[0] * matrix.data[5] * matrix.data[10] -
+			matrix.data[0] * matrix.data[6] * matrix.data[9] -
+			matrix.data[4] * matrix.data[1] * matrix.data[10] +
+			matrix.data[4] * matrix.data[2] * matrix.data[9] +
+			matrix.data[8] * matrix.data[1] * matrix.data[6] -
+			matrix.data[8] * matrix.data[2] * matrix.data[5];
+
+		det = matrix.data[0] * inv[0] + matrix.data[1] * inv[4] + matrix.data[2] * inv[8] + matrix.data[3] * inv[12];
+
+		if (det == 0)
+			return Mat4(); // Mat4() or matrix?
+
+		det = 1.0 / det;
+
+		Mat4 result;
+
+		for (i = 0; i < 16; i++)
+			result.data[i] = inv[i] * det;
+
+		return result;
+	}
 } }
 
 #endif
