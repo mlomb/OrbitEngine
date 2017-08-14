@@ -163,7 +163,7 @@ namespace OrbitEngine { namespace Graphics {
 	{
 		std::string directory = path.substr(0, path.find_last_of('/'));
 
-		std::string fileContent = System::LoadFileAsString(path);
+		std::string fileContent = System::File::LoadFileAsString(path);
 		if (fileContent.size() == 0) {
 			OE_LOG_FATAL("Can't load shader file '" + path + "'.");
 			return "/* Couldn't load file (" + path + ") */";
@@ -171,24 +171,23 @@ namespace OrbitEngine { namespace Graphics {
 
 		std::istringstream file(fileContent);
 
-		std::string buffer;
+		std::stringstream buffer;
 		std::string line;
 		while (std::getline(file, line))
 		{
+			// Remove the jumpline that some platforms add
+			line.erase(std::remove_if(line.begin(), line.end(),
+				[](char c) { return (c == '\r' || c == '\t' || c == '\n'); }), line.end());
+
 			if (line.find("#include") == 0) {
 				std::string includeFilePath = line.substr(9, line.size()); // +1 for the space
-
-				// Remove the jumpline that some platforms add
-				includeFilePath.erase(std::remove_if(includeFilePath.begin(), includeFilePath.end(),
-					[](char c) { return (c == '\r' || c == '\t' || c == '\n'); }), includeFilePath.end());
-
-				buffer += LoadFile(directory + "/" + includeFilePath);
+				buffer << LoadFile(directory + "/" + includeFilePath);
 			}
 			else
-				buffer += line + "\r\n";
+				buffer << line << "\r\n";
 		}
 
-		return buffer;
+		return buffer.str();
 	}
 
 	Shader* ShaderLoader::FromSource(const std::string& source)

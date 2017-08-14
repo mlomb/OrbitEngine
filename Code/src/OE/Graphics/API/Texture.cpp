@@ -14,6 +14,7 @@
 #define FREEIMAGE_LIB
 #endif
 #include <FreeImage.h>
+#include "OE/System/FreeImageIOWrapper.hpp"
 
 #include "OE/Application/Context.hpp"
 #include "OE/Misc/Log.hpp"
@@ -69,6 +70,8 @@ namespace OrbitEngine { namespace Graphics {
 
 		for (size_t i = 0; i < files.size(); i++) {
 			void* data = Texture::LoadImageData(files[i], properties.formatProperties); // We assume formats will match
+			if (data == 0)
+				return 0;
 			dataPtrs.push_back(data);
 		}
 
@@ -127,12 +130,9 @@ namespace OrbitEngine { namespace Graphics {
 			// FreeImage_DeInitialise();
 		}
 
-		/* Load Image File to BYTE* */
-		std::vector<char> buffer = System::LoadFile(file, true);
-		if (buffer.size() == 0)
-			return 0;
-
-		FIMEMORY* fiStream = FreeImage_OpenMemory((BYTE*)buffer.data(), buffer.size());
+		FreeImageIO freeImage_io;
+		System::priv::SetFreeImageIO(&freeImage_io);
+		System::IOStream* fileStream = System::File::Open(file);
 
 		FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
 		FIBITMAP *dib(0);
@@ -140,18 +140,21 @@ namespace OrbitEngine { namespace Graphics {
 		formatProperties.width = 0;
 		formatProperties.height = 0;
 
-		fif = FreeImage_GetFileTypeFromMemory(fiStream);
+		fif = FreeImage_GetFileTypeFromHandle(&freeImage_io, fileStream);
 		if (fif == FIF_UNKNOWN) {
 			OE_LOG_WARNING("Can't determinate the format of the image: " + file);
+			delete fileStream;
 			return 0;
 		}
-		if (FreeImage_FIFSupportsReading(fif)) dib = FreeImage_LoadFromMemory(fif, fiStream, 0);
+		if (FreeImage_FIFSupportsReading(fif)) dib = FreeImage_LoadFromHandle(fif, &freeImage_io, fileStream, 0);
 		else {
 			OE_LOG_WARNING("FreeImage don't support reading the image: " + file);
+			delete fileStream;
 			return 0;
 		}
 		if (!dib) {
 			OE_LOG_WARNING("Problem reading the image: " + file);
+			delete fileStream;
 			return 0;
 		}
 

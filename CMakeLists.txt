@@ -52,6 +52,7 @@ file(GLOB_RECURSE SRC ${INC_DIR}/OE/Misc/*.hpp
                       ${INC_DIR}/OE/Application/*.hpp
                       ${SRC_DIR}/OE/Application/*.cpp
                       ${INC_DIR}/OE/System/*.hpp
+                      ${SRC_DIR}/OE/System/*.hpp
                       ${SRC_DIR}/OE/System/*.cpp
                       ${INC_DIR}/OE/UI/*.hpp
                       ${SRC_DIR}/OE/UI/*.cpp

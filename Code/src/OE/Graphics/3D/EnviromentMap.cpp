@@ -31,6 +31,7 @@ namespace OrbitEngine { namespace Graphics {
 
 		if (texture->getProperties().dimension != TextureDimension::CUBEMAP) {
 			// It's an HDR texture, convert it to a cubemap
+			/*
 			if (s_HDRToCubemap == nullptr) {
 				s_HDRToCubemap = Shader::HDRToCubemap();
 				setViewMatrices(s_HDRToCubemap);
@@ -64,6 +65,7 @@ namespace OrbitEngine { namespace Graphics {
 			FrameBuffer::Pop();
 
 			m_EnviromentMap = fb->getColorTextures()[0];
+			*/
 		}
 		precomputeEnvPBR();
 	}
@@ -71,7 +73,7 @@ namespace OrbitEngine { namespace Graphics {
 	void EnviromentMap::precomputeEnvPBR()
 	{
 		return;
-
+		/*
 		if (s_PrefilterCapture == nullptr) {
 			s_PrefilterCapture = Shader::PrefilterEnviromentPBR();
 			setViewMatrices(s_PrefilterCapture);
@@ -114,6 +116,7 @@ namespace OrbitEngine { namespace Graphics {
 
 		s_PrefilterCapture->unbind();
 		FrameBuffer::Pop();
+		*/
 	}
 
 	void EnviromentMap::setViewMatrices(Shader* shader)

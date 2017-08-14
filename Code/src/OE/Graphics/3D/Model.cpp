@@ -6,6 +6,9 @@
 #include <assimp/cimport.h>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include <assimp/Importer.hpp>
+
+#include "OE/System/AssimpIOWrapper.hpp"
 
 namespace OrbitEngine { namespace Graphics {
 
@@ -26,13 +29,15 @@ namespace OrbitEngine { namespace Graphics {
 	{
 		OE_LOG_DEBUG("Loading model: " << path);
 
-		std::vector<char> file = System::LoadFile(path);
+		Assimp::Importer* importer = new Assimp::Importer();
+		importer->SetIOHandler(new System::priv::AssimpIOSystem());
 
-		m_Scene = aiImportFileFromMemory(file.data(), file.size(), aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_Triangulate | aiProcess_CalcTangentSpace, 0);
+		m_Scene = importer->ReadFile(path, aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_Triangulate | aiProcess_CalcTangentSpace);
 
 		if (!m_Scene)
 		{
 			OE_LOG_WARNING("Error loading model '" + path + "' with Assimp!");
+			delete importer;
 			return;
 		}
 		m_Directory = path.substr(0, path.find_last_of('/'));
@@ -131,7 +136,7 @@ namespace OrbitEngine { namespace Graphics {
 			vertices[i].normal.z = mesh->mNormals[i].z;
 
 			// UVs
-			if (mesh->mTextureCoords[0] > 0)
+			if (mesh->mTextureCoords[0])
 			{
 				vertices[i].uv.x = mesh->mTextureCoords[0][i].x;
 				vertices[i].uv.y = mesh->mTextureCoords[0][i].y;

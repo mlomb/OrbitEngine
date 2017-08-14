@@ -16,9 +16,9 @@
 
 namespace OrbitEngine {	namespace Graphics {
 
-	void Shader::attachFromFile(ShaderType type, const std::string& path, bool binary)
+	void Shader::attachFromFile(ShaderType type, std::string& path, bool binary)
 	{
-		std::vector<char> buffer = System::LoadFile(path, binary);
+		std::vector<char> buffer = System::File::LoadFile(path);
 
 		if (binary)
 			attachFromBinary(type, buffer);
@@ -57,36 +57,5 @@ namespace OrbitEngine {	namespace Graphics {
 			return new VKShader();
 #endif
 		}
-	}
-
-	Shader* Shader::LoadShader(const char* name)
-	{
-		std::string patformId;
-
-		switch (Application::Context::GetCurrentAPI())
-		{
-#if OE_OPENGL
-		case RenderAPI::OPENGL:
-			patformId = "GL";
-			break;
-#endif
-#if OE_OPENGL_ES
-		case RenderAPI::OPENGL_ES:
-			patformId = "GLES";
-			break;
-#endif
-#if OE_D3D
-		case RenderAPI::DIRECT3D:
-			patformId = "D3D11";
-			break;
-#endif
-		}
-
-		Shader* shader = Create();
-		shader->attachFromFile(ShaderType::VERTEX, "Resources/Shaders/" + std::string(name) + "_" + patformId + ".vert");
-		shader->attachFromFile(ShaderType::FRAGMENT, "Resources/Shaders/" + std::string(name) + "_" + patformId + ".frag");
-		shader->finalize();
-
-		return shader;
 	}
 } }
