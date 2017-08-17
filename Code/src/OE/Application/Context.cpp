@@ -12,7 +12,11 @@
 #endif
 
 #if OE_OPENGL_ES
-	#include "OE/Platform/OpenGL/EGLContext.hpp"
+	#if OE_EMSCRIPTEN
+		#include "OE/Platform/Emscripten/WebGLContext.hpp"
+	#else
+		#include "OE/Platform/OpenGL/EGLContext.hpp"
+	#endif
 #endif
 
 #if OE_D3D
@@ -37,6 +41,8 @@ namespace OrbitEngine {	namespace Application {
 		priv::WindowWindows* winWindow = window ? reinterpret_cast<priv::WindowWindows*>(windowImpl) : 0;
 #elif OE_LINUX
 		priv::WindowLinux* linuxWindow = window ? reinterpret_cast<priv::WindowLinux*>(windowImpl) : 0;
+#elif OE_EMSCRIPTEN
+		priv::WindowEmscripten* emscriptenWindow = window ? reinterpret_cast<priv::WindowEmscripten*>(windowImpl) : 0;
 #endif
 
 		switch (renderAPI)
@@ -47,11 +53,6 @@ namespace OrbitEngine {	namespace Application {
 			setPimpl(new priv::D3DContext(winWindow, reinterpret_cast<priv::D3DContext*>(sharedContextImpl)));
 			break;
 #endif
-#if OE_OPENGL_ES
-		case RenderAPI::OPENGL_ES:
-			setPimpl(new priv::EGLContext(windowImpl, reinterpret_cast<priv::EGLContext*>(sharedContextImpl)));
-			break;
-#endif
 #if OE_OPENGL_ANY
 		case RenderAPI::OPENGL:
 	#if OE_OPENGL
@@ -60,6 +61,17 @@ namespace OrbitEngine {	namespace Application {
 		#elif OE_LINUX
 			setPimpl(new priv::GLXContext(linuxWindow, reinterpret_cast<priv::GLXContext*>(sharedContextImpl)));
 		#endif
+		break;
+	#else
+			// Fall to OpenGLES
+	#endif
+#endif
+#if OE_OPENGL_ES
+		case RenderAPI::OPENGL_ES:
+	#if OE_EMSCRIPTEN
+			if(sharedContext)
+				OE_LOG_ERROR("Sharing context is not possible in WebGL!");
+			setPimpl(new priv::WebGLContext(emscriptenWindow));
 	#else
 			setPimpl(new priv::EGLContext(windowImpl, reinterpret_cast<priv::EGLContext*>(sharedContextImpl)));
 	#endif

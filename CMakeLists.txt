@@ -115,9 +115,12 @@ if(OE_OPENGL)
 	endif()
 endif()
 if(OE_OPENGL_ES)
-	set(PLATFORM_SRC ${PLATFORM_SRC}
-					 ${SRC_DIR}/OE/Platform/OpenGL/EGLContext.hpp
-					 ${SRC_DIR}/OE/Platform/OpenGL/EGLContext.cpp)
+	# If Emscripten, we use the WebGLContext located in Platform/Emscripten/
+	if(NOT OE_EMSCRIPTEN)
+		set(PLATFORM_SRC ${PLATFORM_SRC}
+						 ${SRC_DIR}/OE/Platform/OpenGL/EGLContext.hpp
+						 ${SRC_DIR}/OE/Platform/OpenGL/EGLContext.cpp)
+	endif()
 endif()
 if(OE_VULKAN)
 	file(GLOB VULKAN_SRC ${SRC_DIR}/OE/Platform/Vulkan/*.*
