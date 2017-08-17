@@ -34,6 +34,7 @@ namespace OrbitEngine {	namespace Graphics {
 	void D3DBuffer::resize(const unsigned int size)
 	{
 		m_BufferDescription.ByteWidth = size;
+		p_Size = size;
 
 		ID3D11Buffer* pBuffer;
 		Application::priv::D3DContext::GetCurrent()->getDevice()->CreateBuffer(&m_BufferDescription, 0, &pBuffer);
