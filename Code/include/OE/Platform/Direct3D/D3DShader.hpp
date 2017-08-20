@@ -18,7 +18,6 @@ namespace OrbitEngine {	namespace Graphics {
 		void bind() const override;
 		void unbind() const override;
 
-		static ID3D11InputLayout* GenerateInputLayoutFromByteCode(const void* byteCodeData, const unsigned long byteCodeLength);
 		static std::string GetD3DShaderTarget(ShaderType type);
 	private:
 		ID3D11VertexShader* m_VertexShader;

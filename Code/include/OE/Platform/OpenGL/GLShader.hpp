@@ -17,6 +17,7 @@ namespace OrbitEngine {	namespace Graphics {
 
 		void bind() const override;
 		void unbind() const override;
+
 		void attachFromBinary(ShaderType type, const std::vector<char>& binary) override;
 		void attachFromSource(ShaderType type, const std::string& source) override;
 		void finalize() override;
@@ -30,10 +31,12 @@ namespace OrbitEngine {	namespace Graphics {
 		void setUniformMat4(const GLchar* name, const Math::Mat4& matrix) const;
 
 		void bindUBO(const GLchar* name, const unsigned int uboSlot) const;
+		void bindUBO(const unsigned int block_index, const unsigned int uboSlot) const;
 	private:
 		GLuint m_ID = -1;
 
 		GLint getUniformLocation(const GLchar* name) const;
+		GLint getUniformBlockIndex(const GLchar* name) const;
 	};
 } }
 

@@ -3,6 +3,7 @@
 #include "OE/Application/Context.hpp"
 #include "OE/System/File.hpp"
 #include "OE/Misc/Log.hpp"
+#include "OE/Graphics/API/ShaderReflection.hpp"
 
 #if OE_OPENGL_ANY
 	#include "OE/Platform/OpenGL/GLShader.hpp"
@@ -28,14 +29,19 @@ namespace OrbitEngine {	namespace Graphics {
 		}
 	}
 
+	ShaderReflection* Shader::getReflection()
+	{
+		return p_Reflection;
+	}
+
 	Shader::Shader()
 	{
-
+		p_Reflection = ShaderReflection::Create();
 	}
 	
 	Shader::~Shader()
 	{
-
+		delete p_Reflection;
 	}
 
 	Shader* Shader::Create()

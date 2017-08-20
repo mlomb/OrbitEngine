@@ -85,7 +85,7 @@
 				err = glGetError();
 			}
 			if(error){
-				OE_BREAK
+				//OE_BREAK
 			}
 		}
 	}

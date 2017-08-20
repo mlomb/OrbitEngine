@@ -1,6 +1,7 @@
 #include "OE/Platform/OpenGL/GLShader.hpp"
 
 #include "OE/Platform/OpenGL/OpenGL.hpp"
+#include "OE/Platform/OpenGL/GLShaderReflection.hpp"
 
 namespace OrbitEngine {	namespace Graphics {
 	GLShader::GLShader()
@@ -63,22 +64,13 @@ namespace OrbitEngine {	namespace Graphics {
 		OE_CHECK_GL(glLinkProgram(m_ID));
 		OE_CHECK_GL(glValidateProgram(m_ID));
 
-		/* Bind the UBOs automatically */
-		GLint numBlocks;
-		glGetProgramiv(m_ID, GL_ACTIVE_UNIFORM_BLOCKS, &numBlocks);
-		
-		std::vector<std::string> ubos;
-		ubos.reserve(numBlocks);
-		for (int bid = 0; bid < numBlocks; ++bid) {
-			char str[256] = {};
-			GLsizei length = -1;
-			glGetActiveUniformBlockName(m_ID, bid, 255, &length, str);
-			ubos.push_back(str);
-		}
+		// This causes the shader to compile asynchronously :/
+		static_cast<GLShaderReflection*>(p_Reflection)->reflect(m_ID);
 
-		int i = 0;
-		for (std::string ubo : ubos)
-			bindUBO(ubo.c_str(), i++);
+		/* Bind the UBOs automatically */
+		bind();
+		for (const auto& buffer : p_Reflection->getAllBuffers())
+			bindUBO(buffer.slot, buffer.slot);
 	}
 	
 	void GLShader::bind() const
@@ -98,6 +90,11 @@ namespace OrbitEngine {	namespace Graphics {
 
 	GLint GLShader::getUniformLocation(const GLchar* name) const {
 		return glGetUniformLocation(m_ID, name);
+	}
+
+	GLint GLShader::getUniformBlockIndex(const GLchar* name) const
+	{
+		return glGetUniformBlockIndex(m_ID, name);
 	}
 
 	void GLShader::setUniform1f(const GLchar* name, float value) const {
@@ -130,7 +127,11 @@ namespace OrbitEngine {	namespace Graphics {
 
 	void GLShader::bindUBO(const GLchar* name, const unsigned int uboSlot) const
 	{
-		unsigned int block_index = glGetUniformBlockIndex(m_ID, name);
+		bindUBO(getUniformBlockIndex(name), uboSlot);
+	}
+
+	void GLShader::bindUBO(const unsigned int block_index, const unsigned int uboSlot) const
+	{
 		glUniformBlockBinding(m_ID, block_index, uboSlot);
 	}
 } }
