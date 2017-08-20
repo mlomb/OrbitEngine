@@ -1,0 +1,10 @@
+cbuffer CameraBuffer
+{
+    float4x4 VPMatrix;
+	float3 CameraPosition;
+};
+
+cbuffer ObjectBuffer
+{
+    float4x4 MMatrix;
+};

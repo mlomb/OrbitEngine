@@ -36,10 +36,6 @@ namespace OrbitEngine { namespace Graphics {
 		m_BatchMesh->setTopology(Topology::TRIANGLES);
 
 		m_BatchShader = ShaderLoader::Batch2D();
-		
-		int texture_units;
-		glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &texture_units);
-		OE_LOG_DEBUG("MAX TEXTURE UNITS: " << texture_units);
 
 #if OE_OPENGL_ANY
 		if (Application::Context::GetCurrentAPI() == OPENGL

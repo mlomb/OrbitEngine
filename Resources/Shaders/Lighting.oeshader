@@ -1,0 +1,36 @@
+#include PBR.oeshader
+
+TextureCube enviroment : register(t9);
+Texture2D preintegratedBRDFLUT : register(t10);
+
+SamplerState cubemapSampler
+{
+    MinFilter = LinearClamp;
+    MagFilter = LinearClamp;
+	AddressU = Wrap;
+	AddressV = Wrap;
+	AddressW = Wrap;
+};
+
+struct SurfaceOutput {
+	float3 albedo;
+	float3 normal;
+	float roughness;
+	float metallic;
+};
+
+float3 ComputeLighting(SurfaceOutput surf, float3 viewDir) {
+	surf.roughness = max(surf.roughness, 2.0e-2); // Prevent zero
+	
+	// PBR
+	float3 lightDir = normalize(float3(0.8, 0.8, 0.8));
+	float3 halfwayDir = normalize(lightDir + viewDir);
+
+	// Directional BRDF
+	float3 spec = SpecularBRDF(float3(1,1,1), surf.roughness, surf.normal, halfwayDir, lightDir, viewDir);
+	
+	// IBL
+	float3 finalColor = spec + IBL(surf.normal, viewDir, surf.roughness, surf.metallic, surf.albedo, enviroment, preintegratedBRDFLUT);
+
+	return finalColor;
+}

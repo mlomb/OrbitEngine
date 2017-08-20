@@ -7,44 +7,24 @@
 #include "OE/Graphics/API/FrameBuffer.hpp"
 
 namespace OrbitEngine { namespace Graphics {
-	struct DeferredLightUniforms {
-		Math::Vec3f camPosition;
-		float pad0;
-	};
-
 	class DeferredRenderer : public Renderer3D {
 	public:
 		DeferredRenderer();
+		virtual ~DeferredRenderer();
 
 		void end() override;
 
 		FrameBuffer* getGBuffer() const { return m_GBuffer; };
-		static Texture* GetIntegratedBRDFLUT() { return s_IntegratedBRDFLUT->getColorTextures()[0]; }
 	protected:
-		void generateGBuffer();
+		FrameBuffer* generateGBuffer(const Math::Vec2i size);
+
 		void geometryPass();
 		void lightningPass();
 		void skyboxPass();
-
 		//void shadowsPass();
 
-		Graphics::Shader* m_GBufferShader;
-		Graphics::Shader* m_LighPassShader;
-		Graphics::FrameBuffer* m_GBuffer = 0;
-
-		PVMatrices m_MatricesUniforms;
-		MMatrix m_MMatrixUniform;
-		DeferredLightUniforms m_DeferredLightUniform;
-		Graphics::UniformsPack<PVMatrices>* m_PVMatrices;
-		Graphics::UniformsPack<MMatrix>* m_MMatrix;
-		Graphics::UniformsPack<DeferredLightUniforms>* m_DeferredLightUniforms;
-
-		// PBR
-		static Graphics::FrameBuffer* s_IntegratedBRDFLUT;
-
-		/*
-		//std::vector<Light*> lights;
-		*/
+		Shader* m_DeferredLightShader;
+		FrameBuffer* m_GBuffer = 0;
 	};
 } }
 

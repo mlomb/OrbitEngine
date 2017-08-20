@@ -1,5 +1,6 @@
 #include "OE/Graphics/3D/Model.hpp"
 
+#include "OE/Graphics/3D/SurfaceShader.hpp"
 #include "OE/System/File.hpp"
 
 #define ASSIMP_BUILD_BOOST_WORKAROUND
@@ -167,7 +168,7 @@ namespace OrbitEngine { namespace Graphics {
 		}
 
 		// Materials
-		Material* material = new Material();
+		Material* material = new Material(Graphics::SurfaceShader::Standard());
 		if (mesh->mMaterialIndex >= 0)
 		{
 			aiMaterial* aiMaterial = m_Scene->mMaterials[mesh->mMaterialIndex];

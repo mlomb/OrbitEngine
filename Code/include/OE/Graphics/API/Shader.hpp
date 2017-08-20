@@ -7,6 +7,8 @@
 #include <set>
 
 namespace OrbitEngine {	namespace Graphics {
+	class ShaderReflection;
+
 	enum ShaderType {
 		UNKNOWN = 0,
 		VERTEX,
@@ -26,6 +28,7 @@ namespace OrbitEngine {	namespace Graphics {
 		static Shader* Create();
 
 		void attachFromFile(ShaderType type, std::string& path, bool binary = false);
+		ShaderReflection* getReflection();
 
 		virtual void attachFromSource(ShaderType type, const std::string& source) = 0;
 		virtual void attachFromBinary(ShaderType type, const std::vector<char>& binary) = 0;
@@ -33,10 +36,13 @@ namespace OrbitEngine {	namespace Graphics {
 
 		virtual void bind() const = 0;
 		virtual void unbind() const = 0;
-
+		
 	protected:
+		ShaderReflection* p_Reflection;
+
 		Shader();
 	};
+	
 } }
 
 #endif

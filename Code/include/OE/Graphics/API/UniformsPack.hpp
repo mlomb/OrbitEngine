@@ -4,7 +4,6 @@
 #include "OE/Config.hpp"
 #include "OE/Misc/Log.hpp"
 #include "OE/Graphics/API/Shader.hpp"
-#include "OE/Application/Context.hpp"
 
 namespace OrbitEngine {	namespace Graphics {
 	template <class T>
@@ -12,11 +11,14 @@ namespace OrbitEngine {	namespace Graphics {
 	public:
 		virtual void setData(T& data) = 0;
 		virtual void bind(unsigned int slot, ShaderType shader) const = 0;
+		void bind(const std::string& name, Shader* shader) const;
 
 		static UniformsPack<T>* Create();
 	};
 } }
 
+#include "OE/Application/Context.hpp"
+#include "OE/Graphics/API/ShaderReflection.hpp"
 #if OE_OPENGL_ANY
 	#include "OE/Platform/OpenGL/GLUniformBuffer.hpp"
 #endif
@@ -25,6 +27,15 @@ namespace OrbitEngine {	namespace Graphics {
 #endif
 
 namespace OrbitEngine {	namespace Graphics {
+	template<class T>
+	inline void UniformsPack<T>::bind(const std::string& name, Shader* shader) const
+	{
+		shader->bind();
+		auto buffers = shader->getReflection()->getBuffers(name);
+		for (auto& buffer : buffers)
+			bind(buffer.slot, buffer.shaderType);
+	}
+
 	template<class T>
 	inline UniformsPack<T>* UniformsPack<T>::Create()
 	{

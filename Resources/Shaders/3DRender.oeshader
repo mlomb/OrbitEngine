@@ -1,0 +1,97 @@
+#shadertype VERTEX
+#include Variables.oeshader
+
+struct Input {
+	float3 position : POSITION;
+	float3 normal : NORMAL;
+	float2 uv : TEXCOORD;
+	float3 tangent : TANGENT;
+};
+
+struct Output {
+	float4 position : SV_POSITION;
+	float2 uv : TEXCOORD;
+	float3 fragPos : TEXCOORD1;
+	float3 normal : NORMAL;
+	float3 tangent : TANGENT;
+	float3 binormal : BINORMAL;
+};
+
+Output main(Input input) {
+	Output output;
+	
+	float4 worldPos = mul(MMatrix, float4(input.position.xyz, 1));
+
+	output.fragPos = worldPos.xyz;
+    output.position = mul(VPMatrix, worldPos);
+	output.uv = input.uv;
+
+	float3x3 mat = (float3x3)(transpose(MMatrix));
+	
+	output.tangent = normalize(mul(MMatrix, float4(input.tangent, 1)).xyz);
+	output.normal = normalize(mul(MMatrix, float4(input.normal, 1)).xyz);
+	output.binormal = cross(output.normal, output.tangent);
+	
+	return output;
+}
+
+#shadertype FRAGMENT
+#include Common.oeshader
+#include Variables.oeshader
+
+struct Input {
+	float4 position : SV_POSITION;
+	float2 uv : TEXCOORD;
+	float3 fragPos : TEXCOORD1;
+	float3 normal : NORMAL;
+	float3 tangent : TANGENT;
+	float3 binormal : BINORMAL;
+};
+
+struct Output
+{
+#ifdef DEFERRED
+	float4 GPosition : SV_Target0; // Alpha not used
+	float4 GNormalRoughness : SV_Target1;
+	float4 GAlbedoMetallic : SV_Target2;
+#else
+	float4 ColorOutput : SV_Target0;
+#endif
+};
+
+struct FragmentInput {
+	float3 position;
+	float2 uv;
+	float3 fragPos;
+	float3 normal;
+	float3 tangent;
+	float3 binormal;
+};
+
+#include Lighting.oeshader
+${surface}
+
+Output main(Input input) {
+	FragmentInput fragInput;
+	fragInput.position = input.fragPos;
+	fragInput.uv = input.uv;
+	fragInput.fragPos = input.fragPos;
+	fragInput.normal = input.normal;
+	fragInput.tangent = input.tangent;
+	fragInput.binormal = input.binormal;
+	
+	SurfaceOutput surfOutput = surface(fragInput);
+	
+	Output output;
+#ifdef DEFERRED
+	output.GPosition = float4(input.fragPos, 1.0f);
+	output.GNormalRoughness.rgb = surfOutput.normal;
+	output.GNormalRoughness.a = surfOutput.roughness;
+	output.GAlbedoMetallic.rgb = surfOutput.albedo;
+	output.GAlbedoMetallic.a = surfOutput.metallic;
+#else
+	float3 viewDir = normalize(CameraPosition - input.fragPos);
+	output.ColorOutput = float4(ComputeLighting(surfOutput, viewDir), 1.0);
+#endif
+    return output;
+}

@@ -20,8 +20,10 @@ namespace OrbitEngine { namespace Graphics {
 		typedef std::map<ShaderDefinitions, Shader*> ShaderInstances;
 
 		std::string m_Path;
-		ShaderSources m_Sources;
 		ShaderInstances m_Instances;
+
+	protected:
+		ShaderSources p_Sources;
 	};
 } }
 

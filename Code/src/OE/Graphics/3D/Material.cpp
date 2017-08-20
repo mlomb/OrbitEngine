@@ -8,14 +8,33 @@ namespace OrbitEngine { namespace Graphics {
 
 	UniformsPack<MaterialUniforms>* Material::s_MaterialUniformsBuffer = nullptr;
 
-	Material::Material()
+	Material::Material(ManagedShader* shader)
+		: m_Shader(shader)
 	{
 		if (s_MaterialUniformsBuffer == nullptr)
 			s_MaterialUniformsBuffer = UniformsPack<MaterialUniforms>::Create();
 	}
 
-	void Material::use()
+	Shader* Material::use(ShaderDefinitions definitions)
 	{
+		Shader* shader = m_Shader->requestShader(definitions);
+
+		switch (Application::Context::GetCurrentAPI())
+		{
+		case RenderAPI::OPENGL:
+#if OE_OPENGL_ES
+		case RenderAPI::OPENGL_ES:
+#endif
+			GLShader* glShader = (GLShader*)shader;
+			glShader->bind();
+			for (int i = 0; i < 4; i++)
+			{
+				MaterialMapType type = static_cast<MaterialMapType>(i);
+				glShader->setUniform1i(("map_" + MapTypeToString(type)).c_str(), i);
+			}
+			glShader->bindUBO("MaterialUniforms", 2);
+			break;
+		}
 		s_MaterialUniformsBuffer->setData(m_Uniforms);
 		s_MaterialUniformsBuffer->bind(2, ShaderType::FRAGMENT);
 
@@ -29,6 +48,8 @@ namespace OrbitEngine { namespace Graphics {
 			else
 				Texture::Unbind(i);
 		}
+
+		return shader;
 	}
 
 	void Material::setMap(MaterialMapType mapType, Texture* texture)
@@ -52,27 +73,7 @@ namespace OrbitEngine { namespace Graphics {
 			break;
 		}
 	}
-
-	void Material::Prepare(Shader* shader)
-	{
-		switch (Application::Context::GetCurrentAPI())
-		{
-		case RenderAPI::OPENGL:
-#if OE_OPENGL_ES
-		case RenderAPI::OPENGL_ES:
-#endif
-			GLShader* glShader = (GLShader*)shader;
-			glShader->bind();
-			for (int i = 0; i < 4; i++)
-			{
-				MaterialMapType type = static_cast<MaterialMapType>(i);
-				glShader->setUniform1i(("map_" + MapTypeToString(type)).c_str(), i);
-			}
-			glShader->bindUBO("MaterialUniforms", 2);
-			break;
-		}
-	}
-
+	
 	std::string Material::MapTypeToString(MaterialMapType mapType)
 	{
 		switch (mapType) {

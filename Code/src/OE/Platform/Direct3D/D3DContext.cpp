@@ -124,7 +124,7 @@ namespace OrbitEngine { namespace Application { namespace priv {
 
 		UINT flags = 0;
 #ifdef OE_DEBUG
-		flags |= D3D11_CREATE_DEVICE_DEBUG;
+		//flags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
 
 		hr = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, flags, nullptr, 0, D3D11_SDK_VERSION, &scd, &m_DXSwapChain, &m_DXDevice, NULL, &m_DXDeviceContext);

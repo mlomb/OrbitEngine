@@ -9,12 +9,12 @@ namespace OrbitEngine { namespace Graphics {
 	ManagedShader::ManagedShader(const std::string& path)
 		: m_Path(path)
 	{
-		m_Sources = ShaderLoader::LoadShaderSources(path);
+		p_Sources = ShaderLoader::LoadShaderSources(path);
 	}
 
 	ManagedShader::~ManagedShader()
 	{
-		m_Sources.clear();
+		p_Sources.clear();
 		m_Instances.clear();
 	}
 
@@ -33,7 +33,7 @@ namespace OrbitEngine { namespace Graphics {
 			for (std::string definition : definitions)
 				strDefinitions += "#define " + definition + "\r\n";
 
-			for (const auto& kv : m_Sources) {
+			for (const auto& kv : p_Sources) {
 				std::string hlslSource = strDefinitions + kv.second;
 				shader->attachFromSource(kv.first, ShaderCompiler::CrossCompileHLSL(hlslSource, kv.first));
 			}

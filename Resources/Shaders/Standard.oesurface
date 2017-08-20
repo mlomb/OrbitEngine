@@ -1,0 +1,62 @@
+// blendOverlay() taken from https://github.com/jamieowen/glsl-blend/blob/master/overlay.glsl
+float blendOverlay(float base, float blend) { return base<0.5?(2.0*base*blend):(1.0-2.0*(1.0-base)*(1.0-blend)); }
+
+Texture2D map_albedo : register(t0);
+Texture2D map_metallic : register(t1);
+Texture2D map_roughness : register(t2);
+Texture2D map_normals : register(t3);
+
+SamplerState sampler_albedo : register(s0);
+SamplerState sampler_metallic : register(s1);
+SamplerState sampler_roughness : register(s2);
+SamplerState sampler_normals : register(s3);
+
+cbuffer MaterialUniforms : register(b2)
+{
+    float4 baseColor;
+    float metallic;
+    float roughness;
+	
+	float usingAlbedoMap;
+	float usingNormalMap;
+	float usingMetallicMap;
+	float usingRoughnessMap;
+};
+
+float3 getMap(Texture2D map, SamplerState _sampler, float2 texCoords) {
+	return map.Sample(_sampler, texCoords).rgb;
+}
+
+float3 getGammaCorrectedMap(Texture2D map, SamplerState _sampler, float2 texCoords)
+{
+	return pow(getMap(map, _sampler, texCoords), float3(GAMMA, GAMMA, GAMMA));
+}
+
+float3 getMap(Texture2D map, SamplerState _sampler, float2 texCoords, float usingMap, float3 tint) {
+	return (1 - usingMap) * tint + usingMap * tint * getGammaCorrectedMap(map, _sampler, texCoords);
+}
+
+float getMapOverlay(Texture2D map, SamplerState _sampler, float2 texCoords, float usingMap, float base) {
+	return (1 - usingMap) * base + usingMap * blendOverlay(base, getMap(map, _sampler, texCoords).r);
+}
+
+float3 getNormal(float3 normal, float3 tangent, float3 binormal, float2 texCoords) {
+	if (usingNormalMap > 0.0) {
+		float3 normalMap = getMap(map_normals, sampler_normals, texCoords) * 2.0 - 1.0;
+		float3x3 TBN = float3x3(tangent, binormal, normal);
+		return normalize(mul(TBN, normalMap));
+	}
+
+	return normal;
+}
+
+SurfaceOutput surface(FragmentInput fragInput) {
+	SurfaceOutput surfOutput;
+	
+	surfOutput.normal = getNormal(fragInput.normal, fragInput.tangent, fragInput.binormal, fragInput.uv);
+	surfOutput.albedo = getMap(map_albedo, sampler_albedo, fragInput.uv, usingAlbedoMap, baseColor);
+	surfOutput.roughness = getMapOverlay(map_roughness, sampler_roughness, fragInput.uv, usingRoughnessMap, roughness);
+	surfOutput.metallic = getMapOverlay(map_metallic, sampler_metallic, fragInput.uv, usingMetallicMap, metallic);
+
+    return surfOutput;
+}

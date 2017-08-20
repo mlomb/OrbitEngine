@@ -47,6 +47,15 @@ float3 F_Schlick(float3 F0, float LoH)
 }
 
 // -------------- IBL --------------
+SamplerState _sampler
+{
+    MinFilter = LinearClamp;
+    MagFilter = LinearClamp;
+	AddressU = Wrap;
+	AddressV = Wrap;
+	AddressW = Wrap;
+};
+
 float3 IBL(float3 N, float3 V, float roughness, float metallic, float3 albedo, TextureCube env, Texture2D brdfLUT)
 {
 	const float ENVIRONMENT_MIPS = 5.0;
@@ -54,12 +63,12 @@ float3 IBL(float3 N, float3 V, float roughness, float metallic, float3 albedo, T
 	float NoV = clamp(dot(N, V), 0.0, 1.0);
 	float3 R = normalize(reflect(-V, N));
 	
-	float2 EnvBRDF = brdfLUT.Sample(sampler, float2(max(NoV, 0.0), roughness)).rg;
+	float2 EnvBRDF = brdfLUT.Sample(_sampler, float2(max(NoV, 0.0), roughness)).rg;
 	float3 dielectricColor = float3(0.04, 0.04, 0.04);
 	float3 diffColor = albedo.rgb * (1.0 - metallic);
 	float3 specColor = lerp(dielectricColor, albedo, metallic); // * specularIntensity
 
-	float3 PrefilteredColor = env.SampleLevel(sampler, R, roughness * ENVIRONMENT_MIPS).xyz;
+	float3 PrefilteredColor = env.SampleLevel(_sampler, R, roughness * ENVIRONMENT_MIPS).xyz;
 	float3 specIBL = PrefilteredColor * (specColor * EnvBRDF.x + float3(EnvBRDF.y, EnvBRDF.y, EnvBRDF.y));
 
 	return diffColor + specIBL;
@@ -142,7 +151,7 @@ float3 PrefilterEnvMap(float Roughness, float3 R, samplerCube environmentMap)
 {
 	float3 N = R;
 	float3 V = R;
-	float3 PrefilteredColor = float3(0);
+	float3 PrefilteredColor = float3(0,0,0);
 	const uint NumSamples = 4096u * 4u;
 	float TotalWeight = 0.0;
 

@@ -5,8 +5,10 @@
 
 #include "OE/Graphics/API/UniformsPack.hpp"
 #include "OE/Graphics/API/Texture.hpp"
+#include "OE/Graphics/ManagedShader.hpp"
 
 #include "OE/Math/Vec3.hpp"
+#include "OE/Math/Color.hpp"
 
 namespace OrbitEngine { namespace Graphics {
 	enum MaterialMapType {
@@ -17,7 +19,7 @@ namespace OrbitEngine { namespace Graphics {
 	};
 
 	struct MaterialUniforms {
-		Math::Vec3f baseColor = Math::Vec3f(1, 1, 1);
+		Math::Color baseColor = Math::Color(1, 1, 1, 1);
 		float metallic = 0.5f;
 		float roughness = 0.5f;
 
@@ -26,29 +28,29 @@ namespace OrbitEngine { namespace Graphics {
 		float usingMetallicMap = 0;
 		float usingRoughnessMap = 0;
 
-		float pad1, pad2, pad3;
+		float pad1, pad2;
 	};
 
 	class Material {
 	public:
-		Material();
+		Material(ManagedShader* shader);
 
-		void use();
+		Shader* use(ShaderDefinitions definitions = {});
 
 		void setMap(MaterialMapType mapType, Texture* texture);
-		inline void setBaseColor(Math::Vec3f& color) { m_Uniforms.baseColor = color; };
+		inline void setBaseColor(Math::Color& color) { m_Uniforms.baseColor = color; };
 		inline void setMetallic(float metallic) { m_Uniforms.metallic = metallic; };
 		inline void setRoughness(float roughness) { m_Uniforms.roughness = roughness; };
 
-		inline Math::Vec3f getBaseColor() { return m_Uniforms.baseColor; }
+		inline Math::Color getBaseColor() { return m_Uniforms.baseColor; }
 		inline float getMetallic() { return m_Uniforms.metallic; }
 		inline float getRoughness() { return m_Uniforms.roughness; }
 
-		static void Prepare(Shader* shader);
 		static std::string MapTypeToString(MaterialMapType mapType);
 	private:
 		std::map<MaterialMapType, Graphics::Texture*> m_Maps;
 		MaterialUniforms m_Uniforms;
+		ManagedShader* m_Shader;
 
 		static UniformsPack<MaterialUniforms>* s_MaterialUniformsBuffer;
 	};

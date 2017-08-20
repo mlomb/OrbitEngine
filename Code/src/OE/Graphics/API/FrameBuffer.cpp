@@ -50,6 +50,7 @@ namespace OrbitEngine { namespace Graphics {
 	{
 		Application::priv::ContextImpl* currentContext = Application::priv::ContextImpl::GetCurrent();
 		currentContext->m_FrameBufferStack.pop_back();
+		Prepare();
 	}
 
 	void FrameBuffer::Prepare()

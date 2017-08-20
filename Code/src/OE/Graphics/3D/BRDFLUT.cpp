@@ -1,4 +1,4 @@
-#include "OE/Graphics/3D/PBR/BRDFLUT.hpp"
+#include "OE/Graphics/3D/BRDFLUT.hpp"
 
 #include "OE/Graphics/API/FrameBuffer.hpp"
 #include "OE/Graphics/API/Shader.hpp"
