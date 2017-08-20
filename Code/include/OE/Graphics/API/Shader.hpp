@@ -3,6 +3,8 @@
 
 #include <string>
 #include <vector>
+#include <map>
+#include <set>
 
 namespace OrbitEngine {	namespace Graphics {
 	enum ShaderType {
@@ -13,6 +15,9 @@ namespace OrbitEngine {	namespace Graphics {
 		TESS_CONTROL,
 		TESS_EVAL
 	};
+
+	typedef std::map<ShaderType, std::string> ShaderSources;
+	typedef std::set<std::string> ShaderDefinitions;
 
 	class Shader {
 	public:
