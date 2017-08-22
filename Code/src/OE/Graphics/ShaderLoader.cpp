@@ -57,7 +57,7 @@ namespace OrbitEngine { namespace Graphics {
 					currentType = ShaderType::TESS_EVAL;
 			}
 			else {
-				buffer.append(line + "\n");
+				buffer.append(line + "\r\n");
 			}
 		}
 		if (currentType != ShaderType::UNKNOWN)

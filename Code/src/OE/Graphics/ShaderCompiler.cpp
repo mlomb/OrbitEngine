@@ -37,8 +37,9 @@ namespace OrbitEngine { namespace Graphics {
 			Application::priv::GLContext* glcontext = reinterpret_cast<Application::priv::GLContext*>(context);
 			switch (glcontext->getInfo().major) {
 			case 1:
-			case 2:
 				return Xsc::OutputShaderVersion::ESSL100;
+			case 2:
+				return Xsc::OutputShaderVersion::ESSL300;
 			case 3:
 				switch (glcontext->getInfo().minor) {
 				case 0: return Xsc::OutputShaderVersion::ESSL300;

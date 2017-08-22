@@ -65,6 +65,7 @@ namespace OrbitEngine {	namespace Graphics {
 		OE_CHECK_GL(glValidateProgram(m_ID));
 
 		// This causes the shader to compile asynchronously :/
+		bind();
 		static_cast<GLShaderReflection*>(p_Reflection)->reflect(m_ID);
 
 		/* Bind the UBOs automatically */
