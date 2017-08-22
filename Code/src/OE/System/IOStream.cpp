@@ -18,11 +18,10 @@ namespace OrbitEngine { namespace System {
 #if OE_ANDROID
 		if (access == AccessMode::READ) {
 			AAssetManager* assetManager = System::priv::SystemAndroid::GetAndroidApp()->activity->assetManager;
-			m_Data = AAssetManager_open(assetManager, file.c_str(), AASSET_MODE_BUFFER);
+			m_Data = AAssetManager_open(assetManager, file.c_str(), AASSET_MODE_UNKNOWN);
 		}
 		else
 			OE_LOG_ERROR("Can't write a file in Android");
-		//size_t fileLength = AAsset_getLength(file);
 #else
 		char* mode;
 		switch (access) {
@@ -55,7 +54,7 @@ namespace OrbitEngine { namespace System {
 
 		if (m_CachedFilesize == SIZE_MAX) {
 #if OE_ANDROID
-			return AAsset_getLength(m_Data);
+			m_CachedFilesize = AAsset_getLength(m_Data);
 #else
 			struct stat fileStat;
 			int err = stat(m_File.c_str(), &fileStat);
@@ -74,13 +73,14 @@ namespace OrbitEngine { namespace System {
 			return 0;
 
 #if OE_ANDROID
-		return AAsset_read(m_Data, buffer, count);
+		int n = AAsset_read(m_Data, buffer, size * count);
+		return n / size;
 #else
 		return ::fread(buffer, size, count, m_Data);
 #endif
 	}
 
-	size_t IOStream::write(const void * buffer, size_t size, size_t count)
+	size_t IOStream::write(const void* buffer, size_t size, size_t count)
 	{
 		if (!isOpen())
 			return 0;
@@ -98,7 +98,7 @@ namespace OrbitEngine { namespace System {
 			return false;
 
 #if OE_ANDROID
-		return AAsset_seek(m_Data, offset, origin);
+		return AAsset_seek(m_Data, offset, origin) != -1;
 #else
 		return ::fseek(m_Data, offset, origin) == 0;
 #endif
@@ -110,7 +110,7 @@ namespace OrbitEngine { namespace System {
 			return 0;
 		
 #if OE_ANDROID
-		return 0;
+		return AAsset_getLength(m_Data) - AAsset_getRemainingLength(m_Data);
 #else
 		return ::ftell(m_Data);
 #endif
