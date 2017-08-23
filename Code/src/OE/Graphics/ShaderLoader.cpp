@@ -86,7 +86,7 @@ namespace OrbitEngine { namespace Graphics {
 		{
 			// Remove the jumpline that some platforms add
 			line.erase(std::remove_if(line.begin(), line.end(),
-				[](char c) { return (c == '\r' || c == '\t' || c == '\n'); }), line.end());
+				[](char c) { return (c == '\r' || c == '\t' || c == '\n' || c == '\0'); }), line.end());
 
 			if (line.find("#include") == 0) {
 				std::string includeFilePath = line.substr(9, line.size()); // +1 for the space

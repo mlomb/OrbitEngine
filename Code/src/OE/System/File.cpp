@@ -17,44 +17,18 @@ namespace OrbitEngine { namespace System {
 		return std::string(data.begin(), data.end());
 	}
 
-	std::vector<char> File::LoadFile(const std::string& path, bool binary) {
-		std::vector<char> buffer;
-
-		// TODO Replace with IOStream
-#if OE_ANDROID
-		AAssetManager* assetManager = System::priv::SystemAndroid::GetAndroidApp()->activity->assetManager;
-
-		AAsset* file = AAssetManager_open(assetManager, path.c_str(), AASSET_MODE_BUFFER);
-		if (file) {
-			size_t fileLength = AAsset_getLength(file);
-			buffer = std::vector<char>(fileLength + 1);
-			AAsset_read(file, buffer.data(), fileLength);
-			buffer[fileLength] = '\0';
-			AAsset_close(file);
-		}
-#else
-		std::ifstream input(path, binary ? std::ios::binary : std::ios::app);
-		if (input.is_open()) {
-			buffer = std::vector<char>((std::istreambuf_iterator<char>(input)), (std::istreambuf_iterator<char>()));
-			input.close();
-		}
-#endif
-		
-		return buffer;
-		/*
+	std::vector<char> File::LoadFile(const std::string& path) {
 		std::vector<char> buffer;
 
 		IOStream* stream = Open(path);
 
 		size_t fileLength = stream->getFilesize();
-		buffer.resize(fileLength + 1);
+		buffer.resize(fileLength);
 		stream->read(buffer.data(), sizeof(char), fileLength);
-		buffer[fileLength] = '\0';
 
 		Close(stream);
 
 		return buffer;
-		*/
 	}
 
 	IOStream* File::Open(const std::string& path)

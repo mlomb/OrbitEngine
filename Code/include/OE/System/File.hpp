@@ -11,7 +11,7 @@ namespace OrbitEngine { namespace System {
 		static bool Exists(std::string path);
 
 		static std::string LoadFileAsString(const std::string& path);
-		static std::vector<char> LoadFile(const std::string& path, bool binary = false);
+		static std::vector<char> LoadFile(const std::string& path);
 	private:
 	};
 } }
