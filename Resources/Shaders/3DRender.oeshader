@@ -90,8 +90,7 @@ Output main(Input input) {
 	output.GAlbedoMetallic.rgb = surfOutput.albedo;
 	output.GAlbedoMetallic.a = surfOutput.metallic;
 #else
-	float3 viewDir = normalize(CameraPosition - input.fragPos);
-	output.ColorOutput = float4(ComputeLighting(surfOutput, viewDir), 1.0);
+	output.ColorOutput = float4(ComputeLighting(surfOutput, input.fragPos), 1.0);
 #endif
     return output;
 }

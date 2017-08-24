@@ -71,7 +71,7 @@ namespace OrbitEngine {	namespace Graphics {
 		/* Bind the UBOs automatically */
 		bind();
 		for (const auto& buffer : p_Reflection->getAllBuffers())
-			bindUBO(buffer.slot, buffer.slot);
+			bindUBO(buffer.name.c_str(), buffer.slot);
 	}
 	
 	void GLShader::bind() const

@@ -1,13 +1,3 @@
-#include <vector>
-#include <fstream>
-
-#include "OE/Config.hpp"
-
-#if OE_ANDROID
-	#include "OE/Platform/Android/SystemAndroid.hpp"
-#endif
-
-#include "OE/Misc/Log.hpp"
 #include "OE/System/File.hpp"
 
 namespace OrbitEngine { namespace System {
@@ -31,9 +21,9 @@ namespace OrbitEngine { namespace System {
 		return buffer;
 	}
 
-	IOStream* File::Open(const std::string& path)
+	IOStream* File::Open(const std::string& path, AccessMode accessMode)
 	{
-		return new IOStream(path, AccessMode::READ);
+		return new IOStream(path, accessMode);
 	}
 
 	void File::Close(IOStream* stream)
@@ -44,11 +34,7 @@ namespace OrbitEngine { namespace System {
 	bool File::Exists(const std::string path)
 	{
 		IOStream* stream = Open(path);
-
-		bool open = false;
-		if (stream->isOpen())
-			open = true;
-
+		bool open = stream->isOpen();
 		Close(stream);
 		return open;
 	}

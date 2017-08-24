@@ -18,7 +18,7 @@ namespace OrbitEngine { namespace Graphics {
 	DeferredRenderer::DeferredRenderer()
 		: m_GBuffer(0)
 	{
-		m_DeferredLightShader = ShaderLoader::DeferredLighting();
+		m_DeferredLightShader = new ManagedShader("Resources/Shaders/DeferredLighting.oeshader");
 	}
 
 	DeferredRenderer::~DeferredRenderer()
@@ -115,42 +115,49 @@ namespace OrbitEngine { namespace Graphics {
 
 	void DeferredRenderer::lightningPass() {
 		FrameBuffer::Prepare();
-		m_DeferredLightShader->bind();
-		fillCameraBuffer(m_DeferredLightShader);
-
-#if OE_OPENGL_ANY
-		if (Application::Context::GetCurrentAPI() == OPENGL
-#if OE_OPENGL_ES
-			|| Application::Context::GetCurrentAPI() == OPENGL_ES
-#endif
-			) {
-			GLShader* glLighPassShader = (GLShader*)m_DeferredLightShader;
-			glLighPassShader->setUniform1i("GPosition", 0);
-			glLighPassShader->setUniform1i("GNormalRoughness", 1);
-			glLighPassShader->setUniform1i("GAlbedoMetallic", 2);
-			glLighPassShader->setUniform1i("enviroment", 9);
-			glLighPassShader->setUniform1i("preintegratedBRDFLUT", 10);
-		}
-#endif
-
-		std::vector<Texture*> colorBuffers = m_GBuffer->getColorTextures();
-		for (size_t i = 0; i < colorBuffers.size(); i++)
-			colorBuffers[i]->bind(i);
-		
-		if (p_Skybox) {
-			if (p_Skybox->getPrefilteredEnviromentMap())
-				p_Skybox->getPrefilteredEnviromentMap()->bind(9);
-			else
-				p_Skybox->getEnviromentMap()->bind(9);
-		}
-		p_BRDFLUT->bind(10);
 
 		States* states = Application::priv::ContextImpl::GetCurrent()->getGlobalStates();
 		states->setCullMode(CullMode::NONE);
-		states->setBlending(BlendState::DISABLED);
+		states->setBlending(BlendState::ONE_ONE);
 		states->setDepthTest(FunctionMode::DISABLED);
 
-		Renderer2D::RenderQuadScreen();
+		// Foreach type of light
+		for (Light* l : p_Lights) {
+			Shader* shader = m_DeferredLightShader->requestShader(l->getRequiredDefinitions());
+			shader->bind();
+
+			/* Bind the stuff */
+			fillCameraBuffer(shader);
+#if OE_OPENGL_ANY
+			if (Application::Context::GetCurrentAPI() == OPENGL
+#if OE_OPENGL_ES
+				|| Application::Context::GetCurrentAPI() == OPENGL_ES
+#endif
+				) {
+				GLShader* glLighPassShader = (GLShader*)shader;
+				glLighPassShader->setUniform1i("GPosition", 0);
+				glLighPassShader->setUniform1i("GNormalRoughness", 1);
+				glLighPassShader->setUniform1i("GAlbedoMetallic", 2);
+				glLighPassShader->setUniform1i("enviroment", 9);
+				glLighPassShader->setUniform1i("preintegratedBRDFLUT", 10);
+			}
+#endif
+			std::vector<Texture*> colorBuffers = m_GBuffer->getColorTextures();
+			for (size_t i = 0; i < colorBuffers.size(); i++)
+				colorBuffers[i]->bind(i);
+
+			if (p_Skybox) {
+				if (p_Skybox->getPrefilteredEnviromentMap())
+					p_Skybox->getPrefilteredEnviromentMap()->bind(9);
+				else
+					p_Skybox->getEnviromentMap()->bind(9);
+			}
+			p_BRDFLUT->bind(10);
+			/* --- */
+
+			l->fillBuffer(shader);
+			Renderer2D::RenderQuadScreen();
+		}
 
 		/* Dirty AND TEMPORARY method to unbind the GBuffer */
 		for (int slot = 0; slot < 5; slot++)

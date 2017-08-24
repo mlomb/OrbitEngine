@@ -19,18 +19,46 @@ struct SurfaceOutput {
 	float metallic;
 };
 
-float3 ComputeLighting(SurfaceOutput surf, float3 viewDir) {
+// Lights
+cbuffer LightBuffer {
+	float3 light_position;
+	float _pad0;
+	float4 light_color;
+#ifdef LIGHT_DIRECTIONAL
+	float3 light_direction;
+	float _pad1;
+#endif
+#ifdef LIGHT_POINT
+	//float light_test;
+#endif
+};
+
+float3 ComputeLighting(SurfaceOutput surf, float3 fragPos) {
 	surf.roughness = max(surf.roughness, 2.0e-2); // Prevent zero
 	
-	// PBR
-	float3 lightDir = normalize(float3(0.8, 0.8, 0.8));
-	float3 halfwayDir = normalize(lightDir + viewDir);
-
-	// Directional BRDF
-	float3 spec = SpecularBRDF(float3(1,1,1), surf.roughness, surf.normal, halfwayDir, lightDir, viewDir);
+	float3 viewDir = normalize(CameraPosition - fragPos);
 	
 	// IBL
-	float3 finalColor = spec + IBL(surf.normal, viewDir, surf.roughness, surf.metallic, surf.albedo, enviroment, preintegratedBRDFLUT);
+	float3 finalColor = IBL(surf.normal, viewDir, surf.roughness, surf.metallic, surf.albedo, enviroment, preintegratedBRDFLUT);
 
+#ifdef LIGHT_DIRECTIONAL
+
+	// Directional BRDF
+	float3 halfwayDir = normalize(light_direction + viewDir);
+	float3 spec = SpecularBRDF(float3(1,1,1), surf.roughness, surf.normal, halfwayDir, light_direction, viewDir);	
+	finalColor += spec;
+
+#endif
+#ifdef LIGHT_POINT
+
+    float distance = length(light_position - fragPos);
+    float3 lightVector = normalize(light_position - fragPos);
+    float diffuse = max(dot(surf.normal, lightVector), 0.1);
+    diffuse = diffuse * (1.0 / (1.0 + (0.25 * distance * distance)));
+ 
+	finalColor *= light_color.rgb * diffuse * 10;
+
+#endif
+	
 	return finalColor;
 }

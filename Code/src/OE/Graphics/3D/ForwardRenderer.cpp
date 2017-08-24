@@ -27,53 +27,63 @@ namespace OrbitEngine { namespace Graphics {
 
 		States* states = Application::priv::ContextImpl::GetCurrent()->getGlobalStates();
 
-		states->setBlending(BlendState::DISABLED);
+		states->setBlending(BlendState::ONE_ZERO);
 		states->setDepthTest(FunctionMode::LESS);
 		states->setCullMode(CullMode::NONE);
 
 		Material* currentMaterial = 0;
 		Shader* currentShader = 0;
 
-		for (auto &command : p_Commands) {
-			if (command.material != currentMaterial) {
-				currentMaterial = command.material;
+		for (Light* l : p_Lights) {
+			ShaderDefinitions defs = l->getRequiredDefinitions();
+			defs.emplace("FORWARD");
 
-				Shader* shader = command.material->use({
-					"FORWARD"
-				});
-				shader->bind();
+			for (auto &command : p_Commands) {
+				if (command.material != currentMaterial) {
+					currentMaterial = command.material;
 
-				if (shader != currentShader) {
-					currentShader = shader;
-					// bind non-material related stuff
-					fillCameraBuffer(currentShader);
+					Shader* shader = currentMaterial->use(defs);
+					shader->bind();
 
-					if (p_Skybox) {
-						if (p_Skybox->getPrefilteredEnviromentMap())
-							p_Skybox->getPrefilteredEnviromentMap()->bind(9);
-						else
-							p_Skybox->getEnviromentMap()->bind(9);
-					}
+					if (shader != currentShader) {
+						currentShader = shader;
+						// bind non-material related stuff
+						fillCameraBuffer(currentShader);
+
+						if (p_Skybox) {
+							if (p_Skybox->getPrefilteredEnviromentMap())
+								p_Skybox->getPrefilteredEnviromentMap()->bind(9);
+							else
+								p_Skybox->getEnviromentMap()->bind(9);
+						}
 
 #if OE_OPENGL_ANY
-					if (Application::Context::GetCurrentAPI() == OPENGL
+						if (Application::Context::GetCurrentAPI() == OPENGL
 #if OE_OPENGL_ES
-						|| Application::Context::GetCurrentAPI() == OPENGL_ES
+							|| Application::Context::GetCurrentAPI() == OPENGL_ES
 #endif
-						) {
-						GLShader* glGBufferShader = (GLShader*)shader;
-						glGBufferShader->setUniform1i("enviroment", 9);
-						glGBufferShader->setUniform1i("preintegratedBRDFLUT", 10);
+							) {
+							GLShader* glGBufferShader = (GLShader*)currentShader;
+							glGBufferShader->setUniform1i("enviroment", 9);
+							glGBufferShader->setUniform1i("preintegratedBRDFLUT", 10);
+						}
+#endif
 					}
-#endif
-				}
-				// bind material related stuff
-				currentMaterial->use();
-			}
-			// bind object related stuff
-			fillObjectBuffer(currentShader, command);
+					// bind material related stuff
+					currentMaterial->use(); 
 
-			command.mesh->drawIndexed(command.count);
+					// bind light related stuff
+					l->fillBuffer(currentShader);
+				}
+				// bind object related stuff
+				fillObjectBuffer(currentShader, command);
+
+				command.mesh->drawIndexed(command.count);
+			}
+
+			// After the first pass..
+			states->setBlending(BlendState::ONE_ONE);
+			states->setDepthTest(FunctionMode::EQUAL);
 		}
 	}
 } }

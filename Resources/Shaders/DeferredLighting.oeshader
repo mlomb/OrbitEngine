@@ -36,7 +36,6 @@ SamplerState samplerType : register(s0);
 
 float4 main(Input input) : SV_TARGET {
 	float3 fragPos = GPosition.Sample(samplerType, input.uv).rgb;
-	float3 viewDir = normalize(CameraPosition - fragPos);
 	
 	SurfaceOutput surf;
 	surf.normal = GNormalRoughness.Sample(samplerType, input.uv).rgb;
@@ -44,6 +43,7 @@ float4 main(Input input) : SV_TARGET {
 	surf.roughness = GNormalRoughness.Sample(samplerType, input.uv).a;
 	surf.metallic = GAlbedoMetallic.Sample(samplerType, input.uv).a;
 	
-	float3 color = ComputeLighting(surf, viewDir);
+	float3 color = ComputeLighting(surf, fragPos);
+
 	return float4(color, 1.0);
 }

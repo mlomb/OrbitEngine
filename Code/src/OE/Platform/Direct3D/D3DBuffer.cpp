@@ -16,7 +16,14 @@ namespace OrbitEngine {	namespace Graphics {
 
 		if (type == BufferType::CONSTANT) {
 			if (size % 16 != 0) {
-				OE_LOG_FATAL("Constant buffers must size in multiples of 16.");
+				void* newData = 0;
+				int newSize = (size + 15) & -16;
+				if (data != 0) {
+					newData = malloc(newSize);
+					memcpy(newData, data, size);
+				}
+				setData(newSize, newData);
+				//OE_LOG_WARNING("Constant buffers must size in multiples of 16 bytes.");
 				return;
 			}
 		}

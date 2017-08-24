@@ -3,8 +3,8 @@
 
 #include "OE/Graphics/Renderer.hpp"
 #include "OE/Graphics/API/Mesh.hpp"
-
 #include "OE/Graphics/3D/Material.hpp"
+#include "OE/Graphics/3D/Light.hpp"
 
 #include "OE/Math/Vec3.hpp"
 #include "OE/Math/Mat4.hpp"
@@ -43,6 +43,7 @@ namespace OrbitEngine { namespace Graphics {
 		void begin() override;
 
 		void submitMesh(Mesh* mesh, unsigned int count, Material* material = 0, const Math::Mat4& transform = Math::Mat4::Identity());
+		void addLight(Light* light);
 		inline void useSkybox(Skybox* skybox) { p_Skybox = skybox; }
 
 		static VertexLayout* GetVertex3DLayout();
@@ -54,7 +55,9 @@ namespace OrbitEngine { namespace Graphics {
 		void fillObjectBuffer(Shader* shader, const Command& command);
 
 		std::vector<Command> p_Commands;
+		std::vector<Light*> p_Lights;
 		Skybox* p_Skybox = 0;
+
 		BRDFLUT* p_BRDFLUT;
 	private:
 		UniformsPack<CameraBuffer>* m_CameraBufferPack;

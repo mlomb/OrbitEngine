@@ -26,7 +26,7 @@ namespace OrbitEngine { namespace Graphics {
 			OE_LOG_INFO("FreeType initialized");
 		}
 
-		m_FileBuffer = System::File::LoadFile(file, true);
+		m_FileBuffer = System::File::LoadFile(file);
 		FT_New_Memory_Face(Font::s_FTLibrary, (FT_Byte*)m_FileBuffer.data(), m_FileBuffer.size(), 0, &m_Face);
 	}
 

@@ -11,7 +11,7 @@ SamplerState sampler_metallic : register(s1);
 SamplerState sampler_roughness : register(s2);
 SamplerState sampler_normals : register(s3);
 
-cbuffer MaterialUniforms : register(b2)
+cbuffer MaterialBuffer
 {
     float4 baseColor;
     float metallic;

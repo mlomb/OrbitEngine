@@ -18,6 +18,7 @@ namespace OrbitEngine { namespace Graphics {
 	Shader* Material::use(ShaderDefinitions definitions)
 	{
 		Shader* shader = m_Shader->requestShader(definitions);
+		shader->bind();
 
 		switch (Application::Context::GetCurrentAPI())
 		{
@@ -32,11 +33,10 @@ namespace OrbitEngine { namespace Graphics {
 				MaterialMapType type = static_cast<MaterialMapType>(i);
 				glShader->setUniform1i(("map_" + MapTypeToString(type)).c_str(), i);
 			}
-			glShader->bindUBO("MaterialUniforms", 2);
 			break;
 		}
 		s_MaterialUniformsBuffer->setData(m_Uniforms);
-		s_MaterialUniformsBuffer->bind(2, ShaderType::FRAGMENT);
+		s_MaterialUniformsBuffer->bind("MaterialBuffer", shader);
 
 		std::map<MaterialMapType, Texture*>::iterator it;
 		for (int i = 0; i < 4; i++)

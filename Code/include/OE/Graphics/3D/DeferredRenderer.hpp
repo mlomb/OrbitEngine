@@ -23,7 +23,7 @@ namespace OrbitEngine { namespace Graphics {
 		void skyboxPass();
 		//void shadowsPass();
 
-		Shader* m_DeferredLightShader;
+		ManagedShader* m_DeferredLightShader;
 		FrameBuffer* m_GBuffer = 0;
 	};
 } }

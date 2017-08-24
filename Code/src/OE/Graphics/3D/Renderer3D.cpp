@@ -1,6 +1,7 @@
 #include "OE/Graphics/3D/Renderer3D.hpp"
 
 #include "OE/Graphics/3D/BRDFLUT.hpp"
+#include "OE/Graphics/API/UniformsPack.hpp"
 
 namespace OrbitEngine { namespace Graphics {
 
@@ -20,6 +21,10 @@ namespace OrbitEngine { namespace Graphics {
 		command.transform = transform;
 
 		p_Commands.push_back(command);
+	}
+
+	void Renderer3D::addLight(Light* light) {
+		p_Lights.push_back(light);
 	}
 	
 	VertexLayout* Renderer3D::GetVertex3DLayout()
