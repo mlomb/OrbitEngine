@@ -97,6 +97,14 @@ namespace OrbitEngine {	namespace Graphics {
 			src = D3D11_BLEND_ONE;
 			dst = D3D11_BLEND_INV_SRC_ALPHA;
 			break;
+		case BlendState::ONE_ONE:
+			src = D3D11_BLEND_ONE;
+			dst = D3D11_BLEND_ONE;
+			break;
+		case BlendState::ONE_ZERO:
+			src = D3D11_BLEND_ONE;
+			dst = D3D11_BLEND_ZERO;
+			break;
 		default:
 			return nullptr;
 		}

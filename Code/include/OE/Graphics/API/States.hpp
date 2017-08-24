@@ -8,6 +8,8 @@ namespace OrbitEngine { namespace Graphics {
 		SRC_ALPHA = 0,
 		ONE_ALPHA,
 		NO_COLOR,
+		ONE_ONE,
+		ONE_ZERO,
 		DISABLED
 	};
 

@@ -24,6 +24,12 @@ namespace OrbitEngine { namespace Graphics {
 			case BlendState::ONE_ALPHA:
 				glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 				break;
+			case BlendState::ONE_ONE:
+				glBlendFunc(GL_ONE, GL_ONE);
+				break;
+			case BlendState::ONE_ZERO:
+				glBlendFunc(GL_ONE, GL_ZERO);
+				break;
 			}
 			break;
 		}

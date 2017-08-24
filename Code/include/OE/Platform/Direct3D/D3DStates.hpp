@@ -38,7 +38,7 @@ namespace OrbitEngine { namespace Graphics {
 		void CreateDepthStencilState(FunctionMode depthFunction, bool stencil, D3D11_DEPTH_STENCILOP_DESC frontFace, D3D11_DEPTH_STENCILOP_DESC backFace, ID3D11DepthStencilState** pDepthStencil);
 
 	private:
-		ID3D11BlendState* m_BlendStates[4]; // BlendState enum size 
+		ID3D11BlendState* m_BlendStates[6]; // BlendState enum size 
 		ID3D11RasterizerState* m_RasterizerStates[4]; // CullMode enum size
 		ID3D11DepthStencilState* m_DepthStencilStates[9 * 9 * 3]; // depthMode * stencilMode * operation
 
