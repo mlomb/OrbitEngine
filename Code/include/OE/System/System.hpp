@@ -12,9 +12,8 @@ namespace OrbitEngine {	namespace System {
 	class System : public Misc::Pimpl<priv::SystemImpl>, public Misc::Singleton<System> {
 	public:
 
-		const char* getName();
-		long long currentMillis();
-
+		virtual const char* getName();
+		virtual long long currentNano();
 
 	private:
 		friend class Misc::Singleton<System>;

@@ -23,6 +23,12 @@ namespace OrbitEngine { namespace Graphics {
 	}
 
 	template<class T>
+	Math::Vec3f GenericLight<T>::getPosition()
+	{
+		return p_Data.position;
+	}
+
+	template<class T>
 	void GenericLight<T>::setColor(Math::Color color)
 	{
 		p_Data.color = color;

@@ -44,7 +44,7 @@ namespace OrbitEngine { namespace Application {
 		void requestCursorMode(const CursorMode cursorMode);
 		Math::Vec2i getCursorDelta() const;
 		CursorMode getCursorMode() const;
-		priv::WindowImpl* getWindow() const;
+		priv::WindowImpl* getWindowImpl() const;
 
 		EventHandler<KeyInputEvent> onKeyEvent;
 		EventHandler<ButtonInputEvent> onButtonEvent;

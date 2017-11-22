@@ -19,7 +19,7 @@ namespace OrbitEngine { namespace Graphics {
 	};
 
 	struct MaterialUniforms {
-		Math::Color baseColor = Math::Color(1, 1, 1, 1);
+		Math::Color baseColor = Math::Color(1.0f, 1.0f, 1.0f, 1.0f);
 		float metallic = 0.5f;
 		float roughness = 0.5f;
 

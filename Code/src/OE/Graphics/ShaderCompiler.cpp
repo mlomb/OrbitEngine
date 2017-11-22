@@ -34,6 +34,7 @@ namespace OrbitEngine { namespace Graphics {
 		switch (Application::priv::ContextImpl::GetCurrentAPI()) {
 #if OE_OPENGL_ES
 		case OPENGL_ES:
+		{
 			Application::priv::GLContext* glcontext = reinterpret_cast<Application::priv::GLContext*>(context);
 			switch (glcontext->getInfo().major) {
 			case 1:
@@ -50,9 +51,11 @@ namespace OrbitEngine { namespace Graphics {
 			}
 
 			return Xsc::OutputShaderVersion::ESSL;
+		}
 #endif
 #if OE_OPENGL
 		case OPENGL:
+		{
 			Application::priv::GLContext* glcontext = reinterpret_cast<Application::priv::GLContext*>(context);
 			switch (glcontext->getInfo().major) {
 			case 2:
@@ -81,6 +84,7 @@ namespace OrbitEngine { namespace Graphics {
 				break;
 			}
 			return Xsc::OutputShaderVersion::GLSL;
+		}
 #endif
 #if OE_VULKAN
 		case VULKAN:

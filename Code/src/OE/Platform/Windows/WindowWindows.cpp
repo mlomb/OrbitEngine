@@ -68,6 +68,9 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 		}
 
 		initHandle();
+
+		ShowWindow(m_WindowHandle, SW_SHOW);
+		SetFocus(m_WindowHandle);
 	}
 
 	WindowWindows::WindowWindows(HWND handle)
@@ -80,17 +83,14 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 	{
 		m_DeviceContext = GetDC(m_WindowHandle);
 
-		SetWindowLongPtr(m_WindowHandle, GWLP_USERDATA, reinterpret_cast<long>(this));
-		SetWindowLong(m_WindowHandle, GWL_WNDPROC, (LONG)WindowWindows::DefWndProc);
-		
-		ShowWindow(m_WindowHandle, SW_SHOW);
-		SetFocus(m_WindowHandle);
+		SetWindowLongPtr(m_WindowHandle, GWLP_USERDATA, (LONG_PTR)this);
+		SetWindowLongPtr(m_WindowHandle, GWLP_WNDPROC, (LONG_PTR)WindowWindows::DefWndProc);
 	}
 	
 	WindowWindows::~WindowWindows()
 	{
 		if (m_WindowHandle) {
-			SetWindowLong(m_WindowHandle, GWL_WNDPROC, (LONG)DefWindowProc);
+			SetWindowLongPtr(m_WindowHandle, GWLP_WNDPROC, (LONG)DefWindowProc);
 			SetWindowLongPtr(m_WindowHandle, GWLP_USERDATA, 0);
 
 			if(m_DeviceContext)

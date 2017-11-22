@@ -5,8 +5,10 @@ namespace OrbitEngine {	namespace System { namespace priv {
 	class SystemImpl {
 	public:
 		~SystemImpl() { };
-		
-		static long long CurrentMillis();
+
+		virtual const char* getName() = 0;
+		virtual long long currentNano() = 0;
+
 	protected:
 		SystemImpl() { };
 

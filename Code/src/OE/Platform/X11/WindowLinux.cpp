@@ -1,5 +1,6 @@
 #include "WindowLinux.hpp"
 
+#include "OE/Platform/X11/X11Display.hpp"
 #include "OE/Platform/OpenGL/OpenGL.hpp"
 
 namespace OrbitEngine {	namespace Application { namespace priv {
@@ -74,6 +75,16 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 		
 		// Show the window
 		XMapWindow(m_Display, m_Window);
+	}
+
+	WindowLinux::WindowLinux(WindowNativeHandle handle)
+	{
+		m_Display = X11Display::Instance()->GetAndReference();
+		m_Window = handle;
+
+		// Is ok to leave m_VisualInfo NULL?
+
+		loadAtoms();
 	}
 
 	void WindowLinux::processEvents() {

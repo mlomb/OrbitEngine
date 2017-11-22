@@ -114,7 +114,7 @@ namespace OrbitEngine { namespace Graphics {
 		m_BatchShader->bind();
 
 		/* TODO Move or Remove */
-		Application::WindowProperties& wprops = Application::priv::ContextImpl::GetCurrent()->getWindow()->getProperties();
+		Application::WindowProperties& wprops = Application::priv::ContextImpl::GetCurrent()->getWindowImpl()->getProperties();
 		Math::Mat4 proj = Math::Mat4::Orthographic(0.0f, (float)wprops.resolution.x, (float)wprops.resolution.y, 0.0f, -1.0f, 1.0f);
 		/* -- */
 

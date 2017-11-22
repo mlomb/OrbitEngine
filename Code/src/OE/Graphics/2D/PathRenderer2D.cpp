@@ -94,7 +94,7 @@ namespace OrbitEngine { namespace Graphics {
 		}
 
 		/* TODO Remove */
-		Application::WindowProperties& wprops = Application::priv::ContextImpl::GetCurrent()->getWindow()->getProperties();
+		Application::WindowProperties& wprops = Application::priv::ContextImpl::GetCurrent()->getWindowImpl()->getProperties();
 		PVMatrices matricesUniforms;
 		matricesUniforms.pmatrix.pr_matrix = Math::Mat4::Orthographic(0.0f, (float)wprops.resolution.x, (float)wprops.resolution.y, 0.0f, -1.0f, 1.0f);
 		matricesUniforms.vmatrix.vw_matrix = Math::Mat4::Identity();

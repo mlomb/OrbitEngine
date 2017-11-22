@@ -25,6 +25,8 @@ namespace OrbitEngine { namespace Graphics {
 		virtual void setPosition(Math::Vec3f position) = 0;
 		virtual void setColor(Math::Color color) = 0;
 
+		virtual Math::Vec3f getPosition() = 0;
+
 		virtual void fillBuffer(Shader* shader) = 0;
 		virtual ShaderDefinitions getRequiredDefinitions() = 0;
 	protected:
@@ -39,6 +41,8 @@ namespace OrbitEngine { namespace Graphics {
 		void setPosition(Math::Vec3f position) override;
 		void setColor(Math::Color color) override;
 		void fillBuffer(Shader* shader) override;
+
+		Math::Vec3f getPosition() override;
 
 		virtual ShaderDefinitions getRequiredDefinitions() override;
 	protected:

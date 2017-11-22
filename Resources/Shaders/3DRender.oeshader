@@ -28,8 +28,8 @@ Output main(Input input) {
 
 	float3x3 mat = (float3x3)(transpose(MMatrix));
 	
-	output.tangent = normalize(mul(MMatrix, float4(input.tangent, 1)).xyz);
-	output.normal = normalize(mul(MMatrix, float4(input.normal, 1)).xyz);
+	output.tangent = mul(MMatrix, float4(input.tangent, 1)).xyz;
+	output.normal = mul(float3x3(MMatrix), float3(input.normal));
 	output.binormal = cross(output.normal, output.tangent);
 	
 	return output;

@@ -11,7 +11,7 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 	private:
 		friend class Misc::Singleton<X11Display>;
 
-		X11Display();
+		X11Display() {};
 
 		::Display* Create() override;
 		void Destroy(::Display* object) override;

@@ -44,7 +44,7 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 		p_Size = size;
 	}
 
-	WindowImpl* ContextImpl::getWindow()
+	WindowImpl* ContextImpl::getWindowImpl()
 	{
 		return p_Window;
 	}

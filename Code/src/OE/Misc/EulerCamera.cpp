@@ -7,12 +7,12 @@
 
 namespace OrbitEngine { namespace Misc {
 	void EulerCamera::update(float delta) {
-		Application::InputManager* inputManager = Application::priv::ContextImpl::GetCurrent()->getWindow()->getInputManager();
+		Application::InputManager* inputManager = Application::priv::ContextImpl::GetCurrent()->getWindowImpl()->getInputManager();
 
 		//OE_LOG_DEBUG("Has focus: " << inputManager->hasFocus() << ", cursorMode: " << inputManager->getCursorMode());
 
 		if (inputManager->hasFocus() && inputManager->getCursorMode() == Application::CursorMode::GRABBED) {
-			float speed = 3;
+			float speed = 20;
 			float mouseSpeed = 0.005f;
 			
 			/* Cursor */

@@ -1,32 +1,38 @@
+#include "OE/Config.hpp"
+
 #include "OE/System/System.hpp"
 
 #if OE_WINDOWS
+	#include "OE/Platform/Windows/SystemWindows.hpp"
+	typedef OrbitEngine::System::priv::SystemWindows SystemImplType;
 #elif OE_ANDROID
 	#include "OE/Platform/Android/SystemAndroid.hpp"
-	typedef OrbitEngine::Application::priv::SystemAndroid SystemImplType;
+	typedef OrbitEngine::System::priv::SystemAndroid SystemImplType;
 #elif OE_EMSCRIPTEN
+	#include "OE/Platform/Emscripten/SystemEmscripten.hpp"
+	typedef OrbitEngine::System::priv::SystemEmscripten SystemImplType;
 #elif OE_UNIX
+	#include "OE/Platform/X11/SystemLinux.hpp"
+	typedef OrbitEngine::System::priv::SystemLinux SystemImplType;
 #endif
 
 namespace OrbitEngine { namespace System {
 	System::System()
-#if OE_ANDROID
-		: Pimpl(new SystemImplType())
-#else
-		: Pimpl(0)
-#endif
+		: Pimpl(new ::SystemImplType())
 	{
 	}
 
 	System::~System()
 	{
 	}
-	const char * System::getName()
+
+	const char* System::getName()
 	{
-		return nullptr;
+		return p_Pimpl->getName();
 	}
-	long long System::currentMillis()
+
+	long long System::currentNano()
 	{
-		return 42;
+		return p_Pimpl->currentNano();
 	}
 } }

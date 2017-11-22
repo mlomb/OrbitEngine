@@ -111,7 +111,7 @@ namespace OrbitEngine { namespace Application {
 		return m_CursorMode;
 	}
 
-	priv::WindowImpl* InputManager::getWindow() const {
+	priv::WindowImpl* InputManager::getWindowImpl() const {
 		return m_Window;
 	}
 

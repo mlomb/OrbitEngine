@@ -29,7 +29,7 @@ namespace OrbitEngine {
 		virtual const std::string getName() = 0;
 		virtual const RenderAPI getAPI() = 0;
 
-		WindowImpl* getWindow();
+		WindowImpl* getWindowImpl();
 		/*
 		In the future we should remove this
 		because some APIs doesn't have

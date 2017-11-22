@@ -11,6 +11,7 @@ namespace OrbitEngine { namespace Application { namespace priv {
 	{
 		OE_CHECK_GL(glClearColor(0.25f, 0.5f, 1.0f, 1.0f));
 		OE_CHECK_GL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+		setDefaultBackbuffer();
 	}
 
 	void GLContext::setDefaultBackbuffer()

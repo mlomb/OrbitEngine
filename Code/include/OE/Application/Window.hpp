@@ -32,6 +32,7 @@ namespace OrbitEngine {	namespace Application {
 	class Window : public Misc::Pimpl<priv::WindowImpl> {
 	public:
 		Window(WindowProperties windowProperties);
+		Window(WindowNativeHandle handle);
 		~Window();
 
 		DisplayNativeHandle getDisplayNativeHandle();

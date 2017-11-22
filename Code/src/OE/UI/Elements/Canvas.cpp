@@ -83,7 +83,7 @@ namespace OrbitEngine { namespace UI {
 			OE_UI_EVENT_PROPAGATE(element, onMouseUp, e);
 			if (m_PressedElement == element) {
 
-				long long now = System::System::Instance()->currentMillis();
+				long long now = System::System::Instance()->currentNano() * 1000000;
 
 				if (m_LastClickedElement == element) {
 					if (now - m_LastClickTime < 500) // 500ms

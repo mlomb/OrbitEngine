@@ -12,6 +12,7 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 	class WindowLinux : public WindowImpl {
 	public:
 		WindowLinux(WindowProperties properties);
+		WindowLinux(WindowNativeHandle handle);
 		~WindowLinux();
 
 		void processEvents() override;

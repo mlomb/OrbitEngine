@@ -3,6 +3,7 @@
 #include "OE/Config.hpp"
 #include "OE/Application/Context.hpp"
 #include "OE/Graphics/MeshGenerator.hpp"
+#include "OE/Graphics/ShaderLoader.hpp"
 
 #if OE_OPENGL_ANY
 	#include "OE/Platform/OpenGL/GLShader.hpp"
@@ -72,10 +73,8 @@ namespace OrbitEngine { namespace Graphics {
 
 	void EnviromentMap::precomputeEnvPBR()
 	{
-		return;
-		/*
 		if (s_PrefilterCapture == nullptr) {
-			s_PrefilterCapture = Shader::PrefilterEnviromentPBR();
+			s_PrefilterCapture = ShaderLoader::PrefilterEnvMap();
 			setViewMatrices(s_PrefilterCapture);
 			if (Application::Context::GetCurrentAPI() == RenderAPI::OPENGL)
 				((GLShader*)s_PrefilterCapture)->setUniform1i("environment", 0);
@@ -116,7 +115,6 @@ namespace OrbitEngine { namespace Graphics {
 
 		s_PrefilterCapture->unbind();
 		FrameBuffer::Pop();
-		*/
 	}
 
 	void EnviromentMap::setViewMatrices(Shader* shader)

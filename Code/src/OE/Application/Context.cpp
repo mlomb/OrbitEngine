@@ -29,6 +29,7 @@
 
 namespace OrbitEngine {	namespace Application {
 	Context::Context(RenderAPI renderAPI, Window* window, Context* sharedContext)
+		: m_Window(window)
 	{
 		if (sharedContext) {
 			OE_ASSERT_MSG(renderAPI == sharedContext->getAPI(), Trying to share context of differents render APIs)
@@ -116,6 +117,11 @@ namespace OrbitEngine {	namespace Application {
 	bool Context::isReady()
 	{
 		return p_Pimpl->isReady();
+	}
+
+	Window* Context::getWindow()
+	{
+		return m_Window;
 	}
 
 	const std::string Context::getName()
