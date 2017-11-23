@@ -10,6 +10,7 @@
 #cmakedefine01 OE_OPENGL_ES
 #cmakedefine01 OE_D3D
 #cmakedefine01 OE_VULKAN
+#cmakedefine01 OE_EDITOR
 
 #if OE_OPENGL || OE_OPENGL_ES
 	#define OE_OPENGL_ANY 1
