@@ -24,12 +24,22 @@ namespace OrbitEngine { namespace Application {
 	}
 #endif
 
+	void Looper::stop()
+	{
+		m_Running = false;
+#if OE_EMSCRIPTEN
+		emscripten_cancel_main_loop();
+#endif
+	}
+
 	void Looper::loop()
 	{
+		m_Running = true;
+
 #if OE_EMSCRIPTEN
 		emscripten_set_main_loop_arg(emscripten_frame, this, 0, false);
 #else
-		while (!m_Window || !m_Window->destroyRequested()) {
+		while (m_Running && (!m_Window || !m_Window->destroyRequested())) {
 			frame();
 
 			if (m_Window)

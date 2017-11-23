@@ -14,6 +14,7 @@ namespace OrbitEngine {	namespace Application {
 		Looper(Context* context, Loopeable* loopeable = 0);
 		~Looper();
 
+		void stop();
 		void loop();
 		Misc::Ticker* getTicker() const;
 
@@ -24,6 +25,7 @@ namespace OrbitEngine {	namespace Application {
 		static void emscripten_frame(void* looper);
 #endif
 
+		bool m_Running;
 		Loopeable* m_Loopeable;
 		Misc::Ticker* m_Ticker;
 		Window* m_Window;
