@@ -7,7 +7,7 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 		WNDCLASSEX window = { 0 };
 		ZeroMemory(&window, sizeof(window));
 
-		window.cbSize = sizeof(window);
+		window.cbSize = sizeof(WNDCLASSEX);
 		window.style = CS_HREDRAW | CS_VREDRAW | CS_OWNDC;
 		window.hIcon = LoadIcon(NULL, IDI_WINLOGO);
 		window.lpfnWndProc = WindowWindows::DefWndProc;

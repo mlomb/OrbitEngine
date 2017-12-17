@@ -20,6 +20,7 @@ namespace OrbitEngine {	namespace Application {
 		BORDERLESS,
 		FULLSCREEN,
 		FULLSCREEN_BORDERLESS,
+		OVERLAPPED,
 		DUMMY
 	};
 
@@ -27,6 +28,8 @@ namespace OrbitEngine {	namespace Application {
 		std::string title = "OrbitEngine";
 		Math::Vec2i resolution = Math::Vec2i(800, 600);
 		DisplayMode displayMode = WINDOWED;
+
+		WindowNativeHandle parent = 0;
 	};
 
 	class Window : public Misc::Pimpl<priv::WindowImpl> {

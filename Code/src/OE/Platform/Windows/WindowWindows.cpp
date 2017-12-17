@@ -32,10 +32,13 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 			dwStyle = WS_THICKFRAME | WS_SYSMENU | WS_MAXIMIZEBOX | WS_MINIMIZEBOX;
 		case DisplayMode::FULLSCREEN:
 		case DisplayMode::FULLSCREEN_BORDERLESS:
-			dwStyle |= WS_POPUP;
+			dwStyle = WS_POPUP;
+			break;
+		case DisplayMode::OVERLAPPED:
+			dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_TABSTOP;
 			break;
 		}
-
+		
 		if (properties.displayMode == DisplayMode::WINDOWED || properties.displayMode == DisplayMode::WINDOWED_TOOL) {
 			dwExStyle |= WS_EX_WINDOWEDGE;
 			dwStyle = WS_OVERLAPPEDWINDOW;
@@ -56,7 +59,7 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 		unsigned int wY = (long)GetSystemMetrics(SM_CYSCREEN) / 2 - (windowRect.bottom - windowRect.top) / 2;
 
 		// Create the window
-		m_WindowHandle = CreateWindowEx(dwExStyle, OE_WNDCLASSNAME, properties.title.c_str(), dwStyle, wX, wY, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top, NULL, NULL, GetModuleHandleW(NULL), NULL);
+		m_WindowHandle = CreateWindowEx(dwExStyle, OE_WNDCLASSNAME, properties.title.c_str(), dwStyle, wX, wY, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top, properties.parent, NULL, GetModuleHandleW(NULL), NULL);
 		if (!m_WindowHandle) {
 			OE_LOG_FATAL("Couldn't create the window")
 			return;

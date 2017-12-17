@@ -80,7 +80,7 @@ namespace OrbitEngine { namespace Application {
 			m_Ticker->tick();
 		}
 
-		if (m_Initialized && !m_Running) {
+		if (m_Initialized && !m_Running) { // move this
 			if (m_Loopeable)
 				m_Loopeable->deinitialize();
 		}

@@ -22,8 +22,8 @@ namespace OrbitEngine {	namespace Engine {
 	{
 #if OE_EDITOR
 		// beginInsertRows
-		if(internal_EditorBeginInsert)
-			internal_EditorBeginInsert(childCount(), this);
+		//if(internal_EditorBeginInsert)
+		//	internal_EditorBeginInsert(childCount(), this);
 #endif
 
 		// remove from childs list of the parent
@@ -37,8 +37,8 @@ namespace OrbitEngine {	namespace Engine {
 
 #if OE_EDITOR
 		// endInsertRows
-		if (internal_EditorEndInsert)
-			internal_EditorEndInsert();
+		//if (internal_EditorEndInsert)
+		//	internal_EditorEndInsert();
 #endif
 	}
 
