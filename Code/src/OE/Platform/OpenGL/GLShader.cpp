@@ -46,7 +46,7 @@ namespace OrbitEngine {	namespace Graphics {
 		OE_CHECK_GL(glCompileShader(sid));
 
 		OE_CHECK_GL(glGetShaderiv(sid, GL_COMPILE_STATUS, &error));
-		if (error == GL_FALSE) {
+		if (error == GL_FALSE) { // shouldn't be GL_TRUE?
 			GLint logLength;
 			OE_CHECK_GL(glGetShaderiv(sid, GL_INFO_LOG_LENGTH, &logLength));
 			GLchar* texterror = new GLchar[logLength + 1];
@@ -62,6 +62,19 @@ namespace OrbitEngine {	namespace Graphics {
 	void GLShader::finalize()
 	{
 		OE_CHECK_GL(glLinkProgram(m_ID));
+
+		GLint link_status = GL_FALSE;
+		glGetProgramiv(m_ID, GL_LINK_STATUS, &link_status);
+
+		if (link_status == GL_FALSE) {
+			GLint logLength;
+			OE_CHECK_GL(glGetProgramiv(m_ID, GL_INFO_LOG_LENGTH, &logLength));
+			GLchar* texterror = new GLchar[logLength + 1];
+			glGetProgramInfoLog(m_ID, logLength, &logLength, &texterror[0]);
+			OE_LOG_FATAL("Error linking GLSL shaders: " << texterror);
+			return;
+		}
+
 		OE_CHECK_GL(glValidateProgram(m_ID));
 
 		// This causes the shader to compile asynchronously :/

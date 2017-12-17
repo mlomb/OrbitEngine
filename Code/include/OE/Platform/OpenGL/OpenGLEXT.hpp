@@ -117,6 +117,7 @@ typedef ptrdiff_t GLsizeiptr;
 	GLE(void, CompileShader, GLuint shader) \
 	GLE(void, GetShaderiv, GLuint shader, GLenum pname, GLint *params) \
 	GLE(void, GetShaderInfoLog, GLuint shader, GLsizei bufSize, GLsizei *length, GLchar *infoLog) \
+	GLE(void, GetProgramInfoLog, GLuint program, GLsizei maxLength, GLsizei *length, GLchar *infoLog) \
 	GLE(void, DeleteShader, GLuint shader) \
 	GLE(GLuint, CreateProgram, void) \
 	GLE(void, AttachShader, GLuint program, GLuint shader) \

@@ -43,6 +43,7 @@
 #define GL_TEXTURE_2D_ARRAY               0x8C1A
 #define GL_TEXTURE_3D                     0x806F
 #define GL_MAX_UNIFORM_BUFFER_BINDINGS    0x8A2F
+#define GL_LINK_STATUS                    0x8B82
 
 
 	#if OE_OPENGL

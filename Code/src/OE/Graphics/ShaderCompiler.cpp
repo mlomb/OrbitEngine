@@ -80,6 +80,7 @@ namespace OrbitEngine { namespace Graphics {
 				case 3: return Xsc::OutputShaderVersion::GLSL430;
 				case 4: return Xsc::OutputShaderVersion::GLSL440;
 				case 5: return Xsc::OutputShaderVersion::GLSL450;
+				case 6: return Xsc::OutputShaderVersion::GLSL460;
 				}
 				break;
 			}
