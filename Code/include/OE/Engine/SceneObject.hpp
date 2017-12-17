@@ -3,30 +3,46 @@
 
 #include <vector>
 #include <string>
+#include <unordered_map>
 #include <functional>
 
+#include <MetaCPP/TypeID.hpp>
+#include <MetaCPP/TypeInfo.hpp>
+#include <MetaCPP/Runtime.hpp>
+
 #include "OE/Config.hpp"
+#include "OE/Misc/Log.hpp"
+#include "OE/Misc/Property.hpp"
+#include "OE/Misc/OEObject.hpp"
+#include "OE/Engine/Component.hpp"
 
 namespace OrbitEngine {	namespace Engine {
 
-	class SceneObject {
+	class REFLECT SceneObject : public Misc::OEObject {
+		OEOBJECT(SceneObject)
+
 	public:
 		SceneObject(const std::string& name);
 		~SceneObject();
 
 		void addChildren(SceneObject* sceneObject);
+		void addComponent(Component* component);
 
 		SceneObject* parent();
 		SceneObject* childAt(int i);
 		int childCount() const;
 		std::vector<SceneObject*>& getChildrens();
-		std::string getName() const;
+		std::vector<Component*>& getComponents();
+		std::string getName();
 
+		Misc::Property<std::string> m_Name;
 	private:
 
 		SceneObject* m_Parent;
 		std::vector<SceneObject*> m_Childs;
-		std::string m_Name;
+		std::vector<Component*> m_Components;
+		bool test;
+		double k;
 
 #if OE_EDITOR
 	public:

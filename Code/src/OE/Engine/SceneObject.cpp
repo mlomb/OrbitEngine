@@ -1,12 +1,16 @@
 #include "OE/Engine/SceneObject.hpp"
 
+#include "OE/Engine/Transform.hpp"
+#include "OE/Engine/TestComponent.hpp"
+
 namespace OrbitEngine {	namespace Engine {
 	SceneObject::SceneObject(const std::string& name)
 		: m_Childs(std::vector<SceneObject*>()),
 		m_Parent(0),
 		m_Name(name)
 	{
-
+		addComponent(new Transform());
+		addComponent(new TestComponent());
 	}
 
 	SceneObject::~SceneObject()
@@ -38,6 +42,11 @@ namespace OrbitEngine {	namespace Engine {
 #endif
 	}
 
+	void SceneObject::addComponent(Component* component)
+	{
+		m_Components.push_back(component);
+	}
+
 	SceneObject* SceneObject::parent()
 	{
 		return m_Parent;
@@ -54,13 +63,18 @@ namespace OrbitEngine {	namespace Engine {
 	{
 		return m_Childs.size();
 	}
-	
+
 	std::vector<SceneObject*>& SceneObject::getChildrens()
 	{
 		return m_Childs;
 	}
 
-	std::string SceneObject::getName() const
+	std::vector<Component*>& SceneObject::getComponents()
+	{
+		return m_Components;
+	}
+
+	std::string SceneObject::getName()
 	{
 		return m_Name;
 	}

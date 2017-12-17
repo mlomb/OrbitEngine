@@ -40,7 +40,7 @@ namespace OrbitEngine { namespace UI {
 		UPPER, MIDDLE, LOWER
 	};
 
-	enum Visibility {
+	enum AccessSpecifier {
 		COLLAPSED = 0,
 		VISIBLE,
 		HIDDEN,

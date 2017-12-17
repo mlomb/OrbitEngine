@@ -36,11 +36,18 @@ cbuffer LightBuffer {
 float3 ComputeLighting(SurfaceOutput surf, float3 fragPos) {
 	surf.roughness = max(surf.roughness, 2.0e-2); // Prevent zero
 	
+	float3 finalColor;
 	float3 viewDir = normalize(CameraPosition - fragPos);
 	
+	float3 F0 = float3(0.04, 0.04, 0.04); 
+    F0 = lerp(F0, surf.albedo, surf.metallic);
+	
 	// IBL
-	float3 finalColor = IBL(surf.normal, viewDir, surf.roughness, surf.metallic, surf.albedo, enviroment, preintegratedBRDFLUT);
-
+    finalColor = float3(0.03, 0.03, 0.03) * surf.albedo;
+	/*
+	finalColor = IBL(surf.normal, viewDir, surf.roughness, surf.metallic, surf.albedo, enviroment, preintegratedBRDFLUT);
+	*/
+	/*
 #ifdef LIGHT_DIRECTIONAL
 
 	// Directional BRDF
@@ -49,16 +56,56 @@ float3 ComputeLighting(SurfaceOutput surf, float3 fragPos) {
 	finalColor += spec;
 
 #endif
+	*/
 #ifdef LIGHT_POINT
+	
+	float3 dpos = light_position - fragPos;
+	float3 L = normalize(dpos);
+	float3 H = normalize(viewDir + L);
+	float distance = length(dpos);
+	float attenuation = 1.0 / (distance * distance);
+	float3 radiance = light_color.rgb * attenuation;
 
+	// Cook-Torrance BRDF
+	float NDF = DistributionGGX(surf.normal, H, surf.roughness);   
+	float G   = GeometrySmith(surf.normal, viewDir, L, surf.roughness); // GSmith
+	float3 F    = fresnelSchlick(max(dot(H, viewDir), 0.0), F0);
+	   
+	float3 nominator    = NDF * G * F; 
+	float denominator = 4 * max(dot(surf.normal, viewDir), 0.0) * max(dot(surf.normal, L), 0.0) + 0.001;
+	float3 specular = nominator / denominator;
+	
+	// kS is equal to Fresnel
+	float3 kS = F;
+	// for energy conservation, the diffuse and specular light can't
+	// be above 1.0 (unless the surface emits light); to preserve this
+	// relationship the diffuse component (kD) should equal 1.0 - kS.
+	float3 kD = float3(1.0, 1.0, 1.0) - kS;
+	// multiply kD by the inverse metalness such that only non-metals 
+	// have diffuse lighting, or a linear blend if partly metal (pure metals
+	// have no diffuse light).
+	kD *= 1.0 - surf.metallic;	  
+
+	// scale light by NdotL
+	float NdotL = max(dot(surf.normal, L), 0.0);        
+
+	// add to outgoing radiance Lo
+	finalColor += (kD * surf.albedo / PI + specular) * radiance * NdotL;
+
+	/*
     float distance = length(light_position - fragPos);
     float3 lightVector = normalize(light_position - fragPos);
     float diffuse = max(dot(surf.normal, lightVector), 0.1);
     diffuse = diffuse * (1.0 / (1.0 + (0.25 * distance * distance)));
  
 	finalColor *= light_color.rgb * diffuse * 10;
-
+	*/
 #endif
+	
+	
+	finalColor = finalColor / (finalColor + float3(1.0, 1.0, 1.0));
+	const float gmcorrect = 1.0 / GAMMA;
+	finalColor = pow(finalColor, float3(gmcorrect, gmcorrect, gmcorrect));
 	
 	return finalColor;
 }

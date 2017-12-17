@@ -1,13 +1,15 @@
 #ifndef MATH_VEC2_HPP
 #define MATH_VEC2_HPP
 
+#include "OE/Config.hpp"
+
 namespace OrbitEngine { namespace Math {
 
 	template<typename T>
-	struct Vec2 {
+	struct REFLECT Vec2 {
 	public:
 		union {
-			float data[2];
+			T data[2];
 			struct { T x, y; };
 			struct { T w, h; };
 			struct { T r, g; };
@@ -43,9 +45,9 @@ namespace OrbitEngine { namespace Math {
 		static Vec2<T> Normalize(const Vec2<T>& a);
 	};
 
-	typedef Vec2<int>    Vec2i;
-	typedef Vec2<float>  Vec2f;
-	typedef Vec2<double> Vec2d;
+	typedef REFLECT Vec2<int>    Vec2i;
+	typedef REFLECT Vec2<float>  Vec2f;
+	typedef REFLECT Vec2<double> Vec2d;
 } }
 
 #include "OE/Math/Vec2.inl"

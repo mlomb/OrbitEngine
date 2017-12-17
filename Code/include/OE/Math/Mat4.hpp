@@ -5,7 +5,7 @@
 #include "OE/Math/Vec3.hpp"
 
 namespace OrbitEngine { namespace Math {
-	struct Mat4 {
+	struct REFLECT Mat4 {
 		union {
 			struct {
 				float _11, _12, _13, _14;

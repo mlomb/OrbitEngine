@@ -1,13 +1,15 @@
 #ifndef MATH_VEC3_H
 #define MATH_VEC3_H
 
+#include "OE/Config.hpp"
+
 namespace OrbitEngine { namespace Math {
 
 	template<typename T>
-	struct Vec3 {
+	struct REFLECT Vec3 {
 	public:
 		union {
-			float data[3];
+			T data[3];
 			struct { T x, y, z; };
 			struct { T r, g, b; };
 		};
@@ -49,9 +51,9 @@ namespace OrbitEngine { namespace Math {
 		static Vec3<T> Cross(const Vec3<T>& a, const Vec3<T>& b);
 	};
 
-	typedef Vec3<int>    Vec3i;
-	typedef Vec3<float>  Vec3f;
-	typedef Vec3<double> Vec3d;
+	typedef REFLECT Vec3<int>    Vec3i;
+	typedef REFLECT Vec3<float>  Vec3f;
+	typedef REFLECT Vec3<double> Vec3d;
 } }
 
 #include "OE/Math/Vec3.inl"

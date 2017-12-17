@@ -37,14 +37,31 @@ float3 getMap(Texture2D map, SamplerState _sampler, float2 texCoords, float usin
 }
 
 float getMapOverlay(Texture2D map, SamplerState _sampler, float2 texCoords, float usingMap, float base) {
-	return (1 - usingMap) * base + usingMap * blendOverlay(base, getMap(map, _sampler, texCoords).r);
+	return (1 - usingMap) * base + usingMap * getMap(map, _sampler, texCoords).r; //blendOverlay(base, getMap(map, _sampler, texCoords).r);
 }
 
-float3 getNormal(float3 normal, float3 tangent, float3 binormal, float2 texCoords) {
+float3 getNormal(float3 normal, float3 tangent, float3 binormal, float2 texCoords, float3 worldpos) {
 	if (usingNormalMap > 0.0) {
+		/*
 		float3 normalMap = getMap(map_normals, sampler_normals, texCoords) * 2.0 - 1.0;
 		float3x3 TBN = float3x3(tangent, binormal, normal);
 		return normalize(mul(TBN, normalMap));
+		*/
+		
+		/*
+		float3 tangentNormal = getMap(map_normals, sampler_normals, texCoords) * 2.0 - 1.0;
+
+		float3 Q1 = ddx(worldpos);
+		float3 Q2 = ddy(worldpos);
+		float2 st1 = ddx(texCoords);
+		float2 st2 = ddy(texCoords);
+
+		float3 T  = normalize(Q1*st2.x - Q2*st1.x);
+		float3 B  = -normalize(cross(normal, T));
+		float3x3 TBN = float3x3(T, B, normal);
+
+		return normalize(TBN * tangentNormal);
+		*/
 	}
 
 	return normal;
@@ -53,7 +70,7 @@ float3 getNormal(float3 normal, float3 tangent, float3 binormal, float2 texCoord
 SurfaceOutput surface(FragmentInput fragInput) {
 	SurfaceOutput surfOutput;
 	
-	surfOutput.normal = getNormal(fragInput.normal, fragInput.tangent, fragInput.binormal, fragInput.uv);
+	surfOutput.normal = getNormal(normalize(fragInput.normal), fragInput.tangent, fragInput.binormal, fragInput.uv, fragInput.position);
 	surfOutput.albedo = getMap(map_albedo, sampler_albedo, fragInput.uv, usingAlbedoMap, baseColor);
 	surfOutput.roughness = getMapOverlay(map_roughness, sampler_roughness, fragInput.uv, usingRoughnessMap, roughness);
 	surfOutput.metallic = getMapOverlay(map_metallic, sampler_metallic, fragInput.uv, usingMetallicMap, metallic);

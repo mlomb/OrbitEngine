@@ -3,6 +3,8 @@
 
 #include <vector>
 #include <functional>
+#include <memory>
+#include <algorithm>
 
 #include "OE/Application/Event.hpp"
 
@@ -14,26 +16,31 @@ namespace OrbitEngine { namespace Application {
 
 	public:
 		typedef typename std::function<void(const TEvent&)> EventCallback;
-		typedef typename std::vector<EventCallback> Callbacks;
+		typedef typename std::shared_ptr<EventCallback> EventCallbackPtr;
+		typedef typename std::vector<EventCallbackPtr> Callbacks;
 
 		EventHandler() {};
 
-		void AddListener(EventCallback callback) {
-			p_Callbacks.push_back(callback);
+		EventCallbackPtr AddListener(EventCallback callback) {
+			EventCallbackPtr ptr(new EventCallback(callback));
+			p_Callbacks.push_back(ptr);
+			return ptr;
 		}
 
 		template<class T>
-		void AddListener(T* instance, void(T::*callback)(const TEvent&)) {
-			AddListener(std::bind(callback, instance, std::placeholders::_1));
+		EventCallbackPtr AddListener(T* instance, void(T::*callback)(const TEvent&)) {
+			return AddListener(std::bind(callback, instance, std::placeholders::_1));
 		}
 
-		void RemoveListener(EventCallback callback) { // TODO Check if this works
-			//p_Callbacks.erase(std::remove(p_Callbacks.begin(), p_Callbacks.end(), callback), p_Callbacks.end());
+		void RemoveListener(EventCallbackPtr callbackPtr) {
+			auto it = std::find(p_Callbacks.begin(), p_Callbacks.end(), callbackPtr);
+			if (it != p_Callbacks.end())
+				p_Callbacks.erase(it);
 		}
 
 		virtual void FireEvent(const TEvent& event) {
 			for (typename Callbacks::reverse_iterator callback = p_Callbacks.rbegin(); callback != p_Callbacks.rend(); ++callback) {
-				(*callback)(event);
+				(*(*callback))(event);
 			}
 		};
 	protected:

@@ -26,4 +26,10 @@
 	#define OE_DEBUG 0
 #endif
 
+#ifdef __REFLECT__
+	#define REFLECT __attribute__((annotate("reflect")))
+#else
+	#define REFLECT
+#endif
+
 #endif

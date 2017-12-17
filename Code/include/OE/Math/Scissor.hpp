@@ -5,7 +5,7 @@
 #include "OE/Math/Vec4.hpp"
 
 namespace OrbitEngine { namespace Math {
-	struct Scissor {
+	struct REFLECT Scissor {
 	public:
 		//Scissor(Math::Vec2i position, Math::Vec2i size)
 		//	: position(position), size(size) {}

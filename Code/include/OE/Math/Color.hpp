@@ -4,7 +4,7 @@
 #include "OE/Math/Vec4.hpp"
 
 namespace OrbitEngine { namespace Math {
-	typedef Vec4f Color;
+	typedef REFLECT Vec4f Color;
 } }
 
 #endif

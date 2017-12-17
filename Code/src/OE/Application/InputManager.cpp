@@ -126,6 +126,9 @@ namespace OrbitEngine { namespace Application {
 
 	void InputManager::onInputKey(Key key, bool down)
 	{
+		if (key < 0 || key >= MAX_KEYS)
+			return;
+
 		if (down)
 			m_KeysPressed[key] = !m_Keys[key];
 		m_Keys[key] = down;

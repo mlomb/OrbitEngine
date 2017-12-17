@@ -7,7 +7,10 @@ namespace OrbitEngine {	namespace Application {
 		Loopeable() {};
 		~Loopeable() {};
 
+		virtual void init() { };
 		virtual void render() = 0;
+		virtual void update(float delta) {};
+		virtual void deinitialize() {};
 	};
 } }
 

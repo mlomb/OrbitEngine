@@ -3,7 +3,7 @@
 
 namespace OrbitEngine { namespace Application {
 	class Event {
-	protected:
+	public:
 		Event() {}
 	};
 

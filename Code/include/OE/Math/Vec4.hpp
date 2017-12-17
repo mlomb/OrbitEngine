@@ -5,10 +5,10 @@
 
 namespace OrbitEngine { namespace Math {
 	template<typename T>
-	struct Vec4 {
+	struct REFLECT Vec4 {
 	public:
 		union {
-			float data[4];
+			T data[4];
 			struct { T x, y, z, w; };
 			struct { T r, g, b, a; };
 			struct {
@@ -54,9 +54,9 @@ namespace OrbitEngine { namespace Math {
 		static Vec4<T> Normalize(const Vec4<T>& a);
 	};
 
-	typedef Vec4<int>    Vec4i;
-	typedef Vec4<float>  Vec4f;
-	typedef Vec4<double> Vec4d;
+	typedef REFLECT Vec4<int>    Vec4i;
+	typedef REFLECT Vec4<float>  Vec4f;
+	typedef REFLECT Vec4<double> Vec4d;
 } }
 
 #include "OE/Math/Vec4.inl"

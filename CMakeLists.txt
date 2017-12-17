@@ -4,6 +4,7 @@ project(OrbitEngine C CXX)
 
 # Options
 option(OE_EDITOR_INTERNAL OFF)
+option(OE_BUILD_METACPPCLI OFF)
 
 include(CMake/Config.cmake)
 include(CMake/Tools.cmake)
@@ -18,7 +19,7 @@ check_type_size(off64_t OFF64_T)
 
 set(INC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Code/include)
 set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Code/src)
-set(BIN_DIR ${CMAKE_BINARY_DIR})
+set(BIN_DIR ${CMAKE_CURRENT_BINARY_DIR})
 set(BIN_INC_DIR ${BIN_DIR}/include)
 
 # Configure macros file
@@ -28,6 +29,12 @@ configure_file(${INC_DIR}/OE/Config.hpp.in
 # - Dependencies -
 add_subdirectory(Dependencies/FreeType)
 add_subdirectory(Dependencies/FreeImage)
+
+if(OE_BUILD_METACPPCLI)
+	add_subdirectory(Dependencies/MetaCPP/MetaCPP-CLI)
+else()
+	add_subdirectory(Dependencies/MetaCPP/MetaCPP)
+endif()
 
 option(XSC_BUILD_SHELL "" OFF) # Don't build XSC shell
 add_subdirectory(Dependencies/XShaderCompiler)
@@ -48,6 +55,7 @@ set(CMAKE_DEBUG_POSTFIX "" CACHE STRING "" FORCE)
 # General code
 file(GLOB_RECURSE SRC ${INC_DIR}/OE/Misc/*.hpp
                       ${SRC_DIR}/OE/Misc/*.cpp
+                      ${SRC_DIR}/OE/Misc/*.hpp
                       ${INC_DIR}/OE/Math/*.hpp
                       ${SRC_DIR}/OE/Math/*.cpp
                       ${INC_DIR}/OE/Graphics/*.hpp
@@ -64,8 +72,8 @@ file(GLOB_RECURSE SRC ${INC_DIR}/OE/Misc/*.hpp
 )
 
 set(SRC
-    ${SRC}
-    ${BIN_INC_DIR}/OE/Config.hpp
+	${SRC}
+	${BIN_INC_DIR}/OE/Config.hpp
 )
 
 # Platform code
@@ -155,6 +163,7 @@ list(APPEND OE_LIBRARIES
 	FreeImage
 	xsc_core
 	assimp
+	MetaCPP
 )
 list(APPEND OE_LIBRARIES_INC
 	${freetype_SOURCE_DIR}/include
@@ -162,6 +171,8 @@ list(APPEND OE_LIBRARIES_INC
     ${XShaderCompiler_SOURCE_DIR}/inc
     ${Assimp_SOURCE_DIR}/include
     ${Assimp_BINARY_DIR}/include
+    ${MetaCPP_SOURCE_DIR}/include
+    ${MetaCPP_SOURCE_DIR}/../External/mustache # for some reason CMake does not catch this dependency
 )
 
 target_compile_definitions(FreeImage PUBLIC FREEIMAGE_LIB)
@@ -217,3 +228,10 @@ endif()
 
 # C++11
 useCXX11(OrbitEngine)
+
+# Generate meta
+include(Dependencies/MetaCPP/CMake/MetaPrebuild.cmake)
+set(METACPP_FLAGS "")
+#set(METACPP_FLAGS "${METACPP_FLAGS} --flag -D__REFLECT__")
+ #"--reflection-annotation=reflect"
+meta_generate(OrbitEngine "Code/src/OE/Misc/ToReflect.hpp" "${BIN_DIR}/Generated.hpp" "${BIN_DIR}/Generated.cpp" "")

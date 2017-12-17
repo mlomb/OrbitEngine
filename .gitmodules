@@ -10,3 +10,6 @@
 [submodule "Dependencies/Assimp"]
 	path = Dependencies/Assimp
 	url = https://github.com/assimp/assimp.git
+[submodule ".\\Dependencies\\MetaCPP"]
+	path = .\\Dependencies\\MetaCPP
+	url = https://github.com/mlomb/MetaCPP.git

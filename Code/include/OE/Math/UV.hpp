@@ -4,7 +4,7 @@
 #include "OE/Math/Vec2.hpp"
 
 namespace OrbitEngine { namespace Math {
-	struct UV {
+	struct REFLECT UV {
 	public:
 		UV() = default;
 		UV(const float u0, const float v0, const float u1, const float v1)

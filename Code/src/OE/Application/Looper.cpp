@@ -10,11 +10,20 @@ namespace OrbitEngine { namespace Application {
 	{
 		m_Window = m_Context->getWindow();
 		m_Ticker = new Misc::Ticker();
+
+		m_Running = false;
+		m_Initialized = false;
 	}
 
 	Looper::~Looper()
 	{
 		delete m_Ticker;
+	}
+
+	void Looper::setLoopeable(Loopeable* loopeable)
+	{
+		m_Loopeable = loopeable;
+		m_Initialized = false;
 	}
 
 #if OE_EMSCRIPTEN
@@ -27,6 +36,7 @@ namespace OrbitEngine { namespace Application {
 	void Looper::stop()
 	{
 		m_Running = false;
+		m_Initialized = false;
 #if OE_EMSCRIPTEN
 		emscripten_cancel_main_loop();
 #endif
@@ -57,11 +67,22 @@ namespace OrbitEngine { namespace Application {
 			m_Context->makeCurrent();
 			m_Context->prepare();
 
-			if(m_Loopeable)
+			if (m_Loopeable) {
+				if (!m_Initialized) {
+					m_Initialized = true;
+					m_Loopeable->init();
+				}
+				m_Loopeable->update(m_Ticker->getFrameDelta());
 				m_Loopeable->render();
+			}
 
 			m_Context->present();
 			m_Ticker->tick();
+		}
+
+		if (m_Initialized && !m_Running) {
+			if (m_Loopeable)
+				m_Loopeable->deinitialize();
 		}
 	}
 	

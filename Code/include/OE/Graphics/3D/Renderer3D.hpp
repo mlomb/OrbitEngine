@@ -33,6 +33,8 @@ namespace OrbitEngine { namespace Graphics {
 
 	class Renderer3D : public Renderer {
 	public:
+		virtual ~Renderer3D();
+
 		struct Command {
 			Mesh* mesh;
 			Material* material;
@@ -49,7 +51,6 @@ namespace OrbitEngine { namespace Graphics {
 		static VertexLayout* GetVertex3DLayout();
 	protected:
 		Renderer3D();
-		virtual ~Renderer3D();
 
 		void fillCameraBuffer(Shader* shader);
 		void fillObjectBuffer(Shader* shader, const Command& command);

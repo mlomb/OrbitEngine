@@ -1,9 +1,9 @@
 #ifndef MATH_HPP
 #define MATH_HPP
 
-#include <math.h>
-#include <cmath>
 #include <algorithm>
+#include <cmath>
+#include <math.h>
 
 #define PI 3.14159265358979323846f
 #define TAU 6.28318530717958647692f
@@ -61,6 +61,21 @@ namespace OrbitEngine { namespace Math {
 	{
 		return input >= 0 ? 1 : -1;
 	};
+
+	template<typename A, typename B>
+	A castMinMax(B in)
+	{
+		// only integer types
+
+		A retVal = 0;
+
+		if (in > 0)
+			retVal = static_cast<A>(in & std::numeric_limits<A>::max());
+		else if (in < 0)
+			retVal = static_cast<A>(in | std::numeric_limits<A>::min());
+
+		return retVal;
+	}
 } }
 
 #endif

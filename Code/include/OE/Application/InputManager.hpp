@@ -53,6 +53,13 @@ namespace OrbitEngine { namespace Application {
 		EventHandler<WindowFocusInputEvent> onFocusEvent;
 		EventHandler<WindowResizedInputEvent> onResizedEvent;
 
+		// Inject events, internal use
+		void onInputResized(int width, int height);
+		void onInputFocus(bool focus);
+		void onInputKey(Key key, bool down);
+		void onInputWheel(float direction);
+		void onInputMouseButton(Button button, bool down);
+		void onInputMouseMove(int x, int y, bool deltaOnly = false);
 	private:
 #if OE_WINDOWS
 		friend class priv::WindowWindows;
@@ -80,13 +87,6 @@ namespace OrbitEngine { namespace Application {
 		float m_WheelDelta;
 		CursorMode m_CursorMode = CursorMode::NORMAL;
 		Cursor m_Cursor = Cursor::DEFAULT;
-
-		void onInputResized(int width, int height);
-		void onInputFocus(bool focus);
-		void onInputKey(Key key, bool down);
-		void onInputWheel(float direction);
-		void onInputMouseButton(Button button, bool down);
-		void onInputMouseMove(int x, int y, bool deltaOnly = false);
 	};
 } }
 
