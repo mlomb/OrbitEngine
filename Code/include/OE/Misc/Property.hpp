@@ -17,9 +17,15 @@ namespace OrbitEngine {	namespace Misc {
 		Application::EventHandler<> onModification;
 
 		virtual void* getPtr() = 0;
+		
+		bool isDirty();
+		void setDirty(bool dirty);
 
 	protected:
 		void fireModification();
+		
+	private:
+		bool m_Dirty = true;
 	};
 
 	template<typename T>
