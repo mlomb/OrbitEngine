@@ -47,6 +47,7 @@ namespace OrbitEngine { namespace Graphics {
 		void submitMesh(Mesh* mesh, unsigned int count, Material* material = 0, const Math::Mat4& transform = Math::Mat4::Identity());
 		void addLight(Light* light);
 		inline void useSkybox(Skybox* skybox) { p_Skybox = skybox; }
+		void setCamera(Math::Vec3f position, Math::Mat4 PVMatrix);
 
 		static VertexLayout* GetVertex3DLayout();
 	protected:
@@ -61,6 +62,8 @@ namespace OrbitEngine { namespace Graphics {
 
 		BRDFLUT* p_BRDFLUT;
 	private:
+		CameraBuffer m_CameraBuffer;
+
 		UniformsPack<CameraBuffer>* m_CameraBufferPack;
 		UniformsPack<ObjectBuffer>* m_ObjectBufferPack;
 

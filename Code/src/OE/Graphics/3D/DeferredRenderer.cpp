@@ -172,6 +172,6 @@ namespace OrbitEngine { namespace Graphics {
 		// Copy the GBuffer's depth texture into the output framebuffer
 		FrameBuffer::GetCurrent()->blit(m_GBuffer, BlitOperation::DEPTH);
 
-		p_Skybox->render(p_Camera);
+		//p_Skybox->render(p_Camera);
 	}
 } }

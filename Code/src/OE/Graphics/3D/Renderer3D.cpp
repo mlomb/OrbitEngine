@@ -26,7 +26,13 @@ namespace OrbitEngine { namespace Graphics {
 	void Renderer3D::addLight(Light* light) {
 		p_Lights.push_back(light);
 	}
-	
+
+	void Renderer3D::setCamera(Math::Vec3f position, Math::Mat4 PVMatrix)
+	{
+		m_CameraBuffer.CameraPosition = position;
+		m_CameraBuffer.PVMatrix = PVMatrix;
+	}
+
 	VertexLayout* Renderer3D::GetVertex3DLayout()
 	{
 		if (s_Vertex3DLayout == nullptr) {
@@ -56,10 +62,7 @@ namespace OrbitEngine { namespace Graphics {
 
 	void Renderer3D::fillCameraBuffer(Shader* shader)
 	{
-		CameraBuffer data;
-		data.CameraPosition = p_Camera->getPosition();
-		data.PVMatrix = p_Camera->getViewMatrix() * p_Camera->getProjectionMatrix();
-		m_CameraBufferPack->setData(data);
+		m_CameraBufferPack->setData(m_CameraBuffer);
 		m_CameraBufferPack->bind("CameraBuffer", shader);
 	}
 

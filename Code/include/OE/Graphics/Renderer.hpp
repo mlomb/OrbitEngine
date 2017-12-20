@@ -3,9 +3,11 @@
 
 #include "OE/Math/Mat4.hpp"
 #include "OE/Misc/Camera.hpp"
+#include "OE/Graphics/API/UniformsPack.hpp"
 
 namespace OrbitEngine { namespace Graphics {
 
+	/* TODO Delete these */
 	struct PMatrix {
 		Math::Mat4 pr_matrix;
 	};
@@ -22,7 +24,7 @@ namespace OrbitEngine { namespace Graphics {
 		PMatrix pmatrix;
 		VMatrix vmatrix;
 	};
-
+	/* -------- */
 
 	class Renderer {
 	public:
@@ -31,11 +33,7 @@ namespace OrbitEngine { namespace Graphics {
 		virtual void begin() = 0;
 		virtual void end() = 0;
 
-		inline void useCamera(Misc::Camera* camera) { p_Camera = camera; };
-		inline Misc::Camera* getCamera() { return p_Camera; };
-
 	protected:
-		Misc::Camera* p_Camera;
 
 		Renderer() {};
 	};
