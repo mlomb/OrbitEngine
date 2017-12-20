@@ -4,13 +4,9 @@
 #include "OE/Engine/TestComponent.hpp"
 
 namespace OrbitEngine {	namespace Engine {
-	SceneObject::SceneObject(const std::string& name)
-		: m_Childs(std::vector<SceneObject*>()),
-		m_Parent(0),
-		m_Name(name)
+	SceneObject::SceneObject()
+		: m_Childs(std::vector<SceneObject*>()), m_Parent(0)
 	{
-		addComponent(new Transform());
-		addComponent(new TestComponent());
 	}
 
 	SceneObject::~SceneObject()
@@ -18,7 +14,7 @@ namespace OrbitEngine {	namespace Engine {
 
 	}
 
-	void SceneObject::addChildren(SceneObject* sceneObject)
+	SceneObject* SceneObject::addChildren(const std::string& name)
 	{
 #if OE_EDITOR
 		// beginInsertRows
@@ -26,8 +22,18 @@ namespace OrbitEngine {	namespace Engine {
 		//	internal_EditorBeginInsert(childCount(), this);
 #endif
 
-		// remove from childs list of the parent
+		SceneObject* sceneObject = m_Scene->allocateObject<SceneObject>();
+		if (!sceneObject) {
+			OE_LOG_WARNING("Can't allocate more SceneObjects!");
+			return 0;
+		}
+
 		sceneObject->m_Parent = this;
+		sceneObject->m_Scene = m_Scene;
+
+		sceneObject->setName(name);
+		sceneObject->addComponent<Transform>();
+
 #if OE_EDITOR
 		sceneObject->internal_EditorBeginInsert = internal_EditorBeginInsert;
 		sceneObject->internal_EditorEndInsert = internal_EditorEndInsert;
@@ -40,14 +46,16 @@ namespace OrbitEngine {	namespace Engine {
 		//if (internal_EditorEndInsert)
 		//	internal_EditorEndInsert();
 #endif
+
+		return sceneObject;
 	}
 
-	void SceneObject::addComponent(Component* component)
+	Scene* SceneObject::getScene()
 	{
-		m_Components.push_back(component);
+		return m_Scene;
 	}
 
-	SceneObject* SceneObject::parent()
+	SceneObject* SceneObject::getParent()
 	{
 		return m_Parent;
 	}
@@ -77,5 +85,10 @@ namespace OrbitEngine {	namespace Engine {
 	std::string SceneObject::getName()
 	{
 		return m_Name;
+	}
+
+	void SceneObject::setName(const std::string& name)
+	{
+		m_Name = name;
 	}
 } }

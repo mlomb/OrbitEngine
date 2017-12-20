@@ -6,18 +6,30 @@
 #include "OE/Misc/OEObject.hpp"
 
 namespace OrbitEngine {	namespace Engine {
+	class Transform;
+	class SceneObject;
 
 	class REFLECT Component : public Misc::OEObject {
 		OEOBJECT(Component)
 
 	public:
+		virtual ~Component();
+
+		virtual void awake() {};
+		virtual void update(float delta) {};
+		virtual void fixedUpdate() {};
+
+		Transform* getTransform();
+		bool isAwaken();
+		void setAwaken(bool awake);
+
+	protected:
+		friend class SceneObject;
+
 		Component();
-		~Component();
 
-		Misc::Property<std::string> strTest;
-		Misc::Property<int> test_using_a_very_long_name_here;
-
-	private:
+		SceneObject* p_SceneObject;
+		bool m_Awake;
 	};
 } }
 

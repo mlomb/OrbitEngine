@@ -25,3 +25,7 @@ struct test {
 #include "OE/Engine/Component.hpp"
 #include "OE/Engine/Transform.hpp"
 #include "OE/Engine/TestComponent.hpp"
+#include "OE/Engine/Camera.hpp"
+#include "OE/Engine/EulerCameraController.hpp"
+#include "OE/Engine/MeshRenderer.hpp"
+

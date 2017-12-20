@@ -5,6 +5,7 @@
 
 #include "OE/Engine/Component.hpp"
 #include "OE/Math/Vec3.hpp"
+#include "OE/Math/Mat4.hpp"
 
 namespace OrbitEngine {	namespace Engine {
 
@@ -15,13 +16,14 @@ namespace OrbitEngine {	namespace Engine {
 		Transform();
 		~Transform();
 
-	private:
-		Misc::Property<Math::Vec3f> m_Position;
-		Misc::Property<Math::Vec3f> m_Rotation;
-		Misc::Property<Math::Vec3f> m_Scale;
+		Misc::Property<Math::Vec3f> Position;
+		Misc::Property<Math::Vec3f> Rotation;
+		Misc::Property<Math::Vec3f> Scale;
 
-		Misc::Property<std::string> m_Test;
-		Misc::Property<int> m_Counter;
+		Math::Mat4 getMatrix();
+
+	private:
+		Math::Mat4 m_Matrix;
 	};
 } }
 

@@ -1,11 +1,28 @@
 #include "OE/Engine/Component.hpp"
 
-#include <MetaCPP/Runtime.hpp>
+#include "OE/Engine/Transform.hpp"
+#include "OE/Engine/SceneObject.hpp"
 
 namespace OrbitEngine {	namespace Engine {
-	Component::Component()
+	Transform* Component::getTransform()
 	{
-		test_using_a_very_long_name_here = 4224;
+		return p_SceneObject->getComponent<Transform>();
+	}
+
+	bool Component::isAwaken()
+	{
+		return m_Awake;
+	}
+
+	void Component::setAwaken(bool awake)
+	{
+		m_Awake = awake;
+	}
+
+	Component::Component()
+		: m_Awake(false)
+	{
+
 	}
 
 	Component::~Component()

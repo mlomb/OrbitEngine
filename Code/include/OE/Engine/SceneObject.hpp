@@ -14,6 +14,7 @@
 #include "OE/Misc/Log.hpp"
 #include "OE/Misc/Property.hpp"
 #include "OE/Misc/OEObject.hpp"
+#include "OE/Engine/Scene.hpp"
 #include "OE/Engine/Component.hpp"
 
 namespace OrbitEngine {	namespace Engine {
@@ -22,27 +23,34 @@ namespace OrbitEngine {	namespace Engine {
 		OEOBJECT(SceneObject)
 
 	public:
-		SceneObject(const std::string& name);
+		SceneObject();
 		~SceneObject();
 
-		void addChildren(SceneObject* sceneObject);
-		void addComponent(Component* component);
+		SceneObject* addChildren(const std::string& name);
 
-		SceneObject* parent();
+		template<typename T>
+		T* addComponent();
+
+		Scene* getScene();
+		SceneObject* getParent();
 		SceneObject* childAt(int i);
 		int childCount() const;
 		std::vector<SceneObject*>& getChildrens();
 		std::vector<Component*>& getComponents();
 		std::string getName();
+		void setName(const std::string& name);
+
+		template<typename T>
+		T* getComponent();
 
 		Misc::Property<std::string> m_Name;
 	private:
+		friend class Scene;
 
+		Scene* m_Scene;
 		SceneObject* m_Parent;
 		std::vector<SceneObject*> m_Childs;
 		std::vector<Component*> m_Components;
-		bool test;
-		double k;
 
 #if OE_EDITOR
 	public:
@@ -51,6 +59,24 @@ namespace OrbitEngine {	namespace Engine {
 		std::function<void()> internal_EditorEndInsert;
 #endif
 	};
+
+	template<typename T>
+	inline T* SceneObject::addComponent()
+	{
+		T* component = m_Scene->allocateObject<T>();
+		component->p_SceneObject = this;
+		m_Components.push_back(component);
+		return component;
+	}
+
+	template<typename T>
+	inline T* SceneObject::getComponent()
+	{
+		if (m_Components.size() > 0) {
+			return static_cast<T*>(m_Components[0]); // for now
+		}
+		return 0;
+	}
 } }
 
 #endif
