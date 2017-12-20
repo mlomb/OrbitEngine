@@ -124,6 +124,11 @@ namespace OrbitEngine {	namespace Application {
 		return m_Window;
 	}
 
+	Math::Vec2i Context::getSize()
+	{
+		return p_Pimpl->getSize();
+	}
+
 	const std::string Context::getName()
 	{
 		return p_Pimpl->getName();

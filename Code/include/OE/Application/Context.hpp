@@ -53,6 +53,7 @@ namespace OrbitEngine {
 			void resizeContext(Math::Vec2i size);
 
 			Window* getWindow();
+			Math::Vec2i getSize();
 			const std::string getName();
 			const RenderAPI getAPI();
 

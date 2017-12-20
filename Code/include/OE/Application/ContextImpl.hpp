@@ -29,6 +29,7 @@ namespace OrbitEngine {
 		virtual const std::string getName() = 0;
 		virtual const RenderAPI getAPI() = 0;
 
+		Math::Vec2i getSize() { return p_Size; };
 		WindowImpl* getWindowImpl();
 		/*
 		In the future we should remove this
