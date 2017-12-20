@@ -70,7 +70,7 @@ namespace OrbitEngine { namespace Application {
 			if (m_Loopeable) {
 				if (!m_Initialized) {
 					m_Initialized = true;
-					m_Loopeable->init();
+					m_Loopeable->init(m_Context);
 				}
 				m_Loopeable->update(m_Ticker->getFrameDelta());
 				m_Loopeable->render();
