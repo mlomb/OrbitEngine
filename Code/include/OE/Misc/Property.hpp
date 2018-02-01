@@ -37,6 +37,7 @@ namespace OrbitEngine {	namespace Misc {
 		Property(T obj);
 
 		Property& operator=(const T& value);
+		T* operator->();
 
 		operator T() const;
 
@@ -61,10 +62,18 @@ namespace OrbitEngine {	namespace Misc {
 	}
 
 	template<typename T>
-	inline Property<T> &Property<T>::operator=(const T& value) {
+	inline Property<T>& Property<T>::operator=(const T& value) {
 		m_Obj = value;
 		fireModification();
 		return *this;
+	}
+
+	template<typename T>
+	inline T* Property<T>::operator->()
+	{
+		std::cout << "------------ Object accesed" << std::endl; // test
+		fireModification(); // should we?
+		return &m_Obj;
 	}
 
 	template<typename T>

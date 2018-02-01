@@ -48,8 +48,17 @@ namespace OrbitEngine {	namespace Engine {
 	{
 		m_Renderer3D->begin();
 
+		////////////////////////
+		// Render all components
+		////////////////////////
+		auto& kv = m_Scene->getObjects<MeshRenderer>();
+		for (auto it = kv.first; it != kv.second; it++) {
+			MeshRenderer* meshRenderer = static_cast<MeshRenderer*>(*it);
+			m_Renderer3D->submitMesh(sphereMesh, sphereMesh->getIBO()->getSize(), mat, meshRenderer->getTransform()->getMatrix());
+		}
+
 		// traverse the scene
-		renderTraverse(m_Scene->getRoot());
+		//renderTraverse(m_Scene->getRoot());
 
 		m_Renderer3D->end();
 	}
