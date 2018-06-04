@@ -62,6 +62,8 @@ namespace OrbitEngine {	namespace Graphics {
 		case VULKAN:
 			return new VKShader();
 #endif
+		default:
+			return nullptr;
 		}
 	}
 } }

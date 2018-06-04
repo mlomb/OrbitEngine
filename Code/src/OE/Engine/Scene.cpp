@@ -8,7 +8,8 @@
 namespace OrbitEngine {	namespace Engine {
 
 	Scene::Scene() {
-		m_Root = allocateObject<SceneObject>();
+		m_Root = new SceneObject();
+		
 		m_Root->m_Scene = this;
 		m_Root->setName("Root");
 
@@ -28,15 +29,16 @@ namespace OrbitEngine {	namespace Engine {
 			cam->addComponent<Camera>();
 			cam->addComponent<EulerCameraController>();
 		}
+		
 	}
 
-	SceneObject* Scene::getRoot()
+	SceneObject* Scene::GetRoot()
 	{
 		return m_Root;
 	}
 
-	std::unordered_map<metacpp::TypeID, Misc::TrackedMemoryPool*>& Scene::getAllObjects()
-	{
-		return m_Objects;
-	}
+	//std::unordered_map<metacpp::TypeID, Misc::TrackedMemoryPool*>& Scene::getAllObjects()
+	//{
+	//	return m_Objects;
+	//}
 } }

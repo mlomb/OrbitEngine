@@ -19,6 +19,7 @@
 #endif
 
 #define OE_APPNAME "OrbitEngine-Application"
+#define MONO_PATH "${MONO_PATH}"
 
 #ifndef NDEBUG
 	#define OE_DEBUG 1

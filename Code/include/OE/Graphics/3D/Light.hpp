@@ -48,13 +48,12 @@ namespace OrbitEngine { namespace Graphics {
 	protected:
 		GenericLight();
 
-		typedef struct Data {
+		struct Data {
 			Math::Vec3f position;
 			float pad;
 			Math::Color color;
 			T specific;
-		};
-		Data p_Data;
+		} p_Data;
 	private:
 		// TODO Make this static
 		UniformsPack<Data>* s_LightUniformPack;

@@ -46,7 +46,7 @@ namespace OrbitEngine { namespace Graphics {
 			switch (glTexture->getProperties().dimension)
 			{
 			case TEXTURE2D:
-				glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, glTexture->getID(), mipLevel);
+				glFramebufferTexture2D(GL_FRAMEBUFFER, (GLenum)(GL_COLOR_ATTACHMENT0 + i), GL_TEXTURE_2D, glTexture->getID(), mipLevel);
 				break;
 			case CUBEMAP:
 				//glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, glTexture->getID(), mipLevel);
@@ -176,12 +176,12 @@ namespace OrbitEngine { namespace Graphics {
 
 		std::vector<GLuint> attachments(m_ColorBuffers.size());
 		for (size_t i = 0; i < m_ColorBuffers.size(); i++)
-			attachments[i] = GL_COLOR_ATTACHMENT0 + i;
+			attachments[i] = (GLuint)(GL_COLOR_ATTACHMENT0 + i);
 
 		if (m_ColorBuffers.size() == 0)
 			glDrawBuffers(0, 0);
 		else
-			glDrawBuffers(m_ColorBuffers.size(), &attachments[0]);
+			glDrawBuffers((GLsizei)m_ColorBuffers.size(), &attachments[0]);
 
 		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 			OE_LOG_WARNING("FrameBuffer is not complete! Reason:" << glCheckFramebufferStatus(GL_FRAMEBUFFER));

@@ -72,5 +72,6 @@ namespace OrbitEngine {	namespace Graphics {
 #endif
 		}
 		OE_ASSERT(false);
+		return (GLenum)0;
 	}
 } }

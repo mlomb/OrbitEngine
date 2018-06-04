@@ -38,7 +38,7 @@ namespace OrbitEngine {	namespace Misc {
 	void MemoryPool::deallocate(void* ptr)
 	{
 		if (m_Next != 0)
-			*((unsigned int*)ptr) = (unsigned int)(m_Next - m_Memory) / m_Size;
+			*((unsigned int*)ptr) = (unsigned int)(m_Next - m_Memory) / (unsigned int)m_Size;
 		else
 			*((unsigned int*)ptr) = m_Capacity;
 		m_Next = (unsigned char*)ptr;

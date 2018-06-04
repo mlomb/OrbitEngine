@@ -46,7 +46,7 @@ namespace OrbitEngine { namespace Application { namespace priv {
 		p_ContextInfo.version = glGetString(GL_VERSION) ? std::string(reinterpret_cast<const char*>(glGetString(GL_VERSION))) : "";
 
 		// Detect if we are in OpenGLES
-		int versionPos = 0;
+		size_t versionPos = 0;
 		if ((versionPos = p_ContextInfo.version.find("OpenGL ES")) != std::string::npos) {
 			versionPos += strlen("OpenGL ES");
 			p_ContextInfo.ES = true;
@@ -83,7 +83,7 @@ namespace OrbitEngine { namespace Application { namespace priv {
 
 	void GLContext::setViewport()
 	{
-		OE_CHECK_GL(glViewport(0.0f, 0.0f, p_Size.w, p_Size.h));
+		OE_CHECK_GL(glViewport(0, 0, p_Size.w, p_Size.h));
 	}
 
 	void GLContext::makeCurrent(bool active)

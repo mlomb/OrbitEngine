@@ -3,15 +3,12 @@
 
 #include "OE/Config.hpp"
 
-#include "OE/Misc/OEObject.hpp"
 #include "OE/Misc/GUID.hpp"
 
 namespace OrbitEngine {	namespace Engine {
 
 	template<typename T>
-	class REFLECT Resource : public Misc::OEObject {
-		OEOBJECT(Resource)
-
+	class Resource {
 	public:
 		Resource();
 		Resource(Misc::GUID guid);

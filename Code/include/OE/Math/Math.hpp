@@ -57,9 +57,9 @@ namespace OrbitEngine { namespace Math {
 	}
 
 	template<typename T>
-	inline float sign(T input)
+	inline T sign(T input)
 	{
-		return input >= 0 ? 1 : -1;
+		return input >= (T)0 ? (T)1 : (T)-1;
 	};
 
 	template<typename A, typename B>

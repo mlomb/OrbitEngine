@@ -14,7 +14,7 @@ namespace OrbitEngine { namespace UI {
 		displayText->setPivot(Math::Vec2f());
 		displayText->setTextAlignament(RectAlignment::LOWER_RIGHT); // test
 		displayText->setAnchor(Anchor::STRETCH_BOTH);
-		displayText->setMarginsAlongAxis(Math::Vec2f(20 * depth, 0), Axis::HORIZONTAL);
+		displayText->setMarginsAlongAxis(Math::Vec2f(20.0f * depth, 0), Axis::HORIZONTAL);
 		displayText->setFontSize(14.0f);
 
 		p->add(displayText);

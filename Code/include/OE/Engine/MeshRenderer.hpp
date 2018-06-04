@@ -5,9 +5,7 @@
 
 namespace OrbitEngine {	namespace Engine {
 
-	class REFLECT MeshRenderer : public Component {
-		OEOBJECT(MeshRenderer)
-
+	class MeshRenderer : public Component {
 	public:
 		MeshRenderer();
 		~MeshRenderer();

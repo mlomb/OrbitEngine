@@ -42,9 +42,9 @@ namespace OrbitEngine { namespace Graphics {
 		bind();
 		buffer->bind();
 		const std::vector<VertexElement>& layout = bufferLayout->getElements();
-		for (size_t i = 0; i < layout.size(); i++) {
+		for (GLuint i = 0; i < layout.size(); i++) {
 			OE_CHECK_GL(glEnableVertexAttribArray(i));
-			OE_CHECK_GL(glVertexAttribPointer(i, layout[i].count, layout[i].type, layout[i].normalized, bufferLayout->getStride(), (const GLvoid*)layout[i].offset));
+			OE_CHECK_GL(glVertexAttribPointer(i, layout[i].count, layout[i].type, layout[i].normalized, bufferLayout->getStride(), (const GLvoid*)(layout[i].offset)));
 		}
 		m_Buffers.push_back(buffer);
 		OE_CHECK_GL(glBindVertexArray(0));

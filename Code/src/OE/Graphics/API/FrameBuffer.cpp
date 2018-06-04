@@ -56,7 +56,7 @@ namespace OrbitEngine { namespace Graphics {
 	void FrameBuffer::Prepare()
 	{
 		Application::priv::ContextImpl* currentContext = Application::priv::ContextImpl::GetCurrent();
-		int size = currentContext->m_FrameBufferStack.size();
+		int size = int(currentContext->m_FrameBufferStack.size());
 		if (size != 0) {
 			FrameBuffer* currentFrameBuffer = currentContext->m_FrameBufferStack[size - 1];
 			currentFrameBuffer->bind();
@@ -70,7 +70,7 @@ namespace OrbitEngine { namespace Graphics {
 	FrameBuffer* FrameBuffer::GetCurrent()
 	{
 		Application::priv::ContextImpl* currentContext = Application::priv::ContextImpl::GetCurrent();
-		int size = currentContext->m_FrameBufferStack.size();
+		int size = int(currentContext->m_FrameBufferStack.size());
 		if (size != 0)
 			return currentContext->m_FrameBufferStack[size - 1];
 		return nullptr;

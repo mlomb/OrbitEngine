@@ -1,6 +1,5 @@
 #include "OE/Engine/SceneRunner.hpp"
 
-#include "OE/Misc/EulerCamera.hpp"
 #include "OE/Misc/MemoryPool.hpp"
 #include "OE/Graphics/MeshGenerator.hpp"
 #include "OE/Graphics/3D/SurfaceShader.hpp"
@@ -51,42 +50,42 @@ namespace OrbitEngine {	namespace Engine {
 		////////////////////////
 		// Render all components
 		////////////////////////
-		auto& kv = m_Scene->getObjects<MeshRenderer>();
-		for (auto it = kv.first; it != kv.second; it++) {
-			MeshRenderer* meshRenderer = static_cast<MeshRenderer*>(*it);
-			m_Renderer3D->submitMesh(sphereMesh, sphereMesh->getIBO()->getSize(), mat, meshRenderer->getTransform()->getMatrix());
-		}
+		//auto& kv = m_Scene->getObjects<MeshRenderer>();
+		//for (auto it = kv.first; it != kv.second; it++) {
+		//	MeshRenderer* meshRenderer = static_cast<MeshRenderer*>(*it);
+		//	m_Renderer3D->submitMesh(sphereMesh, sphereMesh->getIBO()->getSize(), mat, meshRenderer->getTransform()->getMatrix());
+		//}
 
 		// traverse the scene
-		//renderTraverse(m_Scene->getRoot());
+		//renderTraverse(m_Scene->GetRoot());
 
 		m_Renderer3D->end();
 	}
 
 	void SceneRunner::update(float delta)
 	{
-		metacpp::Storage* storage = metacpp::Runtime::GetStorage();
+		//metacpp::Storage* storage = metacpp::Runtime::GetStorage();
 
 		////////////////////////
 		// Awake any new components
 		///////////////////////
-		ITERATE_ALL_COMPONENTS_BEGIN
-			if (!component->isAwaken()) {
-				component->awake();
-				component->setAwaken(true);
-			}
-		ITERATE_ALL_COMPONENTS_END
-
-		////////////////////////
-		// Update all components
-		////////////////////////
-		ITERATE_ALL_COMPONENTS_BEGIN
-			component->update(delta);
-		ITERATE_ALL_COMPONENTS_END
+		//ITERATE_ALL_COMPONENTS_BEGIN
+		//	if (!component->isAwaken()) {
+		//		component->awake();
+		//		component->setAwaken(true);
+		//	}
+		//ITERATE_ALL_COMPONENTS_END
+		//
+		//////////////////////////
+		//// Update all components
+		//////////////////////////
+		//ITERATE_ALL_COMPONENTS_BEGIN
+		//	component->update(delta);
+		//ITERATE_ALL_COMPONENTS_END
 
 		// Get the main camera
-		Camera* mainCamera = static_cast<Camera*>((*m_Scene->getObjects<Camera>().first));
-		m_Renderer3D->setCamera(mainCamera->getTransform()->Position, mainCamera->getVPMatrix());
+		//Camera* mainCamera = static_cast<Camera*>((*m_Scene->getObjects<Camera>().first));
+		//m_Renderer3D->setCamera(mainCamera->getTransform()->Position, mainCamera->getVPMatrix());
 	}
 
 	void SceneRunner::deinitialize()
@@ -101,9 +100,9 @@ namespace OrbitEngine {	namespace Engine {
 
 		if (transform) {
 			for (Component* component : obj->getComponents()) {
-				if (component->getTypeID() == metacpp::TypeInfo<MeshRenderer>::ID) {
-					m_Renderer3D->submitMesh(sphereMesh, sphereMesh->getIBO()->getSize(), mat, transform->getMatrix());
-				}
+				//if (component->getTypeID() == metacpp::TypeInfo<MeshRenderer>::ID) {
+				//	m_Renderer3D->submitMesh(sphereMesh, sphereMesh->getIBO()->getSize(), mat, transform->getMatrix());
+				//}
 			}
 		}
 

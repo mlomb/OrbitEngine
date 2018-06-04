@@ -3,7 +3,6 @@
 
 #include "OE/Config.hpp"
 
-#include "OE/Misc/OEObject.hpp"
 #include "OE/Misc/GUID.hpp"
 
 namespace OrbitEngine {	namespace Engine {

@@ -10,9 +10,7 @@
 
 namespace OrbitEngine {	namespace Engine {
 
-	class REFLECT EulerCameraController : public Component {
-		OEOBJECT(EulerCameraController)
-
+	class EulerCameraController : public Component {
 	public:
 		EulerCameraController();
 		~EulerCameraController();
@@ -24,8 +22,8 @@ namespace OrbitEngine {	namespace Engine {
 		Camera* m_Camera;
 		Math::Vec3f m_DestPosition;
 
-		Misc::Property<float> m_MovementSpeed;
-		Misc::Property<float> m_MouseSpeed;
+		float m_MovementSpeed;
+		float m_MouseSpeed;
 	};
 } }
 

@@ -143,8 +143,8 @@ namespace OrbitEngine { namespace Graphics {
 			}
 #endif
 			std::vector<Texture*> colorBuffers = m_GBuffer->getColorTextures();
-			for (size_t i = 0; i < colorBuffers.size(); i++)
-				colorBuffers[i]->bind(i);
+			for (unsigned int i = 0; i < colorBuffers.size(); i++)
+				colorBuffers[int(i)]->bind(i);
 
 			if (p_Skybox) {
 				if (p_Skybox->getPrefilteredEnviromentMap())

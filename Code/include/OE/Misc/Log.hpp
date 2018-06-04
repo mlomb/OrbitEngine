@@ -6,6 +6,9 @@
 #if OE_ANDROID
 	#include "OE/Platform/Android/Android.hpp"
 #endif
+#if OE_WINDOWS
+	#include "OE/Platform/Windows/Windows.hpp"
+#endif
 
 #include <sstream>
 #include <cstring>

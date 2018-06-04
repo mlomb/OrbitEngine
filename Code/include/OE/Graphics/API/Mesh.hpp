@@ -50,7 +50,7 @@ namespace OrbitEngine {	namespace Graphics {
 	Mesh* Mesh::Create(const std::vector<Vertex>& vertices, VertexLayout* layout, const std::vector<unsigned short>& indices)
 	{
 		void* verticesPtr = (void*)vertices.data();
-		unsigned int vertexSize = sizeof(Vertex) * vertices.size();
+		unsigned int vertexSize = (unsigned int)sizeof(Vertex) * (unsigned int)vertices.size();
 
 		return Create(verticesPtr, vertexSize, layout, indices);
 	}

@@ -15,7 +15,7 @@ namespace OrbitEngine {
 
 #define ITERATE_ALL_COMPONENTS_BEGIN \
 	for (auto& kv : m_Scene->getAllObjects()) { \
-	if (storage->isDerived(kv.first, metacpp::TypeInfo<Component>::ID)) { \
+	if (storage->IsDerived(kv.first, metacpp::TypeInfo<Component>::ID)) { \
 		Misc::TrackedMemoryPool* components = static_cast<Misc::TrackedMemoryPool*>(kv.second); \
 		auto it_begin = components->begin(); \
 		auto it_end = components->end(); \

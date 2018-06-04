@@ -3,10 +3,13 @@
 #include "OE/Engine/Transform.hpp"
 #include "OE/Engine/TestComponent.hpp"
 
+#include "OE/Math/Math.hpp"
+
 namespace OrbitEngine {	namespace Engine {
 	SceneObject::SceneObject()
 		: m_Childs(std::vector<SceneObject*>()), m_Parent(0)
 	{
+		memset(&m_Test, 0, sizeof(Test));
 	}
 
 	SceneObject::~SceneObject()
@@ -16,13 +19,7 @@ namespace OrbitEngine {	namespace Engine {
 
 	SceneObject* SceneObject::addChildren(const std::string& name)
 	{
-#if OE_EDITOR
-		// beginInsertRows
-		//if(internal_EditorBeginInsert)
-		//	internal_EditorBeginInsert(childCount(), this);
-#endif
-
-		SceneObject* sceneObject = m_Scene->allocateObject<SceneObject>();
+		SceneObject* sceneObject = new SceneObject();
 		if (!sceneObject) {
 			OE_LOG_WARNING("Can't allocate more SceneObjects!");
 			return 0;
@@ -34,18 +31,7 @@ namespace OrbitEngine {	namespace Engine {
 		sceneObject->setName(name);
 		sceneObject->addComponent<Transform>();
 
-#if OE_EDITOR
-		sceneObject->internal_EditorBeginInsert = internal_EditorBeginInsert;
-		sceneObject->internal_EditorEndInsert = internal_EditorEndInsert;
-#endif
-
 		m_Childs.push_back(sceneObject);
-
-#if OE_EDITOR
-		// endInsertRows
-		//if (internal_EditorEndInsert)
-		//	internal_EditorEndInsert();
-#endif
 
 		return sceneObject;
 	}
@@ -69,7 +55,7 @@ namespace OrbitEngine {	namespace Engine {
 
 	int SceneObject::childCount() const
 	{
-		return m_Childs.size();
+		return int(m_Childs.size());
 	}
 
 	std::vector<SceneObject*>& SceneObject::getChildrens()
@@ -82,7 +68,7 @@ namespace OrbitEngine {	namespace Engine {
 		return m_Components;
 	}
 
-	std::string SceneObject::getName()
+	std::string SceneObject::getName() const
 	{
 		return m_Name;
 	}
@@ -91,4 +77,47 @@ namespace OrbitEngine {	namespace Engine {
 	{
 		m_Name = name;
 	}
+
+	void SceneObject::parent(SceneObject* parent, int position) {
+		position = Math::clamp(position, 0, (int)(parent->m_Childs.size()) - 1);
+
+		auto it = std::find(m_Parent->m_Childs.begin(), m_Parent->m_Childs.end(), this);
+
+		if (parent == m_Parent) {
+			if (position == it - m_Parent->m_Childs.begin()) {
+				return;
+			}
+		}
+
+		m_Parent->m_Childs.erase(it);
+
+
+		parent->m_Childs.insert(parent->m_Childs.begin() + position, this);
+		m_Parent = parent;
+	}
+
+	NATIVE_REFLECTION_BEGIN(Test)
+		NATIVE_REFLECTION_MEMBER(b)
+		NATIVE_REFLECTION_MEMBER(c)
+		NATIVE_REFLECTION_MEMBER(i)
+		NATIVE_REFLECTION_MEMBER(ui)
+		NATIVE_REFLECTION_MEMBER(l)
+		NATIVE_REFLECTION_MEMBER(ll)
+		NATIVE_REFLECTION_MEMBER(ul)
+		NATIVE_REFLECTION_MEMBER(ull)
+		NATIVE_REFLECTION_MEMBER(d)
+		NATIVE_REFLECTION_MEMBER(f)
+		NATIVE_REFLECTION_MEMBER(v2i)
+		NATIVE_REFLECTION_MEMBER(v3i)
+		NATIVE_REFLECTION_MEMBER(v4i)
+		NATIVE_REFLECTION_MEMBER(v2f)
+		NATIVE_REFLECTION_MEMBER(v3f)
+		NATIVE_REFLECTION_MEMBER(v4f)
+		NATIVE_REFLECTION_MEMBER(str)
+	NATIVE_REFLECTION_END()
+
+	NATIVE_REFLECTION_BEGIN(SceneObject)
+		NATIVE_REFLECTION_MEMBER(m_Name)
+		NATIVE_REFLECTION_MEMBER(m_Test)
+	NATIVE_REFLECTION_END()
 } }

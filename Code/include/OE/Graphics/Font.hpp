@@ -8,6 +8,8 @@
 #include "OE/Math/Vec2.hpp"
 #include "OE/Math/UV.hpp"
 
+#include "OE/Graphics/API/Texture.hpp"
+
 #define OE_FONT_START ' '
 #define OE_FONT_END   '~'
 #define OE_FONT_COUNT (OE_FONT_END - OE_FONT_START)

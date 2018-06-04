@@ -25,7 +25,7 @@ namespace OrbitEngine { namespace Graphics {
 
 		void render(Renderer3D* r3d, const Math::Mat4 &transform);
 		MeshEntry* getEntry(unsigned int i) const;
-		unsigned int getEntryCount() const { return m_Meshes.size(); };
+		unsigned int getEntryCount() const { return (unsigned int)m_Meshes.size(); };
 
 	private:
 		std::string m_Directory;

@@ -32,7 +32,7 @@ namespace OrbitEngine { namespace Misc {
 			m_Stack.push_back(obj);
 		else
 			m_Stack.push_back(nextStack(m_Stack[m_Stack.size() - 1], obj));
-		m_Index = m_Stack.size() - 1;
+		m_Index = (unsigned int)m_Stack.size() - 1;
 	}
 
 	template<class T>
@@ -40,7 +40,7 @@ namespace OrbitEngine { namespace Misc {
 	{
 		if (m_Stack.size() > 0) {
 			m_Stack.pop_back();
-			m_Index = m_Stack.size() - 1;
+			m_Index = (unsigned int)m_Stack.size() - 1;
 		}
 	}
 

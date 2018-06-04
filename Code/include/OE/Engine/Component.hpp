@@ -2,16 +2,12 @@
 #define ENGINE_COMPONENT_HPP
 
 #include "OE/Config.hpp"
-#include "OE/Misc/Property.hpp"
-#include "OE/Misc/OEObject.hpp"
 
 namespace OrbitEngine {	namespace Engine {
 	class Transform;
 	class SceneObject;
 
-	class REFLECT Component : public Misc::OEObject {
-		OEOBJECT(Component)
-
+	class Component {
 	public:
 		virtual ~Component();
 

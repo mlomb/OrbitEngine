@@ -2,7 +2,6 @@
 #define GRAPHICS_RENDERER_HPP
 
 #include "OE/Math/Mat4.hpp"
-#include "OE/Misc/Camera.hpp"
 #include "OE/Graphics/API/UniformsPack.hpp"
 
 namespace OrbitEngine { namespace Graphics {

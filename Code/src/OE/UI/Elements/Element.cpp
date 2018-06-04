@@ -3,6 +3,7 @@
 #include "OE/Graphics/2D/PathRenderer2D.hpp"
 #include "OE/UI/Fitters/Fitter.hpp"
 #include "OE/UI/Elements/Canvas.hpp"
+#include "OE/UI/Layouts/Layout.hpp"
 
 namespace OrbitEngine { namespace UI {
 	Element::Element()

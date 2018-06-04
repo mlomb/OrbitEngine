@@ -97,7 +97,7 @@ namespace OrbitEngine { namespace Graphics {
 		paint.paintMat = Math::Mat4::Translation(position);
 		paint.extent = size;
 		paint.innerColor = paint.outerColor = Math::Vec4f(1, 1, 1, 1);
-		paint.texid = texture;
+		paint.texid = (float)texture;
 
 		return paint;
 	}

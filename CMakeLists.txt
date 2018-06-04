@@ -4,7 +4,6 @@ project(OrbitEngine C CXX)
 
 # Options
 option(OE_EDITOR_INTERNAL OFF)
-option(OE_BUILD_METACPPCLI OFF)
 
 include(CMake/Config.cmake)
 include(CMake/Tools.cmake)
@@ -30,12 +29,6 @@ configure_file(${INC_DIR}/OE/Config.hpp.in
 add_subdirectory(Dependencies/FreeType)
 add_subdirectory(Dependencies/FreeImage)
 
-if(OE_BUILD_METACPPCLI)
-	add_subdirectory(Dependencies/MetaCPP/MetaCPP-CLI)
-else()
-	add_subdirectory(Dependencies/MetaCPP/MetaCPP)
-endif()
-
 option(XSC_BUILD_SHELL "" OFF) # Don't build XSC shell
 add_subdirectory(Dependencies/XShaderCompiler)
 
@@ -60,10 +53,14 @@ file(GLOB_RECURSE SRC ${INC_DIR}/OE/Misc/*.hpp
                       ${SRC_DIR}/OE/Math/*.cpp
                       ${INC_DIR}/OE/Graphics/*.hpp
                       ${SRC_DIR}/OE/Graphics/*.cpp
+                      ${INC_DIR}/OE/Meta/*.hpp
+                      ${SRC_DIR}/OE/Meta/*.cpp
                       ${INC_DIR}/OE/Application/*.hpp
                       ${SRC_DIR}/OE/Application/*.cpp
                       ${INC_DIR}/OE/Engine/*.hpp
                       ${SRC_DIR}/OE/Engine/*.cpp
+                      ${INC_DIR}/OE/Scripting/*.hpp
+                      ${SRC_DIR}/OE/Scripting/*.cpp
                       ${INC_DIR}/OE/System/*.hpp
                       ${SRC_DIR}/OE/System/*.hpp
                       ${SRC_DIR}/OE/System/*.cpp
@@ -163,7 +160,7 @@ list(APPEND OE_LIBRARIES
 	FreeImage
 	xsc_core
 	assimp
-	MetaCPP
+	${MONO_LIBRARY_DIR}/${MONO_LIBRARIES}
 )
 list(APPEND OE_LIBRARIES_INC
 	${freetype_SOURCE_DIR}/include
@@ -171,8 +168,7 @@ list(APPEND OE_LIBRARIES_INC
     ${XShaderCompiler_SOURCE_DIR}/inc
     ${Assimp_SOURCE_DIR}/include
     ${Assimp_BINARY_DIR}/include
-    ${MetaCPP_SOURCE_DIR}/include
-    ${MetaCPP_SOURCE_DIR}/../External/mustache # for some reason CMake does not catch this dependency
+	${MONO_INCLUDE_DIR}
 )
 
 target_compile_definitions(FreeImage PUBLIC FREEIMAGE_LIB)
@@ -226,12 +222,13 @@ if(EMSCRIPTEN)
     target_link_libraries(OrbitEngine PUBLIC "--shell-file \"${CMAKE_CURRENT_SOURCE_DIR}\"/CMake/Emscripten/template.html")
 endif()
 
+# - Binaries -
+if(OE_WINDOWS)
+	list(APPEND OE_BINARIES
+		"${MONO_PATH}/bin/${MONO_N}.dll"
+	)
+	set(OE_BINARIES "${OE_BINARIES}" CACHE STRING "")
+endif()
+
 # C++11
 useCXX11(OrbitEngine)
-
-# Generate meta
-include(Dependencies/MetaCPP/CMake/MetaPrebuild.cmake)
-set(METACPP_FLAGS "")
-#set(METACPP_FLAGS "${METACPP_FLAGS} --flag -D__REFLECT__")
- #"--reflection-annotation=reflect"
-meta_generate(OrbitEngine "Code/src/OE/Misc/ToReflect.hpp" "${BIN_DIR}/Generated.hpp" "${BIN_DIR}/Generated.cpp" "")

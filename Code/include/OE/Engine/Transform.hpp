@@ -9,16 +9,14 @@
 
 namespace OrbitEngine {	namespace Engine {
 
-	class REFLECT Transform : public Component {
-		OEOBJECT(Transform)
-
+	class Transform : public Component {
 	public:
 		Transform();
 		~Transform();
 
-		Misc::Property<Math::Vec3f> Position;
-		Misc::Property<Math::Vec3f> Rotation;
-		Misc::Property<Math::Vec3f> Scale;
+		Math::Vec3f Position;
+		Math::Vec3f Rotation;
+		Math::Vec3f Scale;
 
 		Math::Mat4 getMatrix();
 

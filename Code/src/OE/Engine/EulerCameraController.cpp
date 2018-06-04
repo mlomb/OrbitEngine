@@ -17,7 +17,7 @@ namespace OrbitEngine {	namespace Engine {
 
 	void EulerCameraController::awake()
 	{
-		m_Camera = static_cast<Camera*>(*(p_SceneObject->getScene()->getObjects<Camera>().first)); // TODO
+		//m_Camera = static_cast<Camera*>(*(p_SceneObject->getScene()->getObjects<Camera>().first)); // TODO
 	}
 
 	void EulerCameraController::update(float delta)

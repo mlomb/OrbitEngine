@@ -54,6 +54,8 @@ namespace OrbitEngine {	namespace Graphics {
 		case DIRECT3D:
 			return new D3DShaderReflection();
 #endif
+		default:
+			return nullptr;
 		}
 	}
 } }

@@ -5,7 +5,7 @@
 namespace OrbitEngine { namespace Graphics {
 	Mesh* MeshGenerator::FromVertexs(std::vector<Vertex3D>& verts, float size)
 	{
-		std::vector<unsigned short> triangles = Mesh::GenerateIndices(Topology::TRIANGLES, verts.size());
+		std::vector<unsigned short> triangles = Mesh::GenerateIndices(Topology::TRIANGLES, (unsigned int)verts.size());
 		return FromVertexs(verts, triangles, size);
 	}
 
@@ -93,7 +93,7 @@ namespace OrbitEngine { namespace Graphics {
 			{ p7, Math::Vec3f::Up() },{ p6, Math::Vec3f::Up() },{ p5, Math::Vec3f::Up() },{ p4, Math::Vec3f::Up() },
 		};
 
-		for (size_t i = 0; i < vertices.size(); i++)
+		for (int i = 0; i < int(vertices.size()); i++)
 			vertices[i].uv = Math::UV_Default.getUV(i);
 
 		return FromVertexs(vertices);
@@ -161,9 +161,9 @@ namespace OrbitEngine { namespace Graphics {
 		//Bottom Cap
 		for (unsigned int lon = 0; lon < slices; lon++)
 		{
-			triangles[i++] = vertices.size() - 1;
-			triangles[i++] = vertices.size() - (lon + 2) - 1;
-			triangles[i++] = vertices.size() - (lon + 1) - 1;
+			triangles[i++] = (unsigned short)vertices.size() - 1;
+			triangles[i++] = (unsigned short)vertices.size() - (lon + 2) - 1;
+			triangles[i++] = (unsigned short)vertices.size() - (lon + 1) - 1;
 		}
 
 		return FromVertexs(vertices, triangles);

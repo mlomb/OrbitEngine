@@ -25,7 +25,7 @@ namespace OrbitEngine {	namespace UI {
 		r2d.beginPath();
 		r2d.roundedRect(start, size, Math::Vec4f(2,2,0,0));
 		r2d.closePath();
-		r2d.fillColor(Math::Vec4f(0.4, 0.4, 0.4, 1));
+		r2d.fillColor(Math::Vec4f(0.4f, 0.4f, 0.4f, 1.0f));
 		r2d.fill();
 	}
 } }

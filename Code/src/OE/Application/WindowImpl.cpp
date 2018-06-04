@@ -2,6 +2,8 @@
 
 #include "OE/Application/InputManager.hpp"
 
+#include "OE/Application/ContextImpl.hpp"
+
 namespace OrbitEngine {	namespace Application { namespace priv {
 	
 	WindowImpl::WindowImpl(WindowProperties properties)

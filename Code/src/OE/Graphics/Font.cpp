@@ -26,8 +26,9 @@ namespace OrbitEngine { namespace Graphics {
 			OE_LOG_INFO("FreeType initialized");
 		}
 
+		m_Instance = 0;
 		m_FileBuffer = System::File::LoadFile(file);
-		FT_New_Memory_Face(Font::s_FTLibrary, (FT_Byte*)m_FileBuffer.data(), m_FileBuffer.size(), 0, &m_Face);
+		FT_New_Memory_Face(Font::s_FTLibrary, (FT_Byte*)m_FileBuffer.data(), (FT_Long)m_FileBuffer.size(), 0, &m_Face);
 	}
 
 	Font::~Font() {
@@ -109,7 +110,7 @@ namespace OrbitEngine { namespace Graphics {
 
 			for (char k = OE_FONT_START; k <= OE_FONT_END; ++k) {
 				FT_Get_Kerning(m_Face, cind, FT_Get_Char_Index(m_Face, k), FT_KERNING_UNFITTED, &kerning);
-				if (kerning.x != 0) instance->m_Kernings.insert(std::pair<std::pair<unsigned char, unsigned char>, float>(std::pair<unsigned char, unsigned char>(c, k), kerning.x >> 6));
+				if (kerning.x != 0) instance->m_Kernings.insert(std::pair<std::pair<unsigned char, unsigned char>, float>(std::pair<unsigned char, unsigned char>(c, k), (float)(kerning.x >> 6)));
 			}
 		}
 

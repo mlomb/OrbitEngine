@@ -100,7 +100,7 @@ namespace OrbitEngine { namespace System {
 #if OE_ANDROID
 		return AAsset_seek(m_Data, offset, origin) != -1;
 #else
-		return ::fseek(m_Data, offset, origin) == 0;
+		return ::fseek(m_Data, (long)offset, origin) == 0;
 #endif
 	}
 

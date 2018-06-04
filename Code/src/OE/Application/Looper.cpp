@@ -36,7 +36,6 @@ namespace OrbitEngine { namespace Application {
 	void Looper::stop()
 	{
 		m_Running = false;
-		m_Initialized = false;
 #if OE_EMSCRIPTEN
 		emscripten_cancel_main_loop();
 #endif
@@ -83,6 +82,7 @@ namespace OrbitEngine { namespace Application {
 		if (m_Initialized && !m_Running) { // move this
 			if (m_Loopeable)
 				m_Loopeable->deinitialize();
+			m_Initialized = false;
 		}
 	}
 	

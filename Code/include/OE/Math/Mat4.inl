@@ -322,7 +322,7 @@ namespace OrbitEngine { namespace Math {
 		if (det == 0)
 			return Mat4(); // Mat4() or matrix?
 
-		det = 1.0 / det;
+		det = 1.0f / det;
 
 		Mat4 result;
 

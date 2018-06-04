@@ -7,9 +7,7 @@
 
 namespace OrbitEngine {	namespace Engine {
 
-	class REFLECT Texture : public Resource<Texture> {
-		OEOBJECT(Texture)
-
+	class Texture : public Resource<Texture> {
 	public:
 		Texture();
 		~Texture();

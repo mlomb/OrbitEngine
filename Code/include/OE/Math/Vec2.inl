@@ -93,32 +93,32 @@ namespace OrbitEngine { namespace Math {
 	
 	template<typename T> inline Vec2<T> operator+(const Vec2<T>& a, const Vec2<T>& b)
 	{
-		return Vec2<T>(a.x + b.x,
-					   a.y + b.y);
+		return Vec2<T>((T)(a.x + b.x),
+					   (T)(a.y + b.y));
 	}
 
 	template<typename T, typename U> inline Vec2<T> operator-(const Vec2<T>& a, const Vec2<U>& b)
 	{
-		return Vec2<T>(a.x - b.x,
-					   a.y - b.y);
+		return Vec2<T>((T)(a.x - b.x),
+					   (T)(a.y - b.y));
 	}
 
 	template<typename T> inline Vec2<T> operator*(const Vec2<T>& a, const Vec2<T>& b)
 	{
-		return Vec2<T>(a.x * b.x,
-					   a.y * b.y);
+		return Vec2<T>((T)(a.x * b.x),
+					   (T)(a.y * b.y));
 	}
 
 	template<typename T> inline Vec2<T> operator/(const Vec2<T>& a, const Vec2<T>& b)
 	{
-		return Vec2<T>(a.x / b.x,
-					   a.y / b.y);
+		return Vec2<T>((T)(a.x / b.x),
+					   (T)(a.y / b.y));
 	}
 
 	template<typename T> inline Vec2<T> operator+(const Vec2<T>& a, const T& b)
 	{
-		return Vec2<T>(a.x + b,
-					   a.y + b);
+		return Vec2<T>((T)(a.x + b),
+					   (T)(a.y + b));
 	}
 
 	template<typename T> inline Vec2<T> operator+(const T& a, const Vec2<T>& b)
@@ -128,8 +128,8 @@ namespace OrbitEngine { namespace Math {
 
 	template<typename T> inline Vec2<T> operator*(const Vec2<T>& a, const T& b)
 	{
-		return Vec2<T>(a.x * b,
-					   a.y * b);
+		return Vec2<T>((T)(a.x * b),
+					   (T)(a.y * b));
 	}
 
 	template<typename T> inline Vec2<T> operator*(const T& a, const Vec2<T>& b)
@@ -139,26 +139,26 @@ namespace OrbitEngine { namespace Math {
 
 	template<typename T> inline Vec2<T> operator-(const Vec2<T>& a, const T& b)
 	{
-		return Vec2<T>(a.x - b,
-					   a.y - b);
+		return Vec2<T>((T)(a.x - b),
+					   (T)(a.y - b));
 	}
 
 	template<typename T> inline Vec2<T> operator-(const T& a, const Vec2<T>& b)
 	{
-		return Vec2<T>(a - b.x,
-					   a - b.y);
+		return Vec2<T>((T)(a - b.x),
+					   (T)(a - b.y));
 	}
 
 	template<typename T> inline Vec2<T> operator/(const Vec2<T>& a, const T& b)
 	{
-		return Vec2<T>(a.x / b,
-					   a.y / b);
+		return Vec2<T>((T)(a.x / b),
+					   (T)(a.y / b));
 	}
 
 	template<typename T> inline Vec2<T> operator/(const T& a, const Vec2<T>& b)
 	{
-		return Vec2<T>(a / b.x,
-					   a / b.y);
+		return Vec2<T>((T)(a / b.x),
+					   (T)(a / b.y));
 	}
 
 	// --

@@ -62,7 +62,7 @@ namespace OrbitEngine {	namespace Graphics {
 			indices.resize(total);
 
 			int t = 0;
-			for (int n = 2; n < verticesCount; ++n) {
+			for (int n = 2; n < int(verticesCount); ++n) {
 				indices[t++] = 0;
 				indices[t++] = n - 1;
 				indices[t++] = n;
@@ -79,7 +79,7 @@ namespace OrbitEngine {	namespace Graphics {
 	{
 		p_VBO = Buffer::CreateVertexBuffer(layout, vertexSize, vertices);
 		if(indices.size() > 0)
-			p_IBO = Buffer::CreateIndexBuffer(sizeof(unsigned short) * indices.size(), indices.data());
+			p_IBO = Buffer::CreateIndexBuffer(sizeof(unsigned short) * (unsigned int)indices.size(), indices.data());
 	}
 
 	Mesh::~Mesh()

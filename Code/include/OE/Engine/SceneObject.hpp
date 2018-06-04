@@ -6,21 +6,41 @@
 #include <unordered_map>
 #include <functional>
 
-#include <MetaCPP/TypeID.hpp>
-#include <MetaCPP/TypeInfo.hpp>
-#include <MetaCPP/Runtime.hpp>
+#include "OE/Meta/NativeReflection.hpp"
 
 #include "OE/Config.hpp"
 #include "OE/Misc/Log.hpp"
-#include "OE/Misc/Property.hpp"
-#include "OE/Misc/OEObject.hpp"
+#include "OE/Engine/Object.hpp"
 #include "OE/Engine/Scene.hpp"
 #include "OE/Engine/Component.hpp"
 
 namespace OrbitEngine {	namespace Engine {
 
-	class REFLECT SceneObject : public Misc::OEObject {
-		OEOBJECT(SceneObject)
+	struct Test {
+		NATIVE_REFLECTION()
+
+	public:
+		bool b;
+		char c;
+		int i;
+		unsigned int ui;
+		long l;
+		long long ll;
+		unsigned long ul;
+		unsigned long long ull;
+		double d;
+		float f;
+		Math::Vec2i v2i;
+		Math::Vec3i v3i;
+		Math::Vec4i v4i;
+		Math::Vec2f v2f;
+		Math::Vec3f v3f;
+		Math::Vec4f v4f;
+		std::string str;
+	};
+
+	class REFLECT SceneObject : public Object {
+		NATIVE_REFLECTION()
 
 	public:
 		SceneObject();
@@ -37,13 +57,15 @@ namespace OrbitEngine {	namespace Engine {
 		int childCount() const;
 		std::vector<SceneObject*>& getChildrens();
 		std::vector<Component*>& getComponents();
-		std::string getName();
+		std::string getName() const;
 		void setName(const std::string& name);
+		void parent(SceneObject* parent, int position = 99999999);
 
 		template<typename T>
 		T* getComponent();
 
-		Misc::Property<std::string> m_Name;
+		Test m_Test;
+		std::string m_Name;
 	private:
 		friend class Scene;
 
@@ -51,19 +73,12 @@ namespace OrbitEngine {	namespace Engine {
 		SceneObject* m_Parent;
 		std::vector<SceneObject*> m_Childs;
 		std::vector<Component*> m_Components;
-
-#if OE_EDITOR
-	public:
-		void* internal_EditorIndex = 0;
-		std::function<void(int, SceneObject*)> internal_EditorBeginInsert;
-		std::function<void()> internal_EditorEndInsert;
-#endif
 	};
 
 	template<typename T>
 	inline T* SceneObject::addComponent()
 	{
-		T* component = m_Scene->allocateObject<T>();
+		T* component = new T();
 		component->p_SceneObject = this;
 		m_Components.push_back(component);
 		return component;

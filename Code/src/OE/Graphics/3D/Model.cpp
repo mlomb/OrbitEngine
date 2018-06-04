@@ -200,7 +200,7 @@ namespace OrbitEngine { namespace Graphics {
 		meshEntry->material = material;
 
 		meshEntry->mesh = Mesh::Create<Vertex3D>(vertices, Renderer3D::GetVertex3DLayout(), indices);
-		meshEntry->count = indices.size();
+		meshEntry->count = (unsigned int)indices.size();
 
 		vertices.clear();
 		indices.clear();

@@ -12,8 +12,7 @@
 
 namespace OrbitEngine {	namespace Engine {
 
-	class REFLECT Camera : public Component {
-		OEOBJECT(Camera)
+	class Camera : public Component {
 	public:
 		enum Projection {
 			ORTHOGRAPHIC,
@@ -30,7 +29,7 @@ namespace OrbitEngine {	namespace Engine {
 		Math::Mat4 getVPMatrix();
 
 	private:
-		Misc::Property<Projection> m_Projection;
+		Projection m_Projection;
 
 		Math::Mat4 m_ProjectionMatrix;
 		Math::Mat4 m_ViewMatrix;

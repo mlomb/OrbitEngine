@@ -225,7 +225,7 @@ namespace OrbitEngine { namespace Graphics {
 			m_TrianglesCall = nullptr;
 			pushCall(temp);
 		}
-		call->data.scissor = Math::Vec4f(p_ScissorStack->get().rect.x, p_ScissorStack->get().rect.y, p_ScissorStack->get().rect.z, p_ScissorStack->get().rect.w);
+		call->data.scissor = Math::Vec4f((float)p_ScissorStack->get().rect.x, (float)p_ScissorStack->get().rect.y, (float)p_ScissorStack->get().rect.z, (float)p_ScissorStack->get().rect.w);
 		m_RenderCalls.push_back(call);
 	}
 
