@@ -2,10 +2,7 @@
 #define GRAPHICS_GLSTATES_HPP
 
 #include "OE/Graphics/API/States.hpp"
-
-namespace {
-	typedef unsigned int GLenum;
-}
+#include "OE/Platform/OpenGL/OpenGL.hpp"
 
 namespace OrbitEngine { namespace Graphics {
 	class GLStates : public States {
