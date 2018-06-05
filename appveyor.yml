@@ -2,6 +2,7 @@ version: v{build}
 image:
 - Ubuntu
 - Visual Studio 2015
+configuration: Release
 install:
 - sh: sudo apt-get -y install uuid-dev libgles1-mesa mesa-utils-extra libgles2-mesa-dev mesa-utils freeglut3-dev mesa-common-dev
 - git submodule update --init --recursive

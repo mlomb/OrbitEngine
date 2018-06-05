@@ -52,6 +52,8 @@ matrix:
     - os: osx
     # I can't get Android to work
     - env: CONFIG=Android
+    # Emscripten with Mono its a lot of work ahead :/
+    - env: CONFIG=Emscripten
   include:
     - env: CONFIG=Android
       language: generic
