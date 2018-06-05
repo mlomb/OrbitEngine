@@ -1,6 +1,8 @@
 #ifndef META_VARIANT_HPP
 #define META_VARIANT_HPP
 
+#include <string.h>
+
 #include "OE/Math/Vec2.hpp"
 #include "OE/Math/Vec3.hpp"
 #include "OE/Math/Vec4.hpp"

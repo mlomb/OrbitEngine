@@ -44,7 +44,7 @@ MonoClassField* MonoMapping::FIELD_##className##_##fieldName = nullptr;
 
 /* -------- ADD CALL -------- */
 #define MONO_ADD_CALL(nameSpace, className, methodName, callName) \
-mono_add_internal_call((std::string() + ""#nameSpace + "." + ""#className + "::"#methodName).c_str(), INTERNAL_CALL_##callName);
+mono_add_internal_call((std::string() + ""#nameSpace + "." + ""#className + "::"#methodName).c_str(), reinterpret_cast<const void*>(INTERNAL_CALL_##callName));
 
 #define MONO_ADD_INTERNAL_CALL(nameSpace, className, methodName) \
 MONO_ADD_CALL(nameSpace, className, INTERNAL_CALL_##methodName, methodName)

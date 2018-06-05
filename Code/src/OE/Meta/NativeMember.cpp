@@ -79,7 +79,7 @@ namespace OrbitEngine { namespace Meta {
 		NATIVE_MEMBER_SET(VEC4_FLOAT, Math::Vec4f, GetVec4f);
 		case Kind::STRING:
 			std::string* str = static_cast<std::string*>(ptr);
-			str->swap(value.GetString());
+			*str = value.GetString();
 			break;
 		}
 	}

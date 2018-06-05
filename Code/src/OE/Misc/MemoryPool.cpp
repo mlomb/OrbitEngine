@@ -1,6 +1,7 @@
 #include "OE/Misc/MemoryPool.hpp"
 
 #include <iostream>
+#include <string.h>
 
 namespace OrbitEngine {	namespace Misc {
 	MemoryPool::MemoryPool(unsigned long long size, int capacity)

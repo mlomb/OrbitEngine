@@ -1,6 +1,8 @@
 #ifndef META_NATIVE_RELFECTION
 #define META_NATIVE_RELFECTION
 
+#include <stddef.h>
+
 #include "OE/Meta/ReflectionDatabase.hpp"
 
 #include "OE/Meta/NativeType.hpp"
