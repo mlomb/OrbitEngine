@@ -3,7 +3,7 @@ image:
 - Ubuntu
 - Visual Studio 2015
 install:
-- sh: sudo apt-get install uuid-dev
+- sh: sudo apt-get install uuid-dev libgles1-mesa mesa-utils-extra libgles2-mesa-dev mesa-utils 
 - git submodule update --init --recursive
 before_build:
 - cmd: powershell -command ". \"Tools/Build/Windows/build_windows.ps1\""
