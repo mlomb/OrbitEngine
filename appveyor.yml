@@ -13,4 +13,4 @@ build_script:
 - sh: make
 after_build:
 - cmd: appveyor PushArtifact Build/Windows/Release/OrbitEngine.lib
-- sh: appveyor PushArtifact Build/Linux/libOrbitEngine.a
+- sh: appveyor PushArtifact libOrbitEngine.a

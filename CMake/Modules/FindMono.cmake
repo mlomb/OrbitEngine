@@ -1,5 +1,4 @@
 set(MONO_V "mono-2.0")
-set(MONO_N "${MONO_V}-sgen")
 
 find_path(
 	MONO_PATH
@@ -12,6 +11,13 @@ find_path(
 
 set(MONO_INCLUDE_DIR "${MONO_PATH}/include/${MONO_V}")
 set(MONO_LIBRARY_DIR "${MONO_PATH}/lib")
+
+if(EXISTS "${MONO_LIBRARY_DIR}/${MONO_V}-sgen.lib")
+	set(MONO_N "${MONO_V}-sgen")
+else()
+	set(MONO_N "monosgen-2.0")
+endif()
+
 set(MONO_LIBRARIES   "${MONO_N}.lib")
 
 message("Mono Path: ${MONO_PATH}")
