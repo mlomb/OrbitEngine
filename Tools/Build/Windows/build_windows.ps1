@@ -5,5 +5,5 @@ $ScriptRoot = Split-Path $MyInvocation.MyCommand.Path
 echo "********** BUILDING FOR WINDOWS ON WINDOWS **********"
 
 Push-Location $buildPath
-cmake.exe "$basePath"
+cmake -DCMAKE_BUILD_TYPE=Release "$basePath"
 Pop-Location

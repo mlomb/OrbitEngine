@@ -10,4 +10,4 @@ echo "Build Path: $BuildRoot"
 
 mkdir -p "$BuildRoot"
 cd "$BuildRoot"
-cmake "$ScriptRoot"
+cmake -DCMAKE_BUILD_TYPE=Release "$ScriptRoot"

@@ -3,7 +3,7 @@
 #include <iostream>
 
 namespace OrbitEngine {	namespace Misc {
-	MemoryPool::MemoryPool(size_t size, int capacity)
+	MemoryPool::MemoryPool(unsigned long long size, int capacity)
 		: m_Size(size), m_Capacity(capacity)
 	{
 		m_Memory = new unsigned char[m_Size * capacity];
@@ -45,7 +45,7 @@ namespace OrbitEngine {	namespace Misc {
 		++m_Free;
 	}
 
-	TrackedMemoryPool::TrackedMemoryPool(size_t size, int capacity)
+	TrackedMemoryPool::TrackedMemoryPool(unsigned long long size, int capacity)
 		: MemoryPool(size, capacity)
 	{
 		m_Used.resize(capacity);

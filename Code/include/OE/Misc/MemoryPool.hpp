@@ -6,14 +6,14 @@
 namespace OrbitEngine {	namespace Misc {
 	class MemoryPool {
 	public:
-		MemoryPool(size_t size, int capacity);
+		MemoryPool(unsigned long long size, int capacity);
 		virtual ~MemoryPool();
 
 		virtual void* allocate();
 		virtual void deallocate(void* ptr);
 
 	private:
-		size_t m_Size;
+		unsigned long long m_Size;
 		int m_Capacity;
 
 		int m_Free;
@@ -23,7 +23,7 @@ namespace OrbitEngine {	namespace Misc {
 
 	class TrackedMemoryPool : public MemoryPool {
 	public:
-		TrackedMemoryPool(size_t size, int capacity);
+		TrackedMemoryPool(unsigned long long size, int capacity);
 		~TrackedMemoryPool();
 
 		void* allocate() override;

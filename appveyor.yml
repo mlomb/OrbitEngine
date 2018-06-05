@@ -3,11 +3,14 @@ image:
 - Ubuntu
 - Visual Studio 2015
 install:
+- sh: sudo apt-get install uuid-dev
 - git submodule update --init --recursive
 before_build:
-- cmd: . "Tools/Build/Windows/build_windows.ps1"
+- cmd: powershell -command ". \"Tools/Build/Windows/build_windows.ps1\""
 - sh: . "Tools/Build/Linux/build.sh"
-build: off
 build_script:
-- cmd: msbuild Build/Windows/OrbitEngine.sln
-- sh: cd Build/Linux/ && make
+- cmd: msbuild Build/Windows/OrbitEngine.sln /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+- sh: make
+after_build:
+- cmd: appveyor PushArtifact Build/Windows/Release/OrbitEngine.lib
+- sh: appveyor PushArtifact Build/Linux/OrbitEngine.lib
