@@ -8,14 +8,12 @@ compiler:
   - gcc
   - clang
 
-mono:
-  - latest
-
 addons:
   apt:
     sources:
       - ubuntu-toolchain-r-test
       - llvm-toolchain-trusty
+      - mono-nightly
     packages:
       - mesa-utils-extra
       - libgles1-mesa
@@ -24,6 +22,7 @@ addons:
       - clang-3.9
       - libc++-dev
       - libc6-dev-i386
+      - mono-devel
 
 before_install:
   # Update the CMake version to 3.9 (no sudo)
