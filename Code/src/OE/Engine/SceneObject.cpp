@@ -7,81 +7,72 @@
 
 namespace OrbitEngine {	namespace Engine {
 	SceneObject::SceneObject()
-		: m_Childs(std::vector<SceneObject*>()), m_Parent(0)
+		: m_Name("SceneObject")
 	{
-		memset(&m_Test, 0, sizeof(Test));
 	}
 
 	SceneObject::~SceneObject()
 	{
-
+		m_Childs.clear();
 	}
 
-	SceneObject* SceneObject::addChildren(const std::string& name)
+	WeakPtr<Scene> SceneObject::GetScene() const
 	{
-		SceneObject* sceneObject = new SceneObject();
+		return m_Scene;
+	}
+
+	WeakPtr<SceneObject> SceneObject::GetParent() const
+	{
+		return m_Parent;
+	}
+
+	WeakPtr<SceneObject> SceneObject::GetChild(int i) const
+	{
+		if (i < 0 || i >= m_Childs.size())
+			return WeakPtr<SceneObject>();
+		return m_Childs[i];
+	}
+
+	int SceneObject::GetChildCount() const
+	{
+		return int(m_Childs.size());
+	}
+
+	std::string SceneObject::GetName() const
+	{
+		return m_Name;
+	}
+
+	WeakPtr<SceneObject> SceneObject::AddChildren()
+	{
+		StrongPtr<SceneObject> sceneObject = MemoryDomain::Get()->Allocate<SceneObject>();
 		if (!sceneObject) {
 			OE_LOG_WARNING("Can't allocate more SceneObjects!");
 			return 0;
 		}
 
-		sceneObject->m_Parent = this;
+		sceneObject->m_Self = sceneObject;
+		sceneObject->m_Parent = m_Self;
 		sceneObject->m_Scene = m_Scene;
-
-		sceneObject->setName(name);
-		sceneObject->addComponent<Transform>();
 
 		m_Childs.push_back(sceneObject);
 
 		return sceneObject;
 	}
 
-	Scene* SceneObject::getScene()
-	{
-		return m_Scene;
-	}
-
-	SceneObject* SceneObject::getParent()
-	{
-		return m_Parent;
-	}
-
-	SceneObject* SceneObject::childAt(int i)
-	{
-		if (i < 0 || i >= m_Childs.size())
-			return 0;
-		return m_Childs[i];
-	}
-
-	int SceneObject::childCount() const
-	{
-		return int(m_Childs.size());
-	}
-
-	std::vector<SceneObject*>& SceneObject::getChildrens()
-	{
-		return m_Childs;
-	}
-
-	std::vector<Component*>& SceneObject::getComponents()
-	{
-		return m_Components;
-	}
-
-	std::string SceneObject::getName() const
-	{
-		return m_Name;
-	}
-
-	void SceneObject::setName(const std::string& name)
+	void SceneObject::SetName(const std::string& name)
 	{
 		m_Name = name;
 	}
 
-	void SceneObject::parent(SceneObject* parent, int position) {
+	void SceneObject::SetParent(WeakPtr<SceneObject> parent, int position) {
 		position = Math::clamp(position, 0, (int)(parent->m_Childs.size()) - 1);
 
-		auto it = std::find(m_Parent->m_Childs.begin(), m_Parent->m_Childs.end(), this);
+		auto it = std::find_if(m_Parent->m_Childs.begin(), m_Parent->m_Childs.end(), [this](StrongPtr<SceneObject> i) {
+			return i.Get() == this;
+		});
+		OE_ASSERT(it != m_Parent->m_Childs.end());
+		StrongPtr<SceneObject> me = *it;
 
 		if (parent == m_Parent) {
 			if (position == it - m_Parent->m_Childs.begin()) {
@@ -91,33 +82,11 @@ namespace OrbitEngine {	namespace Engine {
 
 		m_Parent->m_Childs.erase(it);
 
-
-		parent->m_Childs.insert(parent->m_Childs.begin() + position, this);
+		parent->m_Childs.insert(parent->m_Childs.begin() + position, me);
 		m_Parent = parent;
 	}
-
-	NATIVE_REFLECTION_BEGIN(Test)
-		NATIVE_REFLECTION_MEMBER(b)
-		NATIVE_REFLECTION_MEMBER(c)
-		NATIVE_REFLECTION_MEMBER(i)
-		NATIVE_REFLECTION_MEMBER(ui)
-		NATIVE_REFLECTION_MEMBER(l)
-		NATIVE_REFLECTION_MEMBER(ll)
-		NATIVE_REFLECTION_MEMBER(ul)
-		NATIVE_REFLECTION_MEMBER(ull)
-		NATIVE_REFLECTION_MEMBER(d)
-		NATIVE_REFLECTION_MEMBER(f)
-		NATIVE_REFLECTION_MEMBER(v2i)
-		NATIVE_REFLECTION_MEMBER(v3i)
-		NATIVE_REFLECTION_MEMBER(v4i)
-		NATIVE_REFLECTION_MEMBER(v2f)
-		NATIVE_REFLECTION_MEMBER(v3f)
-		NATIVE_REFLECTION_MEMBER(v4f)
-		NATIVE_REFLECTION_MEMBER(str)
-	NATIVE_REFLECTION_END()
-
+	
 	NATIVE_REFLECTION_BEGIN(SceneObject)
 		NATIVE_REFLECTION_MEMBER(m_Name)
-		NATIVE_REFLECTION_MEMBER(m_Test)
 	NATIVE_REFLECTION_END()
 } }

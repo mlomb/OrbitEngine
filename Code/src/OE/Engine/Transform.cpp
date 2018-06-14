@@ -31,9 +31,9 @@ namespace OrbitEngine {	namespace Engine {
 
 			m_Matrix = Math::Mat4::Identity();
 			if (p_SceneObject) {
-				SceneObject* parent = p_SceneObject->getParent();
-				if (parent && parent->getParent() != 0 /* is not the root */)
-					m_Matrix = parent->getComponent<Transform>()->getMatrix();
+				//SceneObject* parent = p_SceneObject->getParent();
+				//if (parent && parent->getParent() != 0 /* is not the root */)
+				//	m_Matrix = parent->getComponent<Transform>()->getMatrix();
 			}
 
 			m_Matrix = m_Matrix * Math::Mat4::Translation(Position);

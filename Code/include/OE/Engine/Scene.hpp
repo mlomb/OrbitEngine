@@ -13,15 +13,16 @@ namespace OrbitEngine {	namespace Engine {
 	class SceneObject;
 
 	class Scene : public Object {
+		NATIVE_REFLECTION
 
 	public:
 		Scene();
 		~Scene();
 
-		SceneObject* GetRoot();
+		WeakPtr<SceneObject> GetRoot();
 
 	private:
-		SceneObject* m_Root;
+		StrongPtr<SceneObject> m_Root;
 	};
 } }
 

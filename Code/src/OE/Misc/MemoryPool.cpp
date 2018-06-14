@@ -1,6 +1,7 @@
 #include "OE/Misc/MemoryPool.hpp"
 
 #include <iostream>
+#include <algorithm>
 #include <string.h>
 
 namespace OrbitEngine {	namespace Misc {
@@ -25,7 +26,7 @@ namespace OrbitEngine {	namespace Misc {
 		m_Memory = 0;
 	}
 
-	void* MemoryPool::allocate()
+	void* MemoryPool::Allocate()
 	{
 		void* ptr = 0;
 		if (m_Free > 0) {
@@ -36,7 +37,7 @@ namespace OrbitEngine {	namespace Misc {
 		return ptr;
 	}
 
-	void MemoryPool::deallocate(void* ptr)
+	void MemoryPool::Deallocate(void* ptr)
 	{
 		if (m_Next != 0)
 			*((unsigned int*)ptr) = (unsigned int)(m_Next - m_Memory) / (unsigned int)m_Size;
@@ -49,8 +50,7 @@ namespace OrbitEngine {	namespace Misc {
 	TrackedMemoryPool::TrackedMemoryPool(unsigned long long size, int capacity)
 		: MemoryPool(size, capacity)
 	{
-		m_Used.resize(capacity);
-		m_UsedCount = 0;
+		m_Used.reserve(capacity);
 	}
 
 	TrackedMemoryPool::~TrackedMemoryPool()
@@ -58,19 +58,24 @@ namespace OrbitEngine {	namespace Misc {
 		m_Used.clear();
 	}
 
-	void* TrackedMemoryPool::allocate()
+	void* TrackedMemoryPool::Allocate()
 	{
-		void* obj = MemoryPool::allocate();
+		void* obj = MemoryPool::Allocate();
 		if (obj == 0)
 			return 0;
-		m_Used[m_UsedCount++] = obj;
+
+		auto it = std::lower_bound(m_Used.begin(), m_Used.end(), obj);
+		m_Used.insert(it, obj);
+
 		return obj;
 	}
 
-	void TrackedMemoryPool::deallocate(void* ptr)
+	void TrackedMemoryPool::Deallocate(void* ptr)
 	{
-		MemoryPool::deallocate(ptr);
-		m_UsedCount--;
+		MemoryPool::Deallocate(ptr);
+
+		auto it = std::lower_bound(m_Used.begin(), m_Used.end(), ptr);
+		m_Used.erase(it);
 	}
 
 	typename std::vector<void*>::const_iterator TrackedMemoryPool::begin() const
@@ -80,6 +85,6 @@ namespace OrbitEngine {	namespace Misc {
 
 	typename std::vector<void*>::const_iterator TrackedMemoryPool::end() const
 	{
-		return m_Used.begin() + m_UsedCount;
+		return m_Used.begin() + m_Used.size();
 	}
 } }

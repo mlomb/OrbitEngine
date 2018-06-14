@@ -96,6 +96,7 @@ namespace OrbitEngine {	namespace Engine {
 
 	void SceneRunner::renderTraverse(SceneObject* obj)
 	{
+		/*
 		Transform* transform = obj->getComponent<Transform>();
 
 		if (transform) {
@@ -110,6 +111,7 @@ namespace OrbitEngine {	namespace Engine {
 		std::vector<OrbitEngine::Engine::SceneObject*> childs = obj->getChildrens();
 		for (auto& child : childs)
 			renderTraverse(child);
+		*/
 	}
 
 } }

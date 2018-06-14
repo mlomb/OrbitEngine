@@ -3,14 +3,16 @@
 
 #include <vector>
 
+#include "OE/Misc/Allocator.hpp"
+
 namespace OrbitEngine {	namespace Misc {
-	class MemoryPool {
+	class MemoryPool : public Allocator {
 	public:
 		MemoryPool(unsigned long long size, int capacity);
 		virtual ~MemoryPool();
 
-		virtual void* allocate();
-		virtual void deallocate(void* ptr);
+		virtual void* Allocate() override;
+		virtual void Deallocate(void* ptr) override;
 
 	private:
 		unsigned long long m_Size;
@@ -26,15 +28,14 @@ namespace OrbitEngine {	namespace Misc {
 		TrackedMemoryPool(unsigned long long size, int capacity);
 		~TrackedMemoryPool();
 
-		void* allocate() override;
-		void deallocate(void* ptr) override;
+		void* Allocate() override;
+		void Deallocate(void* ptr) override;
 
 		typename std::vector<void*>::const_iterator begin() const;
 		typename std::vector<void*>::const_iterator end() const;
 
 	private:
 		std::vector<void*> m_Used;
-		unsigned int m_UsedCount;
 	};
 } }
 

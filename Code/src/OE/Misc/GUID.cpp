@@ -138,6 +138,11 @@ namespace OrbitEngine {	namespace Misc {
 		return str();
 	}
 
+	const unsigned char* GUID::data() const
+	{
+		return m_Bytes.data();
+	}
+
 	bool GUID::isValid() const
 	{
 		static GUID def;

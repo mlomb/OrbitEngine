@@ -22,6 +22,7 @@ namespace OrbitEngine {	namespace Misc {
 
 		std::string str() const;
 		operator std::string() const;
+		const unsigned char* data() const;
 
 		bool isValid() const;
 
@@ -35,9 +36,11 @@ namespace OrbitEngine {	namespace Misc {
 
 namespace std {
 	template<> struct hash<OrbitEngine::Misc::GUID> {
-		size_t operator()(const OrbitEngine::Misc::GUID& other) const noexcept
+		size_t operator()(const OrbitEngine::Misc::GUID& guid) const noexcept
 		{
-			return 0;
+			const std::uint64_t* p = reinterpret_cast<const std::uint64_t*>(guid.data());
+			std::hash<std::uint64_t> hash;
+			return hash(p[0]) ^ hash(p[1]);
 		}
 	};
 }

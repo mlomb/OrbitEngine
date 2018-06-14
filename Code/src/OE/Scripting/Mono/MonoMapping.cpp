@@ -44,28 +44,29 @@ namespace OrbitEngine {
 	}
 
 	void INTERNAL_CALL_GetRoot(MonoObject* caller, MonoObject** so) {
-		Engine::Scene* s = GetPointerFromMonoObject<Engine::Scene>(caller);
-		*so = GetMonoDomain()->WrapObject(s->GetRoot(), MonoMapping::CLASS_SceneObject);
+		//Engine::Scene* s = GetPointerFromMonoObject<Engine::Scene>(caller);
+		//*so = GetMonoDomain()->WrapObject(s->GetRoot(), MonoMapping::CLASS_SceneObject);
 	}
 
 	MonoString* INTERNAL_CALL_get_Test(MonoObject* caller) {
 		Engine::Scene* s = GetPointerFromMonoObject<Engine::Scene>(caller);
-		return GetMonoDomain()->CreateString(std::string("Num of scene objects in root: ") + std::to_string(s->GetRoot()->childCount()));
+		return GetMonoDomain()->CreateString(std::string("Num of scene objects in root: ") + std::to_string(s->GetRoot()->GetChildCount()));
 	}
 
 	MonoString* INTERNAL_CALL_get_Name(MonoObject* caller) {
 		Engine::SceneObject* so = GetPointerFromMonoObject<Engine::SceneObject>(caller);
-		return GetMonoDomain()->CreateString(so->getName());
+		return GetMonoDomain()->CreateString(so->GetName());
 	}
 
 	MonoArray* INTERNAL_CALL_GetChildrens(MonoObject* caller) {
 		Engine::SceneObject* so = GetPointerFromMonoObject<Engine::SceneObject>(caller);
 		
-		std::vector<Engine::SceneObject*>& childs = so->getChildrens();
-
-		MonoArray* arr = GetMonoDomain()->CreateArray(MonoMapping::CLASS_SceneObject, childs);
-
-		return arr;
+		//std::vector<Engine::SceneObject*>& childs = so->getChildrens();
+		//
+		//MonoArray* arr = GetMonoDomain()->CreateArray(MonoMapping::CLASS_SceneObject, childs);
+		//
+		//return arr;
+		return 0;
 	}
 
 	void MonoMapping::Map(MonoAssembly* assembly)

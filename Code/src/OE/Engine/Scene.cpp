@@ -8,31 +8,36 @@
 namespace OrbitEngine {	namespace Engine {
 
 	Scene::Scene() {
-		m_Root = new SceneObject();
+		m_Root = MemoryDomain::Get()->Allocate<SceneObject>();
+		m_Root->m_Self = m_Root;
+		//m_Root->m_Scene = WeakPtr<Scene>(this);
+		m_Root->SetName("Root");
 		
-		m_Root->m_Scene = this;
-		m_Root->setName("Root");
-
 		// mocking af
 		{
-			m_Root->addChildren("Child1");
+			m_Root->AddChildren()->SetName("Child 1");
 
-			OrbitEngine::Engine::SceneObject* c2 = m_Root->addChildren("Child2");
+			WeakPtr<OrbitEngine::Engine::SceneObject> c2 = m_Root->AddChildren();
+			c2->SetName("Child 2");
 			{
-				c2->addChildren("Child2.1");
-				c2->addChildren("Child2.2");
+				c2->AddChildren()->SetName("Child 2.1");
+				c2->AddChildren()->SetName("Child 2.2");
 			}
-			m_Root->addChildren("Child3");
-			c2->addComponent<TestComponent>();
+			m_Root->AddChildren()->SetName("Child 3");
+			//c2->addComponent<TestComponent>();
 
-			OrbitEngine::Engine::SceneObject* cam = m_Root->addChildren("Camara");
-			cam->addComponent<Camera>();
-			cam->addComponent<EulerCameraController>();
+			WeakPtr<OrbitEngine::Engine::SceneObject> cam = m_Root->AddChildren();
+			c2->SetName("Camera");
+			//cam->addComponent<Camera>();
+			//cam->addComponent<EulerCameraController>();
 		}
-		
 	}
 
-	SceneObject* Scene::GetRoot()
+	Scene::~Scene() {
+
+	}
+
+	WeakPtr<SceneObject> Scene::GetRoot()
 	{
 		return m_Root;
 	}
@@ -41,4 +46,7 @@ namespace OrbitEngine {	namespace Engine {
 	//{
 	//	return m_Objects;
 	//}
+
+	NATIVE_REFLECTION_BEGIN(Scene)
+	NATIVE_REFLECTION_END()
 } }

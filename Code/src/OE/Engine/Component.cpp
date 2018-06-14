@@ -6,7 +6,8 @@
 namespace OrbitEngine {	namespace Engine {
 	Transform* Component::getTransform()
 	{
-		return p_SceneObject->getComponent<Transform>();
+		//return p_SceneObject->getComponent<Transform>();
+		return 0;
 	}
 
 	bool Component::isAwaken()

@@ -15,6 +15,10 @@ namespace OrbitEngine { namespace Engine {
 		EngineDomain();
 		~EngineDomain();
 
+		static EngineDomain* Get();
+
+		MemoryDomain* GetMemoryDomain();
+
 		MonoDomain* GetMonoDomain();
 		Meta::ReflectionDatabase* GetReflectionDatabase();
 		static EngineDomain* GetEngineDomainFromNativeMonoDomain(::MonoDomain* native_md);
@@ -22,8 +26,13 @@ namespace OrbitEngine { namespace Engine {
 		Scene* GetActiveScene();
 
 	private:
+		static thread_local EngineDomain* s_EngineDomain;
+
+		MemoryDomain* m_MemoryDomain;
+
 		MonoDomain* m_MonoDomain;
 		Meta::ReflectionDatabase* m_ReflectionDatabase;
+
 
 		Scene* m_ActiveScene;
 

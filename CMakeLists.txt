@@ -47,6 +47,7 @@ set(CMAKE_DEBUG_POSTFIX "" CACHE STRING "" FORCE)
 # - Code -
 # General code
 file(GLOB_RECURSE SRC ${INC_DIR}/OE/Misc/*.hpp
+					  ${INC_DIR}/OE/Misc/*.inl
                       ${SRC_DIR}/OE/Misc/*.cpp
                       ${SRC_DIR}/OE/Misc/*.hpp
                       ${INC_DIR}/OE/Math/*.hpp
