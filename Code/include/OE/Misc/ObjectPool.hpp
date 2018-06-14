@@ -30,7 +30,7 @@ namespace OrbitEngine {	namespace Misc {
 	template<typename T>
 	inline T* ObjectPool<T>::acquire()
 	{
-		void* ptr = allocate();
+		void* ptr = Allocate();
 		if (ptr == 0)
 			return 0;
 

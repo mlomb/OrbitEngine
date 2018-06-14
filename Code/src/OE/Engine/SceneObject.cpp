@@ -48,7 +48,7 @@ namespace OrbitEngine {	namespace Engine {
 		StrongPtr<SceneObject> sceneObject = MemoryDomain::Get()->Allocate<SceneObject>();
 		if (!sceneObject) {
 			OE_LOG_WARNING("Can't allocate more SceneObjects!");
-			return 0;
+			return WeakPtr<SceneObject>();
 		}
 
 		sceneObject->m_Self = sceneObject;

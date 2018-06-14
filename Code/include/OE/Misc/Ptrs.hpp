@@ -9,6 +9,11 @@ namespace OrbitEngine {
 		class MemoryDomain;
 	}
 
+	template<typename T>
+	class StrongPtr;
+	template<typename T>
+	class WeakPtr;
+
 	namespace internal {
 		struct RefCount {
 			// TODO atomic
@@ -46,8 +51,8 @@ namespace OrbitEngine {
 		T* m_Ptr;
 		Engine::MemoryDomain* m_Domain;
 
-		template<class T> friend class StrongPtr;
-		template<class T> friend class WeakPtr;
+		friend class StrongPtr<T>;
+		friend class WeakPtr<T>;
 	};
 	
 	template<typename T>

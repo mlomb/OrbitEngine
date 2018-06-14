@@ -79,8 +79,8 @@ namespace OrbitEngine {
 		: Ptr<T>(ptr, domain)
 	{
 		if (ptr) {
-			m_RefCount = new internal::RefCount();
-			m_RefCount->Incr();
+			this->m_RefCount = new internal::RefCount();
+			this->m_RefCount->Incr();
 		}
 	}
 
@@ -129,9 +129,9 @@ namespace OrbitEngine {
 
 		Clear();
 
-		m_Ptr = other.m_Ptr;
-		m_RefCount = other.m_RefCount;
-		m_Domain = other.m_Domain;
+		this->m_Ptr = other.m_Ptr;
+		this->m_RefCount = other.m_RefCount;
+		this->m_Domain = other.m_Domain;
 
 		other.Ptr<T>::Clear();
 
@@ -141,17 +141,17 @@ namespace OrbitEngine {
 	template<typename T>
 	inline void StrongPtr<T>::Clear()
 	{
-		if (m_RefCount) {
-			if (m_RefCount->strong == 1) {
+		if (this->m_RefCount) {
+			if (this->m_RefCount->strong == 1) {
 				// DELETE
 				OE_LOG_DEBUG("DELETE");
 
-				if (m_Domain)
-					m_Domain->Deallocate(*this);
+				if (this->m_Domain)
+					this->m_Domain->Deallocate(*this);
 				else
-					delete m_Ptr;
+					delete this->m_Ptr;
 			}
-			m_RefCount->Decr();
+			this->m_RefCount->Decr();
 		}
 		Ptr<T>::Clear();
 	}
@@ -161,12 +161,12 @@ namespace OrbitEngine {
 	{
 		Clear();
 
-		m_Ptr = ptr.m_Ptr;
-		m_RefCount = ptr.m_RefCount;
-		m_Domain = ptr.m_Domain;
+		this->m_Ptr = ptr.m_Ptr;
+		this->m_RefCount = ptr.m_RefCount;
+		this->m_Domain = ptr.m_Domain;
 
-		if (m_RefCount && m_RefCount->strong > 0)
-			m_RefCount->Incr();
+		if (this->m_RefCount && this->m_RefCount->strong > 0)
+			this->m_RefCount->Incr();
 	}
 
 	// Weak
@@ -185,15 +185,15 @@ namespace OrbitEngine {
 
 	template<typename T>
 	inline WeakPtr<T>::WeakPtr()
-		: Ptr()
+		: Ptr<T>()
 	{
 	}
 
 	template<typename T>
 	inline WeakPtr<T>::~WeakPtr()
 	{
-		if (m_RefCount) {
-			m_RefCount->WDecr();
+		if (this->m_RefCount) {
+			this->m_RefCount->WDecr();
 		}
 	}
 
@@ -214,15 +214,15 @@ namespace OrbitEngine {
 	template<typename T>
 	inline void WeakPtr<T>::BuildFromPtr(const Ptr<T>& ptr)
 	{
-		if (m_RefCount)
-			m_RefCount->WDecr();
+		if (this->m_RefCount)
+			this->m_RefCount->WDecr();
 
-		m_Ptr = ptr.m_Ptr;
-		m_RefCount = ptr.m_RefCount;
-		m_Domain = ptr.m_Domain;
+		this->m_Ptr = ptr.m_Ptr;
+		this->m_RefCount = ptr.m_RefCount;
+		this->m_Domain = ptr.m_Domain;
 
-		if (m_RefCount)
-			m_RefCount->WIncr();
+		if (this->m_RefCount)
+			this->m_RefCount->WIncr();
 	}
 }
 
