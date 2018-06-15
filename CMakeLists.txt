@@ -54,11 +54,15 @@ file(GLOB_RECURSE SRC ${INC_DIR}/OE/Misc/*.hpp
                       ${SRC_DIR}/OE/Math/*.cpp
                       ${INC_DIR}/OE/Graphics/*.hpp
                       ${SRC_DIR}/OE/Graphics/*.cpp
+                      ${INC_DIR}/OE/Memory/*.hpp
+                      ${INC_DIR}/OE/Memory/*.inl
+                      ${SRC_DIR}/OE/Memory/*.cpp
                       ${INC_DIR}/OE/Meta/*.hpp
                       ${SRC_DIR}/OE/Meta/*.cpp
                       ${INC_DIR}/OE/Application/*.hpp
                       ${SRC_DIR}/OE/Application/*.cpp
                       ${INC_DIR}/OE/Engine/*.hpp
+                      ${INC_DIR}/OE/Engine/*.inl
                       ${SRC_DIR}/OE/Engine/*.cpp
                       ${INC_DIR}/OE/Scripting/*.hpp
                       ${SRC_DIR}/OE/Scripting/*.cpp

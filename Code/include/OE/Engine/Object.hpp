@@ -3,7 +3,7 @@
 #include "OE/Meta/NativeReflection.hpp"
 
 #include "OE/Scripting/Mono/MonoDomain.hpp"
-#include "OE/Misc/Ptrs.hpp"
+#include "OE/Memory/Ptrs.hpp"
 
 namespace OrbitEngine { namespace Engine {
 	class Object {

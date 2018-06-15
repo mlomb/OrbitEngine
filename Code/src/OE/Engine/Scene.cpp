@@ -1,5 +1,6 @@
 #include "OE/Engine/Scene.hpp"
 
+#include "OE/Engine/MemoryDomain.hpp"
 #include "OE/Engine/SceneObject.hpp"
 #include "OE/Engine/TestComponent.hpp"
 #include "OE/Engine/EulerCameraController.hpp"
@@ -12,7 +13,7 @@ namespace OrbitEngine {	namespace Engine {
 		m_Root->m_Self = m_Root;
 		//m_Root->m_Scene = WeakPtr<Scene>(this);
 		m_Root->SetName("Root");
-		
+
 		// mocking af
 		{
 			m_Root->AddChildren()->SetName("Child 1");

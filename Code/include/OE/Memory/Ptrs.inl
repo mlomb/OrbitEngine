@@ -1,17 +1,46 @@
 #ifndef PTRS_INL
 #define PTRS_INL
 
-#include "OE/Misc/Ptrs.hpp"
+#include "OE/Memory/Ptrs.hpp"
 
 #include "OE/Engine/MemoryDomain.hpp"
 
 namespace OrbitEngine {
 
+	namespace internal {
+		inline void RefCount::Decr()
+		{
+			strong--;
+			if (strong + weak == 0) Destroy();
+		}
+
+		inline void RefCount::Incr()
+		{
+			strong++;
+		}
+
+		inline void RefCount::WDecr()
+		{
+			weak--;
+			if (strong + weak == 0) Destroy();
+		}
+
+		inline void RefCount::WIncr()
+		{
+			weak++;
+		}
+
+		inline void RefCount::Destroy()
+		{
+			delete this;
+		}
+	}
+
 	// Ptr
 
 	template<typename T>
-	inline Ptr<T>::Ptr(T* ptr, Engine::MemoryDomain* domain)
-		: m_Ptr(ptr), m_RefCount(0), m_Domain(domain)
+	inline Ptr<T>::Ptr(T* ptr)
+		: m_Ptr(ptr), m_RefCount(0)
 	{
 	}
 
@@ -31,7 +60,6 @@ namespace OrbitEngine {
 	{
 		m_RefCount = 0;
 		m_Ptr = 0;
-		m_Domain = 0;
 	}
 
 	template<typename T>
@@ -75,8 +103,8 @@ namespace OrbitEngine {
 	// Strong
 
 	template<typename T>
-	inline StrongPtr<T>::StrongPtr(T* ptr, Engine::MemoryDomain* domain)
-		: Ptr<T>(ptr, domain)
+	inline StrongPtr<T>::StrongPtr(T* ptr)
+		: Ptr<T>(ptr)
 	{
 		if (ptr) {
 			this->m_RefCount = new internal::RefCount();
@@ -131,7 +159,6 @@ namespace OrbitEngine {
 
 		this->m_Ptr = other.m_Ptr;
 		this->m_RefCount = other.m_RefCount;
-		this->m_Domain = other.m_Domain;
 
 		other.Ptr<T>::Clear();
 
@@ -143,11 +170,9 @@ namespace OrbitEngine {
 	{
 		if (this->m_RefCount) {
 			if (this->m_RefCount->strong == 1) {
-				// DELETE
-				OE_LOG_DEBUG("DELETE");
-
-				if (this->m_Domain)
-					this->m_Domain->Deallocate(*this);
+				Engine::MemoryDomain* md = Engine::MemoryDomain::Get();
+				if (md)
+					md->Deallocate(*this);
 				else
 					delete this->m_Ptr;
 			}
@@ -163,13 +188,18 @@ namespace OrbitEngine {
 
 		this->m_Ptr = ptr.m_Ptr;
 		this->m_RefCount = ptr.m_RefCount;
-		this->m_Domain = ptr.m_Domain;
 
 		if (this->m_RefCount && this->m_RefCount->strong > 0)
 			this->m_RefCount->Incr();
 	}
 
 	// Weak
+
+	template<typename T>
+	inline WeakPtr<T>::WeakPtr(const Ptr<T>& ptr)
+	{
+		BuildFromPtr(ptr);
+	}
 
 	template<typename T>
 	inline WeakPtr<T>::WeakPtr(const StrongPtr<T>& ptr)
@@ -219,7 +249,6 @@ namespace OrbitEngine {
 
 		this->m_Ptr = ptr.m_Ptr;
 		this->m_RefCount = ptr.m_RefCount;
-		this->m_Domain = ptr.m_Domain;
 
 		if (this->m_RefCount)
 			this->m_RefCount->WIncr();

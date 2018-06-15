@@ -2,10 +2,10 @@
 #define ENGINE_MEMORY_DOMAIN_HPP
 
 #include <unordered_map>
+#include <math.h>
 
 #include "OE/Meta/NativeType.hpp"
-#include "OE/Misc/MemoryPool.hpp"
-#include "OE/Misc/Ptrs.hpp"
+#include "OE/Memory/Allocator.hpp"
 
 namespace std {
 	template <>
@@ -19,6 +19,20 @@ namespace std {
 	};
 }
 
+namespace OrbitEngine {
+	template<typename T>
+	class Ptr;
+	template<typename T>
+	class WeakPtr;
+	template<typename T>
+	class StrongPtr;
+
+	namespace Memory {
+		template<typename T>
+		class TrackedMemoryPool;
+	}
+}
+
 namespace OrbitEngine { namespace Engine {
 
 	class MemoryDomain {
@@ -28,30 +42,23 @@ namespace OrbitEngine { namespace Engine {
 
 		static MemoryDomain* Get();
 
-		void* Allocate(Meta::NativeType* type);
-		void Deallocate(void* object, Meta::NativeType* type);
-
-		template<typename T> StrongPtr<T> Allocate();
-		template<typename T> void Deallocate(StrongPtr<T>& object);
+		template<typename T>
+		StrongPtr<T> Allocate();
+		template<typename T>
+		void Deallocate(Ptr<T>& object);
+		template<typename T>
+		const std::vector<WeakPtr<T>>& GetAll();
 
 	private:
-		std::unordered_map<Meta::NativeType*, Misc::MemoryPool*> m_Allocators;
+		std::unordered_map<Meta::NativeType*, Memory::Allocator*> m_Allocators;
 
-		Misc::MemoryPool* GetAllocator(Meta::NativeType* type);
-		Misc::MemoryPool* CreateAllocator(Meta::NativeType* type);
+		template<typename T>
+		Memory::TrackedMemoryPool<T>* GetAllocator();
+		template<typename T>
+		Memory::TrackedMemoryPool<T>* CreateAllocator();
 	};
-
-	template<typename T>
-	inline StrongPtr<T> MemoryDomain::Allocate()
-	{
-		return StrongPtr<T>(static_cast<T*>(Allocate(Meta::NativeTypeResolver<T>::Get())), this);
-	}
-
-	template<typename T>
-	inline void MemoryDomain::Deallocate(StrongPtr<T>& object)
-	{
-		Deallocate(object.Get(), object.GetType());
-	}
 } }
+
+#include "OE/Engine/MemoryDomain.inl"
 
 #endif

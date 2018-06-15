@@ -1,5 +1,6 @@
 #include "OE/Engine/SceneObject.hpp"
 
+#include "OE/Engine/MemoryDomain.hpp"
 #include "OE/Engine/Transform.hpp"
 #include "OE/Engine/TestComponent.hpp"
 

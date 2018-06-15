@@ -32,7 +32,7 @@ namespace OrbitEngine {
 	template<typename T>
 	class Ptr {
 	public:
-		Ptr(T* ptr = 0, Engine::MemoryDomain* domain = 0);
+		Ptr(T* ptr = 0);
 		virtual ~Ptr();
 
 		Meta::NativeType* GetType() const;
@@ -49,7 +49,6 @@ namespace OrbitEngine {
 	protected:
 		internal::RefCount* m_RefCount;
 		T* m_Ptr;
-		Engine::MemoryDomain* m_Domain;
 
 		friend class StrongPtr<T>;
 		friend class WeakPtr<T>;
@@ -58,7 +57,7 @@ namespace OrbitEngine {
 	template<typename T>
 	class StrongPtr : public Ptr<T> {
 	public:
-		StrongPtr(T* ptr = 0, Engine::MemoryDomain* domain = 0);
+		StrongPtr(T* ptr = 0);
 		StrongPtr(StrongPtr<T>&& mv);
 		StrongPtr(const StrongPtr<T>& ptr);
 		StrongPtr(const WeakPtr<T>& ptr);
@@ -78,6 +77,7 @@ namespace OrbitEngine {
 	template<typename T>
 	class WeakPtr : public Ptr<T> {
 	public:
+		WeakPtr(const Ptr<T>& ptr);
 		WeakPtr(const StrongPtr<T>& ptr);
 		WeakPtr(const WeakPtr<T>& ptr);
 		WeakPtr();
@@ -91,6 +91,6 @@ namespace OrbitEngine {
 	};
 }
 
-#include "OE/Misc/Ptrs.inl"
+#include "OE/Memory/Ptrs.inl"
 
 #endif

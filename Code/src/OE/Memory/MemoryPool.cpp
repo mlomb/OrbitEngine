@@ -1,10 +1,10 @@
-#include "OE/Misc/MemoryPool.hpp"
+#include "OE/Memory/MemoryPool.hpp"
 
 #include <iostream>
 #include <algorithm>
 #include <string.h>
 
-namespace OrbitEngine {	namespace Misc {
+namespace OrbitEngine {	namespace Memory {
 	MemoryPool::MemoryPool(unsigned long long size, int capacity)
 		: m_Size(size), m_Capacity(capacity)
 	{
@@ -45,46 +45,5 @@ namespace OrbitEngine {	namespace Misc {
 			*((unsigned int*)ptr) = m_Capacity;
 		m_Next = (unsigned char*)ptr;
 		++m_Free;
-	}
-
-	TrackedMemoryPool::TrackedMemoryPool(unsigned long long size, int capacity)
-		: MemoryPool(size, capacity)
-	{
-		m_Used.reserve(capacity);
-	}
-
-	TrackedMemoryPool::~TrackedMemoryPool()
-	{
-		m_Used.clear();
-	}
-
-	void* TrackedMemoryPool::Allocate()
-	{
-		void* obj = MemoryPool::Allocate();
-		if (obj == 0)
-			return 0;
-
-		auto it = std::lower_bound(m_Used.begin(), m_Used.end(), obj);
-		m_Used.insert(it, obj);
-
-		return obj;
-	}
-
-	void TrackedMemoryPool::Deallocate(void* ptr)
-	{
-		MemoryPool::Deallocate(ptr);
-
-		auto it = std::lower_bound(m_Used.begin(), m_Used.end(), ptr);
-		m_Used.erase(it);
-	}
-
-	typename std::vector<void*>::const_iterator TrackedMemoryPool::begin() const
-	{
-		return m_Used.begin();
-	}
-
-	typename std::vector<void*>::const_iterator TrackedMemoryPool::end() const
-	{
-		return m_Used.begin() + m_Used.size();
 	}
 } }

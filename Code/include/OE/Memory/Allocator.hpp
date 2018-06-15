@@ -1,7 +1,7 @@
-#ifndef MISC_ALLOCATOR_HPP
-#define MISC_ALLOCATOR_HPP
+#ifndef MEMORY_ALLOCATOR_HPP
+#define MEMORY_ALLOCATOR_HPP
 
-namespace OrbitEngine {	namespace Misc {
+namespace OrbitEngine {	namespace Memory {
 	class Allocator {
 	public:
 		Allocator() {};

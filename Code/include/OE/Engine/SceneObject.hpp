@@ -10,7 +10,6 @@
 
 #include "OE/Config.hpp"
 #include "OE/Misc/Log.hpp"
-#include "OE/Misc/Ptrs.hpp"
 #include "OE/Engine/Object.hpp"
 #include "OE/Engine/Scene.hpp"
 #include "OE/Engine/Component.hpp"
