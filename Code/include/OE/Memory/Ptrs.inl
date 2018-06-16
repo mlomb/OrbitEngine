@@ -3,47 +3,46 @@
 
 #include "OE/Memory/Ptrs.hpp"
 
+#include "OE/Meta/NativeReflection.hpp"
 #include "OE/Engine/MemoryDomain.hpp"
+#include "OE/Misc/Log.hpp"
 
 namespace OrbitEngine {
 
-	namespace internal {
-		inline void RefCount::Decr()
-		{
-			strong--;
-			if (strong + weak == 0) Destroy();
-		}
-
-		inline void RefCount::Incr()
-		{
-			strong++;
-		}
-
-		inline void RefCount::WDecr()
-		{
-			weak--;
-			if (strong + weak == 0) Destroy();
-		}
-
-		inline void RefCount::WIncr()
-		{
-			weak++;
-		}
-
-		inline void RefCount::Destroy()
-		{
-			delete this;
-		}
+	inline void RefCount::Decr()
+	{
+		strong--;
+		if (strong + weak == 0) Destroy();
 	}
 
-	// Ptr
+	inline void RefCount::Incr()
+	{
+		strong++;
+	}
+
+	inline void RefCount::WDecr()
+	{
+		weak--;
+		if (strong + weak == 0) Destroy();
+	}
+
+	inline void RefCount::WIncr()
+	{
+		weak++;
+	}
+
+	inline void RefCount::Destroy()
+	{
+		delete this;
+	}
+
 
 	template<typename T>
-	inline Ptr<T>::Ptr(T* ptr)
-		: m_Ptr(ptr), m_RefCount(0)
+	inline Ptr<T>::Ptr(T* ptr, RefCount* ref_count)
+		: m_Ptr(ptr), m_RefCount(ref_count)
 	{
 	}
-
+	
 	template<typename T>
 	inline Ptr<T>::~Ptr()
 	{
@@ -60,6 +59,15 @@ namespace OrbitEngine {
 	{
 		m_RefCount = 0;
 		m_Ptr = 0;
+	}
+
+	template<typename T>
+	inline void Ptr<T>::BuildFromPtr(const Ptr<T>& ptr)
+	{
+		Clear();
+
+		m_Ptr = ptr.m_Ptr;
+		m_RefCount = ptr.m_RefCount;
 	}
 
 	template<typename T>
@@ -100,22 +108,36 @@ namespace OrbitEngine {
 		return !operator==(rhs);
 	}
 
-	// Strong
+	template<typename T>
+	template<typename V>
+	inline WeakPtr<V> Ptr<T>::AsWeak()
+	{
+		return WeakPtr<V>(Ptr<V>(static_cast<V*>(m_Ptr), m_RefCount));
+	}
+
+	template<typename T>
+	template<typename V>
+	inline StrongPtr<V> Ptr<T>::AsStrong()
+	{
+		return StrongPtr<V>(Ptr<V>(static_cast<V*>(m_Ptr), m_RefCount));
+	}
+
 
 	template<typename T>
 	inline StrongPtr<T>::StrongPtr(T* ptr)
 		: Ptr<T>(ptr)
 	{
-		if (ptr) {
-			this->m_RefCount = new internal::RefCount();
+		if (this->m_Ptr) {
+			if (!this->m_RefCount)
+				this->m_RefCount = new RefCount();
 			this->m_RefCount->Incr();
 		}
 	}
 
 	template<typename T>
-	inline StrongPtr<T>::StrongPtr(StrongPtr<T>&& mv)
+	inline StrongPtr<T>::StrongPtr(const Ptr<T>& ptr)
 	{
-		operator=(mv);
+		BuildFromPtr(ptr);
 	}
 
 	template<typename T>
@@ -127,6 +149,13 @@ namespace OrbitEngine {
 	template<typename T>
 	inline StrongPtr<T>::StrongPtr(const WeakPtr<T>& ptr)
 	{
+		BuildFromPtr(ptr);
+	}
+
+	template<typename T>
+	inline StrongPtr<T>::StrongPtr(StrongPtr<T>&& mv)
+	{
+		operator=(mv);
 	}
 
 	template<typename T>
@@ -155,11 +184,7 @@ namespace OrbitEngine {
 		if (this == &other)
 			return *this;
 
-		Clear();
-
-		this->m_Ptr = other.m_Ptr;
-		this->m_RefCount = other.m_RefCount;
-
+		Ptr<T>::BuildFromPtr(other);
 		other.Ptr<T>::Clear();
 
 		return *this;
@@ -172,7 +197,7 @@ namespace OrbitEngine {
 			if (this->m_RefCount->strong == 1) {
 				Engine::MemoryDomain* md = Engine::MemoryDomain::Get();
 				if (md)
-					md->Deallocate(*this);
+					md->Destroy(*this);
 				else
 					delete this->m_Ptr;
 			}
@@ -184,16 +209,18 @@ namespace OrbitEngine {
 	template<typename T>
 	inline void StrongPtr<T>::BuildFromPtr(const Ptr<T>& ptr)
 	{
-		Clear();
-
-		this->m_Ptr = ptr.m_Ptr;
-		this->m_RefCount = ptr.m_RefCount;
+		Ptr<T>::BuildFromPtr(ptr);
 
 		if (this->m_RefCount && this->m_RefCount->strong > 0)
 			this->m_RefCount->Incr();
 	}
 
-	// Weak
+
+	template<typename T>
+	inline WeakPtr<T>::WeakPtr()
+		: Ptr<T>()
+	{
+	}
 
 	template<typename T>
 	inline WeakPtr<T>::WeakPtr(const Ptr<T>& ptr)
@@ -214,17 +241,15 @@ namespace OrbitEngine {
 	}
 
 	template<typename T>
-	inline WeakPtr<T>::WeakPtr()
-		: Ptr<T>()
+	inline WeakPtr<T>::WeakPtr(WeakPtr<T>&& mv)
 	{
+		operator=(mv);
 	}
 
 	template<typename T>
 	inline WeakPtr<T>::~WeakPtr()
 	{
-		if (this->m_RefCount) {
-			this->m_RefCount->WDecr();
-		}
+		Clear();
 	}
 
 	template<typename T>
@@ -242,13 +267,29 @@ namespace OrbitEngine {
 	}
 
 	template<typename T>
-	inline void WeakPtr<T>::BuildFromPtr(const Ptr<T>& ptr)
+	inline WeakPtr<T>& WeakPtr<T>::operator=(WeakPtr<T>&& other)
+	{
+		if (this == &other)
+			return *this;
+
+		Ptr<T>::BuildFromPtr(other);
+		other.Ptr<T>::Clear();
+
+		return *this;
+	}
+
+	template<typename T>
+	inline void WeakPtr<T>::Clear()
 	{
 		if (this->m_RefCount)
 			this->m_RefCount->WDecr();
+		Ptr<T>::Clear();
+	}
 
-		this->m_Ptr = ptr.m_Ptr;
-		this->m_RefCount = ptr.m_RefCount;
+	template<typename T>
+	inline void WeakPtr<T>::BuildFromPtr(const Ptr<T>& ptr)
+	{
+		Ptr<T>::BuildFromPtr(ptr);
 
 		if (this->m_RefCount)
 			this->m_RefCount->WIncr();

@@ -30,4 +30,8 @@ namespace OrbitEngine {	namespace Engine {
 	{
 
 	}
+
+	NATIVE_REFLECTION_BEGIN(Component)
+
+	NATIVE_REFLECTION_END()
 } }

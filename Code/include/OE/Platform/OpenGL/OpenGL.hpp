@@ -50,6 +50,7 @@
 		#if OE_WINDOWS
 			#include "OE/Platform/Windows/Windows.hpp"
 		#elif OE_LINUX
+			#include "OE/Platform/X11/X11.hpp"
 			#include <GL/glx.h>
 		#endif
 		#include <GL/gl.h>

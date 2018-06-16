@@ -10,6 +10,7 @@
 
 #include "OE/Config.hpp"
 #include "OE/Misc/Log.hpp"
+#include "OE/Memory/Ptrs.hpp"
 #include "OE/Engine/Object.hpp"
 #include "OE/Engine/Scene.hpp"
 #include "OE/Engine/Component.hpp"
@@ -33,6 +34,9 @@ namespace OrbitEngine {	namespace Engine {
 		void SetName(const std::string& name);
 		void SetParent(WeakPtr<SceneObject> parent, int position = 99999999);
 
+		template<typename T>
+		WeakPtr<T> AddComponent();
+
 	private:
 		friend class Scene;
 		
@@ -42,7 +46,16 @@ namespace OrbitEngine {	namespace Engine {
 
 		std::string m_Name;
 		std::vector<StrongPtr<SceneObject>> m_Childs;
+		std::vector<StrongPtr<Component>> m_Components;
 	};
+
+	template<typename T>
+	inline WeakPtr<T> SceneObject::AddComponent()
+	{
+		StrongPtr<T> ptr = MemoryDomain::Get()->Create<T>();
+		m_Components.push_back(ptr.template AsStrong<Component>());
+		return ptr;
+	}
 } }
 
 #endif

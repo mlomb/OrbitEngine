@@ -165,7 +165,7 @@ list(APPEND OE_LIBRARIES
 	FreeImage
 	xsc_core
 	assimp
-	${MONO_LIBRARY_DIR}/${MONO_LIBRARIES}
+	${MONO_LIBRARIES}
 )
 list(APPEND OE_LIBRARIES_INC
 	${freetype_SOURCE_DIR}/include

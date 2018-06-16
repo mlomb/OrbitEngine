@@ -18,9 +18,9 @@ else()
 	set(MONO_N "monosgen-2.0")
 endif()
 
-set(MONO_LIBRARIES   "${MONO_N}.lib")
+find_library(MONO_LIBRARIES ${MONO_N} PATHS ${MONO_LIBRARY_DIR})
 
 message("Mono Path: ${MONO_PATH}")
-# message(${MONO_INCLUDE_DIR})
-# message(${MONO_LIBRARY_DIR})
-# message(${MONO_LIBRARIES})
+#message(${MONO_INCLUDE_DIR})
+#message(${MONO_LIBRARY_DIR})
+#message(${MONO_LIBRARIES})

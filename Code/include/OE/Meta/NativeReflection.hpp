@@ -48,15 +48,17 @@ namespace OrbitEngine { namespace Meta {
 		static Meta::NativeType Reflection; \
 	private: \
 		static void meta_reflect(Meta::NativeType*); \
+		static void meta_ctor(void* ptr); \
+		static void meta_dctor(void* ptr); \
 
 #define NATIVE_REFLECTION_BEGIN(type) \
-	static void meta_ctor_##type (void* ptr) { new (ptr) type (); } \
-	static void meta_dctor_##type (void* ptr) { static_cast<type*>(ptr)-> type ::~type (); } \
+	void type::meta_ctor (void* ptr) { new (ptr) type (); } \
+	void type::meta_dctor (void* ptr) { static_cast<type*>(ptr)-> type ::~type (); } \
 	Meta::NativeType type::Reflection{type::meta_reflect}; \
 	void type::meta_reflect(Meta::NativeType* t) { \
 		using T = type; \
 		t->SetKind(Meta::Kind::CLASS); \
-		t->SetCtorAndDctor(meta_ctor_##type, meta_dctor_##type); \
+		t->SetCtorAndDctor(meta_ctor, meta_dctor); \
 		t->SetName(#type); \
 		t->SetSize(sizeof(T)); \
 

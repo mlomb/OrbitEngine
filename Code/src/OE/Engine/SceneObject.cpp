@@ -10,11 +10,14 @@ namespace OrbitEngine {	namespace Engine {
 	SceneObject::SceneObject()
 		: m_Name("SceneObject")
 	{
+		AddComponent<Transform>();
+		AddComponent<TestComponent>();
 	}
 
 	SceneObject::~SceneObject()
 	{
 		m_Childs.clear();
+		m_Components.clear();
 	}
 
 	WeakPtr<Scene> SceneObject::GetScene() const
@@ -46,7 +49,7 @@ namespace OrbitEngine {	namespace Engine {
 
 	WeakPtr<SceneObject> SceneObject::AddChildren()
 	{
-		StrongPtr<SceneObject> sceneObject = MemoryDomain::Get()->Allocate<SceneObject>();
+		StrongPtr<SceneObject> sceneObject = MemoryDomain::Get()->Create<SceneObject>();
 		if (!sceneObject) {
 			OE_LOG_WARNING("Can't allocate more SceneObjects!");
 			return WeakPtr<SceneObject>();

@@ -8,11 +8,15 @@
 #include "OE/Math/Vec3.hpp"
 #include "OE/Math/Vec4.hpp"
 
+#include "OE/Meta/NativeReflection.hpp"
+
 #include "Transform.hpp"
 
 namespace OrbitEngine {	namespace Engine {
 
 	class TestComponent : public Component {
+		NATIVE_REFLECTION
+
 	public:
 		TestComponent();
 		~TestComponent();

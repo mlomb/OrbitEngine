@@ -4,7 +4,6 @@
 #include <vector>
 
 #include "OE/Memory/Allocator.hpp"
-#include "OE/Memory/Ptrs.hpp"
 
 namespace OrbitEngine {	namespace Memory {
 	class MemoryPool : public Allocator {
@@ -23,23 +22,6 @@ namespace OrbitEngine {	namespace Memory {
 		unsigned char* m_Memory;
 		unsigned char* m_Next;
 	};
-	
-	template<typename T>
-	class TrackedMemoryPool : public MemoryPool {
-	public:
-		TrackedMemoryPool(int capacity);
-		virtual ~TrackedMemoryPool();
-
-		StrongPtr<T> AllocatePtr();
-		void DeallocatePtr(Ptr<T>& ptr);
-
-		const std::vector<WeakPtr<T>>& GetAll() const;
-
-	private:
-		std::vector<WeakPtr<T>> m_Used;
-	};
 } }
-
-#include "OE/Memory/MemoryPool.inl"
 
 #endif

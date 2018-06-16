@@ -9,7 +9,7 @@
 namespace OrbitEngine {	namespace Engine {
 
 	Scene::Scene() {
-		m_Root = MemoryDomain::Get()->Allocate<SceneObject>();
+		m_Root = MemoryDomain::Get()->Create<SceneObject>();
 		m_Root->m_Self = m_Root;
 		//m_Root->m_Scene = WeakPtr<Scene>(this);
 		m_Root->SetName("Root");

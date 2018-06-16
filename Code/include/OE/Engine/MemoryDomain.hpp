@@ -5,7 +5,7 @@
 #include <math.h>
 
 #include "OE/Meta/NativeType.hpp"
-#include "OE/Memory/Allocator.hpp"
+#include "OE/Memory/MemoryPool.hpp"
 
 namespace std {
 	template <>
@@ -26,11 +26,6 @@ namespace OrbitEngine {
 	class WeakPtr;
 	template<typename T>
 	class StrongPtr;
-
-	namespace Memory {
-		template<typename T>
-		class TrackedMemoryPool;
-	}
 }
 
 namespace OrbitEngine { namespace Engine {
@@ -43,19 +38,23 @@ namespace OrbitEngine { namespace Engine {
 		static MemoryDomain* Get();
 
 		template<typename T>
-		StrongPtr<T> Allocate();
+		StrongPtr<T> Create();
 		template<typename T>
-		void Deallocate(Ptr<T>& object);
+		void Destroy(Ptr<T>& object);
 		template<typename T>
 		const std::vector<WeakPtr<T>>& GetAll();
 
 	private:
 		std::unordered_map<Meta::NativeType*, Memory::Allocator*> m_Allocators;
+		std::unordered_map<Meta::NativeType*, void* /* std::vector<WeakPtr<T>> */> m_Objects;
 
 		template<typename T>
-		Memory::TrackedMemoryPool<T>* GetAllocator();
+		std::vector<WeakPtr<T>>& GetObjects();
+
 		template<typename T>
-		Memory::TrackedMemoryPool<T>* CreateAllocator();
+		Memory::MemoryPool* GetAllocator();
+		template<typename T>
+		Memory::MemoryPool* CreateAllocator();
 	};
 } }
 

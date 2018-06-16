@@ -10,6 +10,8 @@
 namespace OrbitEngine {	namespace Engine {
 
 	class Transform : public Component {
+		NATIVE_REFLECTION
+
 	public:
 		Transform();
 		~Transform();

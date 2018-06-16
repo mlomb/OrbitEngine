@@ -3,11 +3,15 @@
 
 #include "OE/Config.hpp"
 
+#include "OE/Meta/NativeReflection.hpp"
+
 namespace OrbitEngine {	namespace Engine {
 	class Transform;
 	class SceneObject;
 
 	class Component {
+		NATIVE_REFLECTION
+
 	public:
 		virtual ~Component();
 

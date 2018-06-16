@@ -11,4 +11,8 @@ namespace OrbitEngine {	namespace Engine {
 	{
 
 	}
+
+	NATIVE_REFLECTION_BEGIN(TestComponent)
+		NATIVE_REFLECTION_MEMBER(m_Int)
+	NATIVE_REFLECTION_END()
 } }

@@ -47,4 +47,7 @@ namespace OrbitEngine {	namespace Engine {
 
 		return m_Matrix;
 	}
+
+	NATIVE_REFLECTION_BEGIN(Transform)
+	NATIVE_REFLECTION_END()
 } }
