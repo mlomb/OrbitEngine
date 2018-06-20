@@ -11,7 +11,6 @@ namespace OrbitEngine {	namespace Engine {
 		: m_Name("SceneObject")
 	{
 		AddComponent<Transform>();
-		AddComponent<TestComponent>();
 	}
 
 	SceneObject::~SceneObject()
@@ -40,6 +39,18 @@ namespace OrbitEngine {	namespace Engine {
 	int SceneObject::GetChildCount() const
 	{
 		return int(m_Childs.size());
+	}
+
+	WeakPtr<Component> SceneObject::GetComponent(int i) const
+	{
+		if (i < 0 || i >= m_Components.size())
+			return WeakPtr<Component>();
+		return m_Components[i];
+	}
+
+	int SceneObject::GetComponentCount() const
+	{
+		return int(m_Components.size());
 	}
 
 	std::string SceneObject::GetName() const

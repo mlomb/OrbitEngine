@@ -5,6 +5,8 @@
 
 #include "OE/Meta/NativeReflection.hpp"
 
+#include "OE/Memory/Ptrs.hpp"
+
 namespace OrbitEngine {	namespace Engine {
 	class Transform;
 	class SceneObject;
@@ -23,12 +25,14 @@ namespace OrbitEngine {	namespace Engine {
 		bool isAwaken();
 		void setAwaken(bool awake);
 
+		WeakPtr<SceneObject> GetSceneObject() const;
+
 	protected:
 		friend class SceneObject;
 
 		Component();
 
-		SceneObject* p_SceneObject;
+		WeakPtr<SceneObject> m_SceneObject;
 		bool m_Awake;
 	};
 } }

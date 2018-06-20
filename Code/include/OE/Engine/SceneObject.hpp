@@ -26,16 +26,18 @@ namespace OrbitEngine {	namespace Engine {
 
 		WeakPtr<Scene> GetScene() const;
 		WeakPtr<SceneObject> GetParent() const;
+		std::string GetName() const;
 		WeakPtr<SceneObject> GetChild(int i) const;
 		int GetChildCount() const;
-		std::string GetName() const;
-
+		WeakPtr<Component> GetComponent(int i) const;
+		int GetComponentCount() const;
+		
 		WeakPtr<SceneObject> AddChildren();
+		template<typename T>
+		WeakPtr<T> AddComponent();
 		void SetName(const std::string& name);
 		void SetParent(WeakPtr<SceneObject> parent, int position = 99999999);
 
-		template<typename T>
-		WeakPtr<T> AddComponent();
 
 	private:
 		friend class Scene;
@@ -53,7 +55,9 @@ namespace OrbitEngine {	namespace Engine {
 	inline WeakPtr<T> SceneObject::AddComponent()
 	{
 		StrongPtr<T> ptr = MemoryDomain::Get()->Create<T>();
-		m_Components.push_back(ptr.template AsStrong<Component>());
+		StrongPtr<Component> comp = ptr.template AsStrong<Component>();
+		comp->m_SceneObject = m_Self;
+		m_Components.push_back(comp);
 		return ptr;
 	}
 } }

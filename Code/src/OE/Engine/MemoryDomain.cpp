@@ -19,6 +19,9 @@ namespace OrbitEngine { namespace Engine {
 
 	MemoryDomain* MemoryDomain::Get()
 	{
-		return EngineDomain::Get()->GetMemoryDomain();
+		EngineDomain* ed = EngineDomain::Get();
+		if (ed)
+			return ed->GetMemoryDomain();
+		return nullptr;
 	}
 } }

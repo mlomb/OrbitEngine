@@ -43,9 +43,11 @@ namespace OrbitEngine { namespace Engine {
 	inline void MemoryDomain::Destroy(Ptr<T>& object)
 	{
 		Meta::NativeType* type = Meta::NativeTypeResolver<T>::Get();
-		OE_ASSERT(type);
 		Memory::MemoryPool* allocator = GetAllocator<T>();
-		OE_ASSERT(allocator);
+		if (!type || !allocator) {
+			delete object.Get();
+			return;
+		}
 
 		type->Destruct(object.Get());
 		allocator->Deallocate(object.Get());

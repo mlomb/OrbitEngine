@@ -38,26 +38,27 @@ namespace OrbitEngine {
 
 
 	template<typename T>
-	inline Ptr<T>::Ptr(T* ptr, RefCount* ref_count)
-		: m_Ptr(ptr), m_RefCount(ref_count)
+	inline Ptr<T>::Ptr(T* ptr, Meta::Type* type, RefCount* ref_count)
+		: m_Ptr(ptr), m_Type(type), m_RefCount(ref_count)
 	{
 	}
-	
+
 	template<typename T>
 	inline Ptr<T>::~Ptr()
 	{
 	}
 
 	template<typename T>
-	inline Meta::NativeType* Ptr<T>::GetType() const
+	inline Meta::Type* Ptr<T>::GetType() const
 	{
-		return Meta::NativeTypeResolver<T>::Get();
+		return m_Type;
 	}
 
 	template<typename T>
 	inline void Ptr<T>::Clear()
 	{
 		m_RefCount = 0;
+		m_Type = 0;
 		m_Ptr = 0;
 	}
 
@@ -67,6 +68,7 @@ namespace OrbitEngine {
 		Clear();
 
 		m_Ptr = ptr.m_Ptr;
+		m_Type = ptr.m_Type;
 		m_RefCount = ptr.m_RefCount;
 	}
 
@@ -76,12 +78,6 @@ namespace OrbitEngine {
 		if (m_RefCount && m_RefCount->strong)
 			return m_Ptr;
 		return nullptr;
-	}
-
-	template<typename T>
-	inline T& Ptr<T>::operator*() const
-	{
-		return *Get();
 	}
 
 	template<typename T>
@@ -112,20 +108,26 @@ namespace OrbitEngine {
 	template<typename V>
 	inline WeakPtr<V> Ptr<T>::AsWeak()
 	{
-		return WeakPtr<V>(Ptr<V>(static_cast<V*>(m_Ptr), m_RefCount));
+		return WeakPtr<V>(Ptr<V>(static_cast<V*>(m_Ptr), m_Type, m_RefCount));
 	}
 
 	template<typename T>
 	template<typename V>
 	inline StrongPtr<V> Ptr<T>::AsStrong()
 	{
-		return StrongPtr<V>(Ptr<V>(static_cast<V*>(m_Ptr), m_RefCount));
+		return StrongPtr<V>(Ptr<V>(static_cast<V*>(m_Ptr), m_Type, m_RefCount));
 	}
 
 
 	template<typename T>
+	inline StrongPtr<T>::StrongPtr()
+		: Ptr<T>(0, 0)
+	{
+	}
+
+	template<typename T>
 	inline StrongPtr<T>::StrongPtr(T* ptr)
-		: Ptr<T>(ptr)
+		: Ptr<T>(ptr, Meta::NativeTypeResolver<T>::Get())
 	{
 		if (this->m_Ptr) {
 			if (!this->m_RefCount)
@@ -196,7 +198,7 @@ namespace OrbitEngine {
 		if (this->m_RefCount) {
 			if (this->m_RefCount->strong == 1) {
 				Engine::MemoryDomain* md = Engine::MemoryDomain::Get();
-				if (md)
+				if (md && m_Type)
 					md->Destroy(*this);
 				else
 					delete this->m_Ptr;

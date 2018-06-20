@@ -8,17 +8,59 @@
 #include "OE/Meta/NativeType.hpp"
 #include "OE/Meta/NativeMember.hpp"
 
+#include "OE/Math/Vec2.hpp"
+#include "OE/Math/Vec3.hpp"
+#include "OE/Math/Vec4.hpp"
+
 namespace OrbitEngine { namespace Meta {
 	namespace internal {
-		template <typename T>
-		NativeType* GetPrimitiveNativeType();
+
+		template<typename T>
+		NativeType* GetPrimitiveNativeType() { return 0; };
+
+		#define NATIVE_TYPE(klass, name, kind) \
+		class NativeType_##name : public Meta::NativeType { \
+		public: \
+			NativeType_##name() : Meta::NativeType(#klass, kind, sizeof(klass)) { \
+			}  \
+		}; \
+		template <> \
+		inline Meta::NativeType* GetPrimitiveNativeType<klass>() { \
+			static NativeType_##name* type = 0; \
+			if(type == 0) {  \
+				type = new NativeType_##name();  \
+				ReflectionDatabase::AddNativeType(type); \
+			} \
+			return type; \
+		} \
+
+		NATIVE_TYPE(std::string, string, STRING)
+		NATIVE_TYPE(bool, bool, BOOL)
+		NATIVE_TYPE(char, char, CHAR)
+		NATIVE_TYPE(int, int, INT)
+		NATIVE_TYPE(unsigned int, uint, UINT)
+		NATIVE_TYPE(long, long, LONG)
+		NATIVE_TYPE(long long, longlong, LONGLONG)
+		NATIVE_TYPE(unsigned long, ulong, ULONG)
+		NATIVE_TYPE(unsigned long long, ulonglong, ULONGLONG)
+		NATIVE_TYPE(double, double, DOUBLE)
+		NATIVE_TYPE(float, float, FLOAT)
+
+		NATIVE_TYPE(Math::Vec2i, Vec2i, VEC2_INT)
+		NATIVE_TYPE(Math::Vec3i, Vec3i, VEC3_INT)
+		NATIVE_TYPE(Math::Vec4i, Vec4i, VEC4_INT)
+		NATIVE_TYPE(Math::Vec2f, Vec2f, VEC2_FLOAT)
+		NATIVE_TYPE(Math::Vec3f, Vec3f, VEC3_FLOAT)
+		NATIVE_TYPE(Math::Vec4f, Vec4f, VEC4_FLOAT)
 
 		struct NativeTypeResolver {
 			template <typename T> static char func(decltype(&T::Reflection));
 			template <typename T> static int func(...);
 			template <typename T>
 			struct IsReflected {
-				enum { value = (sizeof(func<T>(nullptr)) == sizeof(char)) };
+				enum {
+					value = (sizeof(func<T>(nullptr)) == sizeof(char))
+				};
 			};
 
 			template <typename T, typename std::enable_if<IsReflected<T>::value, int>::type = 0>

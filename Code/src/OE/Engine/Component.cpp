@@ -31,6 +31,11 @@ namespace OrbitEngine {	namespace Engine {
 
 	}
 
+	WeakPtr<SceneObject> Component::GetSceneObject() const
+	{
+		return m_SceneObject;
+	}
+
 	NATIVE_REFLECTION_BEGIN(Component)
 
 	NATIVE_REFLECTION_END()

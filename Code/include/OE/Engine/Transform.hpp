@@ -16,14 +16,21 @@ namespace OrbitEngine {	namespace Engine {
 		Transform();
 		~Transform();
 
-		Math::Vec3f Position;
-		Math::Vec3f Rotation;
-		Math::Vec3f Scale;
-
+		Math::Vec3f GetPosition() const;
+		Math::Vec3f GetRotation() const;
+		Math::Vec3f GetScale() const;
 		Math::Mat4 getMatrix();
+
+		void SetPosition(const Math::Vec3f& pos);
+		void SetRotation(const Math::Vec3f& rot);
+		void SetScale(const Math::Vec3f& scale);
 
 	private:
 		Math::Mat4 m_Matrix;
+
+		Math::Vec3f m_Position;
+		Math::Vec3f m_Rotation;
+		Math::Vec3f m_Scale;
 	};
 } }
 

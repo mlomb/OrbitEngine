@@ -14,24 +14,14 @@ namespace OrbitEngine {	namespace Engine {
 		//m_Root->m_Scene = WeakPtr<Scene>(this);
 		m_Root->SetName("Root");
 
-		// mocking af
-		{
-			m_Root->AddChildren()->SetName("Child 1");
 
-			WeakPtr<OrbitEngine::Engine::SceneObject> c2 = m_Root->AddChildren();
-			c2->SetName("Child 2");
-			{
-				c2->AddChildren()->SetName("Child 2.1");
-				c2->AddChildren()->SetName("Child 2.2");
-			}
-			m_Root->AddChildren()->SetName("Child 3");
-			//c2->addComponent<TestComponent>();
 
-			WeakPtr<OrbitEngine::Engine::SceneObject> cam = m_Root->AddChildren();
-			c2->SetName("Camera");
-			//cam->addComponent<Camera>();
-			//cam->addComponent<EulerCameraController>();
-		}
+
+
+		// ---
+		WeakPtr<OrbitEngine::Engine::SceneObject> camera = m_Root->AddChildren();
+		camera->SetName("Camera");
+		camera->AddComponent<Camera>();
 	}
 
 	Scene::~Scene() {

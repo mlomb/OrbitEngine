@@ -29,8 +29,8 @@ namespace OrbitEngine {	namespace Engine {
 
 
 		if (inputManager->hasFocus() && inputManager->getCursorMode() == Application::CursorMode::GRABBED) {
-			Math::Vec3f position = cameraTransform->Position;
-			Math::Vec3f rotation = cameraTransform->Rotation;
+			Math::Vec3f position = cameraTransform->GetPosition();
+			Math::Vec3f rotation = cameraTransform->GetRotation();
 			float movementSpeed = m_MovementSpeed;
 
 			/* Cursor */
@@ -65,8 +65,8 @@ namespace OrbitEngine {	namespace Engine {
 
 			position = Math::Vec3f::Lerp(position, m_DestPosition, Math::clamp(8.0f * delta, 0.0f, 1.0f));
 			
-			cameraTransform->Position = position;
-			cameraTransform->Rotation = rotation;
+			cameraTransform->SetPosition(position);
+			cameraTransform->SetRotation(rotation);
 
 			if (inputManager->isKeyDown(Application::ESCAPE)) {
 				inputManager->requestCursorMode(Application::CursorMode::NORMAL);

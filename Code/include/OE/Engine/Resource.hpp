@@ -12,7 +12,7 @@ namespace OrbitEngine {	namespace Engine {
 	public:
 		Resource();
 		Resource(Misc::GUID guid);
-		~Resource();
+		virtual ~Resource();
 
 		Misc::GUID getGUID() const;
 		bool isValid() const;

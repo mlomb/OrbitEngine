@@ -3,7 +3,7 @@
 
 namespace OrbitEngine {
 	namespace Meta {
-		class NativeType;
+		class Type;
 	}
 
 	template<typename T>
@@ -28,14 +28,13 @@ namespace OrbitEngine {
 	class Ptr {
 	public:
 
-		Ptr(T* ptr = 0, RefCount* ref_count = 0);
+		Ptr(T* ptr = 0, Meta::Type* type = 0, RefCount* ref_count = 0);
 		virtual ~Ptr();
 
-		Meta::NativeType* GetType() const;
+		Meta::Type* GetType() const;
 		virtual void Clear();
 
 		T* Get() const;
-		T& operator*() const;
 		T* operator->() const;
 		operator bool() const;
 		bool operator==(const Ptr& rhs) const;
@@ -47,8 +46,9 @@ namespace OrbitEngine {
 		StrongPtr<V> AsStrong();
 
 	protected:
-		RefCount* m_RefCount;
 		T* m_Ptr;
+		Meta::Type* m_Type;
+		RefCount* m_RefCount;
 
 		virtual void BuildFromPtr(const Ptr<T>& ptr);
 
@@ -59,7 +59,8 @@ namespace OrbitEngine {
 	template<typename T>
 	class StrongPtr : public Ptr<T> {
 	public:
-		StrongPtr(T* ptr = 0);
+		StrongPtr();
+		StrongPtr(T* ptr);
 		StrongPtr(const Ptr<T>& ptr);
 		StrongPtr(const StrongPtr<T>& ptr);
 		StrongPtr(const WeakPtr<T>& ptr);
