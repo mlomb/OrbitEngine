@@ -29,6 +29,9 @@ namespace OrbitEngine { namespace Misc {
 	}
 
 	void FrameDebugger::RegisterEvent(Event& event, bool push) {
+		if (!IsCapturing())
+			return;
+
 		event.index = s_CurrentCapture->events.size();
 		if (push) {
 			event.parent_index = event.index - 1;
@@ -40,7 +43,8 @@ namespace OrbitEngine { namespace Misc {
 	}
 
 	void FrameDebugger::Pop() {
-		if(IsCapturing())
-			s_CurrentCapture->next_parent = s_CurrentCapture->events[s_CurrentCapture->events.size() - 1].parent_index;
+		if (!IsCapturing())
+			return;
+		s_CurrentCapture->next_parent = s_CurrentCapture->events[s_CurrentCapture->events.size() - 1].parent_index;
 	}
 } }

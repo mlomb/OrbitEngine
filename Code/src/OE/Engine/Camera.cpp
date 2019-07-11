@@ -110,7 +110,9 @@ namespace OrbitEngine {	namespace Engine {
 		Graphics::FrameBuffer::Prepare();
 		m_FrameBuffer->clear();
 
+		/* Render */
 
+		/* Render */
 
 		Graphics::FrameBuffer::Pop();
 

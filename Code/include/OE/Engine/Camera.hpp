@@ -25,7 +25,9 @@ namespace OrbitEngine {	namespace Engine {
 		};
 
 		void update(float delta) override;
+
 		Graphics::FrameBuffer* Render();
+
 
 		Camera();
 		~Camera();
