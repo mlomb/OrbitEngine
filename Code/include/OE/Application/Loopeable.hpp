@@ -7,7 +7,7 @@ namespace OrbitEngine {	namespace Application {
 	class Loopeable {
 	public:
 		Loopeable() {};
-		~Loopeable() {};
+		virtual ~Loopeable() {};
 
 		virtual void init(OrbitEngine::Application::Context* context) { };
 		virtual void render() = 0;

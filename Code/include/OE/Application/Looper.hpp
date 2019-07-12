@@ -12,17 +12,17 @@ namespace OrbitEngine {	namespace Application {
 	class Looper {
 	public:
 		Looper(Context* context, Loopeable* loopeable = 0);
-		~Looper();
+		virtual ~Looper();
 
 		void setLoopeable(Loopeable* loopeable);
 
-		void stop();
-		void loop();
+		virtual void stop();
+		virtual void loop();
 		Misc::Ticker* getTicker() const;
 
-	private:
+	protected:
 
-		void frame();
+		virtual void frame();
 #if OE_EMSCRIPTEN
 		static void emscripten_frame(void* looper);
 #endif
