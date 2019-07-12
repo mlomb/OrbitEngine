@@ -57,20 +57,25 @@ file(GLOB_RECURSE SRC ${INC_DIR}/OE/Misc/*.hpp
                       ${INC_DIR}/OE/Memory/*.hpp
                       ${INC_DIR}/OE/Memory/*.inl
                       ${SRC_DIR}/OE/Memory/*.cpp
-                      ${INC_DIR}/OE/Meta/*.hpp
-                      ${SRC_DIR}/OE/Meta/*.cpp
+                      #${INC_DIR}/OE/Meta/*.hpp
+                      #${SRC_DIR}/OE/Meta/*.cpp
                       ${INC_DIR}/OE/Application/*.hpp
                       ${SRC_DIR}/OE/Application/*.cpp
-                      ${INC_DIR}/OE/Engine/*.hpp
-                      ${INC_DIR}/OE/Engine/*.inl
-                      ${SRC_DIR}/OE/Engine/*.cpp
-                      ${INC_DIR}/OE/Scripting/*.hpp
-                      ${SRC_DIR}/OE/Scripting/*.cpp
+                      #${INC_DIR}/OE/Engine/*.hpp
+                      #${INC_DIR}/OE/Engine/*.inl
+                      #${SRC_DIR}/OE/Engine/*.cpp
+                      #${INC_DIR}/OE/Scripting/*.hpp
+                      #${SRC_DIR}/OE/Scripting/*.cpp
                       ${INC_DIR}/OE/System/*.hpp
                       ${SRC_DIR}/OE/System/*.hpp
                       ${SRC_DIR}/OE/System/*.cpp
                       ${INC_DIR}/OE/UI/*.hpp
                       ${SRC_DIR}/OE/UI/*.cpp
+)
+
+list(REMOVE_ITEM SRC
+	${INC_DIR}/OE/Misc/FrameDebugger.hpp
+	${SRC_DIR}/OE/Misc/FrameDebugger.cpp
 )
 
 set(SRC
@@ -165,7 +170,7 @@ list(APPEND OE_LIBRARIES
 	FreeImage
 	xsc_core
 	assimp
-	${MONO_LIBRARIES}
+	#${MONO_LIBRARIES}
 )
 list(APPEND OE_LIBRARIES_INC
 	${freetype_SOURCE_DIR}/include
@@ -173,7 +178,7 @@ list(APPEND OE_LIBRARIES_INC
     ${XShaderCompiler_SOURCE_DIR}/inc
     ${Assimp_SOURCE_DIR}/include
     ${Assimp_BINARY_DIR}/include
-	${MONO_INCLUDE_DIR}
+	#${MONO_INCLUDE_DIR}
 )
 
 target_compile_definitions(FreeImage PUBLIC FREEIMAGE_LIB)
@@ -183,7 +188,7 @@ target_compile_definitions(OrbitEngine PUBLIC FREEIMAGE_LIB)
 if(OE_WINDOWS)
 
 elseif(OE_EMSCRIPTEN)
-	target_link_libraries(OrbitEngine PUBLIC "-s USE_WEBGL2=1 -s FULL_ES3=1 -s ALLOW_MEMORY_GROWTH=1 -s ASSERTIONS=2")
+	target_link_libraries(OrbitEngine PUBLIC "-s USE_WEBGL2=1 -s FULL_ES3=1 -s ALLOW_MEMORY_GROWTH=1 -s ASSERTIONS=2 -s WASM=1 -s MODULARIZE=1")
 elseif(OE_ANDROID)
     list(APPEND OE_LIBRARIES android log)
 elseif(OE_LINUX)
@@ -229,9 +234,9 @@ endif()
 
 # - Binaries -
 if(OE_WINDOWS)
-	list(APPEND OE_BINARIES
-		"${MONO_PATH}/bin/${MONO_N}.dll"
-	)
+	#list(APPEND OE_BINARIES
+	#	"${MONO_PATH}/bin/${MONO_N}.dll"
+	#)
 	set(OE_BINARIES "${OE_BINARIES}" CACHE STRING "")
 endif()
 

@@ -1,7 +1,7 @@
 # Set modules path
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_LIST_DIR}/Modules)
 
-find_package(Mono)
+#find_package(Mono)
 
 if(OE_EDITOR_INTERNAL)
 	set(OE_EDITOR 1)

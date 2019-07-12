@@ -23,7 +23,7 @@ namespace OrbitEngine { namespace Application {
 	}
 
 	Window::Window(WindowNativeHandle handle)
-#if OE_WINDOWS || OE_UNIX
+#if (OE_WINDOWS || OE_UNIX) && !OE_EMSCRIPTEN
 		: Pimpl(new ::WindowImplType(handle))
 #endif
 	{
