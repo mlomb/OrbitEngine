@@ -38,4 +38,8 @@ namespace OrbitEngine { namespace Misc {
 			} while (m_Now - m_FPSTimer > ONE_SECOND_IN_NANO);
 		}
 	}
+
+	long long Ticker::getTimeSinceLastTick() {
+		return System::System::Instance()->currentNano() - m_TicksTimer;
+	}
 } }

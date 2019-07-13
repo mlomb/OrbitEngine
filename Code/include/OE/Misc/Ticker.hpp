@@ -14,6 +14,7 @@ namespace OrbitEngine { namespace Misc {
 		float getFrameDeltaMS() const { return m_FrameDelta * ONE_SECOND_IN_NANO / 1000000; }
 		unsigned short getFPS() const { return m_FPS; }
 		unsigned long getTotalTicks() const { return m_TotalTicks; }
+		long long getTimeSinceLastTick();
 	private:
 		long long m_Now, m_TicksTimer, m_FPSTimer;
 		float m_FrameDelta;
