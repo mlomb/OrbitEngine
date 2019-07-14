@@ -116,22 +116,22 @@ namespace OrbitEngine { namespace UI {
 		void bringToFront(Element* element);
 
 	public:
-		Application::EventHandler<MouseBaseEvent> onClick;
-		Application::EventHandler<MouseBaseEvent> onDblClick;
-		Application::EventHandler<MouseBaseEvent> onMouseEnter;
-		Application::EventHandler<MouseBaseEvent> onMouseLeave;
-		Application::EventHandler<MouseBaseEvent> onMouseUp;
-		Application::EventHandler<MouseBaseEvent> onMouseDown;
-		Application::EventHandler<MouseMoveEvent> onMouseMove;
+		Application::EventHandler<const MouseBaseEvent> onClick;
+		Application::EventHandler<const MouseBaseEvent> onDblClick;
+		Application::EventHandler<const MouseBaseEvent> onMouseEnter;
+		Application::EventHandler<const MouseBaseEvent> onMouseLeave;
+		Application::EventHandler<const MouseBaseEvent> onMouseUp;
+		Application::EventHandler<const MouseBaseEvent> onMouseDown;
+		Application::EventHandler<const MouseMoveEvent> onMouseMove;
 
-		Application::EventHandler<KeyBaseEvent> onKeyUp;
-		Application::EventHandler<KeyBaseEvent> onKeyDown;
-		Application::EventHandler<KeyBaseEvent> onKeyPress;
+		Application::EventHandler<const KeyBaseEvent> onKeyUp;
+		Application::EventHandler<const KeyBaseEvent> onKeyDown;
+		Application::EventHandler<const KeyBaseEvent> onKeyPress;
 
-		Application::EventHandler<Event> onFocusGain;
-		Application::EventHandler<Event> onFocusLost;
+		Application::EventHandler<const Event> onFocusGain;
+		Application::EventHandler<const Event> onFocusLost;
 
-		Application::EventHandler<WheelEvent> onWheelDelta;
+		Application::EventHandler<const WheelEvent> onWheelDelta;
 
 	private:
 		friend class Canvas;

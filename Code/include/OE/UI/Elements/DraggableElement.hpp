@@ -19,7 +19,7 @@ namespace OrbitEngine {	namespace UI {
 	public:
 		DraggableElement();
 
-		Application::EventHandler<DragEvent> onDrag;
+		Application::EventHandler<const DragEvent> onDrag;
 
 		void setDraggingCursor(Application::Cursor draggingCursor) { m_DraggingCursor = draggingCursor; };
 

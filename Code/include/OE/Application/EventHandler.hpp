@@ -12,10 +12,10 @@ namespace OrbitEngine { namespace Application {
 	/* Should it be in the Misc namespace? */
 	template<class TEvent = Event>
 	class EventHandler {
-		static_assert(std::is_base_of<Event, TEvent>::value, "TEvent must inherit from Event");
+		//static_assert(std::is_base_of<Event, TEvent>::value, "TEvent must inherit from Event");
 
 	public:
-		typedef typename std::function<void(const TEvent&)> EventCallback;
+		typedef typename std::function<void(TEvent&)> EventCallback;
 		typedef typename std::shared_ptr<EventCallback> EventCallbackPtr;
 		typedef typename std::vector<EventCallbackPtr> Callbacks;
 
@@ -28,7 +28,7 @@ namespace OrbitEngine { namespace Application {
 		}
 
 		template<class T>
-		EventCallbackPtr AddListener(T* instance, void(T::*callback)(const TEvent&)) {
+		EventCallbackPtr AddListener(T* instance, void(T::*callback)(TEvent&)) {
 			return AddListener(std::bind(callback, instance, std::placeholders::_1));
 		}
 
@@ -38,11 +38,11 @@ namespace OrbitEngine { namespace Application {
 				p_Callbacks.erase(it);
 		}
 
-		virtual void FireEvent(const TEvent& event) {
+		virtual void FireEvent(TEvent& event) {
 			for (typename Callbacks::reverse_iterator callback = p_Callbacks.rbegin(); callback != p_Callbacks.rend(); ++callback) {
 				(*(*callback))(event);
 			}
-		};
+		}
 	protected:
 		Callbacks p_Callbacks;
 	};

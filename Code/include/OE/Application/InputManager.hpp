@@ -46,12 +46,12 @@ namespace OrbitEngine { namespace Application {
 		CursorMode getCursorMode() const;
 		priv::WindowImpl* getWindowImpl() const;
 
-		EventHandler<KeyInputEvent> onKeyEvent;
-		EventHandler<ButtonInputEvent> onButtonEvent;
-		EventHandler<MouseMoveInputEvent> onMouseMoveEvent;
-		EventHandler<MouseWheelInputEvent> onWheelEvent;
-		EventHandler<WindowFocusInputEvent> onFocusEvent;
-		EventHandler<WindowResizedInputEvent> onResizedEvent;
+		EventHandler<const KeyInputEvent> onKeyEvent;
+		EventHandler<const ButtonInputEvent> onButtonEvent;
+		EventHandler<const MouseMoveInputEvent> onMouseMoveEvent;
+		EventHandler<const MouseWheelInputEvent> onWheelEvent;
+		EventHandler<const WindowFocusInputEvent> onFocusEvent;
+		EventHandler<const WindowResizedInputEvent> onResizedEvent;
 
 		// Inject events, internal use
 		void onInputResized(int width, int height);
