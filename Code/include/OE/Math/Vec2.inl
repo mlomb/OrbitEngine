@@ -196,6 +196,11 @@ namespace OrbitEngine { namespace Math {
 		v.normalize();
 		return v;
 	}
+
+	template<typename T> inline Vec2<T> Vec2<T>::FromAngle(double angle)
+	{
+		return Vec2<T>(cos(angle), -sin(angle));
+	}
 } }
 
 #endif

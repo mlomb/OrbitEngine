@@ -41,6 +41,7 @@ namespace OrbitEngine { namespace Math {
 		static Vec2<T> Max(const Vec2<T>& a, const Vec2<T>& b);
 		static Vec2<T> Lerp(const Vec2<T>& a, const Vec2<T>& b, T t);
 		static Vec2<T> Normalize(const Vec2<T>& a);
+		static Vec2<T> FromAngle(double angle);
 	};
 
 	typedef Vec2<int>    Vec2i;
