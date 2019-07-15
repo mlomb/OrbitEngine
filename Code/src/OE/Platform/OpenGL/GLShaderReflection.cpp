@@ -37,6 +37,13 @@ namespace OrbitEngine {	namespace Graphics {
 				binding = i;
 			}
 
+			/*
+				TODO: Temporal fix
+				For some reason, glGetActiveUniformBlockiv is
+				returning 0 for different uniform blocks
+			*/
+			binding = uniformBlocksCount - 1 - i;
+
 			ShaderBufferReflection buffer;
 			// It's not necessary in OpenGL
 			// If some day is necessary use

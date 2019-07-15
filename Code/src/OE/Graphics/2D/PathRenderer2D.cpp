@@ -26,7 +26,6 @@ namespace OrbitEngine { namespace Graphics {
 
 		m_Mesh = Mesh::Create(vertices, layout, indices);
 
-		m_PVMatrices = UniformsPack<PVMatrices>::Create();
 		m_UniformDataPack = UniformsPack<PathRendererUniformData>::Create();
 
 #if OE_OPENGL_ANY
@@ -86,24 +85,10 @@ namespace OrbitEngine { namespace Graphics {
 		m_Mesh->getVBO()->unmapPointer();
 
 		m_Shader->bind();
-		if (Application::Context::GetCurrentAPI() == RenderAPI::OPENGL) {
-			GLShader* glShader = (GLShader*)m_Shader;
-			glShader->bind();
-			glShader->bindUBO("PVMatrices", 0);
-			glShader->bindUBO("Data", 1);
-		}
-
-		/* TODO Remove */
-		Application::WindowProperties& wprops = Application::priv::ContextImpl::GetCurrent()->getWindowImpl()->getProperties();
-		PVMatrices matricesUniforms;
-		matricesUniforms.pmatrix.pr_matrix = Math::Mat4::Orthographic(0.0f, (float)wprops.resolution.x, (float)wprops.resolution.y, 0.0f, -1.0f, 1.0f);
-		matricesUniforms.vmatrix.vw_matrix = Math::Mat4::Identity();
-		/* --- */
 
 		States* states = Application::priv::ContextImpl::GetCurrent()->getGlobalStates();
 
-		m_PVMatrices->setData(matricesUniforms);
-		m_PVMatrices->bind(0, ShaderType::VERTEX);
+		m_UPVMatrix->bind(0, ShaderType::VERTEX);
 
 		states->setCullMode(CullMode::NONE); // BACK
 		states->setDepthTest(FunctionMode::DISABLED);
@@ -239,7 +224,7 @@ namespace OrbitEngine { namespace Graphics {
 			return;
 		}
 
-		m_Verts->position = position;
+		m_Verts->position = p_Transform * position;
 		m_Verts->uv = uv;
 		m_Verts++;
 		m_NVerts++;

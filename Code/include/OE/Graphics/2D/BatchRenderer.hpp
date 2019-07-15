@@ -36,8 +36,6 @@ namespace OrbitEngine { namespace Graphics {
 		Mesh* m_BatchMesh;
 		Math::Color m_BindColor;
 
-		UniformsPack<Math::Mat4>* m_UProjection;
-		
 		Batch2DVertex* m_pVertices;
 		unsigned int m_Count;
 	};

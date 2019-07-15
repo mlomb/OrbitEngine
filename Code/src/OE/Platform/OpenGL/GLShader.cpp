@@ -82,7 +82,6 @@ namespace OrbitEngine {	namespace Graphics {
 		static_cast<GLShaderReflection*>(p_Reflection)->reflect(m_ID);
 
 		/* Bind the UBOs automatically */
-		bind();
 		for (const auto& buffer : p_Reflection->getAllBuffers())
 			bindUBO(buffer.name.c_str(), buffer.slot);
 	}

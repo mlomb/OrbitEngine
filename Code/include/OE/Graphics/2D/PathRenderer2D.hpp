@@ -38,7 +38,6 @@ namespace OrbitEngine { namespace Graphics {
 		Graphics::Mesh* m_Mesh;
 
 		Graphics::UniformsPack<PathRendererUniformData>* m_UniformDataPack;
-		Graphics::UniformsPack<PVMatrices>* m_PVMatrices;
 
 		std::vector<PathRendererCall*> m_RenderCalls;
 		PathRendererVertex* m_Verts;

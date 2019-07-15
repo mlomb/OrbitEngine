@@ -9,7 +9,7 @@ namespace OrbitEngine {	namespace Graphics {
 	template <class T>
 	class UniformsPack {
 	public:
-		virtual void setData(T& data) = 0;
+		virtual void setData(const T& data) = 0;
 		virtual void bind(unsigned int slot, ShaderType shader) const = 0;
 		void bind(const std::string& name, Shader* shader) const;
 

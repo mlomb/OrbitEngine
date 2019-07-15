@@ -1,8 +1,7 @@
 #shadertype VERTEX
-cbuffer PVMatrices : register(b0)
+cbuffer PVMatrix : register(b0)
 {
-	matrix pr_matrix;
-	matrix vw_matrix;
+	matrix pv_matrix;
 };
 
 struct Input {
@@ -18,9 +17,7 @@ struct Output {
 Output main(Input input) {
 	Output output;
 
-	float4x4 worldViewProj = mul(pr_matrix, vw_matrix);
-
-	output.position = mul(worldViewProj, float4(input.position.x, input.position.y, 0, 1));
+	output.position = mul(pv_matrix, float4(input.position.x, input.position.y, 0, 1));
 	output.uv = input.uv;
 
 	return output;

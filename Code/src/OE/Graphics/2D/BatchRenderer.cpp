@@ -55,8 +55,6 @@ namespace OrbitEngine { namespace Graphics {
 			glShader->unbind();
 		}
 #endif
-
-		m_UProjection = Graphics::UniformsPack<Math::Mat4>::Create();
 	}
 
 	BatchRenderer::~BatchRenderer()
@@ -82,7 +80,7 @@ namespace OrbitEngine { namespace Graphics {
 
 	void BatchRenderer::pushVertex(const Math::Vec2f& position, const Math::Color& color, const unsigned short tid, const Math::Vec2f& uv)
 	{
-		m_pVertices->position = position;
+		m_pVertices->position = p_Transform * position;
 		m_pVertices->color = color;
 		m_pVertices->uv = uv;
 		m_pVertices->tid = tid;
@@ -113,13 +111,7 @@ namespace OrbitEngine { namespace Graphics {
 		m_BatchMesh->getVBO()->unmapPointer();
 		m_BatchShader->bind();
 
-		/* TODO Move or Remove */
-		Application::WindowProperties& wprops = Application::priv::ContextImpl::GetCurrent()->getWindowImpl()->getProperties();
-		Math::Mat4 proj = Math::Mat4::Orthographic(0.0f, (float)wprops.resolution.x, (float)wprops.resolution.y, 0.0f, -1.0f, 1.0f);
-		/* -- */
-
-		m_UProjection->setData(proj);
-		m_UProjection->bind(0, Graphics::ShaderType::VERTEX);
+		m_UPVMatrix->bind(0, Graphics::ShaderType::VERTEX);
 
 		m_BatchMesh->drawIndexed(m_Count);
 	}

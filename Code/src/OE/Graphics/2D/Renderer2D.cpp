@@ -9,8 +9,12 @@ namespace OrbitEngine { namespace Graphics {
 	Mesh* Renderer2D::s_Quad = nullptr;
 
 	Renderer2D::Renderer2D()
+		: p_Transform(Math::Mat4::Identity()), p_BindTexture(0)
 	{
 		p_ScissorStack = new Misc::ScissorStack();
+
+		m_UPVMatrix = Graphics::UniformsPack<Math::Mat4>::Create();
+		m_UPVMatrix->setData(Math::Mat4::Orthographic(0.0f, 1000.0f, 1000.0f, 0.0f, -1.0f, 1.0f));
 	}
 
 	int Renderer2D::handleTexture(Texture* tex)
@@ -46,6 +50,16 @@ namespace OrbitEngine { namespace Graphics {
 	void Renderer2D::bindTexture(Texture* tex)
 	{
 		p_BindTexture = handleTexture(tex);
+	}
+
+	void Renderer2D::setPVMatrix(const Math::Mat4& matrix)
+	{
+		m_UPVMatrix->setData(matrix);
+	}
+
+	void Renderer2D::setTransform(const Math::Mat4& matrix)
+	{
+		p_Transform = matrix;
 	}
 
 	void Renderer2D::rect(const Math::Vec2f& position, const Math::Vec2f& size)

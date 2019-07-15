@@ -31,6 +31,8 @@ namespace OrbitEngine { namespace Graphics {
 
 		virtual void bindColor(const Math::Color& color) = 0;
 		void bindTexture(Texture* tex);
+		void setPVMatrix(const Math::Mat4& matrix);
+		void setTransform(const Math::Mat4& matrix);
 
 		void rect(const Math::Vec2f& position, const Math::Vec2f& size);
 		void rect(const Math::Vec2f& position, const Math::Vec2f& size, const Math::UV& uvs, bool flipX = false, bool flipY = false);
@@ -46,6 +48,9 @@ namespace OrbitEngine { namespace Graphics {
 		unsigned short p_BindTexture;
 		std::vector<Texture*> p_Textures;
 		Misc::ScissorStack* p_ScissorStack;
+		Math::Mat4 p_Transform;
+
+		UniformsPack<Math::Mat4>* m_UPVMatrix;
 
 	private:
 		// Little cache

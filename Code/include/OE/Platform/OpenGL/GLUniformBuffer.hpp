@@ -14,7 +14,7 @@ namespace OrbitEngine {	namespace Graphics {
 	public:
 		GLUniformBuffer();
 
-		void setData(T& data) override;
+		void setData(const T& data) override;
 		void bind(unsigned int slot, ShaderType shader) const override;
 	};
 
@@ -25,7 +25,7 @@ namespace OrbitEngine {	namespace Graphics {
 	}
 
 	template<class T>
-	inline void GLUniformBuffer<T>::setData(T& data)
+	inline void GLUniformBuffer<T>::setData(const T& data)
 	{
 		GLBuffer::setData(sizeof(T), &data);
 	}

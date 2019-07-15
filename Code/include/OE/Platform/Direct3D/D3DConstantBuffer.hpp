@@ -15,11 +15,11 @@ namespace OrbitEngine { namespace Graphics {
 		void bind(unsigned int slot, ShaderType shader) const override;
 		void bind() const override;
 
-		void setData(CB& data) override;
+		void setData(const CB& data) override;
 	};
 
 	template<class CB>
-	inline void D3DConstantBuffer<CB>::setData(CB& data)
+	inline void D3DConstantBuffer<CB>::setData(const CB& data)
 	{
 		D3DMappedResource::setData(sizeof(CB), &data);
 	}
