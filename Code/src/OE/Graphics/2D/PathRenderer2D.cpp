@@ -42,7 +42,10 @@ namespace OrbitEngine { namespace Graphics {
 				texIDs[i] = i;
 			}
 			glShader->setUniform1iv("textures", texIDs, (sizeof(texIDs) / sizeof(*texIDs)));
-
+			// TODO: Remove
+			glShader->bindUBO("PVMatrix", 0);
+			glShader->bindUBO("Data", 1);
+			
 			glShader->unbind();
 		}
 #endif
@@ -84,15 +87,13 @@ namespace OrbitEngine { namespace Graphics {
 
 		m_Mesh->getVBO()->unmapPointer();
 
-		m_Shader->bind();
-
 		States* states = Application::priv::ContextImpl::GetCurrent()->getGlobalStates();
-
-		m_UPVMatrix->bind(0, ShaderType::VERTEX);
-
 		states->setCullMode(CullMode::NONE); // BACK
 		states->setDepthTest(FunctionMode::DISABLED);
 
+		m_Shader->bind();
+		m_UPVMatrix->bind(0, ShaderType::VERTEX);
+		
 		unsigned int i = 0;
 		for (PathRendererCall* call : m_RenderCalls) {
 			m_UniformDataPack->setData(call->data);
