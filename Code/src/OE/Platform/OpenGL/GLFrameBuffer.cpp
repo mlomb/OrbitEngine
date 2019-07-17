@@ -160,16 +160,21 @@ namespace OrbitEngine { namespace Graphics {
 		GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 		if (status != GL_FRAMEBUFFER_COMPLETE) {
 			// https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glCheckFramebufferStatus.xhtml
+
+#define GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER 0x8CDB
+#define GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER 0x8CDC
+#define GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS 0x8DA8
+
 			std::string status_value = "-";
 			switch (status)
 			{
 			case GL_FRAMEBUFFER_UNDEFINED:				  status_value = "GL_FRAMEBUFFER_UNDEFINED"; break;
 			case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:    status_value = "GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT"; break;
 			case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT: status_value = "GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT"; break;
-			case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:	  status_value = "GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER"; break;
-			case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:	  status_value = "GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER"; break;
 			case GL_FRAMEBUFFER_UNSUPPORTED:			  status_value = "GL_FRAMEBUFFER_UNSUPPORTED"; break;
 			case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE:	  status_value = "GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE"; break;
+			case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:	  status_value = "GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER"; break;
+			case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:	  status_value = "GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER"; break;
 			case GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS: status_value = "GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS"; break;
 			}
 			OE_LOG_ERROR("FrameBuffer is not complete! Reason: " << status_value << " (" << status << "). See glCheckFramebufferStatus.");

@@ -42,6 +42,7 @@ namespace OrbitEngine {	namespace Graphics {
 				For some reason, glGetActiveUniformBlockiv is
 				returning 0 for different uniform blocks
 			*/
+			// NOTE: This is not working in WebGL.
 			binding = uniformBlocksCount - 1 - i;
 
 			ShaderBufferReflection buffer;

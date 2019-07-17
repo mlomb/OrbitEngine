@@ -140,9 +140,10 @@ namespace OrbitEngine {	namespace Graphics {
 
 	void GLShader::bindUBO(const GLchar* name, const unsigned int uboSlot) const
 	{
+		OE_LOG_DEBUG("Binding to shader " << m_ID << " UBO " << name << " in slot " << uboSlot);
 		bindUBO(getUniformBlockIndex(name), uboSlot);
 	}
-
+	
 	void GLShader::bindUBO(const unsigned int block_index, const unsigned int uboSlot) const
 	{
 		glUniformBlockBinding(m_ID, block_index, uboSlot);
