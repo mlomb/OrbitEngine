@@ -52,7 +52,6 @@ namespace OrbitEngine { namespace Graphics {
 		formatProperties.mipmapping = false;
 		formatProperties.dataType = Graphics::TextureDataType::FLOAT;
 		formatProperties.format = Graphics::TextureFormat::RGBA32F;
-		formatProperties.bpp = 32;
 
 		gBuffer->attachColorTexture(formatProperties, 3); // Positions, Normals, Color + Specular
 

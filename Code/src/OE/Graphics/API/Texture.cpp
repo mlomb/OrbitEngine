@@ -160,25 +160,25 @@ namespace OrbitEngine { namespace Graphics {
 
 		formatProperties.width = FreeImage_GetWidth(dib);
 		formatProperties.height = FreeImage_GetHeight(dib);
-		formatProperties.bpp = FreeImage_GetBPP(dib);
+		unsigned int bpp = FreeImage_GetBPP(dib);
 
 #if OE_D3D
-		if (formatProperties.bpp == 24 && Application::Context::GetCurrentAPI() == DIRECT3D) {
+		if (bpp == 24 && Application::Context::GetCurrentAPI() == DIRECT3D) {
 			// DirectX11 don't support 24bit textures
 			FIBITMAP *tmp = FreeImage_ConvertTo32Bits(dib);
 			FreeImage_Unload(dib);
 			dib = tmp;
-			formatProperties.bpp = FreeImage_GetBPP(dib);
+			bpp = FreeImage_GetBPP(dib);
 		}
 #endif
 
 		BYTE* bits = FreeImage_GetBits(dib);
 
-		unsigned int stride = (formatProperties.bpp / 8);
+		unsigned int stride = (bpp / 8);
 		unsigned int padding = formatProperties.width * formatProperties.height * stride;
 
 #if FREEIMAGE_COLORORDER == FREEIMAGE_COLORORDER_BGR
-		if (formatProperties.bpp == 32 || formatProperties.bpp == 24) {
+		if (bpp == 32 || bpp == 24) {
 			// Taken from SwapRedBlue32
 			const unsigned pitch = FreeImage_GetPitch(dib);
 			const unsigned lineSize = FreeImage_GetLine(dib);
@@ -202,7 +202,7 @@ namespace OrbitEngine { namespace Graphics {
 			return 0;
 		}
 
-		switch (formatProperties.bpp) {
+		switch (bpp) {
 		case 8:
 			formatProperties.format = R8;
 			break;
@@ -239,6 +239,31 @@ namespace OrbitEngine { namespace Graphics {
 		}
 
 		return mips;
+	}
+
+	unsigned int Texture::BPPFromFormat(TextureFormat format)
+	{
+		switch (format) {
+		case R8:
+			return 8;
+		case R16:
+		case RG8:
+			return 16;
+		case RGB:
+		case RGB8:
+			return 24;
+		case RGBA:
+		case RGBA8:
+			return 32;
+		case RG32F:
+			return 64;
+		case RGB32F:
+			return 96;
+		default:
+			OE_LOG_WARNING("BPP not set for format!");
+			return 0;
+		}
+
 	}
 
 	Texture::Texture(TextureProperties properties)

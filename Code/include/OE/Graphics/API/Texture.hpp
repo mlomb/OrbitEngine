@@ -52,7 +52,6 @@ namespace OrbitEngine { namespace Graphics {
 
 	struct TextureFormatProperties {
 		unsigned short width = 16, height = 16;
-		unsigned char bpp = 32;
 		TextureFormat format;
 		TextureDataType dataType = UNSIGNED_BYTE;
 		bool mipmapping = true;
@@ -93,6 +92,7 @@ namespace OrbitEngine { namespace Graphics {
 
 		static void* LoadImageData(std::string file, TextureFormatProperties& formatProperties);
 		static unsigned int CalculateMipLevelsCount(unsigned int width, unsigned int height);
+		static unsigned int BPPFromFormat(TextureFormat format);
 	protected:
 		Texture(TextureProperties properties);
 

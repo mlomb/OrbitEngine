@@ -124,7 +124,7 @@ namespace OrbitEngine { namespace Graphics {
 
 	void D3DTexture::setData(void* data, unsigned int offset)
 	{
-		unsigned int stride = (m_Properties.formatProperties.bpp / 8);
+		unsigned int stride = (BPPFromFormat(m_Properties.formatProperties.format) / 8);
 		switch (m_Properties.textureBufferMode) {
 		case DYNAMIC:
 			D3DMappedResource::setData(m_Properties.formatProperties.width * m_Properties.formatProperties.height * stride, data);

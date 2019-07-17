@@ -57,7 +57,6 @@ namespace OrbitEngine { namespace Graphics {
 		float maxHeight = 0, minHeight = 0;
 
 		Graphics::TextureProperties texProperties;
-		texProperties.formatProperties.bpp = 32;
 		texProperties.formatProperties.format = Graphics::TextureFormat::RGBA8;
 		texProperties.sampleProperties.wrap = Graphics::TextureWrap::CLAMP_TO_EDGE;
 		texProperties.sampleProperties.filter = Graphics::TextureFilter::NEAREST;
@@ -147,7 +146,7 @@ namespace OrbitEngine { namespace Graphics {
 		//if (Application::Context::GetCurrentAPI() == RenderAPI::OPENGL)
 		//	halfPix = texelSize / 2.0f;
 
-		std::vector<unsigned char> buffer = std::vector<unsigned char>(texProperties.formatProperties.width * texProperties.formatProperties.height * (texProperties.formatProperties.bpp / 8), 255);
+		std::vector<unsigned char> buffer = std::vector<unsigned char>(texProperties.formatProperties.width * texProperties.formatProperties.height * (Texture::BPPFromFormat(texProperties.formatProperties.format) / 8), 255);
 
 		for (size_t i = 0; i < rects.size(); ++i) {
 			Glyph* rect = (Glyph*)rects[i];
