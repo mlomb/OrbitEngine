@@ -32,6 +32,11 @@ namespace OrbitEngine {
 		DIRECT3D,
 #endif
 	};
+
+	namespace Graphics {
+		class FrameBuffer;
+		class States;
+	}
 	
 	namespace Application {
 		namespace priv {
@@ -56,6 +61,8 @@ namespace OrbitEngine {
 			Math::Vec2i getSize();
 			const std::string getName();
 			const RenderAPI getAPI();
+			Graphics::States* getGlobalStates();
+			Graphics::FrameBuffer* getDefaultFramebuffer();
 
 		private:
 			Window* m_Window;

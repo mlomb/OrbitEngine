@@ -8,6 +8,7 @@
 namespace OrbitEngine { namespace Graphics {
 	class D3DTexture : public Texture, public D3DMappedResource {
 	public:
+		D3DTexture(TextureProperties properties, ID3D11Texture2D* texture);
 		D3DTexture(TextureProperties properties, std::vector<void*> data, unsigned int additionalBindFlags = 0);
 		~D3DTexture();
 

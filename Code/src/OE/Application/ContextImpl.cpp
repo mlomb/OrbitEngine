@@ -2,6 +2,7 @@
 
 #include "OE/Application/WindowImpl.hpp"
 #include "OE/Misc/Log.hpp"
+#include "OE/Graphics/API/FrameBuffer.hpp"
 
 #ifdef OE_OPENGL_ANY
 	#include "OE/Platform/OpenGL/GLStates.hpp"
@@ -14,7 +15,9 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 
 	ContextImpl* ContextImpl::s_CurrentContext = 0;
 
-	ContextImpl::ContextImpl(WindowImpl* window){
+	ContextImpl::ContextImpl(WindowImpl* window)
+		: p_DefaultFramebuffer(NULL)
+	{
 		// If the context belongs to a Window, here we assign
 		// it that a Context was created for it
 		// Find a better solution?
@@ -24,6 +27,11 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 
 			p_Window->p_Context = this;
 		}
+	}
+
+	void ContextImpl::contextInitialized()
+	{
+		p_DefaultFramebuffer->setClearColor(Math::Vec4f(0.25f, 0.5f, 1.0f, 1.0));
 	}
 
 	ContextImpl::~ContextImpl(){
@@ -71,6 +79,11 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 		}
 
 		return m_States;
+	}
+
+	Graphics::FrameBuffer* ContextImpl::getDefaultFramebuffer()
+	{
+		return p_DefaultFramebuffer;
 	}
 
 	ContextImpl* ContextImpl::GetCurrent()

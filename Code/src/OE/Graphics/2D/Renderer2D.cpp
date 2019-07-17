@@ -62,6 +62,11 @@ namespace OrbitEngine { namespace Graphics {
 		p_Transform = matrix;
 	}
 
+	void Renderer2D::resetTransform()
+	{
+		setTransform(Math::Mat4::Identity());
+	}
+
 	void Renderer2D::rect(const Math::Vec2f& position, const Math::Vec2f& size)
 	{
 		rect(position, size, Math::UV_Default);

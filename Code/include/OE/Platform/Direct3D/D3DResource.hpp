@@ -9,6 +9,7 @@ namespace OrbitEngine {	namespace Graphics {
 		ID3D11Resource* getD3DResource() { return m_pResource; }
 
 	protected:
+		D3DResource();
 		~D3DResource();
 
 		ID3D11Resource* m_pResource;

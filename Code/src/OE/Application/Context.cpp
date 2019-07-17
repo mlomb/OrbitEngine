@@ -139,6 +139,16 @@ namespace OrbitEngine {	namespace Application {
 		return p_Pimpl->getAPI();
 	}
 
+	Graphics::States* Context::getGlobalStates()
+	{
+		return p_Pimpl->getGlobalStates();
+	}
+
+	Graphics::FrameBuffer* Context::getDefaultFramebuffer()
+	{
+		return p_Pimpl->getDefaultFramebuffer();
+	}
+
 	Context* Context::GetCurrent()
 	{
 		// Somehow wrap the ContextImpl* into a Context*

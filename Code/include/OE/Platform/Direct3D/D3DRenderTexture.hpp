@@ -6,6 +6,7 @@
 namespace OrbitEngine { namespace Graphics {
 	class D3DRenderTexture : public D3DTexture {
 	public:
+		D3DRenderTexture(TextureProperties properties, ID3D11Texture2D* texture);
 		D3DRenderTexture(TextureProperties properties);
 		~D3DRenderTexture();
 
@@ -13,6 +14,8 @@ namespace OrbitEngine { namespace Graphics {
 
 		static D3D11_RTV_DIMENSION TextureDimensionToRTVD3D(TextureDimension dimension);
 	private:
+		void createRTV(bool use_desc);
+
 		ID3D11RenderTargetView* m_RenderTargetView;
 	};
 } }

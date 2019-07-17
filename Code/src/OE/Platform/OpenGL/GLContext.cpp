@@ -9,15 +9,9 @@
 namespace OrbitEngine { namespace Application { namespace priv {
 	void GLContext::prepare()
 	{
-		OE_CHECK_GL(glClearColor(0.25f, 0.5f, 1.0f, 1.0f));
-		OE_CHECK_GL(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-		setDefaultBackbuffer();
-	}
-
-	void GLContext::setDefaultBackbuffer()
-	{
-		Graphics::GLFrameBuffer::Unbind();
-		setViewport();
+		p_DefaultFramebuffer->clear();
+		p_DefaultFramebuffer->m_Width = p_Size.w;
+		p_DefaultFramebuffer->m_Height = p_Size.h;
 	}
 
 	const std::string GLContext::getName()
@@ -34,10 +28,18 @@ namespace OrbitEngine { namespace Application { namespace priv {
 		return RenderAPI::OPENGL;
 	}
 
+	GLContext::GLContext(WindowImpl* window)
+		: ContextImpl(window)
+	{
+	}
+
 	void GLContext::contextInitialized()
 	{
 		// Just to be sure
 		makeCurrent(true);
+
+		p_DefaultFramebuffer = new Graphics::GLFrameBuffer((GLuint)0);
+		Graphics::FrameBuffer::Prepare();
 
 		ContextImpl::contextInitialized();
 
@@ -79,11 +81,6 @@ namespace OrbitEngine { namespace Application { namespace priv {
 		OE_LOG_DEBUG("Extensions count: " << p_ContextInfo.extensions.size());
 		
 		OE_LOG_DEBUG("Shading version: " << std::string(glGetString(GL_SHADING_LANGUAGE_VERSION) ? reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION)) : ""));
-	}
-
-	void GLContext::setViewport()
-	{
-		OE_CHECK_GL(glViewport(0, 0, p_Size.w, p_Size.h));
 	}
 
 	void GLContext::makeCurrent(bool active)

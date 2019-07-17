@@ -18,7 +18,8 @@ namespace OrbitEngine { namespace Graphics {
 		RGBA32F,
 		SRC_ALPHA,
 		LUMINANCE_ALPHA,
-		DEPTH
+		DEPTH,
+		DEPTH_STENCIL
 	};
 
 	enum TextureFilter {
@@ -36,6 +37,7 @@ namespace OrbitEngine { namespace Graphics {
 	};
 
 	enum TextureDataType {
+		UNSIGNED_INT,
 		UNSIGNED_BYTE,
 		FLOAT
 	};

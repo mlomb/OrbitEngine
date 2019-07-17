@@ -8,7 +8,6 @@
 namespace OrbitEngine { namespace Graphics {
 	class States;
 	class FrameBuffer;
-	class FrameBufferStack;
 } }
 
 namespace OrbitEngine {
@@ -21,7 +20,6 @@ namespace OrbitEngine {
 
 		virtual void prepare() {};
 		virtual void present() = 0;
-		virtual void setDefaultBackbuffer() = 0;
 		virtual void makeCurrent(bool active = true);
 		virtual void resizeContext(Math::Vec2i size);
 
@@ -37,6 +35,7 @@ namespace OrbitEngine {
 		global states i.e. Vulkan.
 		*/
 		Graphics::States* getGlobalStates();
+		Graphics::FrameBuffer* getDefaultFramebuffer();
 
 		static ContextImpl* GetCurrent();
 		static RenderAPI GetCurrentAPI();
@@ -49,9 +48,10 @@ namespace OrbitEngine {
 
 		Math::Vec2i p_Size;
 		WindowImpl* p_Window;
+		Graphics::FrameBuffer* p_DefaultFramebuffer;
 
 		// Should be called right after the context was created
-		virtual void contextInitialized() {};
+		virtual void contextInitialized();
 
 		// TODO Make this per-context
 		static ContextImpl* s_CurrentContext;
@@ -59,6 +59,8 @@ namespace OrbitEngine {
 	private:
 		// Keep track of the framebuffers
 		// This is per-context
+		// The pointer to the default FB should not be here
+		// as it can be recreated
 		friend class Graphics::FrameBuffer;
 		std::vector<Graphics::FrameBuffer*> m_FrameBufferStack;
 	};

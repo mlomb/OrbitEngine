@@ -33,6 +33,7 @@ namespace OrbitEngine { namespace Graphics {
 		void bindTexture(Texture* tex);
 		void setPVMatrix(const Math::Mat4& matrix);
 		void setTransform(const Math::Mat4& matrix);
+		void resetTransform();
 
 		void rect(const Math::Vec2f& position, const Math::Vec2f& size);
 		void rect(const Math::Vec2f& position, const Math::Vec2f& size, const Math::UV& uvs, bool flipX = false, bool flipY = false);

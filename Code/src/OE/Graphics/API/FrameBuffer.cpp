@@ -11,7 +11,7 @@
 
 namespace OrbitEngine { namespace Graphics {
 	FrameBuffer::FrameBuffer(unsigned int width, unsigned int height)
-		: m_Width(width), m_Height(height)
+		: m_Width(width), m_Height(height), m_DepthStencilTexture(NULL), m_MipLevel(0)
 	{
 	}
 
@@ -20,7 +20,8 @@ namespace OrbitEngine { namespace Graphics {
 		for (size_t i = 0; i < m_ColorBuffers.size(); i++)
 			delete m_ColorBuffers[i];
 		m_ColorBuffers.clear();
-		delete m_DepthTexture;
+		if(m_DepthStencilTexture)
+			delete m_DepthStencilTexture;
 	}
 
 	void FrameBuffer::blit(FrameBuffer* source, BlitOperation operation)
@@ -31,10 +32,10 @@ namespace OrbitEngine { namespace Graphics {
 		switch (operation)
 		{
 		case BlitOperation::DEPTH:
-			if (m_DepthTexture) {
+			if (m_DepthStencilTexture) {
 				Texture* depthSource = source->getDepthTexture();
 				if (depthSource)
-					m_DepthTexture->copy(depthSource);
+					m_DepthStencilTexture->copy(depthSource);
 			}
 			break;
 		}
@@ -57,14 +58,10 @@ namespace OrbitEngine { namespace Graphics {
 	{
 		Application::priv::ContextImpl* currentContext = Application::priv::ContextImpl::GetCurrent();
 		int size = int(currentContext->m_FrameBufferStack.size());
-		if (size != 0) {
-			FrameBuffer* currentFrameBuffer = currentContext->m_FrameBufferStack[size - 1];
-			currentFrameBuffer->bind();
-			currentFrameBuffer->setViewport();
-		}
-		else {
-			currentContext->setDefaultBackbuffer();
-		}
+		FrameBuffer* currentFrameBuffer = size > 0 ? currentContext->m_FrameBufferStack[size - 1] : currentContext->getDefaultFramebuffer();
+
+		currentFrameBuffer->bind();
+		currentFrameBuffer->setViewport();
 	}
 
 	FrameBuffer* FrameBuffer::GetCurrent()
@@ -73,7 +70,7 @@ namespace OrbitEngine { namespace Graphics {
 		int size = int(currentContext->m_FrameBufferStack.size());
 		if (size != 0)
 			return currentContext->m_FrameBufferStack[size - 1];
-		return nullptr;
+		return currentContext->getDefaultFramebuffer();
 	}
 
 	Math::Vec2i FrameBuffer::GetCurrentSize()

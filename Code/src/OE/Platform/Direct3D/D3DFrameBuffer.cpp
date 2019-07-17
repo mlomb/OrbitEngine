@@ -4,6 +4,8 @@
 #include "OE/Platform/Direct3D/D3DRenderTexture.hpp"
 #include "OE/Platform/Direct3D/D3DDepthTexture.hpp"
 
+#include "OE/Misc/Log.hpp"
+
 namespace OrbitEngine { namespace Graphics {
 	D3DFrameBuffer::D3DFrameBuffer(unsigned int width, unsigned int height)
 		: FrameBuffer(width, height),
@@ -40,7 +42,7 @@ namespace OrbitEngine { namespace Graphics {
 
 	void D3DFrameBuffer::unbind() const
 	{
-		Application::priv::D3DContext::GetCurrent()->setDefaultBackbuffer();
+		Application::priv::D3DContext::GetCurrent()->getDeviceContext()->OMSetRenderTargets(0, 0, 0);
 	}
 
 	void D3DFrameBuffer::clear() const
@@ -50,6 +52,7 @@ namespace OrbitEngine { namespace Graphics {
 			Application::priv::D3DContext::GetCurrent()->getDeviceContext()->ClearRenderTargetView(m_RenderTargetViews[i], clearColor);
 		if (m_DepthStencilView)
 			Application::priv::D3DContext::GetCurrent()->getDeviceContext()->ClearDepthStencilView(m_DepthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+		setViewport();
 	}
 
 	void D3DFrameBuffer::attachColorTexture(Graphics::TextureFormatProperties format, int count)
@@ -62,9 +65,13 @@ namespace OrbitEngine { namespace Graphics {
 		properties.dimension = TEXTURE2D;
 
 		for (int i = 0; i < count; i++) {
-			D3DRenderTexture* colorTexture = new D3DRenderTexture(properties);
-			m_ColorBuffers.push_back(colorTexture);
+			attachColorTexture(new D3DRenderTexture(properties));
 		}
+	}
+
+	void D3DFrameBuffer::attachColorTexture(D3DRenderTexture* renderTexture)
+	{
+		m_ColorBuffers.push_back(renderTexture);
 	}
 
 	void D3DFrameBuffer::attachColorCubemap(Graphics::TextureFormatProperties format, int count)
@@ -82,10 +89,14 @@ namespace OrbitEngine { namespace Graphics {
 
 		D3DDepthTexture* depthTex = new D3DDepthTexture(properties);
 		m_DepthStencilView = depthTex->getDSV();
-		m_DepthTexture = depthTex;
+		m_DepthStencilTexture = depthTex;
 	}
 
 	void D3DFrameBuffer::attachDepthCubemap(Graphics::TextureFormatProperties format)
+	{
+	}
+
+	void D3DFrameBuffer::attachDepthStencilTexture(TextureFormatProperties format)
 	{
 	}
 

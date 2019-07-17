@@ -1,14 +1,15 @@
 #include "OE/Platform/Direct3D/D3DContext.hpp"
 
 #include "OE/Platform/Windows/WindowWindows.hpp"
+#include "OE/Platform/Direct3D/D3DFrameBuffer.hpp"
+#include "OE/Platform/Direct3D/D3DRenderTexture.hpp"
+#include "OE/Graphics/API/FrameBuffer.hpp"
 #include "OE/Misc/Log.hpp"
 
 namespace OrbitEngine { namespace Application { namespace priv {
 
 	D3DContext::D3DContext(WindowWindows* window, D3DContext* sharedContext)
-		: ContextImpl(window),
-		m_DXRenderTargetView(0),
-		m_DepthStencil(0)
+		: ContextImpl(window)
 	{
 		HRESULT hr;
 
@@ -86,9 +87,10 @@ namespace OrbitEngine { namespace Application { namespace priv {
 		OE_D3D_RELEASE(factory);
 
 		makeCurrent();
-		contextInitialized();
-
 		initializeDeviceAndSwapChain(window);
+		resizeContext(Math::Vec2i(100, 100));
+
+		contextInitialized();
 	}
 
 	void D3DContext::initializeDeviceAndSwapChain(WindowWindows* window)
@@ -132,6 +134,44 @@ namespace OrbitEngine { namespace Application { namespace priv {
 			OE_LOG_FATAL("Can't create device and swap chain.");
 	}
 
+	void D3DContext::initializeDefaultFramebuffer()
+	{
+		m_DXDeviceContext->OMSetRenderTargets(0, 0, 0);
+
+		if (p_DefaultFramebuffer) {
+			delete p_DefaultFramebuffer;
+			p_DefaultFramebuffer = 0;
+		}
+
+		HRESULT hr;
+		ID3D11Texture2D* backBuffer;
+
+		hr = m_DXSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)& backBuffer);
+		if (FAILED(hr)) {
+			OE_LOG_FATAL("Can't get the pointer to the backbuffer!");
+			return;
+		}
+
+		p_DefaultFramebuffer = Graphics::FrameBuffer::Create(p_Size.x, p_Size.y);
+
+		Graphics::D3DFrameBuffer* fb = static_cast<Graphics::D3DFrameBuffer*>(p_DefaultFramebuffer);
+		Graphics::TextureProperties properties;
+		properties.formatProperties.width = p_Size.x;
+		properties.formatProperties.height = p_Size.y;
+
+		fb->attachColorTexture(new Graphics::D3DRenderTexture(properties, backBuffer));
+
+		properties.formatProperties.format = Graphics::TextureFormat::DEPTH;
+		properties.formatProperties.width = p_Size.x;
+		properties.formatProperties.height = p_Size.y;
+
+		fb->attachDepthTexture(properties.formatProperties);
+		fb->finalize();
+
+		p_DefaultFramebuffer->setViewport();
+	}
+
+	/*
 	void D3DContext::initializeRenderTargetView()
 	{
 		m_DXDeviceContext->OMSetRenderTargets(0, 0, 0);
@@ -162,17 +202,9 @@ namespace OrbitEngine { namespace Application { namespace priv {
 
 		OE_D3D_RELEASE(backBuffer);
 	}
+	*/
 
-	void D3DContext::initializeViewport()
-	{
-		m_Viewport.Width = p_Size.x;
-		m_Viewport.Height = p_Size.y;
-		m_Viewport.MinDepth = 0.0f;
-		m_Viewport.MaxDepth = 1.0f;
-		m_Viewport.TopLeftX = 0.0f;
-		m_Viewport.TopLeftY = 0.0f;
-	}
-
+	/*
 	void D3DContext::setDefaultBackbuffer()
 	{
 		if (!m_DXRenderTargetView || !m_DepthStencil) {
@@ -182,11 +214,7 @@ namespace OrbitEngine { namespace Application { namespace priv {
 		m_DXDeviceContext->OMSetRenderTargets(1, &m_DXRenderTargetView, m_DepthStencil->getDSV());
 		setViewport();
 	}
-
-	void D3DContext::setViewport()
-	{
-		m_DXDeviceContext->RSSetViewports(1, &m_Viewport);
-	}
+	*/
 
 	void D3DContext::resizeContext(Math::Vec2i size)
 	{
@@ -195,11 +223,11 @@ namespace OrbitEngine { namespace Application { namespace priv {
 
 		ContextImpl::resizeContext(size);
 
-		//if (m_DXRenderTargetView)
-		//	return;
-
-		m_DXDeviceContext->OMSetRenderTargets(0, 0, 0);
-		OE_D3D_RELEASE(m_DXRenderTargetView);
+		if (p_DefaultFramebuffer) {
+			m_DXDeviceContext->OMSetRenderTargets(0, 0, 0);
+			delete p_DefaultFramebuffer;
+			p_DefaultFramebuffer = 0;
+		}
 
 		HRESULT hr;
 		hr = m_DXSwapChain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
@@ -208,9 +236,7 @@ namespace OrbitEngine { namespace Application { namespace priv {
 			return;
 		}
 
-		initializeRenderTargetView();
-		initializeViewport();
-		setDefaultBackbuffer();
+		initializeDefaultFramebuffer();
 	}
 
 
@@ -224,17 +250,16 @@ namespace OrbitEngine { namespace Application { namespace priv {
 		OE_D3D_RELEASE(m_Rasterizer);
 		OE_D3D_RELEASE(m_DXDevice);
 		OE_D3D_RELEASE(m_DXDeviceContext);
-		OE_D3D_RELEASE(m_DXRenderTargetView);
-		delete m_DepthStencil;
+		if (p_DefaultFramebuffer) {
+			delete p_DefaultFramebuffer;
+			p_DefaultFramebuffer = 0;
+		}
 	}
 
 	void D3DContext::present()
 	{
 		m_DXSwapChain->Present(/* m_Window->getProperties().vsync */ false, 0);
-
-		setDefaultBackbuffer();
-		float clearColor[] = { 0.25f, 0.5f, 1.0f, 1.0f };
-		m_DXDeviceContext->ClearRenderTargetView(m_DXRenderTargetView, clearColor);
+		p_DefaultFramebuffer->clear();
 	}
 
 	void D3DContext::makeCurrent(bool active)

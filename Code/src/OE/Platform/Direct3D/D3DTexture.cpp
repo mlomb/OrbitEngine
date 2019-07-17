@@ -7,6 +7,11 @@
 #include "OE/Math/Math.hpp"
 
 namespace OrbitEngine { namespace Graphics {
+	D3DTexture::D3DTexture(TextureProperties properties, ID3D11Texture2D* texture)
+		: Texture(properties), m_SamplerState(0), m_ResourceView(0)
+	{
+		m_pResource = texture;
+	}
 
 	D3DTexture::D3DTexture(TextureProperties properties, std::vector<void*> data, unsigned int additionalBindFlags) : Texture(properties)
 	{

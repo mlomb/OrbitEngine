@@ -21,7 +21,6 @@ namespace OrbitEngine { namespace Application { namespace priv {
 		void prepare() override;
 		virtual void present() override {};
 		virtual void makeCurrent(bool active) override;
-		virtual void setDefaultBackbuffer() override;
 
 		const std::string getName() override;
 		const RenderAPI getAPI() override;
@@ -29,15 +28,11 @@ namespace OrbitEngine { namespace Application { namespace priv {
 
 		static GLContext* GetCurrent() { return (GLContext*)ContextImpl::GetCurrent(); };
 	protected:
-		GLContext(WindowImpl* window) : ContextImpl(window) {};
+		GLContext(WindowImpl* window);
 
 		void contextInitialized() override;
 
 		GLContextInfo p_ContextInfo;
-
-	private:
-
-		void setViewport();
 	};
 } } }
 

@@ -5,6 +5,11 @@
 #include "OE/Platform/OpenGL/GLTexture.hpp"
 
 namespace OrbitEngine { namespace Graphics {
+	GLFrameBuffer::GLFrameBuffer(GLuint fbo)
+		: m_FBO(fbo), FrameBuffer(0, 0)
+	{
+	}
+
 	GLFrameBuffer::GLFrameBuffer(unsigned int width, unsigned int height)
 		: FrameBuffer(width, height)
 	{
@@ -69,7 +74,7 @@ namespace OrbitEngine { namespace Graphics {
 	{
 		bind();
 		glClearColor(m_ClearColor.x, m_ClearColor.y, m_ClearColor.z, m_ClearColor.w);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 	}
 
 	void GLFrameBuffer::blit(FrameBuffer* source, BlitOperation operation)
@@ -138,16 +143,16 @@ namespace OrbitEngine { namespace Graphics {
 		properties.formatProperties.height = m_Height;
 		properties.sampleProperties.filter = TextureFilter::LINEAR;
 
-		m_DepthTexture = Texture::Create(properties);
+		m_DepthStencilTexture = Texture::Create(properties);
 
 #if !OE_OPENGL_ES
-		m_DepthTexture->bind(0);
+		m_DepthStencilTexture->bind(0);
 		GLfloat borderColor[] = { 1.0, 1.0, 1.0, 1.0 };
 		glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 		//m_DepthTexture->Unbind();
 #endif
 
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, static_cast<GLTexture*>(m_DepthTexture)->getID(), 0);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, static_cast<GLTexture*>(m_DepthStencilTexture)->getID(), 0);
 
 		unbind();
 	}
@@ -164,6 +169,28 @@ namespace OrbitEngine { namespace Graphics {
 
 		Graphics::GLTexture* m_DepthTexture = static_cast<GLTexture*>(Texture::Create(properties));
 		//glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, m_DepthTexture->getID(), 0);
+
+		unbind();
+	}
+
+	void GLFrameBuffer::attachDepthStencilTexture(Graphics::TextureFormatProperties format)
+	{
+		if (m_DepthStencilTexture) {
+			OE_LOG_ERROR("Depth/stencil attachment already present");
+			return;
+		}
+
+		bind();
+
+		TextureProperties properties;
+		properties.formatProperties = format;
+		properties.formatProperties.width = m_Width;
+		properties.formatProperties.height = m_Height;
+		properties.sampleProperties.filter = TextureFilter::NEAREST;
+
+		m_DepthStencilTexture = Texture::Create(properties);
+
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, static_cast<GLTexture*>(m_DepthStencilTexture)->getID(), 0);
 
 		unbind();
 	}

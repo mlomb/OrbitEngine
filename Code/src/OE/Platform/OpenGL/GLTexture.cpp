@@ -15,14 +15,9 @@ namespace OrbitEngine { namespace Graphics {
 		m_Filter = TextureFilterToGL(m_Properties.sampleProperties.filter);
 		m_DataType = TextureDataTypeToGL(m_Properties.formatProperties.dataType);
 
-#if OE_OPENGL_ES
-		if (m_Properties.formatProperties.format == TextureFormat::DEPTH) {
-			OE_LOG_DEBUG("--DEPTH--");
-			m_Format = GL_DEPTH_COMPONENT;
-			m_InternalFormat = GL_DEPTH_COMPONENT24;
-			m_DataType = GL_UNSIGNED_INT;
+		if (m_Properties.formatProperties.format == TextureFormat::DEPTH_STENCIL) {
+			m_DataType = GL_UNSIGNED_INT_24_8;
 		}
-#endif
 
 		applyParameters();
 
@@ -145,6 +140,8 @@ namespace OrbitEngine { namespace Graphics {
 			return GL_LUMINANCE_ALPHA;
 		case DEPTH:
 			return GL_DEPTH_COMPONENT;
+		case DEPTH_STENCIL:
+			return GL_DEPTH_STENCIL;
 		}
 
 		OE_ASSERT(false);
@@ -180,6 +177,8 @@ namespace OrbitEngine { namespace Graphics {
 		case DEPTH:
 			return GL_DEPTH_COMPONENT24;
 #endif
+		case DEPTH_STENCIL:
+			return GL_DEPTH24_STENCIL8;
 		default:
 			return _default;
 		}
@@ -189,6 +188,8 @@ namespace OrbitEngine { namespace Graphics {
 	{
 		switch (dataType)
 		{
+		case UNSIGNED_INT:
+			return GL_UNSIGNED_INT;
 		case UNSIGNED_BYTE:
 			return GL_UNSIGNED_BYTE;
 		case FLOAT:

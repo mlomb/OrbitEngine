@@ -17,7 +17,6 @@ namespace OrbitEngine { namespace Application { namespace priv {
 		void present() override;
 		void makeCurrent(bool active = true) override;
 		void resizeContext(Math::Vec2i size) override;
-		void setDefaultBackbuffer() override;
 
 		const std::string getName() override { return "Direct3D 11"; }
 		const RenderAPI getAPI() override { return RenderAPI::DIRECT3D; }
@@ -30,20 +29,13 @@ namespace OrbitEngine { namespace Application { namespace priv {
 
 	private:
 		void initializeDeviceAndSwapChain(WindowWindows* window);
-		void initializeRenderTargetView();
-		void initializeViewport();
-
-		void setViewport();
+		void initializeDefaultFramebuffer();
 
 		IDXGISwapChain* m_DXSwapChain;
 		ID3D11Device* m_DXDevice;
 		ID3D11DeviceContext* m_DXDeviceContext;
 
 		ID3D11RasterizerState* m_Rasterizer = 0;
-		ID3D11RenderTargetView* m_DXRenderTargetView = 0;
-
-		D3D11_VIEWPORT m_Viewport;
-		Graphics::D3DDepthTexture* m_DepthStencil;
 	};
 } } }
 
