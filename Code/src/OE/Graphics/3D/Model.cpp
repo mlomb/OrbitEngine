@@ -98,10 +98,10 @@ namespace OrbitEngine { namespace Graphics {
 		{
 			std::string filename = (*itr).first;
 
-			Graphics::TextureProperties properties;
-			properties.sampleProperties.filter = Graphics::TextureFilter::ANISOTROPIC;
-			properties.sampleProperties.wrap = Graphics::TextureWrap::REPEAT;
-			Graphics::Texture* texture = Graphics::Texture::Load(m_Directory + '/' + filename, properties);
+			Graphics::TextureSampleProperties sampleProperties;
+			sampleProperties.filter = Graphics::TextureFilter::ANISOTROPIC;
+			sampleProperties.wrap = Graphics::TextureWrap::REPEAT;
+			Graphics::Texture* texture = Graphics::Texture::Load(m_Directory + '/' + filename, sampleProperties);
 
 			(*itr).second = texture;
 			itr++;

@@ -32,7 +32,7 @@ namespace OrbitEngine { namespace Graphics {
 
 	Texture* Texture::Create(TextureProperties& properties, std::vector<void*> data)
 	{
-		OE_LOG_DEBUG("Creating texture: format: " << properties.formatProperties.format << ", size: " << properties.formatProperties.width << "x" << properties.formatProperties.height);
+		OE_LOG_DEBUG("Creating texture: format: " << properties.formatProperties.format << ", size: " << properties.width << "x" << properties.height);
 
 		switch (Application::Context::GetCurrentAPI()) {
 #if OE_OPENGL_ANY
@@ -59,21 +59,28 @@ namespace OrbitEngine { namespace Graphics {
 		return Create(properties, v);
 	}
 
-	Texture* Texture::Load(std::vector<std::string> files, TextureProperties& properties)
+	Texture* Texture::Load(std::vector<std::string> files, TextureSampleProperties& sampleProperties)
 	{
 		if (files.size() == 0) {
 			OE_LOG_WARNING("Files size can't be zero.");
 			return nullptr;
 		}
 
+		TextureProperties properties;
+		properties.sampleProperties = sampleProperties;
 		std::vector<void*> dataPtrs;
 
+		unsigned int w, h;
+
 		for (size_t i = 0; i < files.size(); i++) {
-			void* data = Texture::LoadImageData(files[i], properties.formatProperties); // We assume formats will match
+			void* data = Texture::LoadImageData(files[i], properties.formatProperties, w, h); // We assume formats will match
 			if (data == 0)
 				return 0;
 			dataPtrs.push_back(data);
 		}
+
+		properties.width = w;
+		properties.height = h;
 
 		Texture* t = Create(properties, dataPtrs);
 
@@ -83,23 +90,23 @@ namespace OrbitEngine { namespace Graphics {
 		return t;
 	}
 
-	Texture* Texture::Load(std::string file, TextureProperties& properties)
+	Texture* Texture::Load(std::string file, TextureSampleProperties& sampleProperties)
 	{
 		std::vector<std::string> v(1);
 		v[0] = file;
-		return Load(v, properties);
+		return Load(v, sampleProperties);
 	}
 
 	Texture* Texture::Load(std::string file)
 	{
-		TextureProperties properties;
-		return Load(file, properties);
+		TextureSampleProperties sampleProperties;
+		return Load(file, sampleProperties);
 	}
 
 	Texture* Texture::Load(std::vector<std::string> files)
 	{
-		TextureProperties properties;
-		return Load(files, properties);
+		TextureSampleProperties sampleProperties;
+		return Load(files, sampleProperties);
 	}
 
 	void Texture::Unbind(const unsigned int slot)
@@ -121,7 +128,7 @@ namespace OrbitEngine { namespace Graphics {
 		}
 	}
 
-	void* Texture::LoadImageData(std::string file, TextureFormatProperties& formatProperties)
+	void* Texture::LoadImageData(const std::string& file, TextureFormatProperties& formatProperties, unsigned int& width, unsigned int& height)
 	{
 		if (!s_FreeImageInitialized) {
 			FreeImage_Initialise();
@@ -137,8 +144,8 @@ namespace OrbitEngine { namespace Graphics {
 		FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
 		FIBITMAP *dib(0);
 
-		formatProperties.width = 0;
-		formatProperties.height = 0;
+		width = 0;
+		height = 0;
 
 		fif = FreeImage_GetFileTypeFromHandle(&freeImage_io, fileStream);
 		if (fif == FIF_UNKNOWN) {
@@ -158,8 +165,8 @@ namespace OrbitEngine { namespace Graphics {
 			return 0;
 		}
 
-		formatProperties.width = FreeImage_GetWidth(dib);
-		formatProperties.height = FreeImage_GetHeight(dib);
+		width = FreeImage_GetWidth(dib);
+		height = FreeImage_GetHeight(dib);
 		unsigned int bpp = FreeImage_GetBPP(dib);
 
 #if OE_D3D
@@ -175,7 +182,7 @@ namespace OrbitEngine { namespace Graphics {
 		BYTE* bits = FreeImage_GetBits(dib);
 
 		unsigned int stride = (bpp / 8);
-		unsigned int padding = formatProperties.width * formatProperties.height * stride;
+		unsigned int padding = width * height * stride;
 
 #if FREEIMAGE_COLORORDER == FREEIMAGE_COLORORDER_BGR
 		if (bpp == 32 || bpp == 24) {
@@ -183,7 +190,7 @@ namespace OrbitEngine { namespace Graphics {
 			const unsigned pitch = FreeImage_GetPitch(dib);
 			const unsigned lineSize = FreeImage_GetLine(dib);
 			BYTE* line = bits;
-			for (unsigned y = 0; y < formatProperties.height; ++y, line += pitch) {
+			for (unsigned y = 0; y < height; ++y, line += pitch) {
 				for (BYTE* pixel = line; pixel < line + lineSize; pixel += stride) {
 					// Taken from INPLACESWAP
 					// a ^= b; b ^= a; a ^= b;
@@ -197,7 +204,7 @@ namespace OrbitEngine { namespace Graphics {
 		memcpy(data, bits, padding);
 		FreeImage_Unload(dib);
 
-		if ((data == 0) || (formatProperties.width == 0) || (formatProperties.height == 0)) {
+		if ((data == 0) || (width == 0) || (height == 0)) {
 			OE_LOG_WARNING("Invalid data, width or height when loading texture: " + file);
 			return 0;
 		}
@@ -271,8 +278,8 @@ namespace OrbitEngine { namespace Graphics {
 	{
 		//ResourcesManager::RegisterTexture(this);
 
-		if (m_Properties.formatProperties.mipmapping)
-			m_MipLevels = CalculateMipLevelsCount(m_Properties.formatProperties.width, m_Properties.formatProperties.height);
+		if (m_Properties.sampleProperties.mipmapping)
+			m_MipLevels = CalculateMipLevelsCount(m_Properties.width, m_Properties.height);
 	}
 
 	Texture::~Texture()

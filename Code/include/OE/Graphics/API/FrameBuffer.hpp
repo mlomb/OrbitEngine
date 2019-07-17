@@ -29,11 +29,8 @@ namespace OrbitEngine {
 
 		static FrameBuffer* Create(unsigned int width, unsigned int height);
 
-		virtual void attachColorTexture(TextureFormatProperties format, int count = 1) = 0;
-		virtual void attachColorCubemap(TextureFormatProperties format, int count = 1) = 0;
-		virtual void attachDepthTexture(TextureFormatProperties format) = 0;
-		virtual void attachDepthCubemap(TextureFormatProperties format) = 0;
-		virtual void attachDepthStencilTexture(TextureFormatProperties format) = 0;
+		virtual void attachColorTextures(int count, TextureFormatProperties formatProperties, TextureSampleProperties sampleProperties = TextureSampleProperties(), TextureDimension dimension = TEXTURE2D) = 0;
+		virtual void attachDepthStencilTexture(bool stencil = false, TextureSampleProperties sampleProperties = TextureSampleProperties(), TextureDimension dimension = TEXTURE2D) = 0;
 		//virtual void attachRenderBuffer(API::TextureFormat format, int count = 1) = 0;
 
 		virtual void finalize() { };

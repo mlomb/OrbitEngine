@@ -55,14 +55,15 @@ namespace OrbitEngine { namespace Graphics {
 		setViewport();
 	}
 
-	void D3DFrameBuffer::attachColorTexture(Graphics::TextureFormatProperties format, int count)
+	void D3DFrameBuffer::attachColorTextures(int count, TextureFormatProperties formatProperties, TextureSampleProperties sampleProperties, TextureDimension dimension)
 	{
 		TextureProperties properties;
 		properties.textureBufferMode = DEFAULT;
-		properties.formatProperties = format;
-		properties.formatProperties.width = m_Width;
-		properties.formatProperties.height = m_Height;
-		properties.dimension = TEXTURE2D;
+		properties.formatProperties = formatProperties;
+		properties.sampleProperties = sampleProperties;
+		properties.width = m_Width;
+		properties.height = m_Height;
+		properties.dimension = dimension;
 
 		for (int i = 0; i < count; i++) {
 			attachColorTexture(new D3DRenderTexture(properties));
@@ -74,30 +75,21 @@ namespace OrbitEngine { namespace Graphics {
 		m_ColorBuffers.push_back(renderTexture);
 	}
 
-	void D3DFrameBuffer::attachColorCubemap(Graphics::TextureFormatProperties format, int count)
-	{
-	}
-
-	void D3DFrameBuffer::attachDepthTexture(Graphics::TextureFormatProperties format)
+	void D3DFrameBuffer::attachDepthStencilTexture(bool stencil, TextureSampleProperties sampleProperties, TextureDimension dimension)
 	{
 		TextureProperties properties;
 		properties.textureBufferMode = DEFAULT;
-		properties.formatProperties = format;
-		properties.formatProperties.width = m_Width;
-		properties.formatProperties.height = m_Height;
-		properties.dimension = TEXTURE2D;
+		// TODO: Check those in D3D
+		properties.formatProperties.dataType = stencil ? TextureDataType::UNSIGNED_INT : TextureDataType::UNSIGNED_BYTE;
+		properties.formatProperties.format = stencil ? TextureFormat::DEPTH_STENCIL : TextureFormat::DEPTH;
+		properties.sampleProperties = sampleProperties;
+		properties.width = m_Width;
+		properties.height = m_Height;
+		properties.dimension = dimension;
 
 		D3DDepthTexture* depthTex = new D3DDepthTexture(properties);
 		m_DepthStencilView = depthTex->getDSV();
 		m_DepthStencilTexture = depthTex;
-	}
-
-	void D3DFrameBuffer::attachDepthCubemap(Graphics::TextureFormatProperties format)
-	{
-	}
-
-	void D3DFrameBuffer::attachDepthStencilTexture(TextureFormatProperties format)
-	{
 	}
 
 	void D3DFrameBuffer::finalize()

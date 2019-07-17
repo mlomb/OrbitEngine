@@ -128,25 +128,25 @@ namespace OrbitEngine { namespace Graphics {
 			return;
 		}
 
-		texProperties.formatProperties.width = (unsigned short)texSize.x;
-		texProperties.formatProperties.height = (unsigned short)texSize.y;
-		if (texProperties.formatProperties.width % 2 != 0) {
-			texProperties.formatProperties.width++;
-			texProperties.formatProperties.height++;
+		texProperties.width = (unsigned short)texSize.x;
+		texProperties.height = (unsigned short)texSize.y;
+		if (texProperties.width % 2 != 0) {
+			texProperties.width++;
+			texProperties.height++;
 		}
 #if OE_D3D
 		if (Application::Context::GetCurrentAPI() == RenderAPI::DIRECT3D) {
 			// Set size to the next power of two
-			texProperties.formatProperties.width = Math::nextPowerOfTwo(texProperties.formatProperties.width);
-			texProperties.formatProperties.height = Math::nextPowerOfTwo(texProperties.formatProperties.height);
+			texProperties.width = Math::nextPowerOfTwo(texProperties.width);
+			texProperties.height = Math::nextPowerOfTwo(texProperties.height);
 		}
 #endif
-		float texelSize = 1.0f / texProperties.formatProperties.width;
+		float texelSize = 1.0f / texProperties.width;
 		float halfPix = 0.0f;
 		//if (Application::Context::GetCurrentAPI() == RenderAPI::OPENGL)
 		//	halfPix = texelSize / 2.0f;
 
-		std::vector<unsigned char> buffer = std::vector<unsigned char>(texProperties.formatProperties.width * texProperties.formatProperties.height * (Texture::BPPFromFormat(texProperties.formatProperties.format) / 8), 255);
+		std::vector<unsigned char> buffer = std::vector<unsigned char>(texProperties.width * texProperties.height * (Texture::BPPFromFormat(texProperties.formatProperties.format) / 8), 255);
 
 		for (size_t i = 0; i < rects.size(); ++i) {
 			Glyph* rect = (Glyph*)rects[i];
@@ -159,12 +159,12 @@ namespace OrbitEngine { namespace Graphics {
 			bmp = m_Face->glyph->bitmap;
 
 			if (bmp.buffer != nullptr) {
-				int base = (rect->y * texProperties.formatProperties.width + rect->x) * 4;
+				int base = (rect->y * texProperties.width + rect->x) * 4;
 
 				if (rect->flipped) {
 					for (int y = 0; y < rect->w; ++y) {
 						for (int x = 0; x < rect->h; ++x) {
-							int c = base + (x * texProperties.formatProperties.width + y) * 4;
+							int c = base + (x * texProperties.width + y) * 4;
 							buffer[c + 3] = bmp.buffer[x + bmp.width * y];
 						}
 					}
@@ -179,7 +179,7 @@ namespace OrbitEngine { namespace Graphics {
 				else {
 					for (int y = 0; y < rect->h; ++y) {
 						for (int x = 0; x < rect->w; ++x) {
-							int c = base + (y * texProperties.formatProperties.width + x) * 4;
+							int c = base + (y * texProperties.width + x) * 4;
 							buffer[c + 3] = bmp.buffer[x + rect->w * y];
 						}
 					}

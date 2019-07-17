@@ -156,18 +156,12 @@ namespace OrbitEngine { namespace Application { namespace priv {
 
 		Graphics::D3DFrameBuffer* fb = static_cast<Graphics::D3DFrameBuffer*>(p_DefaultFramebuffer);
 		Graphics::TextureProperties properties;
-		properties.formatProperties.width = p_Size.x;
-		properties.formatProperties.height = p_Size.y;
-
+		properties.width = p_Size.x;
+		properties.height = p_Size.y;
 		fb->attachColorTexture(new Graphics::D3DRenderTexture(properties, backBuffer));
 
-		properties.formatProperties.format = Graphics::TextureFormat::DEPTH;
-		properties.formatProperties.width = p_Size.x;
-		properties.formatProperties.height = p_Size.y;
-
-		fb->attachDepthTexture(properties.formatProperties);
-		fb->finalize();
-
+		p_DefaultFramebuffer->attachDepthStencilTexture(false);
+		p_DefaultFramebuffer->finalize();
 		p_DefaultFramebuffer->setViewport();
 	}
 

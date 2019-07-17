@@ -12,11 +12,8 @@ namespace OrbitEngine { namespace Graphics {
 		GLFrameBuffer(unsigned int width, unsigned int height);
 		~GLFrameBuffer();
 
-		void attachColorTexture(Graphics::TextureFormatProperties format, int count = 1) override;
-		void attachColorCubemap(Graphics::TextureFormatProperties format, int count = 1) override;
-		void attachDepthTexture(Graphics::TextureFormatProperties format) override;
-		void attachDepthCubemap(Graphics::TextureFormatProperties format) override;
-		void attachDepthStencilTexture(Graphics::TextureFormatProperties format) override;
+		void attachColorTextures(int count, TextureFormatProperties formatProperties, TextureSampleProperties sampleProperties, TextureDimension dimension) override;
+		void attachDepthStencilTexture(bool stencil, TextureSampleProperties sampleProperties, TextureDimension dimension) override;
 		void finalize() override;
 
 		void bind() const override;

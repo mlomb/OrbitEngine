@@ -22,11 +22,11 @@ namespace OrbitEngine { namespace Graphics {
 
 		HRESULT hr;
 		if (!data[0]) {
-			m_Properties.formatProperties.mipmapping = false;
+			m_Properties.sampleProperties.mipmapping = false;
 			m_MipLevels = 1;
 		}
 
-		if (m_Properties.formatProperties.mipmapping || m_Properties.dimension == CUBEMAP)
+		if (m_Properties.sampleProperties.mipmapping || m_Properties.dimension == CUBEMAP)
 			m_Properties.textureBufferMode = DEFAULT;
 
 		switch (m_Properties.dimension) {
@@ -37,8 +37,8 @@ namespace OrbitEngine { namespace Graphics {
 		case TEXTURE2DARRAY:
 		case TEXTURE2D:
 			D3D11_TEXTURE2D_DESC texDesc;
-			texDesc.Width = m_Properties.formatProperties.width;
-			texDesc.Height = m_Properties.formatProperties.height;
+			texDesc.Width = m_Properties.width;
+			texDesc.Height = m_Properties.height;
 			texDesc.Format = TextureFormatToD3D(m_Properties.formatProperties.format);
 			texDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE | additionalBindFlags;
 			texDesc.Usage = D3DBuffer::BufferModeToD3D(m_Properties.textureBufferMode);
@@ -48,7 +48,7 @@ namespace OrbitEngine { namespace Graphics {
 			texDesc.SampleDesc.Count = 1;
 			texDesc.SampleDesc.Quality = 0;
 			texDesc.MiscFlags = 0;
-			if (m_Properties.formatProperties.mipmapping) {
+			if (m_Properties.sampleProperties.mipmapping) {
 				texDesc.BindFlags |= D3D11_BIND_RENDER_TARGET;
 				texDesc.MiscFlags |= D3D11_RESOURCE_MISC_GENERATE_MIPS;
 			}
@@ -79,7 +79,7 @@ namespace OrbitEngine { namespace Graphics {
 		for (unsigned int i = 0; i < data.size(); i++)
 			if (data[i])
 				setData(data[i], D3D11CalcSubresource(0, i, m_MipLevels));
-		if (m_Properties.formatProperties.mipmapping)
+		if (m_Properties.sampleProperties.mipmapping)
 			Application::priv::D3DContext::GetCurrent()->getDeviceContext()->GenerateMips(m_ResourceView);
 
 		// Move to D3DRenderer
@@ -127,10 +127,10 @@ namespace OrbitEngine { namespace Graphics {
 		unsigned int stride = (BPPFromFormat(m_Properties.formatProperties.format) / 8);
 		switch (m_Properties.textureBufferMode) {
 		case DYNAMIC:
-			D3DMappedResource::setData(m_Properties.formatProperties.width * m_Properties.formatProperties.height * stride, data);
+			D3DMappedResource::setData(m_Properties.width * m_Properties.height * stride, data);
 			break;
 		case DEFAULT:
-			Application::priv::D3DContext::GetCurrent()->getDeviceContext()->UpdateSubresource(m_pResource, offset, 0, data, m_Properties.formatProperties.width * stride, m_Properties.formatProperties.width * m_Properties.formatProperties.height * stride);
+			Application::priv::D3DContext::GetCurrent()->getDeviceContext()->UpdateSubresource(m_pResource, offset, 0, data, m_Properties.width * stride, m_Properties.width * m_Properties.height * stride);
 			break;
 		}
 	}
@@ -180,6 +180,8 @@ namespace OrbitEngine { namespace Graphics {
 			return DXGI_FORMAT_R32G32B32A32_FLOAT;
 		case DEPTH:
 			return DXGI_FORMAT_R24G8_TYPELESS;
+		case DEPTH_STENCIL:
+			return DXGI_FORMAT_R32_TYPELESS; // TODO: Test this
 		}
 
 		OE_LOG_FATAL("Unsupported texture format (" + std::to_string(format) + ") in D3D.");

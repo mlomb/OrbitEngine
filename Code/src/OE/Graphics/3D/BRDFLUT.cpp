@@ -10,14 +10,12 @@ namespace OrbitEngine { namespace Graphics {
 	BRDFLUT::BRDFLUT(unsigned short integratedBRDFSize)
 		: m_BRDFFrameBuffer(0)
 	{
-		Graphics::TextureFormatProperties props;
-		props.mipmapping = false;
-		props.format = TextureFormat::RGB8;
-		props.dataType = TextureDataType::UNSIGNED_BYTE;
-		props.width = props.height = integratedBRDFSize;
+		TextureFormatProperties formatProperties;
+		formatProperties.format = TextureFormat::RGB8;
+		formatProperties.dataType = TextureDataType::UNSIGNED_BYTE;
 
 		m_BRDFFrameBuffer = FrameBuffer::Create(integratedBRDFSize, integratedBRDFSize);
-		m_BRDFFrameBuffer->attachColorTexture(props);
+		m_BRDFFrameBuffer->attachColorTextures(1, formatProperties);
 		m_BRDFFrameBuffer->finalize();
 
 		Shader* shader = ShaderLoader::IntegrateBRDF();

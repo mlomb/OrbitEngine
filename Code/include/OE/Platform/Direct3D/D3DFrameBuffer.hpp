@@ -13,11 +13,8 @@ namespace OrbitEngine { namespace Graphics {
 		D3DFrameBuffer(unsigned int width, unsigned int height);
 		~D3DFrameBuffer();
 
-		void attachColorTexture(TextureFormatProperties format, int count = 1) override;
-		void attachColorCubemap(TextureFormatProperties format, int count = 1) override;
-		void attachDepthTexture(TextureFormatProperties format) override;
-		void attachDepthCubemap(TextureFormatProperties format) override;
-		void attachDepthStencilTexture(TextureFormatProperties format) override;
+		void attachColorTextures(int count, TextureFormatProperties formatProperties, TextureSampleProperties sampleProperties, TextureDimension dimension) override;
+		void attachDepthStencilTexture(bool stencil, TextureSampleProperties sampleProperties, TextureDimension dimension) override;
 		void finalize() override;
 
 		// D3D-specific

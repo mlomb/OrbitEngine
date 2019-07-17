@@ -81,13 +81,16 @@ namespace OrbitEngine { namespace Graphics {
 		}
 
 		if (m_PrefilteredEnvMap == nullptr) {
-			TextureFormatProperties formatProps;
-			formatProps.format = TextureFormat::RGBA32F;
-			formatProps.width = formatProps.height = 128;
-			formatProps.mipmapping = true;
+			m_PrefilteredEnvMap = FrameBuffer::Create(128, 128);
 
-			m_PrefilteredEnvMap = FrameBuffer::Create(formatProps.width, formatProps.height);
-			m_PrefilteredEnvMap->attachColorCubemap(formatProps);
+			TextureFormatProperties formatProperties;
+			formatProperties.format = TextureFormat::RGBA32F;
+			formatProperties.dataType = TextureDataType::FLOAT;
+
+			TextureSampleProperties sampleProperties;
+			sampleProperties.mipmapping = true;
+
+			m_PrefilteredEnvMap->attachColorTextures(1, formatProperties, sampleProperties, CUBEMAP);
 			m_PrefilteredEnvMap->finalize();
 			m_PrefilteredEnvMap->setClearColor(Math::Vec4f(1, 0, 1, 1)); // TODO Set clear color
 		}

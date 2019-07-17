@@ -35,12 +35,12 @@ namespace OrbitEngine { namespace Graphics {
 			setData(data[0]);
 		else {
 			if (properties.dimension == TEXTURE2DARRAY)
-				glTexStorage3D(m_Target, size, m_InternalFormat, properties.formatProperties.width, properties.formatProperties.height, size);
+				glTexStorage3D(m_Target, size, m_InternalFormat, properties.width, properties.height, size);
 			for (int i = 0; i < int(size); i++)
 				setData(data[i], (unsigned int)i);
 		}
 
-		if (m_Properties.formatProperties.mipmapping)
+		if (m_Properties.sampleProperties.mipmapping)
 			glGenerateMipmap(m_Target);
 	}
 
@@ -58,7 +58,7 @@ namespace OrbitEngine { namespace Graphics {
 		glTexParameteri(m_Target, GL_TEXTURE_MAG_FILTER, m_Filter);
 		glTexParameteri(m_Target, GL_TEXTURE_MIN_FILTER, m_Filter);
 
-		if (m_Properties.formatProperties.mipmapping) {
+		if (m_Properties.sampleProperties.mipmapping) {
 			glTexParameteri(m_Target, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 			//glTexParameterf(m_Target, GL_TEXTURE_LOD_BIAS, -0.2f);
 
@@ -80,13 +80,13 @@ namespace OrbitEngine { namespace Graphics {
 		{
 		default:
 		case TEXTURE2D:
-			glTexImage2D(m_Target, 0, m_InternalFormat, m_Properties.formatProperties.width, m_Properties.formatProperties.height, 0, m_Format, m_DataType, data);
+			glTexImage2D(m_Target, 0, m_InternalFormat, m_Properties.width, m_Properties.height, 0, m_Format, m_DataType, data);
 			break;
 		case TEXTURE2DARRAY:
 			//glTexSubImage3D(m_Target, 0, 0, 0, 0, m_Properties.formatProperties.width, m_Properties.formatProperties.height, offset, m_Format, m_DataType, data);
 			break;
 		case CUBEMAP:
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + offset, 0, m_InternalFormat, m_Properties.formatProperties.width, m_Properties.formatProperties.height, 0, m_Format, m_DataType, data);
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + offset, 0, m_InternalFormat, m_Properties.width, m_Properties.height, 0, m_Format, m_DataType, data);
 			break;
 		}
 	}

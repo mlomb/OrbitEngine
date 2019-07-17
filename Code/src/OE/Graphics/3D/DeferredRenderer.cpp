@@ -48,15 +48,12 @@ namespace OrbitEngine { namespace Graphics {
 		FrameBuffer* gBuffer = FrameBuffer::Create(size.x, size.y);
 		gBuffer->setClearColor(Math::Vec4f(0, 0, 0, 1));
 
-		Graphics::TextureFormatProperties formatProperties;
-		formatProperties.mipmapping = false;
+		TextureFormatProperties formatProperties;
 		formatProperties.dataType = Graphics::TextureDataType::FLOAT;
 		formatProperties.format = Graphics::TextureFormat::RGBA32F;
 
-		gBuffer->attachColorTexture(formatProperties, 3); // Positions, Normals, Color + Specular
-
-		formatProperties.format = Graphics::TextureFormat::DEPTH;
-		gBuffer->attachDepthTexture(formatProperties); // Depth
+		gBuffer->attachColorTextures(3, formatProperties); // Positions, Normals, Color + Specular
+		gBuffer->attachDepthStencilTexture();
 
 		gBuffer->finalize();
 

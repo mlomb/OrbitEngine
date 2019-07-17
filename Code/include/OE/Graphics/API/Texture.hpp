@@ -51,15 +51,14 @@ namespace OrbitEngine { namespace Graphics {
 	};
 
 	struct TextureFormatProperties {
-		unsigned short width = 16, height = 16;
-		TextureFormat format;
+		TextureFormat format = RGB;
 		TextureDataType dataType = UNSIGNED_BYTE;
-		bool mipmapping = true;
 	};
 
 	struct TextureSampleProperties {
 		TextureWrap wrap = CLAMP_TO_EDGE;
 		TextureFilter filter = ANISOTROPIC;
+		bool mipmapping = true;
 	};
 
 	struct TextureProperties {
@@ -67,6 +66,7 @@ namespace OrbitEngine { namespace Graphics {
 		TextureSampleProperties sampleProperties;
 		TextureDimension dimension = TEXTURE2D;
 		BufferMode textureBufferMode = DYNAMIC;
+		unsigned short width = 16, height = 16;
 	};
 
 	class Texture {
@@ -75,8 +75,8 @@ namespace OrbitEngine { namespace Graphics {
 
 		static Texture* Create(TextureProperties& properties, std::vector<void*> data);
 		static Texture* Create(TextureProperties& properties, void* data = 0);
-		static Texture* Load(std::vector<std::string> files, TextureProperties& properties);
-		static Texture* Load(std::string file, TextureProperties& properties);
+		static Texture* Load(std::vector<std::string> files, TextureSampleProperties& sampleProperties);
+		static Texture* Load(std::string file, TextureSampleProperties& sampleProperties);
 		static Texture* Load(std::vector<std::string> files);
 		static Texture* Load(std::string file);
 
@@ -86,11 +86,11 @@ namespace OrbitEngine { namespace Graphics {
 
 		static void Unbind(const unsigned int slot);
 
-		inline unsigned int getMipmapLevelsCount() { return m_Properties.formatProperties.mipmapping ? m_MipLevels : 1; };
+		inline unsigned int getMipmapLevelsCount() { return m_Properties.sampleProperties.mipmapping ? m_MipLevels : 1; };
 
 		TextureProperties getProperties() const { return m_Properties; }
 
-		static void* LoadImageData(std::string file, TextureFormatProperties& formatProperties);
+		static void* LoadImageData(const std::string& file, TextureFormatProperties& formatProperties, unsigned int& width, unsigned int& height);
 		static unsigned int CalculateMipLevelsCount(unsigned int width, unsigned int height);
 		static unsigned int BPPFromFormat(TextureFormat format);
 	protected:
