@@ -36,12 +36,14 @@ namespace OrbitEngine { namespace Math {
 		Vec2<T>& operator/=(const T& b);
 
 		float normalize();
+		float distanceTo(const Vec2<T>& b) const;
 
 		static Vec2<T> Min(const Vec2<T>& a, const Vec2<T>& b);
 		static Vec2<T> Max(const Vec2<T>& a, const Vec2<T>& b);
 		static Vec2<T> Lerp(const Vec2<T>& a, const Vec2<T>& b, T t);
 		static Vec2<T> Normalize(const Vec2<T>& a);
 		static Vec2<T> FromAngle(double angle);
+		static float Distance(const Vec2<T>& a, const Vec2<T>& b);
 	};
 
 	typedef Vec2<int>    Vec2i;

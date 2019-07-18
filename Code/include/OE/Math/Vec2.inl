@@ -172,6 +172,13 @@ namespace OrbitEngine { namespace Math {
 		return length;
 	}
 
+	template<typename T> inline float Vec2<T>::distanceTo(const Vec2<T>& b) const
+	{
+		float dx = x - b.x;
+		float dy = y - b.y;
+		return sqrt((dx * dx) + (dy * dy));
+	}
+
 	template<typename T> inline Vec2<T> Vec2<T>::Min(const Vec2<T>& a, const Vec2<T>& b)
 	{
 		return Vec2<T>(std::min(a.x, b.x),
@@ -200,6 +207,11 @@ namespace OrbitEngine { namespace Math {
 	template<typename T> inline Vec2<T> Vec2<T>::FromAngle(double angle)
 	{
 		return Vec2<T>(cos(angle), -sin(angle));
+	}
+	
+	template<typename T> inline float Vec2<T>::Distance(const Vec2<T>& a, const Vec2<T>& b)
+	{
+		return a.distanceTo(b);
 	}
 } }
 
