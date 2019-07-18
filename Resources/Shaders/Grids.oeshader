@@ -1,0 +1,75 @@
+float2 to2DWorld(float2 uv, float2 resolution) {
+    return resolution * (uv - 0.5);
+}
+float2 to2DWorldTransformed(float2 uv, float2 resolution, matrix transform) {
+    return mul(transform, float4(to2DWorld(uv, resolution), 0.0, 1.0)).xy;
+}
+float gridLine(float d, float scale, float aa = 2.5, float line_width = 0.01) {
+	return 1.0 - smoothstep(0, aa * scale, d - line_width);
+}
+
+/*
+    Square grid
+    https://www.shadertoy.com/view/Xd2yRd
+*/
+float squareGrid(float2 p, float stepSize = 1.0) {
+    float2 g = abs(float2(-0.5, -0.5) + frac((p + float2(stepSize, stepSize) * 0.5) * (1.0 / stepSize)));
+    return min(g.x, g.y);
+}
+
+/*
+    Triangle Grid
+    https://www.shadertoy.com/view/WtfGDX
+*/
+float distLine(float2 a, float2 b){
+	b = a - b;
+	float h = clamp(dot(a, b)/dot(b, b), 0., 1.);
+    return length(a - b*h);
+}
+float triangleGird(float2 p){
+    float2 s = floor(p + (p.x + p.y) * .36602540378);
+    p -= s - (s.x + s.y)*.211324865;
+    float i = p.x < p.y ? 1. : 0.;
+    float2 ioffs = float2(1. - i, i);
+    float2 ip0 = float2(0.),
+           ip1 = ioffs - .2113248654,
+           ip2 = float2(.577350269);
+
+    return min(min(
+        distLine(p - ip0, p - ip1), 
+        distLine(p - ip1, p - ip2)),
+        distLine(p - ip2, p - ip0)
+    );
+}
+
+/*
+    Hex grid
+    https://www.shadertoy.com/view/XdSyzK
+    https://www.redblobgames.com/grids/hexagons/
+*/
+const float hex_factor = sqrt(3.) / 2.;
+#define HEX_FROM_CART(p) float2(p.x / hex_factor, p.y)
+#define CART_FROM_HEX(g) float2(g.x * hex_factor, g.y)
+
+float2 nearestHexCell(float2 pos) {
+    float2 gpos = HEX_FROM_CART(pos);
+    float2 hex_int = floor(gpos);
+
+    float sy = step(2.0, fmod(hex_int.x+1.0, 4.0));
+    hex_int += fmod(float2(hex_int.x, hex_int.y + sy), 2.0);
+
+    float2 gdiff = gpos - hex_int;
+
+    if (dot(abs(gdiff), float2(hex_factor*hex_factor, 0.5)) > 1.0) {
+        float2 delta = sign(gdiff) * float2(2.0, 1.0);
+        hex_int += delta;
+    }
+
+    return hex_int;
+}
+float hexGrid(float2 pos, float padding = 0.0) {
+    float2 pos_cell = nearestHexCell(pos);
+    pos -= CART_FROM_HEX(pos_cell);
+    pos = abs(pos);
+    return abs(max(dot(pos, float2(hex_factor, 0.5)), pos.y) - (1.0 - padding));
+}
