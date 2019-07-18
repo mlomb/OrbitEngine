@@ -12,9 +12,8 @@
 
 namespace OrbitEngine { namespace Graphics {
 	PathRenderer2D::PathRenderer2D()
+		: m_Verts(NULL), m_NVerts(0)
 	{
-		//m_Verts = (PathRendererVertex*)malloc(sizeof(PathRendererVertex)*MAX_VERTEXS);
-
 		m_Shader = ShaderLoader::Vector2D();
 
 		VertexLayout* layout = new VertexLayout();
