@@ -8,6 +8,7 @@ namespace OrbitEngine { namespace Application {
 		m_KeysPressed = new bool[MAX_KEYS];
 		m_CursorButtons = new bool[MAX_CBUTTONS];
 		m_CursorButtonsClicked = new bool[MAX_CBUTTONS];
+		m_WheelDelta = 0.0f;
 
 		for (int i = 0; i < MAX_KEYS; i++) {
 			m_Keys[i] = false;
