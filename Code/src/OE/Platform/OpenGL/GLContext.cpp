@@ -81,6 +81,7 @@ namespace OrbitEngine { namespace Application { namespace priv {
 		OE_LOG_DEBUG("Extensions count: " << p_ContextInfo.extensions.size());
 		
 		OE_LOG_DEBUG("Shading version: " << std::string(glGetString(GL_SHADING_LANGUAGE_VERSION) ? reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION)) : ""));
+		OE_LOG_DEBUG("-------------------------");
 	}
 
 	void GLContext::makeCurrent(bool active)
