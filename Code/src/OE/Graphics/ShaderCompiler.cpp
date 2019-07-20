@@ -12,6 +12,7 @@
 #undef Always
 #endif
 #include <Xsc/Xsc.h>
+#include <glsl_optimizer.h>
 
 namespace OrbitEngine { namespace Graphics {
 	
@@ -116,6 +117,9 @@ namespace OrbitEngine { namespace Graphics {
 		outputDesc.shaderVersion = OutputShaderVersionFromCurrentContext();
 		outputDesc.sourceCode = &outputStream;
 		outputDesc.options.autoBinding = true;
+		outputDesc.options.allowExtensions = true;
+		outputDesc.options.preserveComments = false;
+		outputDesc.options.writeGeneratorHeader = false; // may cause problems with glsl-optimizer
 
 		/* If we are in Direct3D we only need to preprocess the shader since it's already in HLSL */
 		if (isD3D)
@@ -147,6 +151,66 @@ namespace OrbitEngine { namespace Graphics {
 		OE_LOG_DEBUG(output);
 		OE_LOG_DEBUG("------------------------");
 		*/
+
+#if OE_OPENGL_ANY
+		if (Application::Context::GetCurrentAPI() == OPENGL
+#if OE_OPENGL_ES
+			|| Application::Context::GetCurrentAPI() == OPENGL_ES
+#endif
+			) {
+			static bool glsl_optimizer_initialized = false;
+			static glslopt_ctx* ctx = NULL;
+
+			if (!glsl_optimizer_initialized) {
+				glslopt_target targetVersion;
+				switch (outputDesc.shaderVersion) {
+				case Xsc::OutputShaderVersion::ESSL:
+				case Xsc::OutputShaderVersion::ESSL100:
+					targetVersion = glslopt_target::kGlslTargetOpenGLES20;
+					break;
+				case Xsc::OutputShaderVersion::ESSL300:
+				case Xsc::OutputShaderVersion::ESSL310:
+				case Xsc::OutputShaderVersion::ESSL320:
+					targetVersion = glslopt_target::kGlslTargetOpenGLES30;
+					break;
+				case Xsc::OutputShaderVersion::GLSL110:
+				case Xsc::OutputShaderVersion::GLSL120:
+				case Xsc::OutputShaderVersion::GLSL130:
+				case Xsc::OutputShaderVersion::GLSL140:
+				case Xsc::OutputShaderVersion::GLSL150:
+					targetVersion = glslopt_target::kGlslTargetOpenGL;
+					break;
+				default:
+					return output; // not supported by glsl-optimize
+				}
+				ctx = glslopt_initialize(targetVersion);
+				// call glslopt_cleanup?
+			}
+
+			glslopt_shader_type type;
+			switch (shaderType)
+			{
+			case VERTEX: type = glslopt_shader_type::kGlslOptShaderVertex; break;
+			case FRAGMENT: type = glslopt_shader_type::kGlslOptShaderFragment; break;
+			default:
+				return output; // not supported by glsl-optimize
+			}
+
+			glslopt_shader* shader = glslopt_optimize(ctx, type, output.c_str(), kGlslOptionSkipPreprocessor);
+			if (glslopt_get_status(shader)) {
+				output = glslopt_get_output(shader);
+				/*
+				OE_LOG_DEBUG("Shader optimized output:");
+				OE_LOG_DEBUG(output);
+				OE_LOG_DEBUG("------------------------");
+				*/
+			}
+			else {
+				OE_LOG_WARNING("Couldn't run glsl-optimizer on shader! " << glslopt_get_log(shader));
+			}
+			glslopt_shader_delete(shader);
+		}
+#endif
 
 		return output;
 	}

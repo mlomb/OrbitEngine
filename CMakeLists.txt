@@ -28,6 +28,7 @@ configure_file(${INC_DIR}/OE/Config.hpp.in
 # - Dependencies -
 add_subdirectory(Dependencies/FreeType)
 add_subdirectory(Dependencies/FreeImage)
+add_subdirectory(Dependencies/glsl-optimizer)
 
 option(XSC_BUILD_SHELL "" OFF) # Don't build XSC shell
 add_subdirectory(Dependencies/XShaderCompiler)
@@ -169,6 +170,7 @@ list(APPEND OE_LIBRARIES
 	freetype
 	FreeImage
 	xsc_core
+	glsl_optimizer
 	assimp
 	#${MONO_LIBRARIES}
 )
@@ -178,6 +180,7 @@ list(APPEND OE_LIBRARIES_INC
     ${XShaderCompiler_SOURCE_DIR}/inc
     ${Assimp_SOURCE_DIR}/include
     ${Assimp_BINARY_DIR}/include
+	Dependencies/glsl-optimizer/src/glsl
 	#${MONO_INCLUDE_DIR}
 )
 
