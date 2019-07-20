@@ -12,4 +12,4 @@
 	url = https://github.com/assimp/assimp.git
 [submodule "Dependencies/glsl-optimizer"]
 	path = Dependencies/glsl-optimizer
-	url = https://github.com/mlomb/glsl-optimizer.git
+	url = https://github.com/mlomb/glsl-optimizer
