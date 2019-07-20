@@ -92,6 +92,10 @@ float4 resolveTexture2DArr(float texid, float2 uv) {
 	return float4(1, 0, 1, 1);
 }
 
+float aa(float d) {
+    return smoothstep(0.9 - fwidth(d), 0.9, d);
+}
+
 float4 main(Input input) : SV_TARGET{
 	float2 transformedPos = mul(style.paintMat, float4(input.position.xy, 0, 1));
 	float scissor = calcScissor(input.position);
@@ -108,7 +112,7 @@ float4 main(Input input) : SV_TARGET{
 	if (texid > 0)
 		color *= resolveTexture2DArr(texid, input.uv);
 	else
-		color *= strokeMask(input.uv, strokeMul);
+		color *= aa(strokeMask(input.uv, strokeMul));
 
 	color *= scissor;
 	return color;

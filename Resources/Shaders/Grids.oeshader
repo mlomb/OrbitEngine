@@ -4,8 +4,11 @@ float2 to2DWorld(float2 uv, float2 resolution) {
 float2 to2DWorldTransformed(float2 uv, float2 resolution, matrix transform) {
     return mul(transform, float4(to2DWorld(uv, resolution), 0.0, 1.0)).xy;
 }
-float gridLine(float d, float scale, float aa = 2.5, float line_width = 0.01) {
-	return 1.0 - smoothstep(0, aa * scale, d - line_width);
+float gridLine(float d, float line_width = 0.01) {
+	float delta = fwidth(d);
+	float r = 1.0 - line_width;
+	float alpha = smoothstep(r-delta, r, d);
+	return alpha;
 }
 
 /*
