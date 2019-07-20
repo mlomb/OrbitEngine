@@ -58,7 +58,7 @@ namespace OrbitEngine { namespace Graphics {
 	struct TextureSampleProperties {
 		TextureWrap wrap = CLAMP_TO_EDGE;
 		TextureFilter filter = ANISOTROPIC;
-		bool mipmapping = true;
+		bool mipmapping = false;
 	};
 
 	struct TextureProperties {
