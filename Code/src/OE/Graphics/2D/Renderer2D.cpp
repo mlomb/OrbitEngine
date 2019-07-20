@@ -128,6 +128,16 @@ namespace OrbitEngine { namespace Graphics {
 		FrameBuffer::Prepare();
 		for (unsigned int i = 0; i < p_Textures.size(); i++)
 			p_Textures[i]->bind(i);
+#if OE_OPENGL_ES
+		if (Application::Context::GetCurrentAPI() == OPENGL_ES) {
+			if (p_Textures.size() > 0) {
+				for (unsigned int i = p_Textures.size(); i < OE_2D_MAX_TEXTURES; i++) {
+					// TODO: We should bind a dummy texture
+					p_Textures[0]->bind(i);
+				}
+			}
+		}
+#endif
 	}
 
 	void Renderer2D::RenderQuadScreen()
