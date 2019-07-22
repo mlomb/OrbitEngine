@@ -119,6 +119,7 @@ namespace OrbitEngine { namespace Graphics {
 		outputDesc.options.autoBinding = true;
 		outputDesc.options.allowExtensions = true;
 		outputDesc.options.preserveComments = false;
+		outputDesc.options.optimize = true;
 		outputDesc.options.writeGeneratorHeader = false; // may cause problems with glsl-optimizer
 
 		/* If we are in Direct3D we only need to preprocess the shader since it's already in HLSL */
