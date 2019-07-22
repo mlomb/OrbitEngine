@@ -29,7 +29,7 @@ float distLine(float2 a, float2 b){
 	float h = clamp(dot(a, b)/dot(b, b), 0., 1.);
     return length(a - b*h);
 }
-float triangleGird(float2 p){
+float triangleGrid(float2 p){
     float2 s = floor(p + (p.x + p.y) * .36602540378);
     p -= s - (s.x + s.y)*.211324865;
     float i = p.x < p.y ? 1. : 0.;
