@@ -57,7 +57,6 @@ namespace OrbitEngine { namespace UI {
 		if (renderDebug) {
 			float debugAlpha = 0.1f;
 			bool isValidSize = m_RenderRect.z != 0 && m_RenderRect.w != 0;
-			r2d.bindTexture(0);
 
 			if (isValidSize)
 				r2d.fillColor(Math::Vec4f(0, 1, 0, debugAlpha));

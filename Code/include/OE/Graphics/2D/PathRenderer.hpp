@@ -143,7 +143,7 @@ namespace OrbitEngine { namespace Graphics {
 		float m_StrokeWidth;
 	protected:
 		PathRenderer();
-		~PathRenderer();
+		virtual ~PathRenderer();
 
 		bool p_DirtyState;
 

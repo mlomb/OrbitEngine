@@ -21,7 +21,7 @@ struct FT_FaceRec_;
 typedef FT_FaceRec_* FT_Face;
 
 namespace OrbitEngine { namespace Graphics {
-	class Renderer2D;
+	class SpriteRenderer;
 	class Texture;
 
 	struct Glyph : public Misc::Packeable2D {
@@ -68,7 +68,7 @@ namespace OrbitEngine { namespace Graphics {
 		~Font();
 
 		void prepareFont(float size); // TODO: Add effects
-		void drawString(const std::string& text, const Math::Vec2f& position, Renderer2D& m_Renderer2D);
+		void drawString(const std::string& text, const Math::Vec2f& position, SpriteRenderer& r2d);
 		float getWidth(const std::string& text);
 		float getHeight(const std::string& text);
 		Math::Vec2f getBounds(const std::string& text);

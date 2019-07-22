@@ -76,6 +76,7 @@ namespace OrbitEngine {	namespace Graphics {
 	}
 	
 	Mesh::Mesh(void* vertices, unsigned int vertexSize, VertexLayout* layout, const std::vector<unsigned short>& indices)
+		: p_IBO(NULL)
 	{
 		p_VBO = Buffer::CreateVertexBuffer(layout, vertexSize, vertices);
 		if(indices.size() > 0)

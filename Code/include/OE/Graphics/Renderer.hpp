@@ -27,7 +27,7 @@ namespace OrbitEngine { namespace Graphics {
 
 	class Renderer {
 	public:
-		~Renderer() {};
+		virtual ~Renderer() {};
 
 		virtual void begin() = 0;
 		virtual void end() = 0;

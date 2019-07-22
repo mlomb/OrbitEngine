@@ -6,7 +6,7 @@
 #include "OE/Application/Context.hpp"
 
 #include "OE/Graphics/API/Texture.hpp"
-#include "OE/Graphics/2D/Renderer2D.hpp"
+#include "OE/Graphics/2D/SpriteRenderer.hpp"
 
 #include "OE/Misc/Log.hpp"
 #include "OE/System/File.hpp"
@@ -200,7 +200,7 @@ namespace OrbitEngine { namespace Graphics {
 		m_Instance = instance;
 	}
 
-	void Font::drawString(const std::string& string, const Math::Vec2f& position, Graphics::Renderer2D& r2d) {
+	void Font::drawString(const std::string& string, const Math::Vec2f& position, Graphics::SpriteRenderer& r2d) {
 		if (!m_Instance) {
 			OE_LOG_WARNING("Font instance not generated!");
 			return;

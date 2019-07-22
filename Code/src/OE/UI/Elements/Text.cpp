@@ -13,9 +13,12 @@ namespace OrbitEngine {	namespace UI {
 	void Text::onRender(Graphics::PathRenderer2D& r2d)
 	{
 		if (m_Font) {
+			// TODO: Add support for fonts in the PathRenderer2D
+			/*
 			r2d.bindColor(m_Color);
 			m_Font->prepareFont(m_FontSize);
 			m_Font->drawString(m_Text, getRenderPosition() + Math::Vec2f(0, getLayoutPropertyAlongAxis(LayoutProperty::PREFERRED_SIZE, Axis::VERTICAL)), r2d);
+			*/
 		}
 		else // Well..
 			OE_LOG_WARNING("Text without font.");
