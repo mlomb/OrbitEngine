@@ -3,6 +3,7 @@
 
 #include "OE/Graphics/2D/Renderer2D.hpp"
 #include "OE/Graphics/API/UniformsPack.hpp"
+#include "OE/Graphics/API/VertexLayout.hpp"
 
 #include "OE/Math/Color.hpp"
 #include "OE/Math/Mat4.hpp"
