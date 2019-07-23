@@ -15,6 +15,8 @@ namespace OrbitEngine { namespace Graphics {
 	ManagedShader::~ManagedShader()
 	{
 		p_Sources.clear();
+		for (auto& kv : m_Instances)
+			delete kv.second;
 		m_Instances.clear();
 	}
 
