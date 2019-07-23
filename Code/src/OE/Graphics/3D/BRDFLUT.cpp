@@ -3,7 +3,7 @@
 #include "OE/Graphics/API/FrameBuffer.hpp"
 #include "OE/Graphics/API/Shader.hpp"
 
-#include "OE/Graphics/ShaderLoader.hpp"
+#include "OE/Graphics/Shaders/ShaderLoader.hpp"
 #include "OE/Graphics/2D/Renderer2D.hpp"
 
 namespace OrbitEngine { namespace Graphics {

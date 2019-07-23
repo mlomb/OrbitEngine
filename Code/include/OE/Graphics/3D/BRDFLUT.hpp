@@ -1,7 +1,7 @@
 #ifndef GRAPHICS_BRDFLUT_HPP
 #define GRAPHICS_BRDFLUT_HPP
 
-#include "OE/Graphics/LookUpTexture.hpp"
+#include "OE/Graphics/Textures/LookUpTexture.hpp"
 
 namespace OrbitEngine { namespace Graphics {
 	class FrameBuffer;

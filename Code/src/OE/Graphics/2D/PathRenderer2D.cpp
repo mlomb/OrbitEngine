@@ -2,7 +2,7 @@
 
 #include "OE/Application/Context.hpp"
 #include "OE/Application/ContextImpl.hpp"
-#include "OE/Graphics/ShaderLoader.hpp"
+#include "OE/Graphics/Shaders/ShaderLoader.hpp"
 #include "OE/Graphics/API/States.hpp"
 #if OE_OPENGL_ANY
 #include "OE/Platform/OpenGL/GLShader.hpp"

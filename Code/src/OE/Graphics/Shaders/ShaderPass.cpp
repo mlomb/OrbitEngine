@@ -1,4 +1,4 @@
-#include "OE/Graphics/ShaderPass.hpp"
+#include "OE/Graphics/Shaders/ShaderPass.hpp"
 
 namespace OrbitEngine {	namespace Graphics {
 

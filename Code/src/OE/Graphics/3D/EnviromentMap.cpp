@@ -3,7 +3,7 @@
 #include "OE/Config.hpp"
 #include "OE/Application/Context.hpp"
 #include "OE/Graphics/MeshGenerator.hpp"
-#include "OE/Graphics/ShaderLoader.hpp"
+#include "OE/Graphics/Shaders/ShaderLoader.hpp"
 
 #if OE_OPENGL_ANY
 	#include "OE/Platform/OpenGL/GLShader.hpp"

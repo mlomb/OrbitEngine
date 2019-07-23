@@ -3,7 +3,7 @@
 
 #include <map>
 
-#include "OE/Graphics/ManagedShader.hpp"
+#include "OE/Graphics/Shaders/ManagedShader.hpp"
 
 namespace OrbitEngine { namespace Graphics {
 

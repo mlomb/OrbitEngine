@@ -4,7 +4,7 @@
 #include <string>
 
 #include "OE/UI/Elements/Element.hpp"
-#include "OE/Graphics/Font.hpp"
+#include "OE/Graphics/Fonts/Font.hpp"
 
 #include "OE/Math/Color.hpp"
 
