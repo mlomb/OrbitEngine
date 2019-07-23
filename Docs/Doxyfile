@@ -1,0 +1,10 @@
+PROJECT_NAME            = "OrbitEngine"
+
+EXTRACT_ALL            = YES
+OUTPUT_DIRECTORY       = ./output
+INPUT                  = ./../Code
+RECURSIVE              = YES
+
+GENERATE_HTML           = NO
+GENERATE_XML            = YES
+XML_PROGRAMLISTING      = NO
