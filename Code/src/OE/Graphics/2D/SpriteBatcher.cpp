@@ -20,16 +20,17 @@ namespace OrbitEngine { namespace Graphics {
 				layout->push<float>("TEXID");		   // TextureID
 				return layout;
 			})(),
-			ShaderLoader::Batch2D(),
 			numSprites * 4,
 			Topology::TRIANGLES
 			)
 	{
+		m_Shader = ShaderLoader::Batch2D();
 		TextureArrayHandler::init(m_Shader);
 	}
 
 	SpriteBatcher::~SpriteBatcher()
 	{
+		delete m_Shader;
 	}
 
 	void SpriteBatcher::begin()
@@ -41,6 +42,7 @@ namespace OrbitEngine { namespace Graphics {
 
 	void SpriteBatcher::end()
 	{
+		m_Shader->bind();
 		BatchRenderer2D::end();
 		TextureArrayHandler::end();
 		SpriteRenderer::end();

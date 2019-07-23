@@ -15,7 +15,7 @@ namespace OrbitEngine { namespace Graphics {
 	template<typename V>
 	class BatchRenderer2D : virtual public Renderer2D {
 	public:
-		BatchRenderer2D(VertexLayout* layout, Shader* shader, unsigned int batchSize, Topology batchTopology = Topology::TRIANGLES);
+		BatchRenderer2D(VertexLayout* layout, unsigned int batchSize, Topology batchTopology = Topology::TRIANGLES);
 		virtual ~BatchRenderer2D();
 
 		void begin() override;
@@ -33,8 +33,8 @@ namespace OrbitEngine { namespace Graphics {
 	};
 
 
-	template<typename V> inline BatchRenderer2D<V>::BatchRenderer2D(VertexLayout* layout, Shader* shader, unsigned int batchSize, Topology batchTopology)
-		: m_VertexLayout(layout), m_Shader(shader), m_pVertices(NULL), m_Count(0)
+	template<typename V> inline BatchRenderer2D<V>::BatchRenderer2D(VertexLayout* layout, unsigned int batchSize, Topology batchTopology)
+		: m_VertexLayout(layout), m_pVertices(NULL), m_Count(0)
 	{
 		std::vector<V> vertices = std::vector<V>(batchSize);
 		std::vector<unsigned short> indices = Mesh::GenerateIndices(batchTopology, batchSize);
@@ -46,7 +46,6 @@ namespace OrbitEngine { namespace Graphics {
 	template<typename V> inline BatchRenderer2D<V>::~BatchRenderer2D()
 	{
 		delete m_VertexLayout;
-		delete m_Shader;
 		delete m_Mesh;
 	}
 
@@ -62,8 +61,8 @@ namespace OrbitEngine { namespace Graphics {
 
 		// Map the pointer
 		m_pVertices = (V*)m_Mesh->getVBO()->mapPointer(MappedPointerMode::WRITE);
-		OE_ASSERT_MSG(m_pVertices, "Can't map batch renderer's pointer!");
 		m_Count = 0;
+		OE_ASSERT_MSG(m_pVertices, "Can't map batch renderer's vertex pointer!");
 	}
 
 	template<typename V> inline void BatchRenderer2D<V>::end()
@@ -71,8 +70,6 @@ namespace OrbitEngine { namespace Graphics {
 		Renderer2D::end();
 
 		m_Mesh->getVBO()->unmapPointer();
-		m_Shader->bind();
-
 		m_UPVMatrix->bind(0, Graphics::ShaderType::VERTEX);
 	}
 } }

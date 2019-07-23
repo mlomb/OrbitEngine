@@ -17,13 +17,13 @@ namespace OrbitEngine { namespace Graphics {
 		layout->push<Math::Vec2f>("TEXCOORD"); // UV's
 		return layout;
 	})(),
-		ShaderLoader::Vector2D(),
 		batchSize,
 		Topology::TRIANGLES_FAN
 		)
 	{
 		m_ScissorStack = new Misc::ScissorStack();
 		m_UniformDataPack = UniformsPack<PathRendererUniformData>::Create();
+		m_Shader = ShaderLoader::Vector2D();
 
 		TextureArrayHandler::init(m_Shader);
 
@@ -48,10 +48,12 @@ namespace OrbitEngine { namespace Graphics {
 	PathRenderer2D::~PathRenderer2D()
 	{
 		delete m_UniformDataPack;
+		delete m_Shader;
 	}
 
 	void PathRenderer2D::begin()
 	{
+		m_Shader->bind();
 		BatchRenderer2D::begin();
 		TextureArrayHandler::begin();
 

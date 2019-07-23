@@ -33,7 +33,8 @@ namespace OrbitEngine { namespace Graphics {
 		unsigned int getVertexOffset() override;
 
 		Misc::ScissorStack* m_ScissorStack;
-		Graphics::UniformsPack<PathRendererUniformData>* m_UniformDataPack;
+		UniformsPack<PathRendererUniformData>* m_UniformDataPack;
+		Shader* m_Shader;
 
 		std::vector<PathRendererCall*> m_RenderCalls;
 		PathRendererCall* m_TrianglesCall = nullptr;

@@ -32,6 +32,8 @@ namespace OrbitEngine { namespace Graphics {
 		// TODO: should handleTexture work like this?
 		int handleTexture(Texture* tex) override;
 
+		Shader* m_Shader;
+
 		void submitRect(const Math::Vec2f(&positions)[4], const Math::Vec2f(&uvs)[4], const Math::Color& color, unsigned int texture) override;
 	};
 } }
