@@ -1,4 +1,4 @@
-pip3 install jinja2 Pygments
+pip3 install python3-pip jinja2 Pygments
 apt install texlive-base texlive-latex-extra texlive-fonts-extra texlive-fonts-recommended
 
 git clone git://github.com/mosra/m.css
