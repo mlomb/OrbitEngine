@@ -150,7 +150,7 @@ namespace OrbitEngine { namespace Math {
 	{
 		Mat4 r = Mat4(1.0f);
 
-		double rad = deg2rad(angle);
+		double rad = angle;
 		float c = (float)cos(rad);
 		float s = (float)sin(rad);
 		float omc = 1.0f - c;
