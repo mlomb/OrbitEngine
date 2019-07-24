@@ -1,11 +1,23 @@
 PROJECT_NAME            = "OrbitEngine"
+PROJECT_BRIEF           = "C++ Docs"
 
 EXTRACT_ALL            = YES
 OUTPUT_DIRECTORY       = ./output
-INPUT                  = ./../Code
+INPUT                  = ./../Code/include
 RECURSIVE              = YES
+FILE_PATTERNS          = *.h, *.hpp
 
 GENERATE_HTML          = NO
 GENERATE_XML           = YES
 GENERATE_LATEX         = NO
 XML_PROGRAMLISTING     = NO
+XML_NS_MEMB_FILE_SCOPE = YES
+EXTRACT_PRIV_VIRTUAL   = YES
+FULL_PATH_NAMES        = YES
+STRIP_FROM_PATH        = ../Code/include
+SHOW_INCLUDE_FILES     = YES
+
+M_CLASS_TREE_EXPAND_LEVELS = 2
+M_FILE_TREE_EXPAND_LEVELS = 2
+
+M_SHOW_UNDOCUMENTED    = YES
