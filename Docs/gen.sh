@@ -2,4 +2,4 @@
 
 git clone git://github.com/mosra/m.css
 cd m.css/documentation
-py ./doxygen.py ../../Doxyfile
+./doxygen.py ../../Doxyfile
