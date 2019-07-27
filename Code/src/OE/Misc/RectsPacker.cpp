@@ -107,7 +107,7 @@ namespace OrbitEngine { namespace Misc {
 	};
 
 
-	bool Packer2D::Pack(std::vector<Packeable2D*>& rects, int max_side, Math::Vec2f& out_size, int discard_step) {
+	bool Packer2D::Pack(std::vector<Packeable2D*>& rects, int max_side, unsigned int& out_width, unsigned int& out_height, int discard_step) {
 		Packeable2DRectWH size(max_side, max_side);
 
 		for (Packeable2D* p : rects)
@@ -205,7 +205,8 @@ namespace OrbitEngine { namespace Misc {
 			order[f].shrink_to_fit();
 		}
 
-		out_size = Math::Vec2f((float)clip_x, (float)clip_y);
+		out_width = clip_x;
+		out_height = clip_y;
 		return true;
 	}
 

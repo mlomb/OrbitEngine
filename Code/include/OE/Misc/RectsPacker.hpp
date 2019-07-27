@@ -8,8 +8,6 @@ http://blackpawn.com/texts/lightmaps/default.html
 
 #include <vector>
 
-#include "OE/Math/Vec2.hpp"
-
 namespace OrbitEngine { namespace Misc {
 	struct Packeable2DRectLTRB;
 	struct Packeable2DRectXYWH;
@@ -46,9 +44,20 @@ namespace OrbitEngine { namespace Misc {
 		bool flipped;
 	};
 
+	/// Pack 2D rectangles optimally
 	class Packer2D {
 	public:
-		static bool Pack(std::vector<Packeable2D*>& rects, int max_side, Math::Vec2f& out_size, int discardStep = 1);
+		/**
+			@brief Pack rects using [blackpawn's lightmap packing algorithm](http://blackpawn.com/texts/lightmaps/default.html).
+
+			You may not want to call this function actively during runtime as it can be expensive
+
+			@param[in] rects The rects to pack, each must have width and height assigned
+			@param[in] max_side Maximum allowed size
+			@param[out] out_width,out_height Dimensions of the resulting map
+			@return Whether the algorithm succeeded to pack all the rects
+		*/
+		static bool Pack(std::vector<Packeable2D*>& rects, int max_side, unsigned int& out_width, unsigned int& out_height, int discardStep = 1);
 	};
 } }
 
