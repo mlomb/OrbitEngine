@@ -90,7 +90,6 @@ namespace OrbitEngine { namespace Graphics {
 
 		TextureProperties getProperties() const { return m_Properties; }
 
-		static void* LoadImageData(const std::string& file, TextureFormatProperties& formatProperties, unsigned int& width, unsigned int& height);
 		static unsigned int CalculateMipLevelsCount(unsigned int width, unsigned int height);
 		static unsigned int BPPFromFormat(TextureFormat format);
 	protected:
@@ -98,9 +97,6 @@ namespace OrbitEngine { namespace Graphics {
 
 		TextureProperties m_Properties;
 		unsigned int m_MipLevels = 1;
-
-	private:
-		static bool s_FreeImageInitialized;
 	};
 } }
 
