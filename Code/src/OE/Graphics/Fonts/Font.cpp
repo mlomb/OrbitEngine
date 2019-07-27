@@ -1,12 +1,12 @@
-#include "OE/Graphics/Fonts/Font.hpp"
+#include "OE/Graphics/Font.hpp"
 
 // FreeType
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
 #include "OE/Misc/RectsPacker.hpp"
-#include "OE/Graphics/Fonts/MSDF.hpp"
-#include "OE/Graphics/Images/BitmapAtlas.hpp"
+#include "OE/Graphics/MSDF.hpp"
+#include "OE/Graphics/BitmapAtlas.hpp"
 #include "OE/Misc/Log.hpp"
 #include "OE/System/File.hpp"
 
@@ -21,7 +21,7 @@ namespace OrbitEngine { namespace Graphics {
 				OE_LOG_FATAL("Couldn't initialize FreeType library");
 				return;
 			}
-			OE_LOG_INFO("FreeType initialized");
+			OE_LOG_INFO("FreeType " << FREETYPE_MAJOR << "." << FREETYPE_MINOR << "." << FREETYPE_PATCH << " initialized");
 		}
 
 		m_FileBuffer = System::File::LoadFile(file);
@@ -33,8 +33,24 @@ namespace OrbitEngine { namespace Graphics {
 			FT_Done_Face(m_Face);
 		m_FileBuffer.clear();
 	}
+
+	std::wstring Font::getFullCharset() const
+	{
+		std::wstring result;
+
+		FT_ULong charcode;
+		FT_UInt gindex;
+		charcode = FT_Get_First_Char(m_Face, &gindex);
+		while (gindex != 0)
+		{
+			result.push_back((wchar_t)charcode);
+			charcode = FT_Get_Next_Char(m_Face, charcode, &gindex);
+		}
+
+		return result;
+	}
 	
-	FontInstance* Font::generateInstance(FontSize size, FontAtlasMode mode, const std::string& charset)
+	FontInstance* Font::generateInstance(FontSize size, FontAtlasMode mode, const std::wstring& charset)
 	{
 		FontInstance* instance = initInstance(size, charset);
 
@@ -85,13 +101,13 @@ namespace OrbitEngine { namespace Graphics {
 		return instance;
 	}
 
-	FontInstance* Font::loadInstance(FontSize size, FontAtlasMode mode, const std::string& charset)
+	FontInstance* Font::loadInstance(FontSize size, FontAtlasMode mode, const std::wstring& charset)
 	{
 		// TODO: Implement
 		return nullptr;
 	}
 
-	FontInstance* Font::initInstance(FontSize size, const std::string& charset)
+	FontInstance* Font::initInstance(FontSize size, const std::wstring& charset)
 	{
 		if (FT_Set_Pixel_Sizes(m_Face, 0, (FT_UInt)size) != 0) {
 			OE_LOG_ERROR("Could not set pixel size!");
@@ -105,9 +121,10 @@ namespace OrbitEngine { namespace Graphics {
 
 		FT_Vector kerning;
 
-		for (GlyphIndex c : charset) {
-			if (FT_Load_Char(m_Face, c, FT_LOAD_DEFAULT) != 0) {
-				OE_LOG_WARNING("Could not load char " << c << "!");
+		for (wchar_t c : charset) {
+			GlyphIndex char_code = (GlyphIndex)c;
+			if (FT_Load_Char(m_Face, char_code, FT_LOAD_DEFAULT) != 0) {
+				OE_LOG_WARNING("Could not load char " << char_code << "!");
 				continue;
 			}
 
@@ -137,14 +154,14 @@ namespace OrbitEngine { namespace Graphics {
 			g.V_bearingX = V_bearingX;
 			g.V_bearingY = V_bearingY;
 
-			instance->m_Glyphs[c] = g;
+			instance->m_Glyphs[char_code] = g;
 
-			int cind = FT_Get_Char_Index(m_Face, c);
+			int cind = FT_Get_Char_Index(m_Face, char_code);
 
 			for (GlyphIndex c2 : charset) {
-				FT_Get_Kerning(m_Face, c, FT_Get_Char_Index(m_Face, c2), FT_KERNING_UNFITTED, &kerning);
+				FT_Get_Kerning(m_Face, char_code, FT_Get_Char_Index(m_Face, c2), FT_KERNING_UNFITTED, &kerning);
 				if (kerning.x != 0) {
-					instance->m_Kernings.insert(std::make_pair(std::make_pair(c, c2), kerning.x >> 6));
+					instance->m_Kernings.insert(std::make_pair(std::make_pair(char_code, c2), kerning.x >> 6));
 				}
 			}
 		}

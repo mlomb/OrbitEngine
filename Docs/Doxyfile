@@ -6,6 +6,7 @@ OUTPUT_DIRECTORY       = ./output
 INPUT                  = ./../Code/include
 RECURSIVE              = YES
 FILE_PATTERNS          = *.h, *.hpp
+IMAGE_PATH             = img
 
 GENERATE_HTML          = NO
 GENERATE_XML           = YES
