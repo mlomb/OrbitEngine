@@ -30,6 +30,13 @@ add_subdirectory(Dependencies/FreeType)
 add_subdirectory(Dependencies/FreeImage)
 add_subdirectory(Dependencies/glsl-optimizer)
 
+# msdfgen
+file(GLOB_RECURSE msdfgen_HEADERS "Dependencies/msdfgen/core/*.h" "Dependencies/msdfgen/core/*.hpp")
+file(GLOB_RECURSE msdfgen_SOURCES "Dependencies/msdfgen/core/*.cpp")
+add_library(lib_msdfgen ${msdfgen_SOURCES} ${msdfgen_HEADERS})
+target_include_directories(lib_msdfgen PUBLIC ${freetype_SOURCE_DIR}/include "Dependencies/msdfgen")
+target_link_libraries(lib_msdfgen freetype)
+
 option(XSC_BUILD_SHELL "" OFF) # Don't build XSC shell
 add_subdirectory(Dependencies/XShaderCompiler)
 
@@ -54,6 +61,7 @@ file(GLOB_RECURSE SRC ${INC_DIR}/OE/Misc/*.hpp
                       ${INC_DIR}/OE/Math/*.hpp
                       ${SRC_DIR}/OE/Math/*.cpp
                       ${INC_DIR}/OE/Graphics/*.hpp
+                      ${SRC_DIR}/OE/Graphics/*.hpp
                       ${SRC_DIR}/OE/Graphics/*.cpp
                       ${INC_DIR}/OE/Memory/*.hpp
                       ${INC_DIR}/OE/Memory/*.inl
@@ -172,6 +180,7 @@ list(APPEND OE_LIBRARIES
 	xsc_core
 	glsl_optimizer
 	assimp
+	lib_msdfgen
 	#${MONO_LIBRARIES}
 )
 list(APPEND OE_LIBRARIES_INC
@@ -181,6 +190,7 @@ list(APPEND OE_LIBRARIES_INC
     ${Assimp_SOURCE_DIR}/include
     ${Assimp_BINARY_DIR}/include
 	Dependencies/glsl-optimizer/src/glsl
+	${msdfgen_SOURCE_DIR}
 	#${MONO_INCLUDE_DIR}
 )
 
