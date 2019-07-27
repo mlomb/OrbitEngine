@@ -73,15 +73,15 @@ namespace OrbitEngine { namespace Application { namespace priv {
 		std::istringstream iss(extensions);
 		std::copy(std::istream_iterator<std::string>(iss), std::istream_iterator<std::string>(), std::back_inserter(p_ContextInfo.extensions));
 
-		OE_LOG_DEBUG("-- OpenGL" << (p_ContextInfo.ES ? " ES" : "") << " Context Info --");
-		OE_LOG_DEBUG("Vendor: " << p_ContextInfo.vendor);
-		OE_LOG_DEBUG("Renderer: " << p_ContextInfo.renderer);
-		OE_LOG_DEBUG("Version: " << p_ContextInfo.version);
-		OE_LOG_DEBUG("Major.Minor: " << p_ContextInfo.major << "." << p_ContextInfo.minor);
-		OE_LOG_DEBUG("Extensions count: " << p_ContextInfo.extensions.size());
+		OE_LOG_INFO("-- OpenGL" << (p_ContextInfo.ES ? " ES" : "") << " Context Info --");
+		OE_LOG_INFO("Vendor: " << p_ContextInfo.vendor);
+		OE_LOG_INFO("Renderer: " << p_ContextInfo.renderer);
+		OE_LOG_INFO("Version: " << p_ContextInfo.version);
+		OE_LOG_INFO("Major.Minor: " << p_ContextInfo.major << "." << p_ContextInfo.minor);
+		OE_LOG_INFO("Extensions count: " << p_ContextInfo.extensions.size());
 		
-		OE_LOG_DEBUG("Shading version: " << std::string(glGetString(GL_SHADING_LANGUAGE_VERSION) ? reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION)) : ""));
-		OE_LOG_DEBUG("-------------------------");
+		OE_LOG_INFO("Shading version: " << std::string(glGetString(GL_SHADING_LANGUAGE_VERSION) ? reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION)) : ""));
+		OE_LOG_INFO("-------------------------");
 	}
 
 	void GLContext::makeCurrent(bool active)
