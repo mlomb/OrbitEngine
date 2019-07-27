@@ -26,8 +26,8 @@ namespace OrbitEngine { namespace System {
 		char* mode;
 		switch (access) {
 		case AccessMode::READ: mode = "rb"; break;
-		case AccessMode::WRITE: mode = "w"; break;
-		case AccessMode::READ_AND_WRITE: mode = "w+"; break;
+		case AccessMode::WRITE: mode = "w+b"; break;
+		case AccessMode::READ_AND_WRITE: mode = "w+b"; break;
 		}
 		m_Data = ::fopen(file.c_str(), mode);
 #endif
