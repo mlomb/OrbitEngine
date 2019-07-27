@@ -40,6 +40,10 @@ namespace OrbitEngine { namespace Math {
 		return x;
 	}
 
+	inline bool isPowerOfTwo(unsigned int x) {
+		return x == 0 || (x & (x - 1)) == 0;
+	}
+
 	template<typename T>
 	inline T approximatelyEqual(T a, T b, T epsilon)
 	{
