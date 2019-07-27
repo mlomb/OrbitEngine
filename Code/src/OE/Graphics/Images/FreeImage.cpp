@@ -1,4 +1,4 @@
-﻿#include "OE/Graphics/Images/FreeImage.hpp"
+﻿#include "OE/Graphics/FreeImage.hpp"
 
 #include "OE/System/IOStream.hpp"
 #include "OE/System/File.hpp"

@@ -1,7 +1,7 @@
 #ifndef GRAPHICS_BITMAP_HPP
 #define GRAPHICS_BITMAP_HPP
 
-#include "OE/Graphics/Images/FreeImage.hpp"
+#include "OE/Graphics/FreeImage.hpp"
 
 namespace OrbitEngine { namespace Graphics {
 	/**

@@ -5,7 +5,7 @@
 
 #include "OE/Graphics/API/UniformsPack.hpp"
 #include "OE/Graphics/API/Texture.hpp"
-#include "OE/Graphics/Shaders/ManagedShader.hpp"
+#include "OE/Graphics/ManagedShader.hpp"
 
 #include "OE/Math/Vec3.hpp"
 #include "OE/Math/Color.hpp"

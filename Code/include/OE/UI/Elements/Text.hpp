@@ -4,7 +4,7 @@
 #include <string>
 
 #include "OE/UI/Elements/Element.hpp"
-#include "OE/Graphics/Fonts/Font.hpp"
+#include "OE/Graphics/Font.hpp"
 
 #include "OE/Math/Color.hpp"
 
@@ -21,8 +21,8 @@ namespace OrbitEngine {	namespace UI {
 
 	private:
 		std::string m_Text;
-		Graphics::Font* m_Font;
-		Graphics::FontStyle m_Style;
+		Graphics::FontInstance* m_Font;
+		//Graphics::FontStyle m_Style;
 		float m_FontSize = 18;
 		float m_LineSpacing = 1;
 		bool m_Rich = false;

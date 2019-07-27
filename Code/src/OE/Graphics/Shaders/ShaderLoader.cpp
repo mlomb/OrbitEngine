@@ -1,8 +1,8 @@
-#include "OE/Graphics/Shaders/ShaderLoader.hpp"
+#include "OE/Graphics/ShaderLoader.hpp"
 
 #include <algorithm>
 
-#include "OE/Graphics/Shaders/ShaderCompiler.hpp"
+#include "OE/Graphics/ShaderCompiler.hpp"
 #include "OE/System/File.hpp"
 #include "OE/Misc/Log.hpp"
 

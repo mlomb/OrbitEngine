@@ -1,4 +1,4 @@
-#include "OE/Graphics/Images/Bitmap.hpp"
+#include "OE/Graphics/Bitmap.hpp"
 
 #include "OE/Math/Math.hpp"
 

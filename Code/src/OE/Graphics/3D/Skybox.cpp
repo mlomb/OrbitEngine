@@ -2,7 +2,7 @@
 
 #include "OE/Graphics/API/States.hpp"
 #include "OE/Graphics/API/UniformsPack.hpp"
-#include "OE/Graphics/Shaders/ShaderLoader.hpp"
+#include "OE/Graphics/ShaderLoader.hpp"
 #include "OE/Graphics/2D/Renderer2D.hpp"
 
 #include "OE/Application/Context.hpp"

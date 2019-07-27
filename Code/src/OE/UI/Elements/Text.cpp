@@ -7,7 +7,8 @@ namespace OrbitEngine {	namespace UI {
 	Text::Text() :
 		m_TextBounds(Math::Vec4f())
 	{
-		m_Font = Graphics::Font::GetDefaultFont();
+		m_Font = NULL; // TODO: Fix
+		//m_Font = Graphics::Font::GetDefaultFont();
 	}
 
 	void Text::onRender(Graphics::PathRenderer2D& r2d)
@@ -26,7 +27,6 @@ namespace OrbitEngine {	namespace UI {
 
 	void Text::onValidate()
 	{
-		m_Font->prepareFont(m_FontSize);
 		m_TextBounds.zw = m_Font->getBounds(m_Text);
 		m_TextBounds.xy = AlignableLayout::GetAlignedPosition(m_TextAlignament, m_TextBounds.zw, getSize());
 	}
@@ -35,10 +35,11 @@ namespace OrbitEngine {	namespace UI {
 	{
 		switch (property) {
 		case LayoutProperty::PREFERRED_SIZE:
+			Math::Vec2i bounds = m_Font->getBounds(m_Text);
 			if (axis == Axis::HORIZONTAL)
-				return m_Font->getWidth(m_Text);
+				return bounds.x;
 			else
-				return m_Font->getHeight(m_Text);
+				return bounds.y;
 		}
 		return Element::getLayoutPropertyAlongAxis(property, axis);
 	}

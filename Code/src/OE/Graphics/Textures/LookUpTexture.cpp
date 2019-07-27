@@ -1,4 +1,4 @@
-#include "OE/Graphics/Textures/LookUpTexture.hpp"
+#include "OE/Graphics/LookUpTexture.hpp"
 
 namespace OrbitEngine { namespace Graphics {
 	LookUpTexture::LookUpTexture()

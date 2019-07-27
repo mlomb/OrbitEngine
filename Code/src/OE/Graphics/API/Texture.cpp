@@ -9,7 +9,7 @@
 #endif
 
 #include "OE/System/File.hpp"
-#include "OE/Graphics/Images/FreeImage.hpp"
+#include "OE/Graphics/FreeImage.hpp"
 #include "OE/Application/Context.hpp"
 #include "OE/Misc/Log.hpp"
 

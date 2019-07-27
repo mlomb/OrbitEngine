@@ -1,6 +1,6 @@
 #include "OE/Graphics/3D/SurfaceShader.hpp"
 
-#include "OE/Graphics/Shaders/ShaderLoader.hpp"
+#include "OE/Graphics/ShaderLoader.hpp"
 
 namespace OrbitEngine { namespace Graphics {
 

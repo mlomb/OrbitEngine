@@ -3,7 +3,7 @@
 #include "OE/Graphics/3D/Skybox.hpp"
 #include "OE/Graphics/3D/BRDFLUT.hpp"
 #include "OE/Graphics/2D/Renderer2D.hpp"
-#include "OE/Graphics/Shaders/ShaderLoader.hpp"
+#include "OE/Graphics/ShaderLoader.hpp"
 
 #if OE_OPENGL_ANY
 	#include "OE/Platform/OpenGL/GLShader.hpp"

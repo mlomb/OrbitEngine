@@ -1,4 +1,4 @@
-#include "OE/Graphics/Fonts/MSDF.hpp"
+#include "OE/Graphics/MSDF.hpp"
 
 // FreeType
 #include <ft2build.h>

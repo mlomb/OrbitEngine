@@ -1,7 +1,7 @@
 #ifndef GRAPHICS_MSDF_HPP
 #define GRAPHICS_MSDF_HPP
 
-#include "OE/Graphics/Images/Bitmap.hpp"
+#include "OE/Graphics/Bitmap.hpp"
 
 struct FT_Outline_;
 typedef FT_Outline_ FT_Outline;
