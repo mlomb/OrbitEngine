@@ -13,3 +13,6 @@
 [submodule "Dependencies/glsl-optimizer"]
 	path = Dependencies/glsl-optimizer
 	url = https://github.com/mlomb/glsl-optimizer
+[submodule "Dependencies/msdfgen"]
+	path = Dependencies/msdfgen
+	url = https://github.com/Chlumsky/msdfgen
