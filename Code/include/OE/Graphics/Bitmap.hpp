@@ -121,10 +121,17 @@ namespace OrbitEngine { namespace Graphics {
 	Bitmap<U, M> ConvertBitmap(const Bitmap<T, N>& input) { return U::conversion_not_implemented; }
 	/// Convert from unsigned char 8bit (grayscale) to unsigned char 24bit (RGB)
 	template<> BitmapRGB ConvertBitmap(const Bitmap<unsigned char, 1> & input);
+	/// Convert from unsigned char 8bit (grayscale) to unsigned char 32bit (RGBA)
+	template<> BitmapRGBA ConvertBitmap(const Bitmap<unsigned char, 1> & input);
+	/// Convert from unsigned char 24bit (RGB) to unsigned char 32bit (RGBA)
+	template<> BitmapRGBA ConvertBitmap(const Bitmap<unsigned char, 3> & input);
 	/// Convert from float 8bit (grayscale) to unsigned char 24bit (RGB)
 	template<> BitmapRGB ConvertBitmap(const Bitmap<float, 1> & input);
 	/// Convert from float 24bit (RGB) to unsigned char 24bit (RGB)
 	template<> BitmapRGB ConvertBitmap(const Bitmap<float, 3> & input);
+
+	/// Conver a RGBA bitmap from BGRA to RGBA
+	BitmapRGBA ConvertBGRAtoRGBA(const Bitmap<unsigned char, 4>& /* BGRA */ input);
 
 	template<typename T, unsigned int N> Bitmap<T, N>::Bitmap()
 		: m_Pixels(NULL), m_Width(0), m_Height(0), m_Ownership(true)
