@@ -194,6 +194,7 @@ list(APPEND OE_LIBRARIES_INC
 	#${MONO_INCLUDE_DIR}
 )
 
+target_compile_definitions(freetype PUBLIC FT_CONFIG_OPTION_ERROR_STRINGS)
 target_compile_definitions(FreeImage PUBLIC FREEIMAGE_LIB FREEIMAGE_COLORORDER=1)
 target_compile_definitions(OrbitEngine PUBLIC FREEIMAGE_LIB FREEIMAGE_COLORORDER=1)
 
