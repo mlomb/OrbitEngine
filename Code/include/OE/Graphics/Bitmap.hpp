@@ -43,6 +43,8 @@ namespace OrbitEngine { namespace Graphics {
 			\p source must have at least W*H*N elements
 		*/
 		Bitmap(T* source, unsigned int w, unsigned int h);
+		/// copy constructor
+		Bitmap(const Bitmap<T, N>& other);
 		/// move constructor
 		Bitmap(Bitmap<T, N>&& other) noexcept;
 		/// destructor
@@ -86,7 +88,7 @@ namespace OrbitEngine { namespace Graphics {
 		/**
 			@brief Saves the bitmap as a PNG file.
 			
-			Note: bitmaps with \p T other than unsigned char may be corrupted
+			@warning Bitmaps with \p T other than unsigned char may be corrupted
 		*/
 		bool savePNG(const std::string& path) const;
 
@@ -153,6 +155,11 @@ namespace OrbitEngine { namespace Graphics {
 	template<typename T, unsigned int N>
 	inline Bitmap<T, N>::Bitmap(T* source, unsigned int w, unsigned int h)
 		: m_Width(w), m_Height(h), m_Pixels(source), m_Ownership(false)
+	{
+	}
+
+	template <typename T, unsigned int N> Bitmap<T, N>::Bitmap(const Bitmap<T, N>& other)
+		 : Bitmap(other.m_Width, other.m_Height, other.m_Pixels)
 	{
 	}
 
