@@ -3,6 +3,7 @@
 // FreeType
 #include <ft2build.h>
 #include FT_FREETYPE_H
+#include FT_GLYPH_H
 
 #include "OE/Misc/RectsPacker.hpp"
 #include "OE/Graphics/MSDF.hpp"
@@ -57,17 +58,21 @@ namespace OrbitEngine { namespace Graphics {
 		if (!instance)
 			return nullptr;
 
-		// Font generation target is BitmapRGB
+		// Font generation target is BitmapRGBA
 
-		std::vector<std::pair<std::string, BitmapRGB>> bitmaps;
+		std::vector<std::pair<std::string, BitmapRGBA>> bitmaps;
 
 		std::string key = "X";
 		bool sdf = mode != BITMAP;
 
+		FT_Int32 load_flags = sdf ? FT_LOAD_DEFAULT : FT_LOAD_RENDER;
+		if (FT_HAS_COLOR(m_Face))
+			load_flags |= FT_LOAD_COLOR;
+
 		for (auto& pair : instance->getGlyphs()) {
 			GlyphIndex index = pair.first;
 
-			if (FT_Load_Char(m_Face, index, sdf ? FT_LOAD_DEFAULT : FT_LOAD_RENDER) != 0)
+			if (FT_Load_Glyph(m_Face, FT_Get_Char_Index(m_Face, index), load_flags) != 0)
 				continue;
 
 			key[0] = index; // TODO: Handle unicode
@@ -80,22 +85,35 @@ namespace OrbitEngine { namespace Graphics {
 				case PSDF: sdf_mode = SDFMode::PSDF; break;
 				case MSDF: sdf_mode = SDFMode::MSDF; break;
 				}
-				bitmaps.emplace_back(key, GenerateBitmapFromOutline(&m_Face->glyph->outline, sdf_mode, sdf_range));
-			}
-			else {
+				bitmaps.emplace_back(key, ConvertBitmap<unsigned char, 3, unsigned char, 4>(GenerateBitmapFromOutline(&m_Face->glyph->outline, sdf_mode, sdf_range)));
+			} else {
 				if (m_Face->glyph->bitmap.buffer == nullptr) {
 					continue;
 				}
 
+				FT_Pixel_Mode pixel_mode = (FT_Pixel_Mode)m_Face->glyph->bitmap.pixel_mode;
 				unsigned int w = m_Face->glyph->bitmap.width;
 				unsigned int h = m_Face->glyph->bitmap.rows;
 
-				Bitmap<unsigned char, 1> b(w, h, m_Face->glyph->bitmap.buffer);
-				bitmaps.emplace_back(key, ConvertBitmap<unsigned char, 1, unsigned char, 3>(b));
+				switch (pixel_mode) {
+				case FT_Pixel_Mode::FT_PIXEL_MODE_GRAY:
+				{
+					Bitmap<unsigned char, 1> b(w, h, m_Face->glyph->bitmap.buffer);
+					bitmaps.emplace_back(key, ConvertBitmap<unsigned char, 1, unsigned char, 4>(b));
+					break;
+				}
+				case FT_Pixel_Mode::FT_PIXEL_MODE_BGRA:
+				{
+					Bitmap<unsigned char, 4> b(w, h, m_Face->glyph->bitmap.buffer);
+					bitmaps.emplace_back(key, ConvertBGRAtoRGBA(b));
+					break;
+				}
+				}
+
 			}
 		}
 
-		BitmapAtlas<unsigned char, 3>* atlas = BitmapAtlas<unsigned char, 3>::Generate(bitmaps, 2048, 0);
+		BitmapAtlas<unsigned char, 4>* atlas = BitmapAtlas<unsigned char, 4>::Generate(bitmaps, 2048, 0);
 		atlas->savePNG("atlas.png");
 
 		return instance;
@@ -106,12 +124,34 @@ namespace OrbitEngine { namespace Graphics {
 		// TODO: Implement
 		return nullptr;
 	}
-
+	
 	FontInstance* Font::initInstance(FontSize size, const std::wstring& charset)
 	{
-		if (FT_Set_Pixel_Sizes(m_Face, 0, (FT_UInt)size) != 0) {
-			OE_LOG_ERROR("Could not set pixel size!");
-			return nullptr;
+		bool colorFont = FT_HAS_COLOR(m_Face);
+
+		if (colorFont && m_Face->num_fixed_sizes > 0) {
+			// find the best match
+			int best_match = 0;
+			int diff = std::abs((FT_Short)size - m_Face->available_sizes[0].width);
+			for (int i = 1; i < m_Face->num_fixed_sizes; ++i) {
+				int ndiff = std::abs((FT_Short)size - m_Face->available_sizes[i].width);
+				if (ndiff < diff) {
+					best_match = i;
+					diff = ndiff;
+				}
+			}
+			if (FT_Select_Size(m_Face, best_match) != 0) {
+				OE_LOG_ERROR("Could not select size!");
+				return nullptr;
+			}
+			size = m_Face->available_sizes[best_match].width;
+			OE_LOG_WARNING("Color font: size selected " << size);
+		}
+		else {
+			if (FT_Set_Pixel_Sizes(m_Face, 0, (FT_UInt)size) != 0) {
+				OE_LOG_ERROR("Could not set pixel size!");
+				return nullptr;
+			}
 		}
 
 		int maxHeight = 0, minHeight = 0;
@@ -123,7 +163,8 @@ namespace OrbitEngine { namespace Graphics {
 
 		for (wchar_t c : charset) {
 			GlyphIndex char_code = (GlyphIndex)c;
-			if (FT_Load_Char(m_Face, char_code, FT_LOAD_DEFAULT) != 0) {
+
+			if (FT_Load_Glyph(m_Face, FT_Get_Char_Index(m_Face, char_code), FT_LOAD_DEFAULT) != 0) {
 				OE_LOG_WARNING("Could not load char " << char_code << "!");
 				continue;
 			}

@@ -4,9 +4,6 @@
 #include "OE/System/File.hpp"
 #include "OE/Misc/Log.hpp"
 
-#ifndef FREEIMAGE_LIB
-#define FREEIMAGE_LIB
-#endif
 #include <FreeImage.h>
 
 namespace OrbitEngine { namespace Graphics {
