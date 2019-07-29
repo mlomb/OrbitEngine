@@ -19,7 +19,7 @@ namespace OrbitEngine {	namespace Graphics {
 
 	void Shader::attachFromFile(ShaderType type, std::string& path, bool binary)
 	{
-		std::vector<char> buffer = System::File::LoadFile(path);
+		std::vector<char> buffer = System::File::Read(path);
 
 		if (binary)
 			attachFromBinary(type, buffer);

@@ -92,7 +92,7 @@ namespace OrbitEngine { namespace Graphics {
 		*/
 		bool savePNG(const std::string& path) const;
 
-	private:
+	protected:
 		T* m_Pixels;
 		unsigned int m_Width, m_Height;
 		/// Determinates if the Bitmap object owns \p m_Pixels and it should delete them after its destruction

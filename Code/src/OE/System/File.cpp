@@ -1,13 +1,13 @@
 #include "OE/System/File.hpp"
 
 namespace OrbitEngine { namespace System {
-	std::string File::LoadFileAsString(const std::string& path)
+	std::string File::ReadAsString(const std::string& path)
 	{
-		std::vector<char> data = File::LoadFile(path);
+		std::vector<char> data = File::Read(path);
 		return std::string(data.begin(), data.end());
 	}
 
-	std::vector<char> File::LoadFile(const std::string& path) {
+	std::vector<char> File::Read(const std::string& path) {
 		std::vector<char> buffer;
 
 		IOStream* stream = Open(path);

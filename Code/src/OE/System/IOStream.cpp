@@ -38,6 +38,7 @@ namespace OrbitEngine { namespace System {
 
 	IOStream::~IOStream() {
 		if (isOpen()) {
+			OE_LOG_DEBUG("Closing file: " << m_File);
 #if OE_ANDROID
 			AAsset_close(m_Data);
 #else

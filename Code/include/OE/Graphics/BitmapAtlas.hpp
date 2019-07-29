@@ -1,6 +1,8 @@
 #ifndef GRAPHICS_BITMAP_ATLAS_HPP
 #define GRAPHICS_BITMAP_ATLAS_HPP
 
+#include <map>
+
 #include "Atlas.hpp"
 #include "Bitmap.hpp"
 
@@ -16,13 +18,18 @@ namespace OrbitEngine { namespace Graphics {
 		BitmapAtlas(unsigned int w, unsigned int h);
 		~BitmapAtlas();
 
-		int addFrame(const std::string& name, const Bitmap<T, N>& bitmap, int x, int y);
+		bool addFrame(FrameIndex index, const Bitmap<T, N>& bitmap, int x, int y, bool flip);
 
 		/**
-			Generate a BitmapAtlas
+			@brief Generate an atlas of bitmaps
+			@note The frame indices will match the input vector indices
 			@return The BitmapAtlas instance or NULL if the operation failed
 		*/
-		static BitmapAtlas<T, N>* Generate(std::vector<std::pair<std::string, Bitmap<T, N>>>& bitmaps, unsigned int max_size, unsigned int padding = 0);
+		static BitmapAtlas<T, N>* Generate(std::map<FrameIndex, Bitmap<T, N>>& bitmaps, unsigned int max_size, unsigned int padding = 0);
+
+	protected:
+
+		float getTexelSize() override;
 	};
 
 	typedef BitmapAtlas<unsigned char, 3> BitmapAtlasRGB;
@@ -37,26 +44,26 @@ namespace OrbitEngine { namespace Graphics {
 	{
 	}
 
-	template<typename T, unsigned int N> int BitmapAtlas<T, N>::addFrame(const std::string& name, const Bitmap<T, N>& bitmap, int x, int y)
+	template<typename T, unsigned int N> bool BitmapAtlas<T, N>::addFrame(FrameIndex index, const Bitmap<T, N>& bitmap, int x, int y, bool flip)
 	{
-		write(bitmap, x, y);
-		return Atlas::addFrame(name, { Math::UV() });
+		write(flip ? bitmap.rotate90clockwise() : bitmap, x, y);
+		return Atlas::addFrame(index, x, y, flip ? bitmap.height() : bitmap.width(), flip ? bitmap.width() : bitmap.height(), flip);
 	}
 
-	template<typename T, unsigned int N> BitmapAtlas<T, N>* BitmapAtlas<T, N>::Generate(std::vector<std::pair<std::string, Bitmap<T, N>>>& bitmaps, unsigned int max_size, unsigned int padding)
+	template<typename T, unsigned int N> BitmapAtlas<T, N>* BitmapAtlas<T, N>::Generate(std::map<FrameIndex, Bitmap<T, N>>& bitmaps, unsigned int max_size, unsigned int padding)
 	{
 		std::vector<Misc::Packeable2D*> rects;
 
 		struct Entry : public Misc::Packeable2D {
-			Entry(const std::string& name, const Bitmap<T, N>& bitmap, unsigned int padding)
-				: Misc::Packeable2D(), name(name), bitmap(bitmap) { w = bitmap.width() + padding; h = bitmap.height() + padding; }
-			const std::string& name;
+			Entry(int index, const Bitmap<T, N>& bitmap, unsigned int padding)
+				: Misc::Packeable2D(), index(index), bitmap(bitmap) { w = bitmap.width() + padding; h = bitmap.height() + padding; }
+			const int index;
 			const Bitmap<T, N>& bitmap;
 		};
 
 		rects.reserve(bitmaps.size());
-		for (auto& pair : bitmaps) {
-			rects.push_back(new Entry(pair.first, pair.second, padding));
+		for (auto& p : bitmaps) {
+			rects.push_back(new Entry(p.first, p.second, padding));
 		}
 
 		unsigned int atlas_width, atlas_height;
@@ -76,16 +83,18 @@ namespace OrbitEngine { namespace Graphics {
 
 		for (Misc::Packeable2D* p : rects) {
 			Entry* e = static_cast<Entry*>(p);
-			if(e->flipped)
-				atlas->addFrame(e->name, e->bitmap.rotate90clockwise(), e->x, e->y);
-			else
-				atlas->addFrame(e->name, e->bitmap, e->x, e->y);
+			atlas->addFrame(e->index, e->bitmap, e->x, e->y, e->flipped);
 			delete e;
 		}
 
 		rects.clear();
 
 		return atlas;
+	}
+
+	template<typename T, unsigned int N> float BitmapAtlas<T, N>::getTexelSize()
+	{
+		return 1.0f / m_Width;
 	}
 } }
 

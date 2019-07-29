@@ -72,7 +72,7 @@ namespace OrbitEngine { namespace Graphics {
 
 		std::string directory = path.substr(0, path.find_last_of('/'));
 
-		std::string fileContent = System::File::LoadFileAsString(path);
+		std::string fileContent = System::File::ReadAsString(path);
 		if (fileContent.size() == 0) {
 			OE_LOG_FATAL("Can't load shader file '" + path + "'.");
 			return "/* Couldn't load file (" + path + ") */";
