@@ -16,3 +16,6 @@
 [submodule "Dependencies/msdfgen"]
 	path = Dependencies/msdfgen
 	url = https://github.com/Chlumsky/msdfgen
+[submodule "Dependencies/rapidjson"]
+	path = Dependencies/rapidjson
+	url = https://github.com/Tencent/rapidjson.git

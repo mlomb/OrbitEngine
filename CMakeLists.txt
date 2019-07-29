@@ -190,6 +190,7 @@ list(APPEND OE_LIBRARIES_INC
     ${Assimp_SOURCE_DIR}/include
     ${Assimp_BINARY_DIR}/include
 	Dependencies/glsl-optimizer/src/glsl
+	Dependencies/rapidjson/include
 	${msdfgen_SOURCE_DIR}
 	#${MONO_INCLUDE_DIR}
 )
