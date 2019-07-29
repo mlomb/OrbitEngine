@@ -149,6 +149,6 @@ namespace OrbitEngine { namespace Graphics {
 		delete fileStream;
 		FreeImage_Unload(bitmap);
 
-		return result == 0;
+		return result == TRUE;
 	}
 } }
