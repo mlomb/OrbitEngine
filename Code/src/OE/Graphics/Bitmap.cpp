@@ -50,6 +50,19 @@ namespace OrbitEngine { namespace Graphics {
 		return result;
 	}
 
+	template<> BitmapRGB ConvertBitmap(const Bitmap<unsigned char, 4> & input) {
+		BitmapRGB result(input.width(), input.height());
+		for (int j = 0; j < input.height(); j++) {
+			for (int i = 0; i < input.width(); i++) {
+				result(i, j, 0) = input(i, j, 0);
+				result(i, j, 1) = input(i, j, 1);
+				result(i, j, 2) = input(i, j, 2);
+				// ignore alpha channel
+			}
+		}
+		return result;
+	}
+
 	template<> BitmapRGB ConvertBitmap(const Bitmap<float, 1> & input) {
 		BitmapRGB result(input.width(), input.height());
 		float f;

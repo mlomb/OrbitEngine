@@ -2,6 +2,7 @@
 #define GRAPHICS_BITMAP_HPP
 
 #include "OE/Graphics/FreeImage.hpp"
+#include "OE/Misc/Log.hpp"
 
 namespace OrbitEngine { namespace Graphics {
 	/**
@@ -64,6 +65,8 @@ namespace OrbitEngine { namespace Graphics {
 		const T& operator()(int x, int y, int ith) const;
 		/// move assignment operator
 		Bitmap<T, N>& Bitmap<T, N>::operator=(Bitmap<T, N>&& other) noexcept;
+		/// pixel data
+		T* data() const;
 
 		/**
 			@brief Writes the input Bitmap at \p x, \p y.
@@ -87,10 +90,15 @@ namespace OrbitEngine { namespace Graphics {
 
 		/**
 			@brief Saves the bitmap as a PNG file.
-			
 			@warning Bitmaps with \p T other than unsigned char may be corrupted
 		*/
 		bool savePNG(const std::string& path) const;
+
+		/**
+			@brief Loads an image into a Bitmap
+			@note The image will be transformed to the requested format
+		*/
+		static Bitmap<T, N> Load(const std::string& path);
 
 	protected:
 		T* m_Pixels;
@@ -127,6 +135,8 @@ namespace OrbitEngine { namespace Graphics {
 	template<> BitmapRGBA ConvertBitmap(const Bitmap<unsigned char, 1> & input);
 	/// Convert from unsigned char 24bit (RGB) to unsigned char 32bit (RGBA)
 	template<> BitmapRGBA ConvertBitmap(const Bitmap<unsigned char, 3> & input);
+	/// Convert from unsigned char 32bit (RGBA) to unsigned char 24bit (RGB) (drop alpha)
+	template<> BitmapRGB ConvertBitmap(const Bitmap<unsigned char, 4> & input);
 	/// Convert from float 8bit (grayscale) to unsigned char 24bit (RGB)
 	template<> BitmapRGB ConvertBitmap(const Bitmap<float, 1> & input);
 	/// Convert from float 24bit (RGB) to unsigned char 24bit (RGB)
@@ -217,6 +227,10 @@ namespace OrbitEngine { namespace Graphics {
 		}
 		return *this;
 	}
+	template<typename T, unsigned int N> T* Bitmap<T, N>::data() const
+	{
+		return m_Pixels;
+	}
 
 	template <typename T, unsigned int N> void Bitmap<T, N>::write(const Bitmap<T, N>& input, int x, int y) {
 		int bx = std::min(m_Width, x + input.m_Width);
@@ -298,6 +312,34 @@ namespace OrbitEngine { namespace Graphics {
 
 	template<typename T, unsigned int N> bool Bitmap<T, N>::savePNG(const std::string& path) const {
 		return WritePNG(path, m_Width, m_Height, bpp(), (unsigned char*)m_Pixels);
+	}
+
+	template<typename T, unsigned int N> Bitmap<T, N> Bitmap<T, N>::Load(const std::string& path)
+	{
+		unsigned int w, h, bpp;
+		unsigned char* data = ReadImage(path, w, h, bpp, N == 4);
+		if (data) {
+			if (std::is_same<T, unsigned char>::value) {
+				if (bpp / 8 == N) {
+					Bitmap<T, N> bmp(w, h, data);
+					delete data;
+					return bmp;
+				}
+				else if (N == 3 && bpp == 32) { // image is RGBA but we need RGB
+					BitmapRGBA tmp(data, w, h); // no copy
+					BitmapRGB bmp = ConvertBitmap<unsigned char, 4, unsigned char, 3>(tmp);
+					delete data;
+					return Bitmap<T, N>(w, h, bmp.data()); // copy
+				} else {
+					OE_LOG_WARNING("Unsupported bit depth");
+				}
+			}
+			else {
+				OE_LOG_WARNING("Unsupported bitmap type");
+			}
+			delete data;
+		}
+		return Bitmap<T, N>();
 	}
 } }
 
