@@ -114,6 +114,12 @@ namespace OrbitEngine { namespace Graphics {
 		metrics.V_advance  = (m_Face->glyph->metrics.vertAdvance  >> 6);
 		metrics.V_bearingX = (m_Face->glyph->metrics.vertBearingX >> 6);
 		metrics.V_bearingY = (m_Face->glyph->metrics.vertBearingY >> 6);
+		
+		// exception
+		if (codepoint == ' ') {
+			bitmap = BitmapRGBA();
+			return true;
+		}
 
 		// render glyph
 		if (sdf) {
