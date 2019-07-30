@@ -94,6 +94,8 @@ namespace OrbitEngine { namespace Graphics {
 		/// Kerning distance between left and right glyphs at a specific size in unfitted pixels
 		int getHorizontalKerning(FontSize size, GlyphCodepoint left, GlyphCodepoint right);
 
+		static bool HasEmojiPresentation(GlyphCodepoint codepoint);
+
 	private:
 		static FT_Library s_FTLibrary;
 

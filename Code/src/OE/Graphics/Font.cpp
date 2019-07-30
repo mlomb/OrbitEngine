@@ -137,7 +137,22 @@ namespace OrbitEngine { namespace Graphics {
 			case FT_Pixel_Mode::FT_PIXEL_MODE_GRAY:
 			{
 				Bitmap<unsigned char, 1> b(m_Face->glyph->bitmap.buffer, w, h); // no copy
-				bitmap = ConvertBitmap<unsigned char, 1, unsigned char, 4>(b);
+				if (mode == COLOR) {
+					// convert the grayscale image to white with the grayscale values applied to the alpha channel
+					bitmap = BitmapRGBA(b.width(), b.height());
+					for (int j = 0; j < b.height(); j++) {
+						for (int i = 0; i < b.width(); i++) {
+							bitmap(i, j, 0) = 255;
+							bitmap(i, j, 1) = 255;
+							bitmap(i, j, 2) = 255;
+							bitmap(i, j, 3) = b(i, j, 0);
+						}
+					}
+				}
+				else {
+					// just return the converted bitamp
+					bitmap = ConvertBitmap<unsigned char, 1, unsigned char, 4>(b);
+				}
 				return true;
 			}
 			case FT_Pixel_Mode::FT_PIXEL_MODE_BGRA:
@@ -160,5 +175,62 @@ namespace OrbitEngine { namespace Graphics {
 		FT_Vector kerning;
 		FT_Get_Kerning(m_Face, FT_Get_Char_Index(m_Face, left), FT_Get_Char_Index(m_Face, right), FT_KERNING_UNFITTED, &kerning);
 		return kerning.x;
+	}
+
+	bool Font::HasEmojiPresentation(GlyphCodepoint c) {
+		// source: http://unicode.org/Public/emoji/latest/emoji-data.txt
+		if (c < 0x02728 - 1) // discard lots
+			return false;
+		return 
+			 c == 0x02728 || c == 0x0274C  || c == 0x0274E ||
+			(c >= 0x02753 && c <= 0x02755) || c == 0x02757 ||
+			(c >= 0x02795 && c <= 0x02797) || c == 0x027B0 || c == 0x027BF ||
+			(c >= 0x02B1B && c <= 0x02B1C) || c == 0x02B50 || c == 0x02B55 || c == 0x1F004 || c == 0x1F0CF || c == 0x1F18E ||
+			(c >= 0x1F191 && c <= 0x1F19A) ||
+			(c >= 0x1F1E6 && c <= 0x1F1FF) || c == 0x1F201 || c == 0x1F21A || c == 0x1F22F ||
+			(c >= 0x1F232 && c <= 0x1F236) ||
+			(c >= 0x1F238 && c <= 0x1F23A) ||
+			(c >= 0x1F250 && c <= 0x1F251) ||
+			(c >= 0x1F300 && c <= 0x1F320) ||
+			(c >= 0x1F32D && c <= 0x1F335) ||
+			(c >= 0x1F337 && c <= 0x1F37C) ||
+			(c >= 0x1F37E && c <= 0x1F393) ||
+			(c >= 0x1F3A0 && c <= 0x1F3CA) ||
+			(c >= 0x1F3CF && c <= 0x1F3D3) ||
+			(c >= 0x1F3E0 && c <= 0x1F3F0) || c == 0x1F3F4 ||
+			(c >= 0x1F3F8 && c <= 0x1F43E) || c == 0x1F440 ||
+			(c >= 0x1F442 && c <= 0x1F4FC) ||
+			(c >= 0x1F4FF && c <= 0x1F53D) ||
+			(c >= 0x1F54B && c <= 0x1F54E) ||
+			(c >= 0x1F550 && c <= 0x1F567) || c == 0x1F57A ||
+			(c >= 0x1F595 && c <= 0x1F596) || c == 0x1F5A4 ||
+			(c >= 0x1F5FB && c <= 0x1F64F) ||
+			(c >= 0x1F680 && c <= 0x1F6C5) || c == 0x1F6CC ||
+			(c >= 0x1F6D0 && c <= 0x1F6D2) || c == 0x1F6D5 ||
+			(c >= 0x1F6EB && c <= 0x1F6EC) ||
+			(c >= 0x1F6F4 && c <= 0x1F6FA) ||
+			(c >= 0x1F7E0 && c <= 0x1F7EB) ||
+			(c >= 0x1F90D && c <= 0x1F93A) ||
+			(c >= 0x1F93C && c <= 0x1F945) ||
+			(c >= 0x1F947 && c <= 0x1F971) ||
+			(c >= 0x1F973 && c <= 0x1F976) ||
+			(c >= 0x1F97A && c <= 0x1F9A2) ||
+			(c >= 0x1F9A5 && c <= 0x1F9AA) ||
+			(c >= 0x1F9AE && c <= 0x1F9CA) ||
+			(c >= 0x1F9CD && c <= 0x1F9FF) ||
+			(c >= 0x1FA70 && c <= 0x1FA73) ||
+			(c >= 0x1FA78 && c <= 0x1FA7A) ||
+			(c >= 0x1FA80 && c <= 0x1FA82) ||
+			(c >= 0x1FA90 && c <= 0x1FA95) ||
+			(c >= 0x0231A && c <= 0x0231B) ||
+			(c >= 0x023E9 && c <= 0x023EC) || c == 0x023F0 || c == 0x023F3 ||
+			(c >= 0x025FD && c <= 0x025FE) ||
+			(c >= 0x02614 && c <= 0x02615) ||
+			(c >= 0x02648 && c <= 0x02653) || c == 0x0267F || c == 0x02693 || c == 0x026A1 ||
+			(c >= 0x026AA && c <= 0x026AB) ||
+			(c >= 0x026BD && c <= 0x026BE) ||
+			(c >= 0x026C4 && c <= 0x026C5) || c == 0x026CE || c == 0x026D4 || c == 0x026EA ||
+			(c >= 0x026F2 && c <= 0x026F3) || c == 0x026F5 || c == 0x026FA || c == 0x026FD || c == 0x02705 ||
+			(c >= 0x0270A && c <= 0x0270B);
 	}
 } }
