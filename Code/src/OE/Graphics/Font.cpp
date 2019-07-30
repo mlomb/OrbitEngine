@@ -183,10 +183,11 @@ namespace OrbitEngine { namespace Graphics {
 	{
 		if (!setSize(size))
 			return 0;
-
+		if (!FT_HAS_KERNING(m_Face))
+			return 0;
 		FT_Vector kerning;
 		FT_Get_Kerning(m_Face, FT_Get_Char_Index(m_Face, left), FT_Get_Char_Index(m_Face, right), FT_KERNING_UNFITTED, &kerning);
-		return kerning.x;
+		return kerning.x >> 6;
 	}
 
 	bool Font::HasEmojiPresentation(GlyphCodepoint c) {
