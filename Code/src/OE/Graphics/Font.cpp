@@ -4,12 +4,13 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
+#include "OE/System/File.hpp"
+
+#include "OE/Misc/Log.hpp"
 #include "OE/Misc/RectsPacker.hpp"
+
 #include "OE/Graphics/MSDF.hpp"
 #include "OE/Graphics/BitmapAtlas.hpp"
-#include "OE/Misc/Log.hpp"
-#include "OE/System/File.hpp"
-#include "OE/Graphics/FontInstance.hpp"
 
 namespace OrbitEngine { namespace Graphics {
 	FT_Library Font::s_FTLibrary = nullptr;

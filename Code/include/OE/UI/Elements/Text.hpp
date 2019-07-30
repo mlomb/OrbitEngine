@@ -4,7 +4,7 @@
 #include <string>
 
 #include "OE/UI/Elements/Element.hpp"
-#include "OE/Graphics/FontInstance.hpp"
+#include "OE/Graphics/FontCollection.hpp"
 
 #include "OE/Math/Color.hpp"
 
@@ -13,15 +13,15 @@ namespace OrbitEngine {	namespace UI {
 	public:
 		Text();
 
-		void setText(std::string text) { m_Text = text; invalidate(); };
+		void setText(std::wstring text) { m_Text = text; invalidate(); };
 		void setTextAlignament(RectAlignment textAlignament) { m_TextAlignament = textAlignament; invalidate(); };
 		void setFontSize(float fontSize) { m_FontSize = fontSize; }
 
-		std::string getText() { return m_Text; }
+		std::wstring getText() { return m_Text; }
 
 	private:
-		std::string m_Text;
-		Graphics::FontInstance* m_Font;
+		std::wstring m_Text;
+		Graphics::FontCollection* m_Font;
 		//Graphics::FontStyle m_Style;
 		float m_FontSize = 18;
 		float m_LineSpacing = 1;

@@ -10,26 +10,74 @@
 #include "OE/Misc/RectsPacker.hpp"
 
 namespace OrbitEngine { namespace Graphics {
-	/// A 2D bitmap atlas
+	/**
+		@brief A 2D bitmap atlas
+
+		Example: **manually** make an atlas of four 64x64 bitmaps
+		@code
+		BitmapAtlasRGBA* atlas = new BitmapAtlasRGBA(128, 128);
+		atlas->addFrame(0, img1,  0,  0, false);
+		atlas->addFrame(1, img2, 64,  0, false);
+		atlas->addFrame(2, img3,  0, 64, false);
+		atlas->addFrame(3, img4, 64, 64, false);
+		atlas->exportToFiles("atlas.json", "atlas.png");
+		delete atlas;
+		@endcode
+
+		Example: **automagically** make an atlas out of bitmaps
+		@code
+		std::map<FrameIndex, BitmapRGBA> bitmaps;
+		bitmaps.emplace(0, img1);
+		bitmaps.emplace(1, img2);
+		bitmaps.emplace(2, img3);
+		bitmaps.emplace(3, img4);
+		BitmapAtlasRGBA* atlas = BitmapAtlasRGBA::Generate(bitmaps, 2048, 0);
+		if (atlas) {
+			atlas->exportToFiles("atlas.json", "atlas.png");
+			delete atlas;
+		}
+		@endcode
+
+		Currently, its not possible to load a BitmapAtlas from disk.
+		Take a look into TextureAtlas for using it during runtime.
+	*/
 	template<typename T, unsigned int N = 1>
-	class BitmapAtlas : public Bitmap<T, N>, public Atlas {
+	class BitmapAtlas : public Atlas, private Bitmap<T, N> {
 	public:
 		/// Creates an empty WxH atlas
 		BitmapAtlas(unsigned int w, unsigned int h);
 		~BitmapAtlas();
 
+		Math::Vec2f getTexelSize() const override;
+
+		/**
+			@brief Add a frame to the bitmap at \p x, \p y
+			@param[in] index identifier within the atlas, must be unique
+			@param[in] bitmap Bitmap to write
+			@param[in] x, y location to write the bitmap
+			@param[in] flip if the input bitmap must be rotated 90 degrees clockwise
+			@return Whether the frame was added correctly
+			@note The operation may fail if the bitmap is invalid, the coordinates are out of bounds or
+				  the index provided was already in use
+		*/
 		bool addFrame(FrameIndex index, const Bitmap<T, N>& bitmap, int x, int y, bool flip);
 
 		/**
-			@brief Generate an atlas of bitmaps
-			@note The frame indices will match the input vector indices
+			@brief Export the bitmap atlas to disk
+			@param[in] metadata path to the metadata file to write (.json)
+			@param[in] image path to the image file to write (.png)
+			@return Whether the atlas was exported correctly
+		*/
+		bool exportToFiles(const std::string& metadata, const std::string& image);
+
+		/**
+			@brief Generate an atlas from bitmaps
+			@param[in] bitmap map containing the desired indexes mapped to their corresponding bitmaps
+			@param[in] max_size maximum allowed size for the generated atlas. The generation may fail if its not possible to fit the bitmaps
+			@param[in] padding separation in pixels between each bitmap in the atlas
 			@return The BitmapAtlas instance or NULL if the operation failed
 		*/
-		static BitmapAtlas<T, N>* Generate(std::map<FrameIndex, Bitmap<T, N>>& bitmaps, unsigned int max_size, unsigned int padding = 0);
-
-	protected:
-
-		float getTexelSize() override;
+		static BitmapAtlas<T, N>* Generate(const std::map<FrameIndex, Bitmap<T, N>>& bitmaps, unsigned int max_size, unsigned int padding = 0);
 	};
 
 	typedef BitmapAtlas<unsigned char, 3> BitmapAtlasRGB;
@@ -40,18 +88,26 @@ namespace OrbitEngine { namespace Graphics {
 	{
 	}
 
-	template<typename T, unsigned int N> BitmapAtlas<T, N>::~BitmapAtlas()
-	{
+	template<typename T, unsigned int N> BitmapAtlas<T, N>::~BitmapAtlas() {
 	}
 
-	template<typename T, unsigned int N> bool BitmapAtlas<T, N>::addFrame(FrameIndex index, const Bitmap<T, N>& bitmap, int x, int y, bool flip)
-	{
+	template<typename T, unsigned int N> bool BitmapAtlas<T, N>::addFrame(FrameIndex index, const Bitmap<T, N>& bitmap, int x, int y, bool flip) {
+		if (!bitmap.valid()) // bitmap is invalid
+			return false;
+		if (x < 0 || y < 0 || x > m_Width || y > m_Height) // out of bounds
+			return false;
+		if (!Atlas::addFrame(index, x, y, flip ? bitmap.height() : bitmap.width(), flip ? bitmap.width() : bitmap.height(), flip))
+			return false;
+		// this shouldn't fail
 		write(flip ? bitmap.rotate90clockwise() : bitmap, x, y);
-		return Atlas::addFrame(index, x, y, flip ? bitmap.height() : bitmap.width(), flip ? bitmap.width() : bitmap.height(), flip);
+		return true;
 	}
 
-	template<typename T, unsigned int N> BitmapAtlas<T, N>* BitmapAtlas<T, N>::Generate(std::map<FrameIndex, Bitmap<T, N>>& bitmaps, unsigned int max_size, unsigned int padding)
-	{
+	template<typename T, unsigned int N> bool BitmapAtlas<T, N>::exportToFiles(const std::string& metadata, const std::string& image) {
+		return savePNG(image) && Atlas::exportToFile(metadata);
+	}
+
+	template<typename T, unsigned int N> BitmapAtlas<T, N>* BitmapAtlas<T, N>::Generate(const std::map<FrameIndex, Bitmap<T, N>>& bitmaps, unsigned int max_size, unsigned int padding) {
 		std::vector<Misc::Packeable2D*> rects;
 
 		struct Entry : public Misc::Packeable2D {
@@ -92,9 +148,8 @@ namespace OrbitEngine { namespace Graphics {
 		return atlas;
 	}
 
-	template<typename T, unsigned int N> float BitmapAtlas<T, N>::getTexelSize()
-	{
-		return 1.0f / m_Width;
+	template<typename T, unsigned int N> Math::Vec2f BitmapAtlas<T, N>::getTexelSize() const {
+		return Math::Vec2f(1.0f / m_Width, 1.0f / m_Height);
 	}
 } }
 

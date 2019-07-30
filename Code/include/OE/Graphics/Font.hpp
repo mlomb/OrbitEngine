@@ -60,8 +60,6 @@ namespace OrbitEngine { namespace Graphics {
 	/// Represents a single typeface
 	class Font {
 	public:
-		static FT_Library s_FTLibrary;
-
 		/// Load a font file
 		Font(const std::string& file);
 		~Font();
@@ -97,6 +95,8 @@ namespace OrbitEngine { namespace Graphics {
 		int getHorizontalKerning(FontSize size, GlyphCodepoint left, GlyphCodepoint right);
 
 	private:
+		static FT_Library s_FTLibrary;
+
 		std::vector<char> m_FileBuffer;
 		FT_Face m_Face;
 

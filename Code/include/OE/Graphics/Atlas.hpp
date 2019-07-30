@@ -2,33 +2,31 @@
 #define GRAPHICS_ATLAS_HPP
 
 #include <string>
-#include <vector>
 #include <unordered_map>
 
 #include "OE/Misc/JSON.hpp"
-
+#include "OE/Math/Vec2.hpp"
 #include "OE/Math/UV.hpp"
 
 namespace OrbitEngine { namespace Graphics {
-
+	/// Frame identifier within an atlas. It must be unique and does not have to be sequential
 	typedef unsigned int FrameIndex;
 
-	/// Generic atlas class
+	/// Generic 2D atlas class
 	class Atlas {
 	public:
-
 		struct Frame {
 			int x, y, w, h;
 			bool flipped;
 			Math::UV uvs;
 		};
 
-		/*
-		// TODO: Animations
-		struct Animation {
-			std::vector<int> frames;
-		};
-		*/
+		/// Returns texel sizes in both dimensions (1.0f / size)
+		virtual Math::Vec2f getTexelSize() const = 0;
+
+	protected:
+		Atlas();
+		virtual ~Atlas();
 
 		/**
 			@brief Generates JSON metadata describing the atlas
@@ -53,14 +51,11 @@ namespace OrbitEngine { namespace Graphics {
 			}
 			@endcode
 		*/
-		void writeMetadata(json_writer& writer);
+		void writeMetadata(Misc::JSONWriter& writer);
+		/// Load JSON metadata with the format described in writeMetadata
+		void loadMetadata(const rapidjson::Value& data);
 
-		virtual float getTexelSize() = 0;
-
-	protected:
-		Atlas();
-		virtual ~Atlas();
-
+		bool exportToFile(const std::string& metadata);
 		bool addFrame(FrameIndex index, int x, int y, int w, int h, bool flipped);
 
 		std::unordered_map<FrameIndex, Frame> m_Frames;
