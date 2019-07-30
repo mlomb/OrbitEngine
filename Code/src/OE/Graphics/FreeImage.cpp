@@ -84,7 +84,6 @@ namespace OrbitEngine { namespace Graphics {
 		height = FreeImage_GetHeight(dib);
 		bpp = FreeImage_GetBPP(dib);
 
-#if OE_D3D
 		if (bpp == 24 && force32bits) {
 			// DirectX11 don't support 24bit textures
 			FIBITMAP* tmp = FreeImage_ConvertTo32Bits(dib);
@@ -92,7 +91,6 @@ namespace OrbitEngine { namespace Graphics {
 			dib = tmp;
 			bpp = FreeImage_GetBPP(dib);
 		}
-#endif
 
 		OE_ASSERT(bpp);
 
