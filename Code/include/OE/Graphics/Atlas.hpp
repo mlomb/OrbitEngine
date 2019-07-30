@@ -12,14 +12,22 @@ namespace OrbitEngine { namespace Graphics {
 	/// Frame identifier within an atlas. It must be unique and does not have to be sequential
 	typedef unsigned int FrameIndex;
 
-	/// Generic 2D atlas class
+	/**
+		@brief Generic 2D atlas class
+
+		For examples see BitmapAtlas and TextureAtlas
+	*/
 	class Atlas {
 	public:
+		/// Holds the information to locate a frame
 		struct Frame {
 			int x, y, w, h;
 			bool flipped;
 			Math::UV uvs;
 		};
+
+		/// Returns whether the provided index already exists
+		bool hasFrame(FrameIndex index) const;
 
 		/// Returns texel sizes in both dimensions (1.0f / size)
 		virtual Math::Vec2f getTexelSize() const = 0;
@@ -37,10 +45,10 @@ namespace OrbitEngine { namespace Graphics {
 				"frames": [
 					{
 						"i": 1, // frame index
-						"x": 10,
-						"y": 10,
-						"w": 15,
-						"h": 25,
+						"x": 0,
+						"y": 0,
+						"w": 64,
+						"h": 64,
 						"f": false // flipped?
 					},
 					...
@@ -52,12 +60,32 @@ namespace OrbitEngine { namespace Graphics {
 			@endcode
 		*/
 		void writeMetadata(Misc::JSONWriter& writer);
-		/// Load JSON metadata with the format described in writeMetadata
+		/// Load JSON metadata with the format described in \ref writeMetadata
 		void loadMetadata(const rapidjson::Value& data);
 
+		/// Exports the metadata to the disk using the format described in \ref writeMetadata 
 		bool exportToFile(const std::string& metadata);
+
+		/**
+			@brief Add a frame's metadata to the atlas
+			@param[in] index identifier within the atlas, must be unique
+			@param[in] x,y location of the frame
+			@param[in] w,h sizes of the frame
+			@param[in] flipped if the provided frame is rotated 90 degrees clockwise
+			@return Whether the operation was successful
+			@note The operation may fail if the index provided was already in use
+		*/
 		bool addFrame(FrameIndex index, int x, int y, int w, int h, bool flipped);
 
+	protected:
+		/**
+			@brief Get a constant reference of a frame
+			@param[in] index requested frame index
+			@warning You must check if the frame exists (\ref hasFrame) before calling this function
+		*/
+		const Frame& getFrame(FrameIndex index) const;
+
+	private:
 		std::unordered_map<FrameIndex, Frame> m_Frames;
 	};
 } }

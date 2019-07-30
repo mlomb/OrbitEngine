@@ -4,7 +4,6 @@
 #include "OE/Misc/Log.hpp"
 
 namespace OrbitEngine { namespace Graphics {
-
 	Atlas::Atlas()
 	{
 	}
@@ -13,8 +12,7 @@ namespace OrbitEngine { namespace Graphics {
 	{
 	}
 	
-	void Atlas::writeMetadata(Misc::JSONWriter& writer)
-	{
+	void Atlas::writeMetadata(Misc::JSONWriter& writer) {
 		writer.StartObject();
 
 		// frames
@@ -96,8 +94,7 @@ namespace OrbitEngine { namespace Graphics {
 		}
 	}
 
-	bool Atlas::exportToFile(const std::string& metadata)
-	{
+	bool Atlas::exportToFile(const std::string& metadata) {
 		rapidjson::StringBuffer buffer;
 		Misc::JSONWriter writer(buffer);
 		writeMetadata(writer);
@@ -105,32 +102,43 @@ namespace OrbitEngine { namespace Graphics {
 	}
 
 	bool Atlas::addFrame(FrameIndex index, int x, int y, int w, int h, bool flipped) {
-		if (m_Frames.find(index) == m_Frames.end()) {
-			Frame frame;
-			frame.x = x;
-			frame.y = y;
-			frame.w = w;
-			frame.h = h;
-			frame.flipped = flipped;
+		if (hasFrame(index))
+			return false;
 
-			const Math::Vec2f texelSize = getTexelSize();
+		Frame frame;
+		frame.x = x;
+		frame.y = y;
+		frame.w = w;
+		frame.h = h;
+		frame.flipped = flipped;
 
-			float u0 = texelSize.x * x;
-			float v0 = texelSize.y * y;
-			float u1 = texelSize.x * (x + w);
-			float v1 = texelSize.y * (y + h);
+		const Math::Vec2f texelSize = getTexelSize();
 
-			v0 = 1.0f - v0;
-			v1 = 1.0f - v1;
+		float u0 = texelSize.x * x;
+		float v0 = texelSize.y * y;
+		float u1 = texelSize.x * (x + w);
+		float v1 = texelSize.y * (y + h);
 
-			if (flipped)
-				frame.uvs = Math::UV(Math::Vec2f(u1, v0), Math::Vec2f(u0, v0), Math::Vec2f(u0, v1), Math::Vec2f(u1, v1));
-			else
-				frame.uvs = Math::UV(u0, v0, u1, v1);
+		v0 = 1.0f - v0;
+		v1 = 1.0f - v1;
 
-			m_Frames.insert(std::make_pair(index, frame));
-			return true;
-		}
-		return false;
+		if (flipped)
+			frame.uvs = Math::UV(Math::Vec2f(u1, v0), Math::Vec2f(u0, v0), Math::Vec2f(u0, v1), Math::Vec2f(u1, v1));
+		else
+			frame.uvs = Math::UV(u0, v0, u1, v1);
+
+		m_Frames.insert(std::make_pair(index, frame));
+		return true;
+	}
+
+	bool Atlas::hasFrame(FrameIndex index) const {
+		return m_Frames.find(index) != m_Frames.end();
+	}
+
+	const Atlas::Frame& Atlas::getFrame(FrameIndex index) const {
+		const auto& it = m_Frames.find(index);
+		if(it == m_Frames.end())
+			OE_ASSERT_MSG(false, "index not found in atlas. First use hasFrame to check for existance")
+		return (*it).second;
 	}
 } }

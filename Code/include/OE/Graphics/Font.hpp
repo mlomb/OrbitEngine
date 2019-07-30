@@ -22,19 +22,20 @@ namespace OrbitEngine { namespace Graphics {
 		Example: Grinning Face emoji (U+1F600) and **&** glyphs at 128px
 
 		GRAY
-		@image html font-face-gray.png width=75px
-		@image html font-amp-gray.png width=75px
+		@image html font-face-gray.png width=60px
+		@image html font-amp-gray.png width=60px
 
 		SDF/PSDF
-		@image html font-face-sdf.png width=75px
-		@image html font-amp-sdf.png width=75px
+		@image html font-face-sdf.png width=60px
+		@image html font-amp-sdf.png width=60px
 
 		MSDF
-		@image html font-face-msdf.png width=75px
-		@image html font-amp-msdf.png width=75px
+		@image html font-face-msdf.png width=60px
+		@image html font-amp-msdf.png width=60px
 
 		COLOR
-		@image html font-face-color.png width=75px
+		@image html font-face-color.png width=60px
+		@image html font-amp-color.png width=60px
 	*/
 	enum GlyphRenderMode {
 		GRAY  = 0, ///< monochrome
@@ -49,7 +50,7 @@ namespace OrbitEngine { namespace Graphics {
 
 		[Details](https://www.freetype.org/freetype2/docs/glyphs/glyphs-3.html)
 
-		@image html glyph-metrics.png "Font metrics"
+		@image html glyph-metrics.png "Glyph metrics"
 	*/
 	struct GlyphMetrics {
 		int width, height;
@@ -66,6 +67,7 @@ namespace OrbitEngine { namespace Graphics {
 
 		/// Returns a list of all the available code points in the font file
 		std::vector<GlyphCodepoint> getAvailableGlyphs() const;
+
 		/**
 			@brief Get glyph bitmap and metrics
 
@@ -81,11 +83,11 @@ namespace OrbitEngine { namespace Graphics {
 			@code
 			Font* font = new Font("Font.ttf");
 
-			BitmapRGBA bmp;
-			Glyph g;
+			BitmapRGBA bitmap;
+			GlyphMetrics metrics;
 
-			if (font->getGlyph(38, 100, GlyphRenderMode::BITMAP, bmp, g)) { // U+0026 or 38 or &
-				bmp.savePNG("&.png");
+			if (font->getGlyph(38, 100, GlyphRenderMode::COLOR, bitmap, metrics)) { // U+0026 or 38 or &
+				bitmap.savePNG("&.png");
 			}
 			@endcode
 		*/
@@ -94,6 +96,7 @@ namespace OrbitEngine { namespace Graphics {
 		/// Kerning distance between left and right glyphs at a specific size in unfitted pixels
 		int getHorizontalKerning(FontSize size, GlyphCodepoint left, GlyphCodepoint right);
 
+		/// Returns whether the provided codepoint has emoji presentation according to the Unicode spec
 		static bool HasEmojiPresentation(GlyphCodepoint codepoint);
 
 	private:
@@ -104,6 +107,7 @@ namespace OrbitEngine { namespace Graphics {
 
 		/// internal function to set the current freetype pixel sizes
 		bool setSize(FontSize size);
+		/// cache the selected size to prevent calling freetype multiple times
 		FontSize m_CurrentSize;
 	};
 } }

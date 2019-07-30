@@ -28,7 +28,8 @@ namespace OrbitEngine { namespace Graphics {
 
 		m_FileBuffer = System::File::Read(file);
 		FT_New_Memory_Face(Font::s_FTLibrary, (FT_Byte*)m_FileBuffer.data(), (FT_Long)m_FileBuffer.size(), 0, &m_Face);
-		FT_Select_Charmap(m_Face, FT_ENCODING_UNICODE);
+		if(m_Face)
+			FT_Select_Charmap(m_Face, FT_ENCODING_UNICODE);
 	}
 
 	Font::~Font() {
@@ -39,6 +40,9 @@ namespace OrbitEngine { namespace Graphics {
 
 	bool Font::setSize(FontSize size)
 	{
+		if (!m_Face)
+			return false;
+
 		FT_Error error;
 
 		if (FT_HAS_FIXED_SIZES(m_Face)) {
@@ -71,12 +75,14 @@ namespace OrbitEngine { namespace Graphics {
 	{
 		std::vector<GlyphCodepoint> result;
 
-		FT_UInt codepoint;
-		FT_ULong charcode = FT_Get_First_Char(m_Face, &codepoint);
+		if (m_Face) {
+			FT_UInt codepoint;
+			FT_ULong charcode = FT_Get_First_Char(m_Face, &codepoint);
 
-		while (codepoint != 0) {
-			result.push_back(charcode);
-			charcode = FT_Get_Next_Char(m_Face, charcode, &codepoint);
+			while (codepoint != 0) {
+				result.push_back(charcode);
+				charcode = FT_Get_Next_Char(m_Face, charcode, &codepoint);
+			}
 		}
 
 		return result;
@@ -179,7 +185,7 @@ namespace OrbitEngine { namespace Graphics {
 
 	bool Font::HasEmojiPresentation(GlyphCodepoint c) {
 		// source: http://unicode.org/Public/emoji/latest/emoji-data.txt
-		if (c < 0x02728 - 1) // discard lots
+		if (c < 0x02728 - 1) // discard
 			return false;
 		return 
 			 c == 0x02728 || c == 0x0274C  || c == 0x0274E ||

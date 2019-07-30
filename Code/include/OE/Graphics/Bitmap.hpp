@@ -2,6 +2,7 @@
 #define GRAPHICS_BITMAP_HPP
 
 #include "OE/Graphics/FreeImage.hpp"
+#include "OE/Graphics/API/Texture.hpp"
 #include "OE/Misc/Log.hpp"
 
 namespace OrbitEngine { namespace Graphics {
@@ -95,6 +96,13 @@ namespace OrbitEngine { namespace Graphics {
 		bool savePNG(const std::string& path) const;
 
 		/**
+			@brief Generate a Texture from the Bitmap
+			@note Remind that the Texture and Bitmap will not be linked in any way and if you want to
+				  update the texture you will have to generate a new texture with this method again
+		*/
+		Texture* toTexture(const TextureSampleProperties& sample_properties = TextureSampleProperties());
+
+		/**
 			@brief Loads an image into a Bitmap
 			@note The image will be transformed to the requested format
 		*/
@@ -186,8 +194,7 @@ namespace OrbitEngine { namespace Graphics {
 			delete[] m_Pixels;
 	}
 
-	template<typename T, unsigned int N> bool Bitmap<T, N>::valid() const
-	{
+	template<typename T, unsigned int N> bool Bitmap<T, N>::valid() const {
 		return m_Width > 0 && m_Height > 0 && m_Pixels != NULL;
 	}
 
@@ -227,8 +234,7 @@ namespace OrbitEngine { namespace Graphics {
 		}
 		return *this;
 	}
-	template<typename T, unsigned int N> T* Bitmap<T, N>::data() const
-	{
+	template<typename T, unsigned int N> T* Bitmap<T, N>::data() const {
 		return m_Pixels;
 	}
 
@@ -245,8 +251,7 @@ namespace OrbitEngine { namespace Graphics {
 		}
 	}
 
-	template<typename T, unsigned int N> void Bitmap<T, N>::fill(const T input[N])
-	{
+	template<typename T, unsigned int N> void Bitmap<T, N>::fill(const T input[N]) {
 		for (int y = 0; y < m_Height; y++) {
 			for (int x = 0; x < m_Width; x++) {
 				for (int i = 0; i < N; i++) {
@@ -256,16 +261,14 @@ namespace OrbitEngine { namespace Graphics {
 		}
 	}
 
-	template<typename T, unsigned int N> void Bitmap<T, N>::clear()
-	{
+	template<typename T, unsigned int N> void Bitmap<T, N>::clear() {
 		T arr[N];
 		for (int i = 0; i < N; i++)
 			arr[i] = 0;
 		fill(arr);
 	}
 
-	template<typename T, unsigned int N> void Bitmap<T, N>::flipVertically()
-	{
+	template<typename T, unsigned int N> void Bitmap<T, N>::flipVertically() {
 		for (int y = 0; y < m_Height / 2; y++) {
 			for (int x = 0; x < m_Width; x++) {
 				for (int i = 0; i < N; i++) {
@@ -275,8 +278,7 @@ namespace OrbitEngine { namespace Graphics {
 		}
 	}
 
-	template<typename T, unsigned int N> void Bitmap<T, N>::flipHorizontally()
-	{
+	template<typename T, unsigned int N> void Bitmap<T, N>::flipHorizontally() {
 		for (int y = 0; y < m_Height; y++) {
 			for (int x = 0; x < m_Width / 2; x++) {
 				for (int i = 0; i < N; i++) {
@@ -286,8 +288,7 @@ namespace OrbitEngine { namespace Graphics {
 		}
 	}
 
-	template<typename T, unsigned int N> void Bitmap<T, N>::flipBoth()
-	{
+	template<typename T, unsigned int N> void Bitmap<T, N>::flipBoth() {
 		for (int y = 0; y < m_Height / 2; y++) {
 			for (int x = 0; x < m_Width; x++) {
 				for (int i = 0; i < N; i++) {
@@ -297,8 +298,7 @@ namespace OrbitEngine { namespace Graphics {
 		}
 	}
 
-	template<typename T, unsigned int N> Bitmap<T, N> Bitmap<T, N>::rotate90clockwise() const
-	{
+	template<typename T, unsigned int N> Bitmap<T, N> Bitmap<T, N>::rotate90clockwise() const {
 		Bitmap<T, N> result(m_Height, m_Width);
 		for (int y = 0; y < m_Height; y++) {
 			for (int x = 0; x < m_Width; x++) {
@@ -314,8 +314,35 @@ namespace OrbitEngine { namespace Graphics {
 		return WritePNG(path, m_Width, m_Height, bpp(), (unsigned char*)m_Pixels);
 	}
 
-	template<typename T, unsigned int N> Bitmap<T, N> Bitmap<T, N>::Load(const std::string& path)
-	{
+	template<typename T, unsigned int N> Texture* Bitmap<T, N>::toTexture(const TextureSampleProperties& sample_properties) {
+		TextureProperties properties;
+		properties.width = m_Width;
+		properties.height = m_Height;
+		properties.sampleProperties = sample_properties;
+
+		if (std::is_same<T, unsigned char>::value) {
+			properties.formatProperties.dataType = TextureDataType::UNSIGNED_BYTE;
+
+			switch (N)
+			{
+			case 1: properties.formatProperties.format = TextureFormat::R8; break;
+			case 2: properties.formatProperties.format = TextureFormat::RG8; break;
+			case 3: properties.formatProperties.format = TextureFormat::RGB8; break;
+			case 4: properties.formatProperties.format = TextureFormat::RGBA8; break;
+			default:
+				OE_LOG_WARNING("Unsupported bit depth");
+				return nullptr;
+			}
+		}
+		else {
+			OE_LOG_WARNING("Unsupported data type");
+			return nullptr;
+		}
+
+		return Texture::Create(properties, m_Pixels);
+	}
+
+	template<typename T, unsigned int N> Bitmap<T, N> Bitmap<T, N>::Load(const std::string& path) {
 		unsigned int w, h, bpp;
 		unsigned char* data = ReadImage(path, w, h, bpp, N == 4);
 		if (data) {

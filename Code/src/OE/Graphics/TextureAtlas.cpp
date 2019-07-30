@@ -25,26 +25,16 @@ namespace OrbitEngine { namespace Graphics {
 
 	void TextureAtlas::drawFrame(FrameIndex index, const Math::Vec2f& position, const Math::Vec2f& size, SpriteRenderer& sr)
 	{
-		auto& it = m_Frames.find(index);
-		if (it == m_Frames.end())
-			return;
-		sr.bindTexture(m_Texture);
-		sr.rect(position, size, (*it).second.uvs);
+		if (hasFrame(index)) {
+			sr.bindTexture(m_Texture);
+			sr.rect(position, size, getFrame(index).uvs);
+		}
 	}
 
 	Math::Vec2f TextureAtlas::getTexelSize() const
 	{
 		const TextureProperties& props = m_Texture->getProperties();
 		return Math::Vec2f(1.0f / (float)props.width, 1.0f / (float)props.height);
-	}
-
-	Texture* TextureAtlas::getTexture() const {
-		return m_Texture;
-	}
-
-	bool TextureAtlas::hasFrame(FrameIndex index) const
-	{
-		return m_Frames.find(index) != m_Frames.end();
 	}
 
 	TextureAtlas::TextureAtlas(Texture* texture)

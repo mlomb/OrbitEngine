@@ -31,7 +31,7 @@ namespace OrbitEngine { namespace Graphics {
 		bitmaps.emplace(1, img2);
 		bitmaps.emplace(2, img3);
 		bitmaps.emplace(3, img4);
-		BitmapAtlasRGBA* atlas = BitmapAtlasRGBA::Generate(bitmaps, 2048, 0);
+		BitmapAtlasRGBA* atlas = BitmapAtlasRGBA::Generate(bitmaps, 2048);
 		if (atlas) {
 			atlas->exportToFiles("atlas.json", "atlas.png");
 			delete atlas;
@@ -44,14 +44,14 @@ namespace OrbitEngine { namespace Graphics {
 	template<typename T, unsigned int N = 1>
 	class BitmapAtlas : public Atlas, private Bitmap<T, N> {
 	public:
-		/// Creates an empty WxH atlas
+		/// Creates an empty WxH bitmap atlas
 		BitmapAtlas(unsigned int w, unsigned int h);
 		~BitmapAtlas();
 
 		Math::Vec2f getTexelSize() const override;
 
 		/**
-			@brief Add a frame to the bitmap at \p x, \p y
+			@brief Add a bitmap frame at \p x, \p y
 			@param[in] index identifier within the atlas, must be unique
 			@param[in] bitmap Bitmap to write
 			@param[in] x, y location to write the bitmap
@@ -67,17 +67,19 @@ namespace OrbitEngine { namespace Graphics {
 			@param[in] metadata path to the metadata file to write (.json)
 			@param[in] image path to the image file to write (.png)
 			@return Whether the atlas was exported correctly
+			@note The format of the JSON file is described in \ref Atlas::writeMetadata
 		*/
 		bool exportToFiles(const std::string& metadata, const std::string& image);
 
 		/**
 			@brief Generate an atlas from bitmaps
-			@param[in] bitmap map containing the desired indexes mapped to their corresponding bitmaps
+			@param[in] bitmaps map containing the desired indexes mapped to their corresponding bitmaps
 			@param[in] max_size maximum allowed size for the generated atlas. The generation may fail if its not possible to fit the bitmaps
 			@param[in] padding separation in pixels between each bitmap in the atlas
+			@param[in] POT force the atlas generation to be a power of two
 			@return The BitmapAtlas instance or NULL if the operation failed
 		*/
-		static BitmapAtlas<T, N>* Generate(const std::map<FrameIndex, Bitmap<T, N>>& bitmaps, unsigned int max_size, unsigned int padding = 0);
+		static BitmapAtlas<T, N>* Generate(const std::map<FrameIndex, Bitmap<T, N>>& bitmaps, unsigned int max_size, unsigned int padding = 0, bool POT = false);
 	};
 
 	typedef BitmapAtlas<unsigned char, 3> BitmapAtlasRGB;
@@ -107,7 +109,11 @@ namespace OrbitEngine { namespace Graphics {
 		return savePNG(image) && Atlas::exportToFile(metadata);
 	}
 
-	template<typename T, unsigned int N> BitmapAtlas<T, N>* BitmapAtlas<T, N>::Generate(const std::map<FrameIndex, Bitmap<T, N>>& bitmaps, unsigned int max_size, unsigned int padding) {
+	template<typename T, unsigned int N> Math::Vec2f BitmapAtlas<T, N>::getTexelSize() const {
+		return Math::Vec2f(1.0f / m_Width, 1.0f / m_Height);
+	}
+
+	template<typename T, unsigned int N> BitmapAtlas<T, N>* BitmapAtlas<T, N>::Generate(const std::map<FrameIndex, Bitmap<T, N>>& bitmaps, unsigned int max_size, unsigned int padding, bool POT) {
 		std::vector<Misc::Packeable2D*> rects;
 
 		struct Entry : public Misc::Packeable2D {
@@ -128,8 +134,13 @@ namespace OrbitEngine { namespace Graphics {
 			return nullptr;
 		}
 
+		if (POT) {
+			unsigned int size = std::max(Math::nextPowerOfTwo(atlas_width), Math::nextPowerOfTwo(atlas_height));
+			atlas_width = atlas_height = size;
+		}
+
 		// TODO: Rethink padding strategy
-		if (!Math::isPowerOfTwo(atlas_width) && !Math::isPowerOfTwo(atlas_height)) {
+		if (!POT) {
 			atlas_width -= padding;
 			atlas_height -= padding;
 		}
@@ -146,10 +157,6 @@ namespace OrbitEngine { namespace Graphics {
 		rects.clear();
 
 		return atlas;
-	}
-
-	template<typename T, unsigned int N> Math::Vec2f BitmapAtlas<T, N>::getTexelSize() const {
-		return Math::Vec2f(1.0f / m_Width, 1.0f / m_Height);
 	}
 } }
 
