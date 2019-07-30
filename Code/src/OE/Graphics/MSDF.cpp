@@ -5,6 +5,7 @@
 #include FT_OUTLINE_H
 
 // msdfgen
+#undef INFINITE
 #include <msdfgen.h>
 #include <core/Shape.h>
 
