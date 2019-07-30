@@ -10,6 +10,11 @@
 
 namespace OrbitEngine {	namespace Graphics {
 	
+	FrameIndex toIndex(GlyphCodepoint code, GlyphRenderMode mode) {
+		const int MAX_UNICODE = 0x10FFFF;
+		return mode * MAX_UNICODE + code;
+	}
+
 	FontCollection* FontCollection::Load(const std::string& font_metadata, const std::string& atlas_metadata, const std::string& atlas_image)
 	{
 		rapidjson::Document meta = Misc::ReadJSON(font_metadata);
@@ -30,8 +35,7 @@ namespace OrbitEngine {	namespace Graphics {
 		if (!font)
 			return false;
 
-		EntryKey key = std::make_pair(codepoint, mode);
-		if (m_Collection.find(key) != m_Collection.end())
+		if (entryExists(codepoint, mode))
 			return false;
 
 		Entry entry;
@@ -39,7 +43,7 @@ namespace OrbitEngine {	namespace Graphics {
 		if (!font->getGlyph(codepoint, size, mode, entry.bitmap, entry.metrics))
 			return false;
 
-		m_Collection.emplace(key, entry);
+		m_Collection[codepoint].emplace(mode, entry);
 
 		return true;
 	}
@@ -51,7 +55,7 @@ namespace OrbitEngine {	namespace Graphics {
 			if (addGlyph(font, codepoint, size, mode)) {
 				c++;
 
-				Entry& entry = m_Collection.find(std::make_pair(codepoint, mode))->second;
+				Entry& entry = m_Collection[codepoint][mode];
 				
 				for (GlyphCodepoint codepoint_right : codepoints) {
 					if (codepoint == codepoint_right) continue;
@@ -80,15 +84,19 @@ namespace OrbitEngine {	namespace Graphics {
 				pen.y += size;
 				continue;
 			}
-			else if (!m_TextureAtlas->hasFrame(code))
-				continue;
-			EntryKey key = std::make_pair(code, GlyphRenderMode::COLOR);
-			
-			auto& it = m_Collection.find(key);
+
+			auto& it = m_Collection.find(code);
 			if (it == m_Collection.end())
 				continue;
 
-			Entry& entry = (*it).second;
+			auto& p = *(*it).second.rbegin();
+			GlyphRenderMode mode = p.first;
+			FrameIndex index = toIndex(code, mode);
+
+			if (!m_TextureAtlas->hasFrame(index))
+				continue;
+
+			Entry& entry = p.second;
 
 			if (i > 0) {
 				//getHorizontalKerning(string[i - 1], c)
@@ -103,7 +111,7 @@ namespace OrbitEngine {	namespace Graphics {
 				pos.x = (float)(int)pos.x;
 				pos.y = (float)(int)pos.y;
 
-				m_TextureAtlas->drawFrame((FrameIndex)code, pos, Math::Vec2f(entry.metrics.width, entry.metrics.height), sr);
+				m_TextureAtlas->drawFrame(index, pos, Math::Vec2f(entry.metrics.width, entry.metrics.height), sr);
 			}
 
 			pen.x += entry.metrics.H_advance;
@@ -145,7 +153,8 @@ namespace OrbitEngine {	namespace Graphics {
 		// generate atlas
 		std::map<FrameIndex, BitmapRGBA> bitmaps;
 		for (auto& p : m_Collection)
-			bitmaps.emplace(p.first.first, p.second.bitmap);
+			for (auto& p2 : p.second)
+				bitmaps.emplace(toIndex(p.first, p2.first), p2.second.bitmap);
 		BitmapAtlasRGBA* atlas = BitmapAtlasRGBA::Generate(bitmaps, 2048, 1);
 		if (!atlas)
 			return false;
@@ -190,45 +199,47 @@ namespace OrbitEngine {	namespace Graphics {
 			writer.StartArray();
 
 			for (auto& p : m_Collection) {
-				writer.StartObject();
-				writer.Key("i");
-				writer.Uint(p.first.first);
-				writer.Key("m");
-				writer.Int(p.first.second);
+				for (auto& p2 : p.second) {
+					writer.StartObject();
+					writer.Key("i");
+					writer.Uint(p.first);
+					writer.Key("m");
+					writer.Int(p2.first);
 
-				const GlyphMetrics& metrics = p.second.metrics;
-				writer.Key("w");
-				writer.Int(metrics.width);
-				writer.Key("h");
-				writer.Int(metrics.height);
-				writer.Key("ha");
-				writer.Int(metrics.H_advance);
-				writer.Key("va");
-				writer.Int(metrics.V_advance);
-				writer.Key("hbx");
-				writer.Int(metrics.H_bearingX);
-				writer.Key("hby");
-				writer.Int(metrics.H_bearingY);
-				writer.Key("vbx");
-				writer.Int(metrics.V_bearingX);
-				writer.Key("vby");
-				writer.Int(metrics.V_bearingY);
+					const GlyphMetrics& metrics = p2.second.metrics;
+					writer.Key("w");
+					writer.Int(metrics.width);
+					writer.Key("h");
+					writer.Int(metrics.height);
+					writer.Key("ha");
+					writer.Int(metrics.H_advance);
+					writer.Key("va");
+					writer.Int(metrics.V_advance);
+					writer.Key("hbx");
+					writer.Int(metrics.H_bearingX);
+					writer.Key("hby");
+					writer.Int(metrics.H_bearingY);
+					writer.Key("vbx");
+					writer.Int(metrics.V_bearingX);
+					writer.Key("vby");
+					writer.Int(metrics.V_bearingY);
 
-				if (p.second.kernings.size() > 0) {
-					writer.Key("k");
-					writer.StartArray();
-					for (auto& pk : p.second.kernings) {
-						writer.StartObject();
-						writer.Key("i");
-						writer.Uint(pk.first);
-						writer.Key("d");
-						writer.Int(pk.second);
-						writer.EndObject();
+					if (p2.second.kernings.size() > 0) {
+						writer.Key("k");
+						writer.StartArray();
+						for (auto& pk : p2.second.kernings) {
+							writer.StartObject();
+							writer.Key("i");
+							writer.Uint(pk.first);
+							writer.Key("d");
+							writer.Int(pk.second);
+							writer.EndObject();
+						}
+						writer.EndArray();
 					}
-					writer.EndArray();
-				}
 
-				writer.EndObject();
+					writer.EndObject();
+				}
 			}
 
 			writer.EndArray();
@@ -266,8 +277,9 @@ namespace OrbitEngine {	namespace Graphics {
 							glyph["hby"].IsInt() &&
 							glyph["vbx"].IsInt() &&
 							glyph["vby"].IsInt()) {
-							EntryKey key = std::make_pair((GlyphCodepoint)glyph["i"].GetUint(), static_cast<GlyphRenderMode>(glyph["m"].GetInt()));
-							if (m_Collection.find(key) != m_Collection.end()) {
+							GlyphCodepoint code = (GlyphCodepoint)glyph["i"].GetUint();
+							GlyphRenderMode mode = static_cast<GlyphRenderMode>(glyph["m"].GetInt());
+							if (entryExists(code, mode)) {
 								OE_LOG_WARNING("a glyph has been found twice, skipping");
 								continue;
 							}
@@ -304,7 +316,7 @@ namespace OrbitEngine {	namespace Graphics {
 								else OE_LOG_WARNING("a kerning entry is not an array");
 							}
 
-							m_Collection.emplace(key, entry);
+							m_Collection[code].emplace(mode, entry);
 						}
 						else OE_LOG_WARNING("a glyph is malformed");
 					}
@@ -313,6 +325,17 @@ namespace OrbitEngine {	namespace Graphics {
 			}
 			else OE_LOG_WARNING("glyphs is not an array");
 		}
+	}
+
+	bool FontCollection::entryExists(GlyphCodepoint code, GlyphRenderMode mode) const
+	{
+		const auto& it = m_Collection.find(code);
+		if (it == m_Collection.end())
+			return false;
+		const auto& modes = (*it).second;
+		if (modes.find(mode) == modes.end())
+			return false;
+		return true;
 	}
 
 } }

@@ -33,19 +33,19 @@ namespace OrbitEngine {	namespace Graphics {
 
 		struct Entry {
 			GlyphMetrics metrics;
-			std::map<GlyphCodepoint, int> kernings; // in pixels
+			std::unordered_map<GlyphCodepoint, int> kernings; // in pixels
 
 			// only valid during build
 			BitmapRGBA bitmap;
 		};
 
-		typedef std::pair<GlyphCodepoint, GlyphRenderMode> EntryKey;
-
 		void writeMetadata(Misc::JSONWriter& writer);
 		void loadMetadata(const rapidjson::Value& data);
 
+		bool entryExists(GlyphCodepoint code, GlyphRenderMode mode) const;
+
 		TextureAtlas* m_TextureAtlas;
-		std::map<EntryKey, Entry> m_Collection;
+		std::unordered_map<GlyphCodepoint, std::map<GlyphRenderMode, Entry>> m_Collection;
 	};
 
 } }
