@@ -12,7 +12,7 @@ namespace OrbitEngine {	namespace UI {
 		m_Title->setAnchor(Anchor::STRETCH_TOP_HORIZONTAL);
 		m_Title->setSize(Math::Vec2f(0, 20));
 		m_Title->setPivot(Math::Vec2f(0, 0));
-		m_Title->setText("Title");
+		m_Title->setText(L"Title");
 		add(m_Title);
 	}
 

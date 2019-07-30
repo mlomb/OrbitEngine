@@ -12,10 +12,10 @@ namespace OrbitEngine {	namespace UI {
 	public:
 		Window();
 
-		void setTitle(std::string title) { return m_Header->getTitle()->setText(title); }
+		void setTitle(std::wstring title) { return m_Header->getTitle()->setText(title); }
 		void setContent(Element* element, bool borders = true);
 
-		std::string getTitle() { return m_Header->getTitle()->getText(); }
+		std::wstring getTitle() { return m_Header->getTitle()->getText(); }
 
 	private:
 		WindowHeader* m_Header;

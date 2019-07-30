@@ -10,7 +10,7 @@ namespace OrbitEngine { namespace UI {
 	class TreeViewItem {
 	public:
 		virtual std::vector<TreeViewItem*> getChildrens() { return std::vector<TreeViewItem*>(); };
-		virtual std::string getDisplayText() { return "TreeItem"; };
+		virtual std::wstring getDisplayText() { return L"TreeItem"; };
 		
 		virtual Element* Build(int depth);
 
