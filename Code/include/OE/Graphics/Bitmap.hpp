@@ -88,6 +88,8 @@ namespace OrbitEngine { namespace Graphics {
 		void flipBoth();
 		/// Returns a rotated copy of the bitmap 90 degrees clockwise
 		Bitmap<T, N> rotate90clockwise() const;
+		/// Deletes the pixel data and makes the bitmap invalid
+		void destroy();
 
 		/**
 			@brief Saves the bitmap as a PNG file.
@@ -308,6 +310,15 @@ namespace OrbitEngine { namespace Graphics {
 			}
 		}
 		return result;
+	}
+
+	template<typename T, unsigned int N> void Bitmap<T, N>::destroy() {
+		if (m_Ownership)
+			delete m_Pixels;
+		m_Pixels = NULL;
+		m_Width = 0;
+		m_Height = 0;
+		m_Ownership = true;
 	}
 
 	template<typename T, unsigned int N> bool Bitmap<T, N>::savePNG(const std::string& path) const {
