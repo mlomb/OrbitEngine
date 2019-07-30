@@ -58,10 +58,8 @@ namespace OrbitEngine {	namespace Graphics {
 				Entry& entry = m_Collection[codepoint][mode];
 				
 				for (GlyphCodepoint codepoint_right : codepoints) {
-					if (codepoint == codepoint_right) continue;
-
 					int k = font->getHorizontalKerning(size, codepoint, codepoint_right);
-					if(k != 0)
+					if (k != 0)
 						entry.kernings[codepoint_right] = k;
 				}
 			}
@@ -69,7 +67,11 @@ namespace OrbitEngine {	namespace Graphics {
 		return c;
 	}
 
-	void FontCollection::drawString(const std::vector<GlyphCodepoint>& text, float size, const Math::Vec2f& position, SpriteRenderer& sr) {
+	void FontCollection::drawText(const std::vector<GlyphCodepoint>& text, float size, const Math::Vec2f& position, SpriteRenderer& sr) {
+		// TODO: Apply size to the mix
+		// TODO: Use the different render modes
+		// TODO: Make a Text shader...
+
 		if (text.size() == 0)
 			return;
 
@@ -92,35 +94,29 @@ namespace OrbitEngine {	namespace Graphics {
 			auto& p = *(*it).second.rbegin();
 			GlyphRenderMode mode = p.first;
 			FrameIndex index = toIndex(code, mode);
-
-			if (!m_TextureAtlas->hasFrame(index))
-				continue;
-
 			Entry& entry = p.second;
 
-			if (i > 0) {
-				//getHorizontalKerning(string[i - 1], c)
-				int k = 0;
-				auto& kit = entry.kernings.find(code);
-				//if()
-				pen.x += k;
-			}
-
-			if (entry.metrics.width > 0 && entry.metrics.height > 0) {
+			if (m_TextureAtlas->hasFrame(index) && entry.metrics.width > 0 && entry.metrics.height > 0) {
 				Math::Vec2f pos(pen.x + entry.metrics.H_bearingX, pen.y - entry.metrics.H_bearingY);
 				pos.x = (float)(int)pos.x;
 				pos.y = (float)(int)pos.y;
 
 				m_TextureAtlas->drawFrame(index, pos, Math::Vec2f(entry.metrics.width, entry.metrics.height), sr);
 			}
-
+			
+			if (i + 1 < text.size()) {
+				auto& kit = entry.kernings.find((GlyphCodepoint)text[i + 1]);
+				if(kit != entry.kernings.end())
+					pen.x += (*kit).second;
+			}
+			
 			pen.x += entry.metrics.H_advance;
 		}
 	}
 
-	Math::Vec2i FontCollection::getBounds(const std::wstring& text)
+	Math::Vec2i FontCollection::getBounds(const std::vector<GlyphCodepoint>& text, float size)
 	{
-		if (text.length() == 0)
+		if (text.size() == 0)
 			return Math::Vec2i(0, 0);
 
 		float maxWidth = 0;

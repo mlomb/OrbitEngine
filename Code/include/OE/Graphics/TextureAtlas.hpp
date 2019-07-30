@@ -8,7 +8,11 @@ namespace OrbitEngine { namespace Graphics {
 	class SpriteRenderer;
 	class Texture;
 
-	/// A 2D texture atlas
+	/**
+		@brief A 2D texture atlas
+
+		To generate a TextureAtlas check the BitmapAtlas class.
+	*/
 	class TextureAtlas : public Atlas {
 	public:
 		~TextureAtlas();
@@ -30,7 +34,7 @@ namespace OrbitEngine { namespace Graphics {
 			@param[in] metadata path to the metadata file to read (.json)
 			@param[in] image path to the image file to read (.png)
 			@return The TextureAtlas instance if the operation was successful, NULL otherwise
-			@note The format of the JSON file is described in \ref Atlas::writeMetadata
+			@see Atlas for the atlas's metadata format
 		*/
 		static TextureAtlas* Load(const std::string& metadata, const std::string& image);
 

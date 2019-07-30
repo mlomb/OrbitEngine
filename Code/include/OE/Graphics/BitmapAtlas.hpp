@@ -67,7 +67,7 @@ namespace OrbitEngine { namespace Graphics {
 			@param[in] metadata path to the metadata file to write (.json)
 			@param[in] image path to the image file to write (.png)
 			@return Whether the atlas was exported correctly
-			@note The format of the JSON file is described in \ref Atlas::writeMetadata
+			@see Atlas for the atlas's metadata format
 		*/
 		bool exportToFiles(const std::string& metadata, const std::string& image);
 

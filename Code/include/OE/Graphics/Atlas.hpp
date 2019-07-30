@@ -16,6 +16,26 @@ namespace OrbitEngine { namespace Graphics {
 		@brief Generic 2D atlas class
 
 		For examples see BitmapAtlas and TextureAtlas
+
+		Metadata format:
+		@code{json}
+		{
+			"frames": [
+				{
+					"i": 1, // frame index
+					"x": 0,
+					"y": 0,
+					"w": 64,
+					"h": 64,
+					"f": false // flipped?
+				},
+				...
+			],
+			"animations": [
+				// TODO...
+			]
+		}
+		@endcode
 	*/
 	class Atlas {
 	public:
@@ -36,34 +56,12 @@ namespace OrbitEngine { namespace Graphics {
 		Atlas();
 		virtual ~Atlas();
 
-		/**
-			@brief Generates JSON metadata describing the atlas
-
-			Format:
-			@code{json}
-			{
-				"frames": [
-					{
-						"i": 1, // frame index
-						"x": 0,
-						"y": 0,
-						"w": 64,
-						"h": 64,
-						"f": false // flipped?
-					},
-					...
-				],
-				"animations": [
-					// TODO...
-				]
-			}
-			@endcode
-		*/
+		/// Generates JSON metadata
 		void writeMetadata(Misc::JSONWriter& writer);
-		/// Load JSON metadata with the format described in \ref writeMetadata
+		/// Load JSON metadata
 		void loadMetadata(const rapidjson::Value& data);
 
-		/// Exports the metadata to the disk using the format described in \ref writeMetadata 
+		/// Exports the metadata to the disk
 		bool exportToFile(const std::string& metadata);
 
 		/**

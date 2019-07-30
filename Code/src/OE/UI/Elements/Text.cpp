@@ -27,19 +27,20 @@ namespace OrbitEngine {	namespace UI {
 
 	void Text::onValidate()
 	{
-		m_TextBounds.zw = m_Font->getBounds(m_Text);
-		m_TextBounds.xy = AlignableLayout::GetAlignedPosition(m_TextAlignament, m_TextBounds.zw, getSize());
+		//m_TextBounds.zw = m_Font->getBounds(m_Text);
+		//m_TextBounds.xy = AlignableLayout::GetAlignedPosition(m_TextAlignament, m_TextBounds.zw, getSize());
 	}
 
 	float Text::getLayoutPropertyAlongAxis(LayoutProperty property, Axis axis)
 	{
 		switch (property) {
 		case LayoutProperty::PREFERRED_SIZE:
-			Math::Vec2i bounds = m_Font->getBounds(m_Text);
-			if (axis == Axis::HORIZONTAL)
-				return bounds.x;
-			else
-				return bounds.y;
+			//Math::Vec2i bounds = m_Font->getBounds(m_Text);
+			//if (axis == Axis::HORIZONTAL)
+			//	return bounds.x;
+			//else
+			//	return bounds.y;
+			break;
 		}
 		return Element::getLayoutPropertyAlongAxis(property, axis);
 	}
