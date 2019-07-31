@@ -151,15 +151,7 @@ namespace OrbitEngine { namespace Graphics {
 				Bitmap<unsigned char, 1> b(m_Face->glyph->bitmap.buffer, w, h); // no copy
 				if (mode == COLOR) {
 					// convert the grayscale image to white with the grayscale values applied to the alpha channel
-					bitmap = BitmapRGBA(b.width(), b.height());
-					for (int j = 0; j < b.height(); j++) {
-						for (int i = 0; i < b.width(); i++) {
-							bitmap(i, j, 0) = 255;
-							bitmap(i, j, 1) = 255;
-							bitmap(i, j, 2) = 255;
-							bitmap(i, j, 3) = b(i, j, 0);
-						}
-					}
+					bitmap = ConvertAlphaToWhiteRGBA(b);
 				}
 				else {
 					// just return the converted bitamp

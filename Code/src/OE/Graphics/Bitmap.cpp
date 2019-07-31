@@ -8,7 +8,7 @@ namespace OrbitEngine { namespace Graphics {
 		return (unsigned char)(Math::clamp(256.0f * f, 0.0f, 255.0f));
 	}
 
-	template<> BitmapRGB ConvertBitmap(const Bitmap<unsigned char, 1> & input) {
+	template<> BitmapRGB ConvertBitmap(const Bitmap<unsigned char, 1>& input) {
 		BitmapRGB result(input.width(), input.height());
 		unsigned char v;
 		for (int j = 0; j < input.height(); j++) {
@@ -22,7 +22,7 @@ namespace OrbitEngine { namespace Graphics {
 		return result;
 	}
 
-	template<> BitmapRGBA ConvertBitmap(const Bitmap<unsigned char, 1> & input) {
+	template<> BitmapRGBA ConvertBitmap(const Bitmap<unsigned char, 1>& input) {
 		BitmapRGBA result(input.width(), input.height());
 		unsigned char v;
 		for (int j = 0; j < input.height(); j++) {
@@ -37,7 +37,7 @@ namespace OrbitEngine { namespace Graphics {
 		return result;
 	}
 
-	template<> BitmapRGBA ConvertBitmap(const Bitmap<unsigned char, 3> & input) {
+	template<> BitmapRGBA ConvertBitmap(const Bitmap<unsigned char, 3>& input) {
 		BitmapRGBA result(input.width(), input.height());
 		for (int j = 0; j < input.height(); j++) {
 			for (int i = 0; i < input.width(); i++) {
@@ -50,7 +50,7 @@ namespace OrbitEngine { namespace Graphics {
 		return result;
 	}
 
-	template<> BitmapRGB ConvertBitmap(const Bitmap<unsigned char, 4> & input) {
+	template<> BitmapRGB ConvertBitmap(const Bitmap<unsigned char, 4>& input) {
 		BitmapRGB result(input.width(), input.height());
 		for (int j = 0; j < input.height(); j++) {
 			for (int i = 0; i < input.width(); i++) {
@@ -63,7 +63,7 @@ namespace OrbitEngine { namespace Graphics {
 		return result;
 	}
 
-	template<> BitmapRGB ConvertBitmap(const Bitmap<float, 1> & input) {
+	template<> BitmapRGB ConvertBitmap(const Bitmap<float, 1>& input) {
 		BitmapRGB result(input.width(), input.height());
 		float f;
 		unsigned char v;
@@ -78,7 +78,7 @@ namespace OrbitEngine { namespace Graphics {
 		return result;
 	}
 
-	template<> BitmapRGB ConvertBitmap(const Bitmap<float, 3> & input) {
+	template<> BitmapRGB ConvertBitmap(const Bitmap<float, 3>& input) {
 		BitmapRGB result(input.width(), input.height());
 		for (int j = 0; j < input.height(); j++) {
 			for (int i = 0; i < input.width(); i++) {
@@ -90,7 +90,7 @@ namespace OrbitEngine { namespace Graphics {
 		return result;
 	}
 
-	BitmapRGBA ConvertBGRAtoRGBA(const Bitmap<unsigned char, 4> & input)
+	BitmapRGBA ConvertBGRAtoRGBA(const Bitmap<unsigned char, 4>& input)
 	{
 		BitmapRGBA result(input.width(), input.height());
 		for (int j = 0; j < input.height(); j++) {
@@ -99,6 +99,20 @@ namespace OrbitEngine { namespace Graphics {
 				result(i, j, 1) = input(i, j, 1);
 				result(i, j, 2) = input(i, j, 0);
 				result(i, j, 3) = input(i, j, 3);
+			}
+		}
+		return result;
+	}
+
+	BitmapRGBA ConvertAlphaToWhiteRGBA(const Bitmap<unsigned char, 1>& input)
+	{
+		BitmapRGBA result(input.width(), input.height());
+		for (int j = 0; j < input.height(); j++) {
+			for (int i = 0; i < input.width(); i++) {
+				result(i, j, 0) = 255;
+				result(i, j, 1) = 255;
+				result(i, j, 2) = 255;
+				result(i, j, 3) = input(i, j, 0);
 			}
 		}
 		return result;

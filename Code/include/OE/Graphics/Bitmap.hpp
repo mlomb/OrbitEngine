@@ -152,8 +152,9 @@ namespace OrbitEngine { namespace Graphics {
 	/// Convert from float 24bit (RGB) to unsigned char 24bit (RGB)
 	template<> BitmapRGB ConvertBitmap(const Bitmap<float, 3> & input);
 
-	/// Conver a RGBA bitmap from BGRA to RGBA
+	/// Convert a RGBA bitmap from BGRA to RGBA
 	BitmapRGBA ConvertBGRAtoRGBA(const Bitmap<unsigned char, 4>& /* BGRA */ input);
+	BitmapRGBA ConvertAlphaToWhiteRGBA(const Bitmap<unsigned char, 1>& /* Alpha8 */ input);
 
 	template<typename T, unsigned int N> Bitmap<T, N>::Bitmap()
 		: m_Pixels(NULL), m_Width(0), m_Height(0), m_Ownership(true)
