@@ -65,7 +65,7 @@ namespace OrbitEngine { namespace Graphics {
 		/// const reference to the ith element at \p x, \p y
 		const T& operator()(int x, int y, int ith) const;
 		/// move assignment operator
-		Bitmap<T, N>& Bitmap<T, N>::operator=(Bitmap<T, N>&& other) noexcept;
+		Bitmap<T, N>& operator=(Bitmap<T, N>&& other) noexcept;
 		/// pixel data
 		T* data() const;
 

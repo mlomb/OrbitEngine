@@ -19,7 +19,7 @@ namespace OrbitEngine { namespace Misc {
 	Document ReadJSON(const std::string& path)
 	{
 		Document d;
-		std::string& data = System::File::ReadAsString(path);
+		std::string data = System::File::ReadAsString(path);
 		if(data.size() > 0)
 			d.Parse(data.c_str());
 		return d;

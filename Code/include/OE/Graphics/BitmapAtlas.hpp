@@ -42,7 +42,7 @@ namespace OrbitEngine { namespace Graphics {
 		Take a look into TextureAtlas for using it during runtime.
 	*/
 	template<typename T, unsigned int N = 1>
-	class BitmapAtlas : public Atlas, private Bitmap<T, N> {
+	class BitmapAtlas : public Atlas, protected Bitmap<T, N> {
 	public:
 		/// Creates an empty WxH bitmap atlas
 		BitmapAtlas(unsigned int w, unsigned int h);
@@ -69,7 +69,7 @@ namespace OrbitEngine { namespace Graphics {
 			@return Whether the atlas was exported correctly
 			@see Atlas for the atlas's metadata format
 		*/
-		bool exportToFiles(const std::string& metadata, const std::string& image);
+		bool exportToFiles(const std::string& metadata, const std::string& image) const;
 
 		/**
 			@brief Generate an atlas from bitmaps
@@ -96,21 +96,21 @@ namespace OrbitEngine { namespace Graphics {
 	template<typename T, unsigned int N> bool BitmapAtlas<T, N>::addFrame(FrameIndex index, const Bitmap<T, N>& bitmap, int x, int y, bool flip) {
 		if (!bitmap.valid()) // bitmap is invalid
 			return false;
-		if (x < 0 || y < 0 || x > m_Width || y > m_Height) // out of bounds
+		if (x < 0 || y < 0 || x > Bitmap<T, N>::m_Width || y > Bitmap<T, N>::m_Height) // out of bounds
 			return false;
 		if (!Atlas::addFrame(index, x, y, flip ? bitmap.height() : bitmap.width(), flip ? bitmap.width() : bitmap.height(), flip))
 			return false;
 		// this shouldn't fail
-		write(flip ? bitmap.rotate90clockwise() : bitmap, x, y);
+		Bitmap<T, N>::write(flip ? bitmap.rotate90clockwise() : bitmap, x, y);
 		return true;
 	}
 
-	template<typename T, unsigned int N> bool BitmapAtlas<T, N>::exportToFiles(const std::string& metadata, const std::string& image) {
-		return savePNG(image) && Atlas::exportToFile(metadata);
+	template<typename T, unsigned int N> bool BitmapAtlas<T, N>::exportToFiles(const std::string& metadata, const std::string& image) const {
+		return Bitmap<T, N>::savePNG(image) && Atlas::exportToFile(metadata);
 	}
 
 	template<typename T, unsigned int N> Math::Vec2f BitmapAtlas<T, N>::getTexelSize() const {
-		return Math::Vec2f(1.0f / m_Width, 1.0f / m_Height);
+		return Math::Vec2f(1.0f / Bitmap<T, N>::m_Width, 1.0f / Bitmap<T, N>::m_Height);
 	}
 
 	template<typename T, unsigned int N> BitmapAtlas<T, N>* BitmapAtlas<T, N>::Generate(const std::map<FrameIndex, Bitmap<T, N>>& bitmaps, unsigned int max_size, unsigned int padding, bool POT) {

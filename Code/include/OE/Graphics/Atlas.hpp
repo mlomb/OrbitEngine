@@ -57,12 +57,12 @@ namespace OrbitEngine { namespace Graphics {
 		virtual ~Atlas();
 
 		/// Generates JSON metadata
-		void writeMetadata(Misc::JSONWriter& writer);
+		void writeMetadata(Misc::JSONWriter& writer) const;
 		/// Load JSON metadata
 		void loadMetadata(const rapidjson::Value& data);
 
 		/// Exports the metadata to the disk
-		bool exportToFile(const std::string& metadata);
+		bool exportToFile(const std::string& metadata) const;
 
 		/**
 			@brief Add a frame's metadata to the atlas

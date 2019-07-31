@@ -87,14 +87,14 @@ namespace OrbitEngine {	namespace Graphics {
 				continue;
 			}
 
-			auto& it = m_Collection.find(code);
+			const auto& it = m_Collection.find(code);
 			if (it == m_Collection.end())
 				continue;
 
-			auto& p = *(*it).second.rbegin();
+			const auto& p = *(*it).second.rbegin();
 			GlyphRenderMode mode = p.first;
 			FrameIndex index = toIndex(code, mode);
-			Entry& entry = p.second;
+			const Entry& entry = p.second;
 
 			if (m_TextureAtlas->hasFrame(index) && entry.metrics.width > 0 && entry.metrics.height > 0) {
 				Math::Vec2f pos(pen.x + entry.metrics.H_bearingX, pen.y - entry.metrics.H_bearingY);
@@ -105,7 +105,7 @@ namespace OrbitEngine {	namespace Graphics {
 			}
 			
 			if (i + 1 < text.size()) {
-				auto& kit = entry.kernings.find((GlyphCodepoint)text[i + 1]);
+				const auto& kit = entry.kernings.find((GlyphCodepoint)text[i + 1]);
 				if(kit != entry.kernings.end())
 					pen.x += (*kit).second;
 			}

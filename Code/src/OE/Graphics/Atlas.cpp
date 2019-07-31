@@ -12,7 +12,7 @@ namespace OrbitEngine { namespace Graphics {
 	{
 	}
 	
-	void Atlas::writeMetadata(Misc::JSONWriter& writer) {
+	void Atlas::writeMetadata(Misc::JSONWriter& writer) const {
 		writer.StartObject();
 
 		// frames
@@ -94,7 +94,7 @@ namespace OrbitEngine { namespace Graphics {
 		}
 	}
 
-	bool Atlas::exportToFile(const std::string& metadata) {
+	bool Atlas::exportToFile(const std::string& metadata) const {
 		rapidjson::StringBuffer buffer;
 		Misc::JSONWriter writer(buffer);
 		writeMetadata(writer);
