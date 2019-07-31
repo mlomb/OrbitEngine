@@ -143,10 +143,10 @@ namespace OrbitEngine { namespace Application {
 
 	enum Button {
 		LEFT = 0,
-		MIDDLE,
-		RIGHT,
-		N4,
-		N5
+		RIGHT = 1,
+		MIDDLE = 2,
+		N4 = 3,
+		N5 = 4
 	};
 
 	enum Cursor {
