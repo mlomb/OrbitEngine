@@ -31,6 +31,7 @@ namespace OrbitEngine {	namespace Graphics {
 
 		if (type == ShaderType::VERTEX) {
 			// We need the input layout only from the Vertex Shader
+			// TODO: Use the actual vertex layout if provided
 			auto inputLayoutDesc = reflectInputLayout(shaderDesc, pReflector);
 			hr = Application::priv::D3DContext::GetCurrent()->getDevice()->CreateInputLayout(&inputLayoutDesc[0], inputLayoutDesc.size(), binary.data(), binary.size(), &m_VertexInputLayout);
 			if (FAILED(hr))
