@@ -36,6 +36,7 @@ namespace OrbitEngine {	namespace Graphics {
 		template<typename Vertex>
 		static Mesh* Create(const std::vector<Vertex>& vertices, VertexLayout* layout, const std::vector<unsigned short>& indices = std::vector<unsigned short>());
 		static Mesh* Create(void* vertices, unsigned int vertexSize, VertexLayout* layout, const std::vector<unsigned short>& indices = std::vector<unsigned short>());
+		static Mesh* Create(VertexLayout* layout, bool with_index_buffer);
 
 		static std::vector<unsigned short> GenerateIndices(Topology topology, unsigned int verticesCount);
 	protected:

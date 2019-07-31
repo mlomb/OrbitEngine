@@ -30,7 +30,7 @@ namespace OrbitEngine {	namespace Graphics {
 				return 0;
 		}
 	}
-	
+
 	std::vector<unsigned short> Mesh::GenerateIndices(Topology topology, unsigned int verticesCount)
 	{
 		std::vector<unsigned short> indices = std::vector<unsigned short>();
@@ -74,7 +74,16 @@ namespace OrbitEngine {	namespace Graphics {
 		}
 		return indices;
 	}
-	
+
+	Mesh* Mesh::Create(VertexLayout* layout, bool with_index_buffer)
+	{
+		// TODO: Change this
+		std::vector<unsigned short> i;
+		if(with_index_buffer)
+			i.push_back(0);
+		return Create(0, 0, layout, i);
+	}
+
 	Mesh::Mesh(void* vertices, unsigned int vertexSize, VertexLayout* layout, const std::vector<unsigned short>& indices)
 		: p_IBO(NULL)
 	{
