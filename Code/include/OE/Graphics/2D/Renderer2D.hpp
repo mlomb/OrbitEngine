@@ -17,8 +17,8 @@ namespace OrbitEngine { namespace Graphics {
 		void setTransform(const Math::Mat4& matrix);
 		void resetTransform();
 
-		virtual void begin();
-		virtual void end();
+		virtual void begin() override;
+		virtual void end() override;
 
 		static void RenderQuadScreen();
 	protected:
