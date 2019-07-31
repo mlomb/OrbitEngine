@@ -14,7 +14,7 @@ namespace OrbitEngine {	namespace Application {
 
 	class WindowImpl : public View {
 	public:
-		~WindowImpl();
+		virtual ~WindowImpl();
 
 		virtual void processEvents();
 		virtual void requestCursorMode(const CursorMode cursorMode);

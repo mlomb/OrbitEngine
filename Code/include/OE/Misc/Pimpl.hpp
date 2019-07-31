@@ -11,7 +11,7 @@ namespace OrbitEngine {	namespace Misc {
 
 	protected:
 		Pimpl(T* pimpl = 0);
-		~Pimpl();
+		virtual ~Pimpl();
 
 		void setPimpl(T* pimpl);
 

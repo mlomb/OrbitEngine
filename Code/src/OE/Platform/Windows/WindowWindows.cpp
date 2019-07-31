@@ -93,7 +93,7 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 	WindowWindows::~WindowWindows()
 	{
 		if (m_WindowHandle) {
-			SetWindowLongPtr(m_WindowHandle, GWLP_WNDPROC, (LONG)DefWindowProc);
+			SetWindowLongPtr(m_WindowHandle, GWLP_WNDPROC, 0);
 			SetWindowLongPtr(m_WindowHandle, GWLP_USERDATA, 0);
 
 			if(m_DeviceContext)
@@ -186,7 +186,7 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 	LRESULT CALLBACK WindowWindows::DefWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		WindowWindows* window = reinterpret_cast<WindowWindows*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
-		if (window) {
+		if (window && window->m_WindowHandle) {
 			/*
 			switch (uMsg)
 			{

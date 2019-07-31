@@ -4,7 +4,7 @@
 namespace OrbitEngine {	namespace Application {
 	class View {
 	public:
-		~View();
+		virtual ~View();
 
 
 	protected:
