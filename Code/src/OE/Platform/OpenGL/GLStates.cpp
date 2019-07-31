@@ -98,9 +98,8 @@ namespace OrbitEngine { namespace Graphics {
 
 		GLEnableDisable(GL_SCISSOR_TEST, enabled);
 
-		// TODO
-		//if (enabled)
-		//	glScissor((GLint)scissor->position.x, (GLint)(Application::View::GetCurrent()->getHeight() - scissor->size.y - scissor->position.y), (GLsizei)scissor->size.x, (GLsizei)scissor->size.y);
+		if (enabled)
+			glScissor(scissor->rect.x, scissor->rect.y, scissor->rect.z, scissor->rect.w);
 	}
 
 	GLenum GLStates::CullModeToGL(CullMode cullMode)
