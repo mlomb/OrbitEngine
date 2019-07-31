@@ -15,6 +15,8 @@ namespace OrbitEngine {	namespace Graphics {
 
 	void* D3DMappedResource::mapPointer(MappedPointerMode mode)
 	{
+		if (m_pResource == NULL)
+			return NULL;
 		// TODO See D3D10_MAP_FLAG_DO_NOT_WAIT
 		Application::priv::D3DContext::GetCurrent()->getDeviceContext()->Map(m_pResource, 0, PointerMapTypeToD3D(mode), 0, &m_MappedResource);
 		return m_MappedResource.pData;
@@ -28,6 +30,9 @@ namespace OrbitEngine {	namespace Graphics {
 	void D3DMappedResource::setData(unsigned int count, const void* data)
 	{
 		void* pointer = mapPointer(MappedPointerMode::WRITE);
+
+		if (pointer == NULL)
+			return;
 
 		if (data == NULL)
 			memset(pointer, 0, count);
