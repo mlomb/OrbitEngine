@@ -313,7 +313,7 @@ namespace OrbitEngine { namespace Graphics {
 			case ImGuiMouseCursor_ResizeAll:    target_cursor_style = Application::Cursor::SIZEALL;  break;
 			case ImGuiMouseCursor_ResizeEW:     target_cursor_style = Application::Cursor::SIZEWE;   break;
 			case ImGuiMouseCursor_ResizeNS:     target_cursor_style = Application::Cursor::SIZENS;   break;
-			case ImGuiMouseCursor_ResizeNESW:   target_cursor_style = Application::Cursor::SIZENWSE; break;
+			case ImGuiMouseCursor_ResizeNESW:   target_cursor_style = Application::Cursor::SIZENESW; break;
 			case ImGuiMouseCursor_ResizeNWSE:   target_cursor_style = Application::Cursor::SIZENWSE; break;
 			case ImGuiMouseCursor_Hand:         target_cursor_style = Application::Cursor::HAND;     break;
 			}

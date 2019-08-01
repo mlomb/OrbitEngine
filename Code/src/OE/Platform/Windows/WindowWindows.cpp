@@ -323,6 +323,8 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 			return IDC_SIZEWE;
 		case SIZENWSE:
 			return IDC_SIZENWSE;
+		case SIZENESW:
+			return IDC_SIZENESW;
 		case UPARROW:
 			return IDC_UPARROW;
 		};

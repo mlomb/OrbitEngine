@@ -38,6 +38,7 @@ namespace OrbitEngine {	namespace Application {
 		SIZEALL,
 		SIZENS,
 		SIZENWSE,
+		SIZENESW,
 		SIZEWE,
 		UPARROW,
 	};
