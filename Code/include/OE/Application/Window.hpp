@@ -24,6 +24,24 @@ namespace OrbitEngine {	namespace Application {
 		DUMMY
 	};
 
+	enum Cursor {
+		DEFAULT,
+		HIDDEN,
+		ARROW,
+		CROSS,
+		HOURGLASS,
+		HAND,
+		ARROW_HOURGLASS,
+		HELP,
+		IBEAM,
+		NO,
+		SIZEALL,
+		SIZENS,
+		SIZENWSE,
+		SIZEWE,
+		UPARROW,
+	};
+
 	class Window : public Misc::Pimpl<priv::WindowImpl> {
 	public:
 		Window();
@@ -35,7 +53,6 @@ namespace OrbitEngine {	namespace Application {
 		bool destroyRequested() const;
 		Math::Vec2i getCursorPosition() const;
 		DisplayMode getDisplayMode() const;
-		std::string getTitle() const;
 		Math::Vec2i getPosition() const;
 		Math::Vec2i getSize() const;
 		bool isVisible() const;
@@ -43,6 +60,7 @@ namespace OrbitEngine {	namespace Application {
 		bool isMinimized() const;
 
 		bool setDisplayMode(DisplayMode mode);
+		bool setCursor(Cursor cursor);
 		bool setTitle(const std::string& title);
 		bool setPosition(const Math::Vec2i& position);
 		bool setSize(const Math::Vec2i& size);

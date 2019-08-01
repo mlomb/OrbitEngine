@@ -42,11 +42,6 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 		return p_DisplayMode;
 	}
 
-	std::string WindowImpl::getTitle() const
-	{
-		return p_Title;
-	}
-
 	Math::Vec2i WindowImpl::getPosition() const
 	{
 		return p_Position;

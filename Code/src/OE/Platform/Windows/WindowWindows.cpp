@@ -154,13 +154,15 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 		*/
 	}
 
+	bool WindowWindows::setCursor(Cursor cursor)
+	{
+		m_CursorTarget = cursor;
+		return true;
+	}
+
 	bool WindowWindows::setTitle(const std::string& title)
 	{
-		if (::SetWindowText(m_WindowHandle, title.c_str()) != NULL) {
-			p_Title = title;
-			return true;
-		}
-		return false;
+		return ::SetWindowText(m_WindowHandle, title.c_str()) != NULL;
 	}
 
 	bool WindowWindows::setPosition(const Math::Vec2i& position)
@@ -363,8 +365,7 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 		case WM_SETCURSOR:
 		{
 			if (LOWORD(lParam) == HTCLIENT) {
-				// TODO: Handle cursor
-				//SetCursor(p_InputManager->m_Cursor == HIDDEN ? NULL : LoadCursor(NULL, CursorToResource(p_InputManager->m_Cursor)));
+				SetCursor(m_CursorTarget == HIDDEN ? NULL : LoadCursor(NULL, CursorToResource(m_CursorTarget)));
 				return TRUE;
 			}
 			else

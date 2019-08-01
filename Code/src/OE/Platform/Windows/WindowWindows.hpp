@@ -21,6 +21,7 @@ namespace OrbitEngine {
 
 		bool isMinimized() const override;
 		bool setDisplayMode(DisplayMode mode) override;
+		bool setCursor(Cursor cursor) override;
 		bool setTitle(const std::string& title) override;
 		bool setPosition(const Math::Vec2i& position) override;
 		bool setSize(const Math::Vec2i& size) override;
@@ -45,7 +46,9 @@ namespace OrbitEngine {
 		HDC m_DeviceContext;
 		DWORD m_dwExStyle = 0;
 		DWORD m_dwStyle = 0;
+
 		Math::Vec2i m_LastFreeCursorPosition;
+		Cursor m_CursorTarget;
 
 		LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	};

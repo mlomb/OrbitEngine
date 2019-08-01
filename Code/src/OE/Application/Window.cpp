@@ -40,6 +40,7 @@ namespace OrbitEngine { namespace Application {
 		setTitle("OrbitEngine");
 		setSize(Math::Vec2i(800, 600));
 		setDisplayMode(DisplayMode::WINDOWED);
+		setCursor(Cursor::DEFAULT);
 	}
 
 	void Window::processEvents() {
@@ -58,11 +59,6 @@ namespace OrbitEngine { namespace Application {
 	DisplayMode Window::getDisplayMode() const
 	{
 		return p_Pimpl->getDisplayMode();
-	}
-
-	std::string Window::getTitle() const
-	{
-		return p_Pimpl->getTitle();
 	}
 
 	Math::Vec2i Window::getPosition() const
@@ -93,6 +89,11 @@ namespace OrbitEngine { namespace Application {
 	bool Window::setDisplayMode(DisplayMode mode)
 	{
 		return p_Pimpl->setDisplayMode(mode);
+	}
+
+	bool Window::setCursor(Cursor cursor)
+	{
+		return p_Pimpl->setCursor(cursor);
 	}
 
 	bool Window::setTitle(const std::string& title)

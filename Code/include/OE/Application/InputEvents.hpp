@@ -149,24 +149,6 @@ namespace OrbitEngine { namespace Application {
 		N5 = 4
 	};
 
-	enum Cursor {
-		DEFAULT,
-		HIDDEN,
-		ARROW,
-		CROSS,
-		HOURGLASS,
-		HAND,
-		ARROW_HOURGLASS,
-		HELP,
-		IBEAM,
-		NO,
-		SIZEALL,
-		SIZENS,
-		SIZENWSE,
-		SIZEWE,
-		UPARROW,
-	};
-
 	enum InputEventType {
 		WINDOW_RESIZED,
 		WINDOW_FOCUS,

@@ -20,7 +20,6 @@ namespace OrbitEngine {	namespace Application {
 
 		Math::Vec2i getCursorPosition() const;
 		virtual DisplayMode getDisplayMode() const;
-		virtual std::string getTitle() const;
 		virtual Math::Vec2i getPosition() const;
 		virtual Math::Vec2i getSize() const;
 		virtual bool isVisible() const;
@@ -28,6 +27,7 @@ namespace OrbitEngine {	namespace Application {
 		virtual bool isMinimized() const = 0;
 
 		virtual bool setDisplayMode(DisplayMode mode) = 0;
+		virtual bool setCursor(Cursor cursor) = 0;
 		virtual bool setTitle(const std::string& title) = 0;
 		virtual bool setPosition(const Math::Vec2i& position) = 0;
 		virtual bool setSize(const Math::Vec2i& size) = 0;
@@ -47,7 +47,6 @@ namespace OrbitEngine {	namespace Application {
 		friend class InputManager;
 
 		DisplayMode p_DisplayMode;
-		std::string p_Title;
 		Math::Vec2i p_Position;
 		Math::Vec2i p_Size;
 		bool p_Focused;

@@ -8,7 +8,7 @@
 #include "OE/UI/Layouts/LayoutElement.hpp"
 
 #include "OE/Application/EventHandler.hpp"
-#include "OE/Application/InputEvents.hpp"
+#include "OE/Application/Window.hpp"
 
 #include "OE/Math/Vec2.hpp"
 #include "OE/Math/Vec4.hpp"
