@@ -1,6 +1,8 @@
 #ifndef APPLICATION_INPUT_MANAGER_HPP
 #define APPLICATION_INPUT_MANAGER_HPP
 
+#include "OE/Misc/Singleton.hpp"
+
 #include "OE/Application/EventHandler.hpp"
 #include "OE/Application/InputEvents.hpp"
 #include "OE/Application/WindowImpl.hpp"
@@ -12,10 +14,8 @@
 
 namespace OrbitEngine { namespace Application {
 
-	class InputManager {
+	class InputManager : public Misc::Singleton<InputManager> {
 	public:
-		static InputManager* Get();
-
 		bool cursorMoved() const;
 		bool isKeyDown(const Key key) const;
 		bool isKeyPressed(const Key key) const;
@@ -38,7 +38,7 @@ namespace OrbitEngine { namespace Application {
 		void onInputWheel(float direction);
 		void reset();
 	private:
-		static InputManager* s_Instance;
+		friend class Misc::Singleton<InputManager>;
 
 		bool m_Keys[OE_MAX_KEYS];
 		bool m_KeysPressed[OE_MAX_KEYS];

@@ -4,15 +4,6 @@
 
 namespace OrbitEngine { namespace Application {
 
-	InputManager* InputManager::s_Instance = NULL;
-
-	InputManager* InputManager::Get()
-	{
-		if (s_Instance == NULL)
-			s_Instance = new InputManager();
-		return s_Instance;
-	}
-
 	InputManager::InputManager()
 		: m_WheelDelta(0.0f)
 	{
