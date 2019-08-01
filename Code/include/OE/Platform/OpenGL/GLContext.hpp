@@ -16,7 +16,7 @@ namespace OrbitEngine { namespace Application { namespace priv {
 
 	class GLContext : public ContextImpl {
 	public:
-		~GLContext() {};
+		virtual ~GLContext() {};
 
 		void prepare() override;
 		virtual void present() override {};

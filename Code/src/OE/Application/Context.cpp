@@ -87,6 +87,9 @@ namespace OrbitEngine {	namespace Application {
 			OE_LOG_FATAL("Invalid render API.")
 			break;
 		}
+
+		if (p_Pimpl)
+			p_Pimpl->m_Wrapper = this;
 	}
 
 	Context::~Context()
@@ -151,9 +154,7 @@ namespace OrbitEngine {	namespace Application {
 
 	Context* Context::GetCurrent()
 	{
-		// Somehow wrap the ContextImpl* into a Context*
-		//return priv::ContextImpl::GetCurrent();
-		return 0;
+		return priv::ContextImpl::GetCurrent()->m_Wrapper;
 	}
 
 	RenderAPI Context::GetCurrentAPI()

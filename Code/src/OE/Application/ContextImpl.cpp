@@ -16,7 +16,7 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 	ContextImpl* ContextImpl::s_CurrentContext = 0;
 
 	ContextImpl::ContextImpl(WindowImpl* window)
-		: p_DefaultFramebuffer(NULL)
+		: p_DefaultFramebuffer(NULL), m_States(NULL), m_Wrapper(NULL)
 	{
 		// If the context belongs to a Window, here we assign
 		// it that a Context was created for it
@@ -37,6 +37,10 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 	ContextImpl::~ContextImpl(){
 		if (p_Window && p_Window->p_Context == this)
 			p_Window->p_Context = 0;
+		if (p_DefaultFramebuffer)
+			delete p_DefaultFramebuffer;
+		if (m_States)
+			delete m_States;
 	}
 
 	void ContextImpl::makeCurrent(bool active)
@@ -60,7 +64,7 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 	Graphics::States* ContextImpl::getGlobalStates()
 	{
 		// TODO We should move this to the constructor
-		if (m_States == 0) {
+		if (m_States == NULL) {
 			switch (GetCurrentAPI()) {
 #ifdef OE_OPENGL_ANY
 			case OPENGL:

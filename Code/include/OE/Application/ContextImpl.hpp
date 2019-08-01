@@ -16,7 +16,7 @@ namespace OrbitEngine {
 
 	class ContextImpl {
 	public:
-		~ContextImpl();
+		virtual ~ContextImpl();
 
 		virtual void prepare() {};
 		virtual void present() = 0;
@@ -41,7 +41,10 @@ namespace OrbitEngine {
 		static RenderAPI GetCurrentAPI();
 
 	private:
-		Graphics::States* m_States = 0;
+		Graphics::States* m_States;
+
+		friend class Context;
+		Context* m_Wrapper;
 
 	protected:
 		ContextImpl(WindowImpl* window);
