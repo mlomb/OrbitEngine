@@ -318,7 +318,11 @@ namespace OrbitEngine { namespace Graphics {
 			case ImGuiMouseCursor_Hand:         target_cursor_style = Application::Cursor::HAND;     break;
 			}
 
-			// TODO: set cursor
+			for (int i = 0; i < platform_io.Viewports.Size; i++) {
+				ImGuiViewport* viewport = platform_io.Viewports[i];
+				GET_PTRS;
+				window->setCursor(target_cursor_style);
+			}
 		}
 
 		/// other input states
