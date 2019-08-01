@@ -5,7 +5,7 @@ namespace OrbitEngine {	namespace Misc {
 	template<typename T>
 	class Singleton {
 	public:
-		static T* Instance();
+		static T* Get();
 
 	protected:
 		Singleton() {};
@@ -16,7 +16,7 @@ namespace OrbitEngine {	namespace Misc {
 	};
 
 	template<typename T>
-	inline T* Singleton<T>::Instance()
+	inline T* Singleton<T>::Get()
 	{
 		if (s_Instance == 0)
 			s_Instance = new T;

@@ -20,7 +20,7 @@ namespace OrbitEngine { namespace Misc {
 	{
 		m_TotalTicks++;
 
-		m_Now = System::System::Instance()->currentNano();
+		m_Now = System::System::Get()->currentNano();
 		m_FrameDelta = (m_Now - m_TicksTimer) / (float)ONE_SECOND_IN_NANO;
 		m_TicksTimer = m_Now;
 		m_FPSCounter++;
@@ -40,6 +40,6 @@ namespace OrbitEngine { namespace Misc {
 	}
 
 	long long Ticker::getTimeSinceLastTick() {
-		return System::System::Instance()->currentNano() - m_TicksTimer;
+		return System::System::Get()->currentNano() - m_TicksTimer;
 	}
 } }
