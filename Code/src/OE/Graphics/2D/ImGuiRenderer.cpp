@@ -186,28 +186,28 @@ namespace OrbitEngine { namespace Graphics {
 		}
 
 		// Keyboard mapping
-		io.KeyMap[ImGuiKey_Tab] = VK_TAB;
-		io.KeyMap[ImGuiKey_LeftArrow] = VK_LEFT;
-		io.KeyMap[ImGuiKey_RightArrow] = VK_RIGHT;
-		io.KeyMap[ImGuiKey_UpArrow] = VK_UP;
-		io.KeyMap[ImGuiKey_DownArrow] = VK_DOWN;
-		io.KeyMap[ImGuiKey_PageUp] = VK_PRIOR;
-		io.KeyMap[ImGuiKey_PageDown] = VK_NEXT;
-		io.KeyMap[ImGuiKey_Home] = VK_HOME;
-		io.KeyMap[ImGuiKey_End] = VK_END;
-		io.KeyMap[ImGuiKey_Insert] = VK_INSERT;
-		io.KeyMap[ImGuiKey_Delete] = VK_DELETE;
-		io.KeyMap[ImGuiKey_Backspace] = VK_BACK;
-		io.KeyMap[ImGuiKey_Space] = VK_SPACE;
-		io.KeyMap[ImGuiKey_Enter] = VK_RETURN;
-		io.KeyMap[ImGuiKey_Escape] = VK_ESCAPE;
-		io.KeyMap[ImGuiKey_KeyPadEnter] = VK_RETURN;
-		io.KeyMap[ImGuiKey_A] = 'A';
-		io.KeyMap[ImGuiKey_C] = 'C';
-		io.KeyMap[ImGuiKey_V] = 'V';
-		io.KeyMap[ImGuiKey_X] = 'X';
-		io.KeyMap[ImGuiKey_Y] = 'Y';
-		io.KeyMap[ImGuiKey_Z] = 'Z';
+		io.KeyMap[ImGuiKey_Tab]         = Application::Key::TAB;
+		io.KeyMap[ImGuiKey_LeftArrow]   = Application::Key::ARROW_LEFT;
+		io.KeyMap[ImGuiKey_RightArrow]  = Application::Key::ARROW_RIGHT;
+		io.KeyMap[ImGuiKey_UpArrow]     = Application::Key::ARROW_UP;
+		io.KeyMap[ImGuiKey_DownArrow]   = Application::Key::ARROW_DOWN;
+		io.KeyMap[ImGuiKey_PageUp]      = Application::Key::PAGE_UP;
+		io.KeyMap[ImGuiKey_PageDown]    = Application::Key::PAGE_DOWN;
+		io.KeyMap[ImGuiKey_Home]        = Application::Key::HOME;
+		io.KeyMap[ImGuiKey_End]         = Application::Key::END;
+		io.KeyMap[ImGuiKey_Insert]      = Application::Key::INSERT;
+		io.KeyMap[ImGuiKey_Delete]      = Application::Key::DELETE_;
+		io.KeyMap[ImGuiKey_Backspace]   = Application::Key::BACKSPACE;
+		io.KeyMap[ImGuiKey_Space]       = Application::Key::SPACEBAR;
+		io.KeyMap[ImGuiKey_Enter]       = Application::Key::ENTER;
+		io.KeyMap[ImGuiKey_Escape]      = Application::Key::ESCAPE;
+		io.KeyMap[ImGuiKey_KeyPadEnter] = Application::Key::ENTER;
+		io.KeyMap[ImGuiKey_A]           = Application::Key::A;
+		io.KeyMap[ImGuiKey_C]           = Application::Key::C;
+		io.KeyMap[ImGuiKey_V]           = Application::Key::V;
+		io.KeyMap[ImGuiKey_X]           = Application::Key::X;
+		io.KeyMap[ImGuiKey_Y]           = Application::Key::Y;
+		io.KeyMap[ImGuiKey_Z]           = Application::Key::Z;
 
 		// Generate font atlas (may change later on)
 		{
