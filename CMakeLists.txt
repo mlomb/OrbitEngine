@@ -37,6 +37,19 @@ add_library(lib_msdfgen ${msdfgen_SOURCES} ${msdfgen_HEADERS})
 target_include_directories(lib_msdfgen PUBLIC ${freetype_SOURCE_DIR}/include "Dependencies/msdfgen")
 target_link_libraries(lib_msdfgen freetype)
 
+# imgui
+add_library(imgui
+	"Dependencies/imgui/imconfig.h"
+	"Dependencies/imgui/imgui.h"
+	"Dependencies/imgui/imgui_internal.h"
+	
+	"Dependencies/imgui/imgui.cpp"
+	"Dependencies/imgui/imgui_demo.cpp"
+	"Dependencies/imgui/imgui_draw.cpp"
+	"Dependencies/imgui/imgui_widgets.cpp"
+)
+target_include_directories(imgui PUBLIC "Dependencies/imgui")
+
 option(XSC_BUILD_SHELL "" OFF) # Don't build XSC shell
 add_subdirectory(Dependencies/XShaderCompiler)
 
@@ -181,6 +194,7 @@ list(APPEND OE_LIBRARIES
 	glsl_optimizer
 	assimp
 	lib_msdfgen
+	imgui
 	#${MONO_LIBRARIES}
 )
 list(APPEND OE_LIBRARIES_INC
@@ -191,6 +205,7 @@ list(APPEND OE_LIBRARIES_INC
     ${Assimp_BINARY_DIR}/include
 	Dependencies/glsl-optimizer/src/glsl
 	Dependencies/rapidjson/include
+	Dependencies/imgui
 	${msdfgen_SOURCE_DIR}
 	#${MONO_INCLUDE_DIR}
 )
