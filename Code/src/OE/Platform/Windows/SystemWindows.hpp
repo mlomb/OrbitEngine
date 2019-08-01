@@ -10,6 +10,7 @@ namespace OrbitEngine { namespace System { namespace priv {
 		SystemWindows() {};
 		~SystemWindows() {};
 
+		std::vector<MonitorDesc> getMonitors() override;
 		const char* getName() override;
 		long long currentNano() override;
 

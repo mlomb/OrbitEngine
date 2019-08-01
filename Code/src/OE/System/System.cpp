@@ -26,6 +26,11 @@ namespace OrbitEngine { namespace System {
 	{
 	}
 
+	std::vector<MonitorDesc> System::getMonitors()
+	{
+		return p_Pimpl->getMonitors();
+	}
+
 	const char* System::getName()
 	{
 		return p_Pimpl->getName();
