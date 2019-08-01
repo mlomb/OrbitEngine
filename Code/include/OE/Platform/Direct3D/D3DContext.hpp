@@ -1,9 +1,9 @@
 #ifndef GRAPHICS_D3DCONTEXT_HPP
 #define GRAPHICS_D3DCONTEXT_HPP
 
+#include "OE/Platform/Direct3D/Direct3D.hpp"
 #include "OE/Platform/Direct3D/D3DStates.hpp"
 #include "OE/Platform/Direct3D/D3DDepthTexture.hpp"
-#include "OE/Platform/Direct3D/Direct3D.hpp"
 #include "OE/Application/ContextImpl.hpp"
 
 namespace OrbitEngine { namespace Application { namespace priv {
