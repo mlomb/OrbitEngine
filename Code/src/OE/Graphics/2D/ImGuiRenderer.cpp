@@ -36,6 +36,9 @@ namespace OrbitEngine { namespace Graphics {
 		// create a shared context
 		viewport->PlatformUserData = new Application::Context(current_context->getAPI(), window, current_context);
 		viewport->RendererUserData = ImGui::GetMainViewport()->RendererUserData; // copy the renderer pointer
+
+		// restore
+		current_context->makeCurrent();
 	}
 
 	void ImGui_ImplOE_UpdateWindow(ImGuiViewport* viewport) {
@@ -51,18 +54,32 @@ namespace OrbitEngine { namespace Graphics {
 	void ImGui_ImplOERenderer_RenderWindow(ImGuiViewport* viewport, void*) {
 		GET_PTRS;
 
-		context->resizeContext(window->getSize());
+		Application::Context* last_ctx = Application::Context::GetCurrent();
+
 		context->makeCurrent();
+		context->resizeContext(window->getSize());
 		context->prepare();
 
 		renderer->draw(viewport->DrawData);
 
 		context->present();
+
+		// restore
+		last_ctx->makeCurrent();
 	}
 
 	void ImGui_ImplOERenderer_DestroyWindow(ImGuiViewport* viewport) {
 		GET_PTRS;
+
+		Application::Context* last_ctx = Application::Context::GetCurrent();
+
+		context->makeCurrent();
 		delete context;
+
+		// restore
+		if (context != last_ctx)
+			last_ctx->makeCurrent();
+
 		viewport->PlatformUserData = NULL;
 		viewport->RendererUserData = NULL;
 	}
