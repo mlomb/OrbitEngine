@@ -12,12 +12,21 @@
 namespace OrbitEngine {	namespace Application { namespace priv {
 	class WindowEmscripten : public WindowImpl {
 	public:
-		WindowEmscripten(WindowProperties properties);
+		WindowEmscripten();
 		~WindowEmscripten();
 
-		void setTitle(const char* title) override;
-		void requestCursorMode(const CursorMode cursorMode) override;
 		void processEvents() override;
+
+		bool isMinimized() const override;
+		bool setDisplayMode(DisplayMode mode) override;
+		bool setCursor(Cursor cursor) override;
+		bool setTitle(const std::string& title) override;
+		bool setPosition(const Math::Vec2i& position) override;
+		bool setSize(const Math::Vec2i& size) override;
+		bool setVisibility(bool visible) override;
+		bool requestFocus() override;
+		bool setAlpha(float alpha) override;
+
 		WindowNativeHandle getWindowNativeHandle() override;
 		DisplayNativeHandle getDisplayNativeHandle() override;
 		

@@ -1,10 +1,11 @@
 #include "WindowEmscripten.hpp"
 
+#include "OE/Application/InputManager.hpp"
 #include "OE/Misc/Log.hpp"
 
 namespace OrbitEngine {	namespace Application { namespace priv {
-	WindowEmscripten::WindowEmscripten(WindowProperties properties)
-		: WindowImpl(properties)
+	WindowEmscripten::WindowEmscripten()
+		: WindowImpl()
 	{
 		updateSizeFromHTML();
 
@@ -21,16 +22,13 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 		emscripten_set_mousedown_callback(NULL, this, false, &WindowEmscripten::EMS_Callback_MouseButton);
 
 		// Do we start with the focus?
-		p_InputManager->onInputFocus(true);
+		p_Focused = true;
 	}
 	
 	void WindowEmscripten::processEvents()
 	{
 		m_PointerLock = isPointerLockActive();
-		p_InputManager->m_CursorMode = m_PointerLock ? CursorMode::GRABBED : CursorMode::NORMAL;
-
-		std::string script = "Module.canvas.style.cursor = \"" + CursorToCSS(p_InputManager->m_Cursor) + "\";";
-		emscripten_run_script(script.c_str());
+		//p_InputManager->m_CursorMode = m_PointerLock ? CursorMode::GRABBED : CursorMode::NORMAL;
 
 		WindowImpl::processEvents();
 	}
@@ -38,6 +36,61 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 	WindowEmscripten::~WindowEmscripten()
 	{
 
+	}
+
+	bool WindowEmscripten::isMinimized() const
+	{
+		// TODO: This can be done
+		return false;
+	}
+
+	bool WindowEmscripten::setDisplayMode(DisplayMode mode)
+	{
+		// TODO: !
+		return true;
+	}
+
+	bool WindowEmscripten::setCursor(Cursor cursor)
+	{
+		std::string script = "Module.canvas.style.cursor = \"" + CursorToCSS(cursor) + "\";";
+		emscripten_run_script(script.c_str());
+		return true;
+	}
+
+	bool WindowEmscripten::setTitle(const std::string& title)
+	{
+		// TODO: change document.title?
+		return false;
+	}
+
+	bool WindowEmscripten::setPosition(const Math::Vec2i& position)
+	{
+		// not valid
+		return false;
+	}
+
+	bool WindowEmscripten::setSize(const Math::Vec2i& size)
+	{
+		// not valid
+		return false;
+	}
+
+	bool WindowEmscripten::setVisibility(bool visible)
+	{
+		// TODO: set display: none?
+		return true;
+	}
+
+	bool WindowEmscripten::requestFocus()
+	{
+		// TODO?
+		return true;
+	}
+
+	bool WindowEmscripten::setAlpha(float alpha)
+	{
+		// not valid
+		return false;
 	}
 
 	WindowNativeHandle WindowEmscripten::getWindowNativeHandle()
@@ -50,11 +103,13 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 		return 0;
 	}
 
+	/*
 	void WindowEmscripten::requestCursorMode(const CursorMode cursorMode) {
 		if(cursorMode == CursorMode::GRABBED){
 			emscripten_request_pointerlock(NULL, true);
 		}
 	}
+	*/
 
 	bool WindowEmscripten::isPointerLockActive(){
 	    EmscriptenPointerlockChangeEvent pointerlockStatus;
@@ -64,10 +119,10 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 
 	void WindowEmscripten::updateSizeFromHTML(){
 		//double pixel_ratio = emscripten_get_device_pixel_ratio(); Use it?
-		double w = p_Properties.resolution.w;
-		double h = p_Properties.resolution.h;
+		double w = p_Size.x;
+		double h = p_Size.y;
 
-		if(p_Properties.displayMode != DisplayMode::FULLSCREEN){
+		if(p_DisplayMode != DisplayMode::FULLSCREEN){
 			// If we are not in fullscreen, we use the css size values
 			emscripten_get_element_css_size(NULL, &w, &h);
 		} else {
@@ -83,20 +138,15 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 
 		emscripten_set_canvas_size(w, h);
 
-		p_InputManager->onInputResized(w, h);
-	}
-
-	void WindowEmscripten::setTitle(const char* title)
-	{
-		// What
+		p_Size = Math::Vec2i(w, h);
 	}
 
 	EM_BOOL WindowEmscripten::EMS_Callback_FullscreenChange(int eventType, const EmscriptenFullscreenChangeEvent *fullscreenChangeEvent, void *userData) {
 		WindowEmscripten* window = static_cast<WindowEmscripten*>(userData);
 		if(fullscreenChangeEvent->isFullscreen)
-			window->p_Properties.displayMode = DisplayMode::FULLSCREEN;
+			window->p_DisplayMode = DisplayMode::FULLSCREEN;
 		else
-			window->p_Properties.displayMode = DisplayMode::WINDOWED;
+			window->p_DisplayMode = DisplayMode::WINDOWED;
 		window->updateSizeFromHTML();
 	}
 
@@ -107,14 +157,13 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 
 	EM_BOOL WindowEmscripten::EMS_Callback_Focus(int eventType, const EmscriptenFocusEvent *focusEvent, void *userData) {
 		WindowEmscripten* window = static_cast<WindowEmscripten*>(userData);
-		window->p_InputManager->onInputFocus(eventType == EMSCRIPTEN_EVENT_FOCUS);
+		window->p_Focused = eventType == EMSCRIPTEN_EVENT_FOCUS;
 	}
 
 	EM_BOOL WindowEmscripten::EMS_Callback_Key(int eventType, const EmscriptenKeyboardEvent *keyEvent, void *userData) {
-		if (keyEvent->keyCode < MAX_KEYS) {
+		if (keyEvent->keyCode < OE_MAX_KEYS) {
 			Key key = Key(keyEvent->keyCode);
-			WindowEmscripten* window = static_cast<WindowEmscripten*>(userData);
-			window->p_InputManager->onInputKey(key, eventType == EMSCRIPTEN_EVENT_KEYDOWN);
+			InputManager::Get()->onInputKey(key, eventType == EMSCRIPTEN_EVENT_KEYDOWN);
 			bool isNavKey = key == Key::BACKSPACE ||
 							key == Key::TAB;
 			return isNavKey;
@@ -122,22 +171,27 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 	}
 
 	EM_BOOL WindowEmscripten::EMS_Callback_Wheel(int eventType, const EmscriptenWheelEvent *wheelEvent, void *userData) {
-		WindowEmscripten* window = static_cast<WindowEmscripten*>(userData);
-		window->p_InputManager->onInputWheel(wheelEvent->deltaY);
+		InputManager::Get()->onInputWheel((float)wheelEvent->deltaY / 120.0f);
 	}
 
 	EM_BOOL WindowEmscripten::EMS_Callback_MouseMove(int eventType, const EmscriptenMouseEvent *mouseEvent, void *userData) {
 		WindowEmscripten* window = static_cast<WindowEmscripten*>(userData);
 		if(window->m_PointerLock){
-			window->p_InputManager->onInputMouseMove(-mouseEvent->movementX, -mouseEvent->movementY, true);
+			InputManager::Get()->onInputMouseMove(-mouseEvent->movementX, -mouseEvent->movementY, true);
 		} else {
-			window->p_InputManager->onInputMouseMove(mouseEvent->canvasX, mouseEvent->canvasY);
+			InputManager::Get()->onInputMouseMove(mouseEvent->canvasX, mouseEvent->canvasY);
 		}
 	}
 
 	EM_BOOL WindowEmscripten::EMS_Callback_MouseButton(int eventType, const EmscriptenMouseEvent *mouseEvent, void *userData) {
-		WindowEmscripten* window = static_cast<WindowEmscripten*>(userData);
-		window->p_InputManager->onInputMouseButton(Button(mouseEvent->button), eventType == EMSCRIPTEN_EVENT_MOUSEDOWN);
+		Button btn;
+		switch (mouseEvent->button) {
+		default:
+		case 0: btn = Button::LEFT; break;
+		case 1: btn = Button::MIDDLE; break;
+		case 2: btn = Button::RIGHT; break;
+		}
+		InputManager::Get()->onInputMouseButton(btn, eventType == EMSCRIPTEN_EVENT_MOUSEDOWN);
 	}
 
 	std::string WindowEmscripten::CursorToCSS(const Cursor cursor){

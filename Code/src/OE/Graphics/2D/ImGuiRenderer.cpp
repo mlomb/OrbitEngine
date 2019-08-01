@@ -9,7 +9,9 @@
 #include "OE/Application/Window.hpp"
 #include "OE/Application/InputManager.hpp"
 #include "OE/System/System.hpp"
+#include "OE/Graphics/API/States.hpp"
 #include "OE/Graphics/Bitmap.hpp"
+#include "OE/Math/Scissor.hpp"
 
 namespace OrbitEngine { namespace Graphics {
 	
@@ -25,7 +27,7 @@ namespace OrbitEngine { namespace Graphics {
 			window->setDisplayMode(Application::DisplayMode::BORDERLESS);
 
 		viewport->PlatformHandle = window;
-		viewport->PlatformHandleRaw = window->getDisplayNativeHandle();
+		viewport->PlatformHandleRaw = reinterpret_cast<void*>(window->getDisplayNativeHandle());
 	}
 
 	void ImGui_ImplOERenderer_CreateWindow(ImGuiViewport* viewport) {
@@ -180,7 +182,7 @@ namespace OrbitEngine { namespace Graphics {
 			// set pointers for the default viewport
 			ImGuiViewport* main_viewport = ImGui::GetMainViewport();
 			main_viewport->PlatformHandle    = current_context->getWindow();
-			main_viewport->PlatformHandleRaw = current_context->getWindow()->getDisplayNativeHandle();
+			main_viewport->PlatformHandleRaw = reinterpret_cast<void*>(current_context->getWindow()->getDisplayNativeHandle());
 			main_viewport->PlatformUserData  = current_context;
 			main_viewport->RendererUserData  = this;
 		}
@@ -291,7 +293,7 @@ namespace OrbitEngine { namespace Graphics {
 		Application::InputManager* input_manager = Application::InputManager::Get();
 
 		/// Cursor position
-		Math::Vec2i cursor_pos = Math::Vec2i(-FLT_MAX, -FLT_MAX);
+		Math::Vec2f cursor_pos = Math::Vec2f(-FLT_MAX, -FLT_MAX);
 		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
 			// absolute coords
 			cursor_pos = input_manager->getCursorPosition();
@@ -371,7 +373,7 @@ namespace OrbitEngine { namespace Graphics {
 
 		Renderer2D::end();
 
-		States* states = Application::priv::ContextImpl::GetCurrent()->getGlobalStates();
+		States* states = Application::Context::GetCurrent()->getGlobalStates();
 
 		states->setBlending(BlendState::SRC_ALPHA);
 		states->setDepthTest(FunctionMode::DISABLED);

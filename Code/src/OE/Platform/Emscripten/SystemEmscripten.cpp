@@ -3,6 +3,12 @@
 #include <chrono>
 
 namespace OrbitEngine { namespace System { namespace priv {
+
+	std::vector<MonitorDesc> SystemEmscripten::getMonitors() {
+		// no monitor information
+		return std::vector<MonitorDesc>();
+	}
+
 	const char* SystemEmscripten::getName()
 	{
 		return "Emscripten";

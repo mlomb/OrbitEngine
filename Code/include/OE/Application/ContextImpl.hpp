@@ -43,8 +43,8 @@ namespace OrbitEngine {
 	private:
 		Graphics::States* m_States;
 
-		friend class Context;
-		Context* m_Wrapper;
+		friend class Application::Context;
+		Application::Context* m_Wrapper;
 
 	protected:
 		ContextImpl(WindowImpl* window);
