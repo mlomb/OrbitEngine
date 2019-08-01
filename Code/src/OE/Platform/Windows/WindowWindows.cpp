@@ -373,7 +373,7 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 		case WM_MOUSEWHEEL:
 		case WM_MOUSEHWHEEL:
 		{
-			input_manager->onInputWheel(GET_WHEEL_DELTA_WPARAM(wParam) / (float)WHEEL_DELTA);
+			input_manager->onInputWheel((float)GET_WHEEL_DELTA_WPARAM(wParam) / (float)WHEEL_DELTA);
 			return TRUE;
 		}
 		case WM_KEYDOWN:
