@@ -70,7 +70,7 @@ namespace OrbitEngine { namespace Graphics {
 
 		/* TESTING TODO REMOVE */
 		bool wf = false;
-		if (Application::priv::ContextImpl::GetCurrent()->getWindowImpl()->getInputManager()->isButtonDown(Application::Button::RIGHT)) {
+		if (Application::InputManager::Get()->isButtonDown(Application::Button::RIGHT)) {
 			wf = true;
 			states->setCullMode(CullMode::WIREFRAME);
 		}

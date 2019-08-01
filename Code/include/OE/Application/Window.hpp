@@ -24,30 +24,36 @@ namespace OrbitEngine {	namespace Application {
 		DUMMY
 	};
 
-	struct WindowProperties {
-		std::string title = "OrbitEngine";
-		Math::Vec2i resolution = Math::Vec2i(800, 600);
-		DisplayMode displayMode = WINDOWED;
-
-		WindowNativeHandle parent = 0;
-	};
-
 	class Window : public Misc::Pimpl<priv::WindowImpl> {
 	public:
-		Window(WindowProperties windowProperties);
+		Window();
 		Window(WindowNativeHandle handle);
 		~Window();
 
+		void processEvents();
+
+		bool destroyRequested() const;
+		Math::Vec2i getCursorPosition() const;
+		DisplayMode getDisplayMode() const;
+		std::string getTitle() const;
+		Math::Vec2i getPosition() const;
+		Math::Vec2i getSize() const;
+		bool isVisible() const;
+		bool isFocused() const;
+		bool isMinimized() const;
+
+		bool setDisplayMode(DisplayMode mode);
+		bool setTitle(const std::string& title);
+		bool setPosition(const Math::Vec2i& position);
+		bool setSize(const Math::Vec2i& size);
+		bool setVisibility(bool visible);
+		bool requestFocus();
+		bool setAlpha(float alpha);
+
 		DisplayNativeHandle getDisplayNativeHandle();
 		WindowNativeHandle getWindowNativeHandle();
-		void processEvents();
-		bool destroyRequested();
-		Context* getContext();
-		WindowProperties& getProperties();
-		InputManager* getInputManager();
-
 	private:
-
+		void setDefaults();
 	};
 } }
 

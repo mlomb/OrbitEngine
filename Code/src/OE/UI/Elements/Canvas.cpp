@@ -21,10 +21,10 @@ namespace OrbitEngine { namespace UI {
 	{
 		m_Window = view;
 
-		view->getInputManager()->onKeyEvent.AddListener(this, &Canvas::input_keyEvent);
-		view->getInputManager()->onButtonEvent.AddListener(this, &Canvas::input_buttonEvent);
-		view->getInputManager()->onMouseMoveEvent.AddListener(this, &Canvas::input_mouseMoveEvent);
-		view->getInputManager()->onWheelEvent.AddListener(this, &Canvas::input_wheelEvent);
+		Application::InputManager::Get()->onKeyEvent.AddListener(this, &Canvas::input_keyEvent);
+		Application::InputManager::Get()->onButtonEvent.AddListener(this, &Canvas::input_buttonEvent);
+		Application::InputManager::Get()->onMouseMoveEvent.AddListener(this, &Canvas::input_mouseMoveEvent);
+		Application::InputManager::Get()->onWheelEvent.AddListener(this, &Canvas::input_wheelEvent);
 	}
 
 	void Canvas::captureElement(Element* element)
@@ -35,8 +35,8 @@ namespace OrbitEngine { namespace UI {
 	void Canvas::onUpdate(float deltaTime)
 	{
 		if (!getParent()) {
-			if (m_Window)
-				m_Window->getInputManager()->setCursor(m_CapturedElement ? m_CapturedElement->getFinalCursorAtMe() : m_CurrentCursor);
+			//if (m_Window)
+			//	m_Window->getInputManager()->setCursor(m_CapturedElement ? m_CapturedElement->getFinalCursorAtMe() : m_CurrentCursor);
 		}
 	}
 
@@ -50,7 +50,7 @@ namespace OrbitEngine { namespace UI {
 		setAnchor(Anchor::TOP_LEFT);
 		setPivot(Math::Vec2f());
 		setPosition(Math::Vec2f());
-		setSize(m_Window->getProperties().resolution);
+		setSize(m_Window->getSize());
 	}
 
 	void Canvas::input_keyEvent(const Application::KeyInputEvent& keyEvent)

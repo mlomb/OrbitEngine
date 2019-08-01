@@ -10,70 +10,20 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 	
 	WindowClass* WindowWindows::s_WindowClass = new WindowClass();
 
-	WindowWindows::WindowWindows(WindowProperties properties) : WindowImpl(properties)
+	WindowWindows::WindowWindows()
+		: WindowImpl(), m_dwStyle(0), m_dwExStyle(0)
 	{
 		// Register class if necessary
 		s_WindowClass->Reference();
 
-		// Create window
-		RECT windowRect;
-		DWORD dwExStyle = 0;
-		DWORD dwStyle = 0;
-
-		switch (properties.displayMode) {
-		default:
-		case DisplayMode::WINDOWED:
-			dwExStyle = WS_EX_APPWINDOW;
-			break;
-		case DisplayMode::WINDOWED_TOOL:
-			dwExStyle = WS_EX_TOOLWINDOW;
-			break;
-		case DisplayMode::BORDERLESS:
-			dwStyle = WS_THICKFRAME | WS_SYSMENU | WS_MAXIMIZEBOX | WS_MINIMIZEBOX;
-		case DisplayMode::FULLSCREEN:
-		case DisplayMode::FULLSCREEN_BORDERLESS:
-			dwStyle = WS_POPUP;
-			break;
-		case DisplayMode::OVERLAPPED:
-			dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_TABSTOP;
-			break;
-		}
-		
-		if (properties.displayMode == DisplayMode::WINDOWED || properties.displayMode == DisplayMode::WINDOWED_TOOL) {
-			dwExStyle |= WS_EX_WINDOWEDGE;
-			dwStyle = WS_OVERLAPPEDWINDOW;
-		}
-
-		// WS_EX_APPWINDOW
-		// WS_EX_TOOLWINDOW
-		dwStyle |= WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
-
-		// Adjust to the surface size
-		windowRect.left = (long)0; windowRect.top = (long)0;
-		windowRect.right = (long)p_Properties.resolution.w;
-		windowRect.bottom = (long)p_Properties.resolution.h;
-
-		AdjustWindowRectEx(&windowRect, dwStyle, FALSE, dwExStyle);
-		
-		unsigned int wX = (long)GetSystemMetrics(SM_CXSCREEN) / 2 - (windowRect.right - windowRect.left) / 2;
-		unsigned int wY = (long)GetSystemMetrics(SM_CYSCREEN) / 2 - (windowRect.bottom - windowRect.top) / 2;
-
 		// Create the window
-		m_WindowHandle = CreateWindowEx(dwExStyle, OE_WNDCLASSNAME, properties.title.c_str(), dwStyle, wX, wY, windowRect.right - windowRect.left, windowRect.bottom - windowRect.top, properties.parent, NULL, GetModuleHandleW(NULL), NULL);
+		m_WindowHandle = CreateWindowEx(0, OE_WNDCLASSNAME, "OrbitEngine", 0, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, NULL, NULL, GetModuleHandleW(NULL), NULL);
 		if (!m_WindowHandle) {
 			OE_LOG_FATAL("Couldn't create the window")
 			return;
 		}
 
-		if (properties.displayMode == DisplayMode::BORDERLESS) {
-			static const MARGINS shadowBorders{ 1,1,1,1 };
-			DwmExtendFrameIntoClientArea(m_WindowHandle, &shadowBorders);
-		}
-
 		initHandle();
-
-		ShowWindow(m_WindowHandle, SW_SHOW);
-		SetFocus(m_WindowHandle);
 	}
 
 	WindowWindows::WindowWindows(HWND handle)
@@ -103,6 +53,7 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 		}
 	}
 
+	/*
 	void WindowWindows::requestCursorMode(const CursorMode cursorMode)
 	{
 		if (cursorMode == p_InputManager->getCursorMode())
@@ -116,17 +67,13 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 			TODO Cancel delta
 			Math::Vec2i grabDelta = p_Properties.resolution / 2 - p_InputManager->m_CursorPos;
 			p_InputManager->m_CursorDelta += grabDelta;
-			*/
+			* /
 			m_LastFreeCursorPosition = p_InputManager->getCursorPosition();
 		}
 
 		WindowImpl::requestCursorMode(cursorMode);
 	}
-
-	void WindowWindows::setTitle(const char* title)
-	{
-		SetWindowText(m_WindowHandle, title);
-	}
+	*/
 
 	void WindowWindows::setCursorPosition(int x, int y, bool relative)
 	{
@@ -136,6 +83,139 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 		if (relative)
 			ClientToScreen(m_WindowHandle, &pt);
 		SetCursorPos(pt.x, pt.y);
+	}
+
+	bool WindowWindows::isMinimized() const
+	{
+		return ::IsIconic(m_WindowHandle) != NULL;
+	}
+	
+	bool WindowWindows::setDisplayMode(DisplayMode mode)
+	{
+		// Create window
+		RECT windowRect;
+		m_dwExStyle = 0;
+		m_dwStyle = 0;
+
+		switch (mode) {
+		default:
+		case DisplayMode::WINDOWED:
+			m_dwExStyle = WS_EX_APPWINDOW;
+			break;
+		case DisplayMode::WINDOWED_TOOL:
+			m_dwExStyle = WS_EX_TOOLWINDOW;
+			break;
+		case DisplayMode::BORDERLESS:
+			m_dwStyle = WS_THICKFRAME | WS_SYSMENU | WS_MAXIMIZEBOX | WS_MINIMIZEBOX;
+		case DisplayMode::FULLSCREEN:
+		case DisplayMode::FULLSCREEN_BORDERLESS:
+			m_dwStyle = WS_POPUP;
+			break;
+		case DisplayMode::OVERLAPPED:
+			m_dwStyle = WS_CHILD | WS_CLIPSIBLINGS | WS_TABSTOP;
+			break;
+		}
+
+		if (mode == DisplayMode::WINDOWED || mode == DisplayMode::WINDOWED_TOOL) {
+			m_dwExStyle |= WS_EX_WINDOWEDGE;
+			m_dwStyle = WS_OVERLAPPEDWINDOW;
+		}
+
+		// WS_EX_APPWINDOW
+		// WS_EX_TOOLWINDOW
+		m_dwStyle |= WS_CLIPSIBLINGS | WS_CLIPCHILDREN | WS_MINIMIZEBOX | WS_MAXIMIZEBOX;
+
+		::SetWindowLong(m_WindowHandle, GWL_STYLE, m_dwStyle);
+		::SetWindowLong(m_WindowHandle, GWL_EXSTYLE, m_dwExStyle);
+
+		if (isVisible()) {
+			// required when changing display modes
+			setVisibility(true);
+		}
+
+		p_DisplayMode = mode;
+		return true;
+
+		/*
+		// Adjust to the surface size
+		windowRect.left = (long)0; windowRect.top = (long)0;
+		windowRect.right = (long)p_Size.x;
+		windowRect.bottom = (long)p_Size.y;
+
+		AdjustWindowRectEx(&windowRect, dwStyle, FALSE, dwExStyle);
+
+		unsigned int wX = (long)GetSystemMetrics(SM_CXSCREEN) / 2 - (windowRect.right - windowRect.left) / 2;
+		unsigned int wY = (long)GetSystemMetrics(SM_CYSCREEN) / 2 - (windowRect.bottom - windowRect.top) / 2;
+		
+		if (p_DisplayMode == DisplayMode::BORDERLESS) {
+			static const MARGINS shadowBorders{ 1,1,1,1 };
+			DwmExtendFrameIntoClientArea(m_WindowHandle, &shadowBorders);
+		}
+		*/
+	}
+
+	bool WindowWindows::setTitle(const std::string& title)
+	{
+		if (::SetWindowText(m_WindowHandle, title.c_str()) != NULL) {
+			p_Title = title;
+			return true;
+		}
+		return false;
+	}
+
+	bool WindowWindows::setPosition(const Math::Vec2i& position)
+	{
+		RECT rect = { (LONG)position.x, (LONG)position.y, (LONG)position.x, (LONG)position.y };
+		if (::AdjustWindowRectEx(&rect, m_dwStyle, FALSE, m_dwExStyle) != NULL &&
+			::SetWindowPos(m_WindowHandle, NULL, rect.left, rect.top, 0, 0, SWP_NOZORDER | SWP_NOSIZE | SWP_NOACTIVATE) != NULL) {
+			p_Position = position;
+			return true;
+		}
+		return false;
+	}
+
+	bool WindowWindows::setSize(const Math::Vec2i& size)
+	{
+		RECT rect = { 0, 0, (LONG)size.x, (LONG)size.y };
+		if (::AdjustWindowRectEx(&rect, m_dwStyle, FALSE, m_dwExStyle) != NULL && // Client to Screen
+			::SetWindowPos(m_WindowHandle, NULL, 0, 0, rect.right - rect.left, rect.bottom - rect.top, SWP_NOZORDER | SWP_NOMOVE | SWP_NOACTIVATE) != NULL) {
+			p_Size = size;
+			return true;
+		}
+		return false;
+	}
+
+	bool WindowWindows::setVisibility(bool visible)
+	{
+		::ShowWindow(m_WindowHandle, visible ? SW_SHOW : SW_HIDE);
+		return true;
+	}
+
+	bool WindowWindows::requestFocus()
+	{
+		if (::BringWindowToTop(m_WindowHandle) != NULL &&
+			::SetForegroundWindow(m_WindowHandle) != NULL &&
+			::SetFocus(m_WindowHandle) != NULL) {
+			p_Focused = true;
+			return true;
+		}
+		return false;
+	}
+
+	bool WindowWindows::setAlpha(float alpha)
+	{
+		if (alpha < 1.0f)
+		{
+			DWORD style = ::GetWindowLongW(m_WindowHandle, GWL_EXSTYLE) | WS_EX_LAYERED;
+			::SetWindowLongW(m_WindowHandle, GWL_EXSTYLE, style);
+			return ::SetLayeredWindowAttributes(m_WindowHandle, 0, (BYTE)(255 * alpha), LWA_ALPHA) != NULL;
+		}
+		else
+		{
+			DWORD style = ::GetWindowLongW(m_WindowHandle, GWL_EXSTYLE) & ~WS_EX_LAYERED;
+			::SetWindowLongW(m_WindowHandle, GWL_EXSTYLE, style);
+		}
+		return true;
 	}
 
 	void WindowWindows::processEvents()
@@ -149,10 +229,10 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 			DispatchMessage(&message);
 		}
 
-
-		if (p_InputManager->hasFocus()) {
+		/*
+		if (p_Focused) {
 			if (p_InputManager->m_CursorMode == CursorMode::GRABBED) {
-				Math::Vec2i center = p_Properties.resolution / 2;
+				Math::Vec2i center = p_Size / 2;
 				p_InputManager->m_CursorPos = center;
 				setCursorPosition((int)center.x, (int)center.y, true);
 			}
@@ -168,9 +248,10 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 				else
 				if (p_InputManager->m_CursorMode != CursorMode::LOCKED)
 				ClipCursor(NULL);
-				*/
+				* /
 			}
 		}
+		*/
 	}
 
 	DisplayNativeHandle WindowWindows::getDisplayNativeHandle()
@@ -247,6 +328,8 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 	
 	LRESULT WindowWindows::WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
+		InputManager* input_manager = InputManager::Get();
+
 		switch (uMsg)
 		{
 		case WM_CLOSE:
@@ -280,7 +363,8 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 		case WM_SETCURSOR:
 		{
 			if (LOWORD(lParam) == HTCLIENT) {
-				SetCursor(p_InputManager->m_Cursor == HIDDEN ? NULL : LoadCursor(NULL, CursorToResource(p_InputManager->m_Cursor)));
+				// TODO: Handle cursor
+				//SetCursor(p_InputManager->m_Cursor == HIDDEN ? NULL : LoadCursor(NULL, CursorToResource(p_InputManager->m_Cursor)));
 				return TRUE;
 			}
 			else
@@ -289,24 +373,22 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 		case WM_MOUSEWHEEL:
 		case WM_MOUSEHWHEEL:
 		{
-			p_InputManager->onInputWheel(GET_WHEEL_DELTA_WPARAM(wParam) / (float)WHEEL_DELTA);
+			input_manager->onInputWheel(GET_WHEEL_DELTA_WPARAM(wParam) / (float)WHEEL_DELTA);
 			return TRUE;
 		}
 		case WM_KEYDOWN:
 		{
-			if (wParam < MAX_KEYS)
-				p_InputManager->onInputKey(Key(wParam), true);
+			input_manager->onInputKey(Key(wParam), true);
 			return TRUE;
 		}
 		case WM_KEYUP:
 		{
-			if (wParam < MAX_KEYS)
-				p_InputManager->onInputKey(Key(wParam), false);
+			input_manager->onInputKey(Key(wParam), false);
 			return TRUE;
 		}
 		case WM_MOUSEMOVE:
 		{
-			p_InputManager->onInputMouseMove(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+			input_manager->onInputMouseMove(GET_X_LPARAM(lParam) + p_Position.x, GET_Y_LPARAM(lParam) + p_Position.y);
 			return FALSE;
 		}
 		case WM_LBUTTONDOWN:
@@ -354,20 +436,21 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 			if (state) SetCapture(hWnd);
 			else ReleaseCapture();
 
-			p_InputManager->onInputMouseButton(button, state);
+			input_manager->onInputMouseButton(button, state);
 			return FALSE;
 		}
 		case WM_SIZE:
 		{
-			p_InputManager->onInputResized(LOWORD(lParam), HIWORD(lParam));
+			p_Size = Math::Vec2i(LOWORD(lParam), HIWORD(lParam));
 			return FALSE;
 		}
 		case WM_SETFOCUS:
 		case WM_KILLFOCUS:
 		{
 			bool focus = uMsg == WM_SETFOCUS;
-
-			p_InputManager->onInputFocus(focus);
+			//if (p_Focused != focus)
+			//	m_CursorMode = CursorMode::NORMAL;
+			p_Focused = focus;
 			return FALSE;
 		}
 		}

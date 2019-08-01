@@ -15,7 +15,11 @@ namespace OrbitEngine {	namespace Graphics {
 
 	void GLMesh::preDraw()
 	{
-		if (m_VAO == nullptr) { // We ensure that the VAO is generated in the render thread
+		if (m_VAO) {
+			delete m_VAO;
+			m_VAO = nullptr;
+		}
+		if (m_VAO == nullptr) { // We ensure that the VAO is generated in the same context
 			m_VAO = new GLVertexArrays(p_Topology);
 			m_VAO->push(p_VBO);
 		}

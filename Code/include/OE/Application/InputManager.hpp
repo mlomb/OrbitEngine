@@ -7,86 +7,50 @@
 
 #include "OE/Math/Vec2.hpp"
 
-#define MAX_KEYS 512
-#define MAX_CBUTTONS 5
+#define OE_MAX_KEYS 512
+#define OE_MAX_CBUTTONS 5
 
 namespace OrbitEngine { namespace Application {
-	class WindowImplType;
 
-	namespace priv {
-		class WindowImpl;
-#if OE_WINDOWS
-		class WindowWindows;
-#elif OE_ANDROID
-		class WindowAndroid;
-#elif OE_EMSCRIPTEN
-		class WindowEmscripten;
-#elif OE_UNIX
-		class WindowLinux;
-#endif
-	}
-	
 	class InputManager {
 	public:
-		InputManager(priv::WindowImpl* window);
-		~InputManager();
+		static InputManager* Get();
 
-		bool wasResized() const;
-		bool hasFocus() const;
+		bool cursorMoved() const;
 		bool isKeyDown(const Key key) const;
 		bool isKeyPressed(const Key key) const;
 		bool isButtonDown(const Button button) const;
 		bool isButtonClicked(const Button button) const;
 		float getWheelDelta() const;
 		Math::Vec2i getCursorPosition() const;
-		void setCursorPosition(int x, int y, bool relative = true);
-		void setCursor(const Cursor cursor);
-		void requestCursorMode(const CursorMode cursorMode);
 		Math::Vec2i getCursorDelta() const;
-		CursorMode getCursorMode() const;
-		priv::WindowImpl* getWindowImpl() const;
 
 		EventHandler<const KeyInputEvent> onKeyEvent;
 		EventHandler<const ButtonInputEvent> onButtonEvent;
 		EventHandler<const MouseMoveInputEvent> onMouseMoveEvent;
 		EventHandler<const MouseWheelInputEvent> onWheelEvent;
-		EventHandler<const WindowFocusInputEvent> onFocusEvent;
-		EventHandler<const WindowResizedInputEvent> onResizedEvent;
 
-		// Inject events, internal use
-		void onInputResized(int width, int height);
-		void onInputFocus(bool focus);
+		// -- INTERNAL USE --
+		// This is where platforms inject events
 		void onInputKey(Key key, bool down);
-		void onInputWheel(float direction);
 		void onInputMouseButton(Button button, bool down);
 		void onInputMouseMove(int x, int y, bool deltaOnly = false);
+		void onInputWheel(float direction);
+		void reset();
 	private:
-#if OE_WINDOWS
-		friend class priv::WindowWindows;
-#elif OE_ANDROID
-		friend class priv::WindowAndroid;
-#elif OE_EMSCRIPTEN
-		friend class priv::WindowEmscripten;
-#elif OE_UNIX
-		friend class priv::WindowLinux;
-#endif
-		friend class priv::WindowImpl;
+		static InputManager* s_Instance;
 
-		priv::WindowImpl* m_Window;
-
-		void update();
-
-		bool* m_Keys;
-		bool* m_KeysPressed;
-		bool* m_CursorButtons;
-		bool* m_CursorButtonsClicked;
-		bool m_Resized;
-		bool m_Focus;
-		Math::Vec2i m_CursorPos;
+		bool m_Keys[OE_MAX_KEYS];
+		bool m_KeysPressed[OE_MAX_KEYS];
+		bool m_CursorButtons[OE_MAX_CBUTTONS];
+		bool m_CursorButtonsClicked[OE_MAX_CBUTTONS];
+		bool m_CursorMoved;
 		Math::Vec2i m_CursorDelta;
+		Math::Vec2i m_CursorPos;
 		float m_WheelDelta;
-		CursorMode m_CursorMode = CursorMode::NORMAL;
-		Cursor m_Cursor = Cursor::DEFAULT;
+
+		InputManager();
+		~InputManager();
 	};
 } }
 

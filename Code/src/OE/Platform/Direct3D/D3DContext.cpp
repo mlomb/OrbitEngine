@@ -100,8 +100,8 @@ namespace OrbitEngine { namespace Application { namespace priv {
 		ZeroMemory(&scd, sizeof(scd));
 
 		scd.BufferCount = 1;
-		scd.BufferDesc.Width = window->getProperties().resolution.x;
-		scd.BufferDesc.Height = window->getProperties().resolution.y;
+		scd.BufferDesc.Width = window->getSize().x;
+		scd.BufferDesc.Height = window->getSize().y;
 		scd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 		scd.BufferDesc.RefreshRate.Numerator = 0;
 		scd.BufferDesc.RefreshRate.Denominator = 1;

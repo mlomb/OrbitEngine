@@ -4,6 +4,8 @@
 	#include "OE/Platform/Emscripten/Emscripten.hpp"
 #endif
 
+#include "OE/Application/InputManager.hpp"
+
 namespace OrbitEngine { namespace Application {
 	Looper::Looper(Context* context, Loopeable* loopeable)
 		: m_Context(context), m_Loopeable(loopeable)
@@ -49,10 +51,10 @@ namespace OrbitEngine { namespace Application {
 		emscripten_set_main_loop_arg(emscripten_frame, this, 0, false);
 #else
 		while (m_Running && (!m_Window || !m_Window->destroyRequested())) {
-			frame();
-
 			if (m_Window)
 				m_Window->processEvents();
+
+			frame();
 		}
 #endif
 	}
@@ -61,7 +63,7 @@ namespace OrbitEngine { namespace Application {
 	{
 		if (m_Context && m_Context->isReady()) {
 			if (m_Window)
-				m_Context->resizeContext(m_Window->getProperties().resolution);
+				m_Context->resizeContext(m_Window->getSize());
 
 			m_Context->makeCurrent();
 			m_Context->prepare();
@@ -78,6 +80,9 @@ namespace OrbitEngine { namespace Application {
 			m_Context->present();
 			m_Ticker->tick();
 		}
+
+		// this should be here?
+		InputManager::Get()->reset();
 
 		if (m_Initialized && !m_Running) { // move this
 			if (m_Loopeable)

@@ -3,18 +3,24 @@
 
 
 namespace OrbitEngine { namespace Application {
-	InputManager::InputManager(priv::WindowImpl* window) : m_Window(window) {
-		m_Keys = new bool[MAX_KEYS];
-		m_KeysPressed = new bool[MAX_KEYS];
-		m_CursorButtons = new bool[MAX_CBUTTONS];
-		m_CursorButtonsClicked = new bool[MAX_CBUTTONS];
-		m_WheelDelta = 0.0f;
 
-		for (int i = 0; i < MAX_KEYS; i++) {
+	InputManager* InputManager::s_Instance = NULL;
+
+	InputManager* InputManager::Get()
+	{
+		if (s_Instance == NULL)
+			s_Instance = new InputManager();
+		return s_Instance;
+	}
+
+	InputManager::InputManager()
+		: m_WheelDelta(0.0f)
+	{
+		for (int i = 0; i < OE_MAX_KEYS; i++) {
 			m_Keys[i] = false;
 			m_KeysPressed[i] = false;
 		}
-		for (int i = 0; i < MAX_CBUTTONS; i++) {
+		for (int i = 0; i < OE_MAX_CBUTTONS; i++) {
 			m_CursorButtons[i] = false;
 			m_CursorButtonsClicked[i] = false;
 		}
@@ -22,17 +28,14 @@ namespace OrbitEngine { namespace Application {
 
 	InputManager::~InputManager()
 	{
-		delete[] m_Keys;
-		delete[] m_KeysPressed;
-		delete[] m_CursorButtons;
-		delete[] m_CursorButtonsClicked;
+		//
 	}
 
-	void InputManager::update() {
+	void InputManager::reset() {
 		// TODO Fix this :/
 		//m_Resized = false;
 
-		if (hasFocus()) {
+		//if (m_Window->p_Focused) {
 			/*
 			if (m_CursorMode == CursorMode::GRABBED) {
 				Math::Vec2i center = m_Window->getProperties().resolution / 2;
@@ -43,41 +46,42 @@ namespace OrbitEngine { namespace Application {
 				}
 			}
 			*/
-		}
+		//}
 
 		//m_Cursor = Cursor::DEFAULT; // Back to default
+		m_CursorMoved = false;
 		m_CursorDelta = Math::Vec2i();
 		//m_CursorDelta = m_LastCursorPos - m_CursorPos;
 		//if (m_CursorMode != CursorMode::GRABBED || !hasFocus())
 		//	m_LastCursorPos = m_CursorPos;
 
-		for (int i = 0; i < MAX_KEYS; i++)
+		for (int i = 0; i < OE_MAX_KEYS; i++)
 			m_KeysPressed[i] = false;
-		for (int i = 0; i < MAX_CBUTTONS; i++)
+		for (int i = 0; i < OE_MAX_CBUTTONS; i++)
 			m_CursorButtonsClicked[i] = false;
 		m_WheelDelta = 0;
 	}
 
 	bool InputManager::isKeyDown(const Key key) const {
-		if (key >= MAX_KEYS)
+		if (key >= OE_MAX_KEYS)
 			return false;
 		return m_Keys[key];
 	}
 
 	bool InputManager::isButtonDown(const Button button) const {
-		if (button >= MAX_CBUTTONS)
+		if (button >= OE_MAX_CBUTTONS)
 			return false;
 		return m_CursorButtons[button];
 	}
 
 	bool InputManager::isKeyPressed(const Key key) const {
-		if (key >= MAX_KEYS)
+		if (key >= OE_MAX_KEYS)
 			return false;
 		return m_KeysPressed[key];
 	}
 
 	bool InputManager::isButtonClicked(const Button button) const {
-		if (button >= MAX_CBUTTONS)
+		if (button >= OE_MAX_CBUTTONS)
 			return false;
 		return m_CursorButtonsClicked[button];
 	}
@@ -91,43 +95,18 @@ namespace OrbitEngine { namespace Application {
 		return m_CursorPos;
 	}
 
-	void InputManager::setCursorPosition(int x, int y, bool relative)
-	{
-		//m_Window->setCursorPosition(x, y, relative);
-	}
-
 	Math::Vec2i InputManager::getCursorDelta() const {
 		return m_CursorDelta;
 	}
 
-	bool InputManager::wasResized() const {
-		return m_Resized;
-	}
-
-	bool InputManager::hasFocus() const {
-		return m_Focus;
-	}
-
-	CursorMode InputManager::getCursorMode() const {
-		return m_CursorMode;
-	}
-
-	priv::WindowImpl* InputManager::getWindowImpl() const {
-		return m_Window;
-	}
-
-	void InputManager::requestCursorMode(const CursorMode cursorMode) {
-		m_Window->requestCursorMode(cursorMode);
-	}
-
-	void InputManager::setCursor(const Cursor cursor)
+	bool InputManager::cursorMoved() const
 	{
-		m_Cursor = cursor;
+		return m_CursorMoved;
 	}
 
 	void InputManager::onInputKey(Key key, bool down)
 	{
-		if (key < 0 || key >= MAX_KEYS)
+		if (key < 0 || key >= OE_MAX_KEYS)
 			return;
 
 		if (down)
@@ -154,6 +133,7 @@ namespace OrbitEngine { namespace Application {
 		else {
 			delta = m_CursorPos;
 			m_CursorPos = Math::Vec2i(x, y);
+			m_CursorMoved = true;
 			delta -= m_CursorPos;
 		}
 
@@ -167,29 +147,5 @@ namespace OrbitEngine { namespace Application {
 		m_WheelDelta += direction;
 
 		onWheelEvent.FireEvent(MouseWheelInputEvent(direction, m_CursorPos));
-	}
-
-	void InputManager::onInputFocus(bool focus)
-	{
-		m_Focus = focus;
-
-		if (!focus) {
-			m_CursorMode = CursorMode::NORMAL;
-		}
-
-		onFocusEvent.FireEvent(WindowFocusInputEvent(m_Focus));
-	}
-
-	void InputManager::onInputResized(int width, int height)
-	{
-		unsigned int lastw, lasth;
-		lastw = m_Window->getProperties().resolution.x;
-		lasth = m_Window->getProperties().resolution.y;
-
-		m_Window->getProperties().resolution = Math::Vec2i(width, height);
-
-		m_Resized = true;
-
-		onResizedEvent.FireEvent(WindowResizedInputEvent(lastw, lasth, m_Window->getProperties().resolution.x, m_Window->getProperties().resolution.y));
 	}
 } }

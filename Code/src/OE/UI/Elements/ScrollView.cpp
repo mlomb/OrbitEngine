@@ -19,7 +19,7 @@ namespace OrbitEngine {	namespace UI {
 
 	void ScrollView::wheelDelta(const WheelEvent& wheelEvent)
 	{
-		bool shiftDown = getCanvas()->getWindow()->getInputManager()->isKeyDown(Application::Key::SHIFT);
+		bool shiftDown = Application::InputManager::Get()->isKeyDown(Application::Key::SHIFT);
 		m_ScrollPosition[shiftDown ? 0 : 1] += wheelEvent.direction * 7.0f;
 		invalidate();
 	}

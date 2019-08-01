@@ -13,13 +13,21 @@ namespace OrbitEngine {
 	namespace priv {
 	class WindowWindows : public WindowImpl {
 	public:
-		WindowWindows(WindowProperties windowProperties);
+		WindowWindows();
 		WindowWindows(HWND handle);
 		~WindowWindows();
 
-		void requestCursorMode(const CursorMode cursorMode) override;
-		void setTitle(const char* title) override;
 		void setCursorPosition(int x, int y, bool relative);
+
+		bool isMinimized() const override;
+		bool setDisplayMode(DisplayMode mode) override;
+		bool setTitle(const std::string& title) override;
+		bool setPosition(const Math::Vec2i& position) override;
+		bool setSize(const Math::Vec2i& size) override;
+		bool setVisibility(bool visible) override;
+		bool requestFocus() override;
+		bool setAlpha(float alpha) override;
+
 		void processEvents() override;
 
 		DisplayNativeHandle getDisplayNativeHandle() override;
@@ -35,6 +43,8 @@ namespace OrbitEngine {
 
 		HWND m_WindowHandle;
 		HDC m_DeviceContext;
+		DWORD m_dwExStyle = 0;
+		DWORD m_dwStyle = 0;
 		Math::Vec2i m_LastFreeCursorPosition;
 
 		LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);

@@ -6,11 +6,9 @@
 
 namespace OrbitEngine {	namespace Application { namespace priv {
 	
-	WindowImpl::WindowImpl(WindowProperties properties)
+	WindowImpl::WindowImpl()
+		: p_Visible(false), p_Focused(false)
 	{
-		p_Properties = properties;
-
-		p_InputManager = new InputManager(this);
 	}
 
 	WindowImpl::~WindowImpl(){
@@ -18,31 +16,54 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 			delete p_Context;
 	}
 	
-	bool WindowImpl::destroyRequested() {
+	bool WindowImpl::destroyRequested() const {
 		return m_DestroyRequested;
 	}
 
 	void WindowImpl::processEvents()
 	{
-		p_InputManager->update();
 	}
 	
 	void WindowImpl::requestDestroy() {
 		m_DestroyRequested = true;
 	}
 
-	void WindowImpl::requestCursorMode(const CursorMode cursorMode)
+	Math::Vec2i WindowImpl::getCursorPosition() const
 	{
-		p_InputManager->m_CursorMode = cursorMode;
+		Math::Vec2i absolute_position = InputManager::Get()->getCursorPosition();
+		return Math::Vec2i(
+			absolute_position.x - p_Position.x,
+			absolute_position.y - p_Position.y
+		);
 	}
 
-	WindowProperties& WindowImpl::getProperties()
+	DisplayMode WindowImpl::getDisplayMode() const
 	{
-		return p_Properties;
+		return p_DisplayMode;
 	}
 
-	InputManager* WindowImpl::getInputManager()
+	std::string WindowImpl::getTitle() const
 	{
-		return p_InputManager;
+		return p_Title;
+	}
+
+	Math::Vec2i WindowImpl::getPosition() const
+	{
+		return p_Position;
+	}
+
+	Math::Vec2i WindowImpl::getSize() const
+	{
+		return p_Size;
+	}
+
+	bool WindowImpl::isVisible() const
+	{
+		return p_Visible;
+	}
+
+	bool WindowImpl::isFocused() const
+	{
+		return p_Focused;
 	}
 } } }
