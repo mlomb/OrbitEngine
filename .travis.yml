@@ -94,6 +94,9 @@ matrix:
         - cmake -DCMAKE_TOOLCHAIN_FILE=$EMSCRIPTEN/cmake/Modules/Platform/Emscripten.cmake ..
         - make
     - env: CONFIG=Docs
+      branches:
+        only:
+          - master
       language: python
       python: 3.6
       addons:
