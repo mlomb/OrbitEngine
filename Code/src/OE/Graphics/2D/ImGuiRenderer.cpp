@@ -74,12 +74,13 @@ namespace OrbitEngine { namespace Graphics {
 		GET_PTRS;
 
 		Application::Context* last_ctx = Application::Context::GetCurrent();
+		bool same = context == last_ctx;
 
 		context->makeCurrent();
 		delete context;
 
 		// restore
-		if (context != last_ctx)
+		if (!same)
 			last_ctx->makeCurrent();
 
 		viewport->PlatformUserData = NULL;
