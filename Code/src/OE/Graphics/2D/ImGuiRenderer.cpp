@@ -226,6 +226,8 @@ namespace OrbitEngine { namespace Graphics {
 
 		// Generate font atlas (may change later on)
 		{
+			io.Fonts->AddFontFromFileTTF("Resources/Fonts/Roboto-Regular.ttf", 17.0f);
+
 			unsigned char* pixels;
 			int width, height;
 			io.Fonts->GetTexDataAsRGBA32(&pixels, &width, &height);
