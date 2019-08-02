@@ -1,3 +1,0 @@
-jinja2==2.10.1
-Pygments==2.4.2
-libgs==1.2.1
