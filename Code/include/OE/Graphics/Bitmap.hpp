@@ -110,6 +110,11 @@ namespace OrbitEngine { namespace Graphics {
 		*/
 		static Bitmap<T, N> Load(const std::string& path);
 
+		/**
+			@brief Generate a Bitmap from a Texture
+		*/
+		static Bitmap<T, N> FromTexture(Texture* texture);
+
 	protected:
 		T* m_Pixels;
 		unsigned int m_Width, m_Height;
@@ -379,6 +384,21 @@ namespace OrbitEngine { namespace Graphics {
 			delete data;
 		}
 		return Bitmap<T, N>();
+	}
+
+	template<typename T, unsigned int N> Bitmap<T, N> Bitmap<T, N>::FromTexture(Texture* texture) {
+		int bpp = Texture::BPPFromFormat(texture->getProperties().formatProperties.format);
+		if (bpp / 8 == N) {
+			// TODO: Check for type match
+			T* data = static_cast<T*>(texture->getData());
+			Bitmap<T, N> bmp(texture->getProperties().width, texture->getProperties().height, data);
+			delete data;
+			return bmp;
+		}
+		else {
+			OE_LOG_WARNING("Can't create Bitmap from texture: bpp mismatch");
+		}
+		return Bitmap<T, N>(); // invalid bitmap
 	}
 } }
 

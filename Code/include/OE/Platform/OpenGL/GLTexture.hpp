@@ -17,6 +17,7 @@ namespace OrbitEngine { namespace Graphics {
 		void bind(unsigned int slot) override;
 		void setData(void* data, unsigned int offset = 0) override;
 		void copy(Texture* source) override;
+		void* getData() override;
 
 		static void Unbind(const unsigned int slot);
 

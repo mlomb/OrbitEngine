@@ -140,6 +140,23 @@ namespace OrbitEngine { namespace Graphics {
 		Application::priv::D3DContext::GetCurrent()->getDeviceContext()->CopyResource(m_pResource, ((D3DTexture*)source)->getD3DResource());
 	}
 
+	void* D3DTexture::getData()
+	{
+		void* pointer = D3DMappedResource::mapPointer(MappedPointerMode::WRITE);
+
+		if (pointer == NULL) {
+			OE_LOG_WARNING("Mapping a pointer to the texture is not possible. Is the texture buffer mode DYNAMIC?");
+			return nullptr;
+		}
+
+		size_t size = m_Properties.width * m_Properties.height * BPPFromFormat(m_Properties.formatProperties.format);
+		void* pixels = malloc(size);
+		memcpy(pixels, pointer, size);
+
+		unmapPointer();
+		return pixels;
+	}
+
 	D3D11_FILTER D3DTexture::TextureFilterToD3D(TextureFilter filter)
 	{
 		switch (filter)

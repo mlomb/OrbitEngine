@@ -83,6 +83,7 @@ namespace OrbitEngine { namespace Graphics {
 		virtual void bind(unsigned int slot) = 0;
 		virtual void setData(void* data, unsigned int offset = 0) = 0;
 		virtual void copy(Texture* source) = 0;
+		virtual void* getData() = 0; // you must delete the pointer after using it
 
 		static void Unbind(const unsigned int slot);
 
