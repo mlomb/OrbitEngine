@@ -121,9 +121,20 @@ namespace OrbitEngine { namespace Graphics {
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
-		// ImGuiRenderer supports viewports in OpenGL
-		if(current_context->getAPI() == OPENGL)
+		if (
+#if OE_OPENGL_ANY
+			current_context->getAPI() == OPENGL ||
+#if OE_OPENGL_ES
+			current_context->getAPI() == OPENGL_ES ||
+#endif
+#endif
+#if OE_D3D
+			current_context->getAPI() == DIRECT3D
+#endif
+			) {
+			// ImGuiRenderer supports viewports
 			io.BackendFlags |= ImGuiBackendFlags_RendererHasViewports;
+		}
 #if OE_WINDOWS
 		// only the Windows platform supports viewports
 		io.BackendFlags |= ImGuiBackendFlags_PlatformHasViewports;
