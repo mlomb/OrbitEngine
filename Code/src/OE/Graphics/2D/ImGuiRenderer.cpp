@@ -104,6 +104,7 @@ namespace OrbitEngine { namespace Graphics {
 	void   ImGui_ImplOE_ShowWindow(ImGuiViewport* viewport)                 { GET_PTRS; window->setVisibility(true); }
 
 	ImGuiRenderer::ImGuiRenderer()
+		: m_Time(0)
 	{
 		Application::Context* current_context = Application::Context::GetCurrent();
 		m_ImGuiContext = ImGui::CreateContext();
@@ -283,6 +284,11 @@ namespace OrbitEngine { namespace Graphics {
 		ImGuiIO& io = ImGui::GetIO();
 		ImGuiPlatformIO& platform_io = ImGui::GetPlatformIO();
 
+		long long now = System::System::Get()->currentNano();
+		if (m_Time == 0) m_Time = now;
+		io.DeltaTime = (float)(now - m_Time) / (float)1e+9;
+		m_Time = now;
+
 		Application::Context* current_context = Application::Context::GetCurrent();
 		Application::Window* current_window = current_context->getWindow();
 		io.DisplaySize.x = current_window->getSize().x;
@@ -383,7 +389,7 @@ namespace OrbitEngine { namespace Graphics {
 		states->setBlending(BlendState::SRC_ALPHA);
 		states->setDepthTest(FunctionMode::DISABLED);
 		states->setStencil(FunctionMode::DISABLED);
-		states->setCullMode(CullMode::FRONT);
+		states->setCullMode(CullMode::NONE);
 		
 		m_Shader->bind();
 		m_UPVMatrix->bind(0, Graphics::ShaderType::VERTEX);

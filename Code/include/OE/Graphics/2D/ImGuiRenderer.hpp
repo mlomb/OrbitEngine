@@ -4,6 +4,7 @@
 #include "OE/Graphics/API/Mesh.hpp"
 #include "OE/Graphics/2D/Renderer2D.hpp"
 #include "imgui.h"
+#include "misc/cpp/imgui_stdlib.h"
 
 namespace OrbitEngine { namespace Graphics {
 
@@ -20,6 +21,7 @@ namespace OrbitEngine { namespace Graphics {
 	private:
 		ImGuiContext* m_ImGuiContext;
 
+		long long m_Time;
 		Mesh* m_Mesh;
 		Shader* m_Shader;
 	};
