@@ -9,10 +9,13 @@ namespace OrbitEngine {	namespace Graphics {
 	class D3DVertexBuffer : public D3DBuffer, public VertexBuffer {
 	public:
 		D3DVertexBuffer(const unsigned int size, const void* data);
+		~D3DVertexBuffer();
 
 		void bind() const override;
+		void buildInputLayout();
 
 	private:
+		ID3D11InputLayout* m_InputLayout;
 
 	public:
 		// What

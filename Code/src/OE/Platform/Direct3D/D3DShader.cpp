@@ -6,9 +6,7 @@
 
 namespace OrbitEngine {	namespace Graphics {
 	D3DShader::D3DShader()
-		: m_InputLayout(0),
-		m_VertexShader(0),
-		m_PixelShader(0)
+		: m_VertexShader(0), m_PixelShader(0)
 	{
 	}
 
@@ -16,7 +14,6 @@ namespace OrbitEngine {	namespace Graphics {
 	{
 		OE_D3D_RELEASE(m_VertexShader);
 		OE_D3D_RELEASE(m_PixelShader);
-		OE_D3D_RELEASE(m_InputLayout);
 	}
 
 	void D3DShader::attachFromBinary(ShaderType type, const std::vector<char>& binary)
@@ -38,8 +35,6 @@ namespace OrbitEngine {	namespace Graphics {
 		/* Reflect shader */
 		D3DShaderReflection* d3dReflection = static_cast<D3DShaderReflection*>(p_Reflection);
 		d3dReflection->reflect(binary, type);
-
-		m_InputLayout = d3dReflection->getVertexInputLayout();
 	}
 
 	void D3DShader::attachFromSource(ShaderType type, const std::string& source)
@@ -56,7 +51,7 @@ namespace OrbitEngine {	namespace Graphics {
 			OE_D3D_RELEASE(errorBlob);
 			return;
 		}
-
+		
 		const char* ptr = (const char*)byteCode->GetBufferPointer();
 		std::vector<char> binary(ptr, ptr + byteCode->GetBufferSize());
 		OE_D3D_RELEASE(byteCode);
@@ -73,8 +68,6 @@ namespace OrbitEngine {	namespace Graphics {
 
 	void D3DShader::bind() const
 	{
-		if (m_InputLayout)
-			Application::priv::D3DContext::GetCurrent()->getDeviceContext()->IASetInputLayout(m_InputLayout);
 		Application::priv::D3DContext::GetCurrent()->getDeviceContext()->VSSetShader(m_VertexShader ? m_VertexShader : 0, nullptr, 0);
 		Application::priv::D3DContext::GetCurrent()->getDeviceContext()->PSSetShader(m_PixelShader ? m_PixelShader : 0, nullptr, 0);
 	}

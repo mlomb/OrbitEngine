@@ -29,6 +29,8 @@ namespace OrbitEngine {	namespace Graphics {
 
 		reflectBuffers(shaderDesc, pReflector, type);
 
+		/*
+		/// DEPRECATED: InputLayout is now generated in D3DVertexBuffer
 		if (type == ShaderType::VERTEX) {
 			// We need the input layout only from the Vertex Shader
 			// TODO: Use the actual vertex layout if provided
@@ -37,6 +39,7 @@ namespace OrbitEngine {	namespace Graphics {
 			if (FAILED(hr))
 				OE_LOG_WARNING("Can't create a InputLayout from reflected shader!");
 		}
+		*/
 
 		OE_D3D_RELEASE(pReflector);
 	}
@@ -121,10 +124,5 @@ namespace OrbitEngine {	namespace Graphics {
 			shaderbuffer.shaderType = type;
 			addBuffer(shaderbuffer);
 		}
-	}
-
-	ID3D11InputLayout* D3DShaderReflection::getVertexInputLayout()
-	{
-		return  m_VertexInputLayout;
 	}
 } }

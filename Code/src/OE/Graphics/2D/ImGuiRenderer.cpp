@@ -120,8 +120,9 @@ namespace OrbitEngine { namespace Graphics {
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
-		// ImGuiRenderer supports viewports
-		io.BackendFlags |= ImGuiBackendFlags_RendererHasViewports;
+		// ImGuiRenderer supports viewports in OpenGL
+		if(current_context->getAPI() == OPENGL)
+			io.BackendFlags |= ImGuiBackendFlags_RendererHasViewports;
 #if OE_WINDOWS
 		// only the Windows platform supports viewports
 		io.BackendFlags |= ImGuiBackendFlags_PlatformHasViewports;
@@ -232,27 +233,6 @@ namespace OrbitEngine { namespace Graphics {
 		m_Mesh = Mesh::Create(layout, true);
 
 		m_Shader = ShaderLoader::LoadRawShader("Resources/Shaders/ImGui.oeshader");
-
-		/*
-#if OE_OPENGL_ANY
-		if (Application::Context::GetCurrentAPI() == OPENGL
-#if OE_OPENGL_ES
-			|| Application::Context::GetCurrentAPI() == OPENGL_ES
-#endif
-			) {
-			Graphics::GLShader* glShader = (Graphics::GLShader*)shader;
-			glShader->bind();
-
-			GLint texIDs[1];
-			for (int i = 0; i < 1; i++) {
-				texIDs[i] = i;
-			}
-			glShader->setUniform1iv("texture0", texIDs, (sizeof(texIDs) / sizeof(*texIDs)));
-
-			glShader->unbind();
-		}
-#endif
-		*/
 	}
 
 	ImGuiRenderer::~ImGuiRenderer()
@@ -417,7 +397,7 @@ namespace OrbitEngine { namespace Graphics {
 
 						if (pcmd->TextureId)
 							static_cast<Texture*>(pcmd->TextureId)->bind(0);
-						m_Mesh->drawIndexed((GLsizei)pcmd->ElemCount, (intptr_t)(pcmd->IdxOffset * sizeof(ImDrawIdx)));
+						m_Mesh->drawIndexed(pcmd->ElemCount, pcmd->IdxOffset);
 					}
 				}
 				else {

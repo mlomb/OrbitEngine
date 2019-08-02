@@ -55,6 +55,7 @@ namespace OrbitEngine {	namespace Graphics {
 
 	void D3DStates::setScissor(Math::Scissor* scissor)
 	{
+		scissor = 0;
 		D3D11_RECT rects[1];
 		if (scissor) {
 			rects[0].left = (LONG)scissor->rect.x;

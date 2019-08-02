@@ -15,13 +15,9 @@ namespace OrbitEngine {	namespace Graphics {
 
 		void reflect(const std::vector<char>& binary, ShaderType type);
 
-		ID3D11InputLayout* getVertexInputLayout();
-
 	private:
 		std::vector<D3D11_INPUT_ELEMENT_DESC> reflectInputLayout(D3D11_SHADER_DESC& shaderDesc, ID3D11ShaderReflection* reflector);
 		void reflectBuffers(D3D11_SHADER_DESC& shaderDesc, ID3D11ShaderReflection* reflector, ShaderType type);
-
-		ID3D11InputLayout* m_VertexInputLayout;
 	};
 } }
 

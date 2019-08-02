@@ -23,7 +23,7 @@ namespace OrbitEngine {	namespace Graphics {
 					memcpy(newData, data, size);
 				}
 				setData(newSize, newData);
-				//OE_LOG_WARNING("Constant buffers must size in multiples of 16 bytes.");
+				OE_LOG_WARNING("Constant buffers must size in multiples of 16 bytes.");
 				return;
 			}
 		}

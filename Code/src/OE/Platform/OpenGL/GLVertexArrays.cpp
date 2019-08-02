@@ -22,7 +22,7 @@ namespace OrbitEngine { namespace Graphics {
 
 	void GLVertexArrays::drawElements(const unsigned int count, const unsigned int offset) const
 	{
-		OE_CHECK_GL(glDrawElements(TopologyToGL(m_Topology), count, GL_UNSIGNED_SHORT, reinterpret_cast<void*>(offset)));
+		OE_CHECK_GL(glDrawElements(TopologyToGL(m_Topology), count, GL_UNSIGNED_SHORT, reinterpret_cast<void*>(offset * sizeof(unsigned short))));
 	}
 
 	void GLVertexArrays::drawArrays(const unsigned int count, const unsigned int offset) const

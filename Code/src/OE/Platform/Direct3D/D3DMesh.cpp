@@ -24,7 +24,7 @@ namespace OrbitEngine { namespace Graphics {
 	{
 		preDraw();
 		p_IBO->bind();
-		Application::priv::D3DContext::GetCurrent()->getDeviceContext()->DrawIndexed(count, 0, offset);
+		Application::priv::D3DContext::GetCurrent()->getDeviceContext()->DrawIndexed(count, offset, 0);
 	}
 
 	D3D_PRIMITIVE_TOPOLOGY D3DMesh::TopologyToD3D(Topology topology)

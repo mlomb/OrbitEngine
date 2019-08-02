@@ -40,8 +40,15 @@ namespace OrbitEngine {	namespace Graphics {
 			OE_ASSERT(false);
 			break;
 		}
-		if (vertexBuffer != 0)
+		if (vertexBuffer != 0) {
 			vertexBuffer->setLayout(layout);
+
+#ifdef OE_D3D
+			if (Application::Context::GetCurrentAPI() == DIRECT3D) {
+				static_cast<D3DVertexBuffer*>(vertexBuffer)->buildInputLayout();
+			}
+#endif
+		}
 
 		return vertexBuffer;
 	}
