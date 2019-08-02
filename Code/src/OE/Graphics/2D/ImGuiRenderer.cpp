@@ -9,6 +9,7 @@
 #include "OE/Application/Window.hpp"
 #include "OE/Application/InputManager.hpp"
 #include "OE/System/System.hpp"
+#include "OE/System/IOStream.hpp"
 #include "OE/Graphics/API/States.hpp"
 #include "OE/Graphics/Bitmap.hpp"
 #include "OE/Math/Scissor.hpp"
@@ -227,7 +228,15 @@ namespace OrbitEngine { namespace Graphics {
 
 		// Generate font atlas (may change later on)
 		{
-			io.Fonts->AddFontFromFileTTF("Resources/Fonts/Roboto-Regular.ttf", 17.0f);
+			System::IOStream* stream = new System::IOStream("Resources/Fonts/Roboto-Regular.ttf", System::AccessMode::READ);
+
+			size_t size = stream->getFilesize();
+			void* data = malloc(size);
+			stream->read(data, sizeof(char), size);
+
+			delete stream;
+			// ! ImGui will take ownership of the data
+			io.Fonts->AddFontFromMemoryTTF(data, size, 17.0f);
 
 			unsigned char* pixels;
 			int width, height;
