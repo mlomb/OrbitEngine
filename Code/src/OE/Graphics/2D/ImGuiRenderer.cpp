@@ -122,14 +122,15 @@ namespace OrbitEngine { namespace Graphics {
 		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
 		if (
+			false
 #if OE_OPENGL_ANY
-			current_context->getAPI() == OPENGL ||
+			|| current_context->getAPI() == OPENGL
 #if OE_OPENGL_ES
-			current_context->getAPI() == OPENGL_ES ||
+			|| current_context->getAPI() == OPENGL_ES
 #endif
 #endif
 #if OE_D3D
-			current_context->getAPI() == DIRECT3D
+			|| current_context->getAPI() == DIRECT3D
 #endif
 			) {
 			// ImGuiRenderer supports viewports
