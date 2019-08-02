@@ -97,21 +97,23 @@ matrix:
       language: python
       python: 3.6
       addons:
-      apt:
-        sources:
-          - ubuntu-toolchain-r-test
-          - llvm-toolchain-trusty
-          - mono-nightly
-        packages:
-          - doxygen
-          - texlive-base
-          - texlive-latex-extra
-          - texlive-fonts-extra
-          - texlive-fonts-recommended
+        apt:
+          sources:
+            - ubuntu-toolchain-r-test
+            - llvm-toolchain-trusty
+            - mono-nightly
+          packages:
+            - doxygen
+            - texlive-base
+            - texlive-latex-extra
+            - texlive-fonts-extra
+            - texlive-fonts-recommended
+      before_install:
       install:
         - pip3 install jinja2 Pygments
         - cd $HOME
         - git clone git://github.com/mosra/m.css
+      before_script:
       script:
         - cd $HOME/m.css/documentation
         - ./doxygen.py $TRAVIS_BUILD_DIR/Docs/Doxyfile
