@@ -14,6 +14,7 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 		emscripten_set_focus_callback(NULL, this, false, &WindowEmscripten::EMS_Callback_Focus);
 		emscripten_set_blur_callback(NULL, this, false, &WindowEmscripten::EMS_Callback_Focus);
 
+		emscripten_set_keypress_callback(NULL, this, false, &WindowEmscripten::EMS_Callback_KeyPress);
 		emscripten_set_keydown_callback(NULL, this, false, &WindowEmscripten::EMS_Callback_Key);
 		emscripten_set_keyup_callback(NULL, this, false, &WindowEmscripten::EMS_Callback_Key);
 		emscripten_set_wheel_callback(NULL, this, false, &WindowEmscripten::EMS_Callback_Wheel);
@@ -168,6 +169,11 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 							key == Key::TAB;
 			return isNavKey;
 		}
+	}
+
+	EM_BOOL OrbitEngine::Application::priv::WindowEmscripten::EMS_Callback_KeyPress(int eventType, const EmscriptenKeyboardEvent* keyEvent, void* userData)
+	{
+		InputManager::Get()->onInputChar((unsigned int)keyEvent->charCode);
 	}
 
 	EM_BOOL WindowEmscripten::EMS_Callback_Wheel(int eventType, const EmscriptenWheelEvent *wheelEvent, void *userData) {

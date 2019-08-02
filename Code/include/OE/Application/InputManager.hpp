@@ -24,6 +24,7 @@ namespace OrbitEngine { namespace Application {
 		float getWheelDelta() const;
 		Math::Vec2i getCursorPosition() const;
 		Math::Vec2i getCursorDelta() const;
+		std::vector<unsigned int> getCharQueue();
 
 		EventHandler<const KeyInputEvent> onKeyEvent;
 		EventHandler<const ButtonInputEvent> onButtonEvent;
@@ -36,6 +37,7 @@ namespace OrbitEngine { namespace Application {
 		void onInputMouseButton(Button button, bool down);
 		void onInputMouseMove(int x, int y, bool deltaOnly = false);
 		void onInputWheel(float direction);
+		void onInputChar(unsigned int c);
 		void reset();
 	private:
 		friend class Misc::Singleton<InputManager>;
@@ -48,6 +50,7 @@ namespace OrbitEngine { namespace Application {
 		Math::Vec2i m_CursorDelta;
 		Math::Vec2i m_CursorPos;
 		float m_WheelDelta;
+		std::vector<unsigned int> m_CharQueue;
 
 		InputManager();
 		~InputManager();

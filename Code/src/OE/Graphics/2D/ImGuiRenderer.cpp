@@ -347,14 +347,12 @@ namespace OrbitEngine { namespace Graphics {
 		for (int i = 0; i < std::min(OE_MAX_KEYS, 512); i++) {
 			Application::Key k = static_cast<Application::Key>(i);
 			io.KeysDown[i] = input_manager->isKeyDown(k);
-
-			// TODO: Replace this
-			if (input_manager->isKeyPressed(k))
-				io.AddInputCharacter(k);
 		}
-		io.KeyCtrl= input_manager->isKeyDown(Application::Key::CONTROL);
-		io.KeyAlt = input_manager->isKeyDown(Application::Key::ALT);
-		io.KeyShift= input_manager->isKeyDown(Application::Key::SHIFT);
+		for(unsigned int c : input_manager->getCharQueue())
+			io.AddInputCharacter(c);
+		io.KeyCtrl  = input_manager->isKeyDown(Application::Key::CONTROL);
+		io.KeyAlt   = input_manager->isKeyDown(Application::Key::ALT);
+		io.KeyShift = input_manager->isKeyDown(Application::Key::SHIFT);
 		io.KeySuper = input_manager->isKeyDown(Application::Key::LWIN); // TODO: test in other platforms
 
 		/// start frame

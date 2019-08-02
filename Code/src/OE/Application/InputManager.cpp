@@ -51,6 +51,8 @@ namespace OrbitEngine { namespace Application {
 		for (int i = 0; i < OE_MAX_CBUTTONS; i++)
 			m_CursorButtonsClicked[i] = false;
 		m_WheelDelta = 0;
+
+		m_CharQueue.clear();
 	}
 
 	bool InputManager::isKeyDown(const Key key) const {
@@ -88,6 +90,11 @@ namespace OrbitEngine { namespace Application {
 
 	Math::Vec2i InputManager::getCursorDelta() const {
 		return m_CursorDelta;
+	}
+
+	std::vector<unsigned int> InputManager::getCharQueue()
+	{
+		return m_CharQueue;
 	}
 
 	bool InputManager::cursorMoved() const
@@ -138,5 +145,11 @@ namespace OrbitEngine { namespace Application {
 		m_WheelDelta += direction;
 
 		onWheelEvent.FireEvent(MouseWheelInputEvent(direction, m_CursorPos));
+	}
+
+	void InputManager::onInputChar(unsigned int c)
+	{
+		if (c > 0 && c < 0x10000)
+			m_CharQueue.push_back(c);
 	}
 } }

@@ -41,7 +41,8 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 		static EM_BOOL EMS_Callback_ResizeCanvas(int eventType, const EmscriptenUiEvent *uiEvent, void *userData);
 		static EM_BOOL EMS_Callback_Focus(int eventType, const EmscriptenFocusEvent *focusEvent, void *userData);
 
-		static EM_BOOL EMS_Callback_Key(int eventType, const EmscriptenKeyboardEvent *keyEvent, void *userData);
+		static EM_BOOL EMS_Callback_Key(int eventType, const EmscriptenKeyboardEvent* keyEvent, void* userData);
+		static EM_BOOL EMS_Callback_KeyPress(int eventType, const EmscriptenKeyboardEvent* keyEvent, void* userData);
 		static EM_BOOL EMS_Callback_Wheel(int eventType, const EmscriptenWheelEvent *wheelEvent, void *userData);
 		static EM_BOOL EMS_Callback_MouseMove(int eventType, const EmscriptenMouseEvent *mouseEvent, void *userData);
 		static EM_BOOL EMS_Callback_MouseButton(int eventType, const EmscriptenMouseEvent *mouseEvent, void *userData);

@@ -389,6 +389,11 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 			input_manager->onInputKey(Key(wParam), false);
 			return TRUE;
 		}
+		case WM_CHAR:
+		{
+			input_manager->onInputChar((unsigned int)wParam);
+			return TRUE;
+		}
 		case WM_MOUSEMOVE:
 		{
 			input_manager->onInputMouseMove(GET_X_LPARAM(lParam) + p_Position.x, GET_Y_LPARAM(lParam) + p_Position.y);
