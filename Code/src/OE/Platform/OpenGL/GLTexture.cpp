@@ -2,6 +2,9 @@
 
 #include "OE/Math/Math.hpp"
 
+#include "OE/Graphics/API/FrameBuffer.hpp"
+#include "OE/Application/Context.hpp"
+
 namespace OrbitEngine { namespace Graphics {
 	GLTexture::GLTexture(TextureProperties properties, std::vector<void*> data)
 		: Texture(properties)
@@ -101,7 +104,31 @@ namespace OrbitEngine { namespace Graphics {
 		bind(0);
 
 		void* pixels = malloc(m_Properties.width * m_Properties.height * BPPFromFormat(m_Properties.formatProperties.format));
-		glGetTexImage(m_Target, 0, m_Format, m_DataType, pixels);
+
+#if OE_OPENGL
+		if (Application::Context::GetCurrentAPI() == OPENGL) {
+			glGetTexImage(m_Target, 0, m_Format, m_DataType, pixels);
+		}
+		else {
+#endif
+#if OE_OPENGL_ES
+			// glGetTexImage is not available in OpenGL ES
+			// slow workaround
+			GLuint fbo;
+			glGenFramebuffers(1, &fbo);
+			glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_ID, 0);
+
+			glReadPixels(0, 0, m_Properties.width, m_Properties.height, m_Format, m_DataType, pixels);
+
+			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			glDeleteFramebuffers(1, &fbo);
+			FrameBuffer::Prepare();
+#endif
+#if OE_OPENGL
+		}
+#endif
+
 		return pixels;
 	}
 
