@@ -34,9 +34,9 @@ float triangleGrid(float2 p){
     p -= s - (s.x + s.y)*.211324865;
     float i = p.x < p.y ? 1. : 0.;
     float2 ioffs = float2(1. - i, i);
-    float2 ip0 = float2(0.),
+    float2 ip0 = float2(0.0, 0.0),
            ip1 = ioffs - .2113248654,
-           ip2 = float2(.577350269);
+           ip2 = float2(.577350269, .577350269);
 
     return min(min(
         distLine(p - ip0, p - ip1), 
