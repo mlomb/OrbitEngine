@@ -117,3 +117,11 @@ matrix:
       script:
         - cd $HOME/m.css/documentation
         - ./doxygen.py $TRAVIS_BUILD_DIR/Docs/Doxyfile
+        # copy images directly to the output
+        - cp -a $TRAVIS_BUILD_DIR/Docs/img/. $TRAVIS_BUILD_DIR/Docs/output/html/
+      before_deploy:
+        - npm install netlify-cli -g
+      deploy:
+        provider: script
+        script: netlify deploy -s $NETLIFY_SITE_ID -t $NETLIFY_ACCESS_TOKEN -p $TRAVIS_BUILD_DIR/Docs/output/html/
+        skip_cleanup: true
