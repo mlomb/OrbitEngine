@@ -42,11 +42,13 @@ add_library(imgui
 	"Dependencies/imgui/imconfig.h"
 	"Dependencies/imgui/imgui.h"
 	"Dependencies/imgui/imgui_internal.h"
+	"Dependencies/imgui/misc/cpp/imgui_stdlib.h"
 	
 	"Dependencies/imgui/imgui.cpp"
 	"Dependencies/imgui/imgui_demo.cpp"
 	"Dependencies/imgui/imgui_draw.cpp"
 	"Dependencies/imgui/imgui_widgets.cpp"
+	"Dependencies/imgui/misc/cpp/imgui_stdlib.cpp"
 )
 target_include_directories(imgui PUBLIC "Dependencies/imgui")
 
