@@ -9,93 +9,44 @@
 namespace OrbitEngine { namespace Application { namespace priv {
 
 	D3DContext::D3DContext(WindowWindows* window, D3DContext* sharedContext)
-		: ContextImpl(window)
+		: ContextImpl(window), m_Factory(NULL), m_DXDevice(NULL), m_DXDeviceContext(NULL), m_DXSwapChain(NULL)
 	{
 		HRESULT hr;
 
-		IDXGIFactory* factory;
-		IDXGIAdapter* adapter;
-		IDXGIOutput* adapterOutput;
-		unsigned int numModes, numerator = 0, denominator = 0;
-		DXGI_MODE_DESC* displayModeList;
-		DXGI_ADAPTER_DESC adapterDesc;
+		if (sharedContext == NULL) {
+			m_IsShared = false;
 
-		hr = CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)&factory);
-		if (FAILED(hr)) {
-			OE_LOG_FATAL("Can't create DXGIFactory!");
-			return;
-		}
+			// Create a new DXGIFactory
+			hr = CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)&m_Factory);
+			if (FAILED(hr)) {
+				OE_LOG_FATAL("Can't create DXGIFactory!");
+				return;
+			}
 
-		hr = factory->EnumAdapters(0, &adapter);
-		if (FAILED(hr)) {
-			OE_LOG_FATAL("Can't EnumAdapters!");
-			return;
-		}
+			UINT flags = 0;
+#ifdef OE_DEBUG
+			//flags |= D3D11_CREATE_DEVICE_DEBUG;
+#endif
 
-		hr = adapter->EnumOutputs(0, &adapterOutput);
-		if (FAILED(hr)) {
-			OE_LOG_FATAL("Can't EnumOutputs!");
-			return;
-		}
-
-		hr = adapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &numModes, 0);
-		if (FAILED(hr)) {
-			OE_LOG_FATAL("Can't retrive the number of display modes!");
-			return;
-		}
-
-		displayModeList = new DXGI_MODE_DESC[numModes];
-		hr = adapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &numModes, displayModeList);
-		if (FAILED(hr)) {
-			OE_LOG_FATAL("Can't retrive the display mode list!");
-			return;
-		}
-
-		/*
-		for (unsigned int i = 0; i < numModes; ++i) {
-			if (displayModeList[i].Width == m_View->getWidth() && displayModeList[i].Height == m_View->getHeight()) {
-				numerator = displayModeList[i].RefreshRate.Numerator;
-				denominator = displayModeList[i].RefreshRate.Denominator;
+			// Create a new Device
+			hr = D3D11CreateDevice(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, flags, nullptr, 0, D3D11_SDK_VERSION, &m_DXDevice, NULL, &m_DXDeviceContext);
+			if (FAILED(hr)) {
+				OE_LOG_FATAL("Can't create D3D device!");
 			}
 		}
-		*/
-
-		//if (numerator == 0 && denominator == 0)
-		//	OE_LOG_WARNING("Can't find a situable display mode!");
-
-		hr = adapter->GetDesc(&adapterDesc);
-		if (FAILED(hr)) {
-			OE_LOG_FATAL("Can't retrive the description of the adapter!");
-			return;
+		else {
+			// copy factory and device from the other context
+			m_IsShared = true;
+			m_Factory = sharedContext->m_Factory;
+			m_DXDevice = sharedContext->m_DXDevice;
+			m_DXDeviceContext = sharedContext->m_DXDeviceContext;
 		}
 
-		/*
-		unsigned int videoCardMemory = adapterDesc.DedicatedVideoMemory / 1024 / 1024;
-		std::wstring description = std::wstring(adapterDesc.Description);
-		std::string videoCardDescription = std::string(description.begin(), description.end());
-		
-		OE_LOG_INFO("Direct3D 11");
-		OE_LOG_INFO("GPU " + videoCardDescription);
-		OE_LOG_INFO("GPU Memory " + std::to_string(videoCardMemory) + "MB");
-		*/
-		
-		delete[] displayModeList;
-		displayModeList = 0;
-
-		OE_D3D_RELEASE(adapterOutput);
-		OE_D3D_RELEASE(adapter);
-		OE_D3D_RELEASE(factory);
-
 		makeCurrent();
-		initializeDeviceAndSwapChain(window);
-		resizeContext(Math::Vec2i(100, 100));
 
-		contextInitialized();
-	}
-
-	void D3DContext::initializeDeviceAndSwapChain(WindowWindows* window)
-	{
-		HRESULT hr;
+		//////////////////////////
+		// Initialize SwapChain //
+		//////////////////////////
 		DXGI_SWAP_CHAIN_DESC scd;
 		ZeroMemory(&scd, sizeof(scd));
 
@@ -124,14 +75,79 @@ namespace OrbitEngine { namespace Application { namespace priv {
 		}
 		*/
 
-		UINT flags = 0;
-#ifdef OE_DEBUG
-		//flags |= D3D11_CREATE_DEVICE_DEBUG;
-#endif
-
-		hr = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, flags, nullptr, 0, D3D11_SDK_VERSION, &scd, &m_DXSwapChain, &m_DXDevice, NULL, &m_DXDeviceContext);
+		hr = m_Factory->CreateSwapChain(m_DXDevice, &scd, &m_DXSwapChain);
 		if (FAILED(hr))
-			OE_LOG_FATAL("Can't create device and swap chain.");
+			OE_LOG_FATAL("Can't create SwapChain.");
+
+		resizeContext(Math::Vec2i(100, 100));
+
+		contextInitialized();
+
+		return;
+
+		/*
+		IDXGIAdapter* adapter;
+		IDXGIOutput* adapterOutput;
+		DXGI_ADAPTER_DESC adapterDesc;
+
+		unsigned int numModes, numerator = 0, denominator = 0;
+		DXGI_MODE_DESC* displayModeList;
+
+		hr = factory->EnumAdapters(0, &adapter);
+		if (FAILED(hr)) {
+			OE_LOG_FATAL("Can't EnumAdapters!");
+			return;
+		}
+
+		hr = adapter->EnumOutputs(0, &adapterOutput);
+		if (FAILED(hr)) {
+			OE_LOG_FATAL("Can't EnumOutputs!");
+			return;
+		}
+
+		hr = adapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &numModes, 0);
+		if (FAILED(hr)) {
+			OE_LOG_FATAL("Can't retrive the number of display modes!");
+			return;
+		}
+
+		displayModeList = new DXGI_MODE_DESC[numModes];
+		hr = adapterOutput->GetDisplayModeList(DXGI_FORMAT_R8G8B8A8_UNORM, DXGI_ENUM_MODES_INTERLACED, &numModes, displayModeList);
+		if (FAILED(hr)) {
+			OE_LOG_FATAL("Can't retrive the display mode list!");
+			return;
+		}
+
+		for (unsigned int i = 0; i < numModes; ++i) {
+			if (displayModeList[i].Width == m_View->getWidth() && displayModeList[i].Height == m_View->getHeight()) {
+				numerator = displayModeList[i].RefreshRate.Numerator;
+				denominator = displayModeList[i].RefreshRate.Denominator;
+			}
+		}
+
+		delete[] displayModeList;
+		displayModeList = 0;
+
+		//if (numerator == 0 && denominator == 0)
+		//	OE_LOG_WARNING("Can't find a situable display mode!");
+
+		hr = adapter->GetDesc(&adapterDesc);
+		if (FAILED(hr)) {
+			OE_LOG_FATAL("Can't retrive the description of the adapter!");
+			return;
+		}
+
+		unsigned int videoCardMemory = adapterDesc.DedicatedVideoMemory / 1024 / 1024;
+		std::wstring description = std::wstring(adapterDesc.Description);
+		std::string videoCardDescription = std::string(description.begin(), description.end());
+		
+		OE_LOG_INFO("Direct3D 11");
+		OE_LOG_INFO("GPU " + videoCardDescription);
+		OE_LOG_INFO("GPU Memory " + std::to_string(videoCardMemory) + "MB");
+
+		OE_D3D_RELEASE(adapterOutput);
+		OE_D3D_RELEASE(adapter);
+		*/
 	}
 
 	void D3DContext::initializeDefaultFramebuffer()
@@ -165,51 +181,6 @@ namespace OrbitEngine { namespace Application { namespace priv {
 		p_DefaultFramebuffer->setViewport();
 	}
 
-	/*
-	void D3DContext::initializeRenderTargetView()
-	{
-		m_DXDeviceContext->OMSetRenderTargets(0, 0, 0);
-		OE_D3D_RELEASE(m_DXRenderTargetView);
-		delete m_DepthStencil;
-
-		HRESULT hr;
-		ID3D11Texture2D* backBuffer;
-
-		hr = m_DXSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&backBuffer);
-		if (FAILED(hr)) {
-			OE_LOG_FATAL("Can't get the pointer to the backbuffer!");
-			return;
-		}
-		hr = m_DXDevice->CreateRenderTargetView(backBuffer, NULL, &m_DXRenderTargetView);
-		if (FAILED(hr)) {
-			OE_LOG_FATAL("Can't create the render target view!");
-			return;
-		}
-
-		Graphics::TextureProperties properties;
-		properties.textureBufferMode = Graphics::BufferMode::DEFAULT;
-		properties.formatProperties.format = Graphics::TextureFormat::DEPTH;
-		properties.formatProperties.width = p_Size.x;
-		properties.formatProperties.height = p_Size.y;
-		properties.dimension = Graphics::TEXTURE2D;
-		m_DepthStencil = new Graphics::D3DDepthTexture(properties);
-
-		OE_D3D_RELEASE(backBuffer);
-	}
-	*/
-
-	/*
-	void D3DContext::setDefaultBackbuffer()
-	{
-		if (!m_DXRenderTargetView || !m_DepthStencil) {
-			resizeContext(p_Size);
-		}
-
-		m_DXDeviceContext->OMSetRenderTargets(1, &m_DXRenderTargetView, m_DepthStencil->getDSV());
-		setViewport();
-	}
-	*/
-
 	void D3DContext::resizeContext(Math::Vec2i size)
 	{
 		if (p_Size == size)
@@ -242,11 +213,14 @@ namespace OrbitEngine { namespace Application { namespace priv {
 		}
 		m_DXDeviceContext->OMSetRenderTargets(0, 0, 0);
 		OE_D3D_RELEASE(m_Rasterizer);
-		OE_D3D_RELEASE(m_DXDevice);
-		OE_D3D_RELEASE(m_DXDeviceContext);
 		if (p_DefaultFramebuffer) {
 			delete p_DefaultFramebuffer;
 			p_DefaultFramebuffer = 0;
+		}
+		if (!m_IsShared) {
+			OE_D3D_RELEASE(m_DXDevice);
+			OE_D3D_RELEASE(m_DXDeviceContext);
+			OE_D3D_RELEASE(m_Factory);
 		}
 	}
 

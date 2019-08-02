@@ -28,12 +28,14 @@ namespace OrbitEngine { namespace Application { namespace priv {
 	protected:
 
 	private:
-		void initializeDeviceAndSwapChain(WindowWindows* window);
 		void initializeDefaultFramebuffer();
 
-		IDXGISwapChain* m_DXSwapChain;
+		IDXGIFactory* m_Factory;
 		ID3D11Device* m_DXDevice;
 		ID3D11DeviceContext* m_DXDeviceContext;
+
+		bool m_IsShared;
+		IDXGISwapChain* m_DXSwapChain;
 
 		ID3D11RasterizerState* m_Rasterizer = 0;
 	};
