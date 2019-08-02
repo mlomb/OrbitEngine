@@ -1,5 +1,7 @@
 language: cpp
-sudo: false
+sudo: required
+git:
+    submodules: true
 os:
   - linux
   - osx
@@ -23,6 +25,7 @@ addons:
       - libc++-dev
       - libc6-dev-i386
       - mono-devel
+      - doxygen
 
 before_install:
   # Update the CMake version to 3.9 (no sudo)
@@ -90,3 +93,11 @@ matrix:
       script:
         - cmake -DCMAKE_TOOLCHAIN_FILE=$EMSCRIPTEN/cmake/Modules/Platform/Emscripten.cmake ..
         - make
+    - env: CONFIG=Docs
+      language: python
+      python: 3.6
+      install:
+        - cd $HOME/Docs
+        - git clone git://github.com/mosra/m.css
+        - cd m.css/documentation
+        - ./doxygen.py ../../Doxyfile
