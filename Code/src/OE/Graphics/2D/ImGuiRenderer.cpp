@@ -261,6 +261,9 @@ namespace OrbitEngine { namespace Graphics {
 
 	ImGuiRenderer::~ImGuiRenderer()
 	{
+		delete m_Shader;
+		delete m_Mesh;
+
 		ImGui::SetCurrentContext(m_ImGuiContext);
 
 		ImGuiIO& io = ImGui::GetIO();
