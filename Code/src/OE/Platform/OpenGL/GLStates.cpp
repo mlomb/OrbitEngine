@@ -1,6 +1,7 @@
 #include "OE/Platform/OpenGL/GLStates.hpp"
 
 #include "OE/Platform/OpenGL/OpenGL.hpp"
+#include "OE/Graphics/API/FrameBuffer.hpp"
 
 namespace OrbitEngine { namespace Graphics {
 
@@ -99,7 +100,12 @@ namespace OrbitEngine { namespace Graphics {
 		GLEnableDisable(GL_SCISSOR_TEST, enabled);
 
 		if (enabled)
-			glScissor(scissor->rect.x, scissor->rect.y, scissor->rect.z, scissor->rect.w);
+			glScissor(
+				scissor->rect.x,
+				FrameBuffer::GetCurrentSize().y - (scissor->rect.w + scissor->rect.y),
+				scissor->rect.z,
+				scissor->rect.w
+			);
 	}
 
 	GLenum GLStates::CullModeToGL(CullMode cullMode)

@@ -346,8 +346,6 @@ namespace OrbitEngine { namespace Graphics {
 
 	void ImGuiRenderer::draw(ImDrawData* draw_data)
 	{
-		int fb_width = (int)(draw_data->DisplaySize.x * draw_data->FramebufferScale.x);
-		int fb_height = (int)(draw_data->DisplaySize.y * draw_data->FramebufferScale.y);
 		ImVec2 clip_off = draw_data->DisplayPos;
 		ImVec2 clip_scale = draw_data->FramebufferScale;
 
@@ -380,25 +378,25 @@ namespace OrbitEngine { namespace Graphics {
 				const ImDrawCmd* pcmd = &cmd_list->CmdBuffer[cmd_i];
 
 				if (pcmd->UserCallback == NULL) {
-					// Project scissor/clipping rectangles into framebuffer space
 					ImVec4 clip_rect;
 					clip_rect.x = (pcmd->ClipRect.x - clip_off.x) * clip_scale.x;
 					clip_rect.y = (pcmd->ClipRect.y - clip_off.y) * clip_scale.y;
 					clip_rect.z = (pcmd->ClipRect.z - clip_off.x) * clip_scale.x;
 					clip_rect.w = (pcmd->ClipRect.w - clip_off.y) * clip_scale.y;
 
-					if (clip_rect.x < fb_width && clip_rect.y < fb_height && clip_rect.z >= 0.0f && clip_rect.w >= 0.0f)
-					{
-						Math::Scissor* s = new Math::Scissor(
-							(int)clip_rect.x, (int)(fb_height - clip_rect.w), (int)(clip_rect.z - clip_rect.x), (int)(clip_rect.w - clip_rect.y)
-						);
-						states->setScissor(s);
-						delete s;
+					Math::Scissor* s = new Math::Scissor(
+						(int)(clip_rect.x),
+						(int)(clip_rect.y),
+						(int)(clip_rect.z - clip_rect.x),
+						(int)(clip_rect.w - clip_rect.y)
+					);
 
-						if (pcmd->TextureId)
-							static_cast<Texture*>(pcmd->TextureId)->bind(0);
-						m_Mesh->drawIndexed(pcmd->ElemCount, pcmd->IdxOffset);
-					}
+					states->setScissor(s);
+					delete s;
+
+					if (pcmd->TextureId)
+						static_cast<Texture*>(pcmd->TextureId)->bind(0);
+					m_Mesh->drawIndexed(pcmd->ElemCount, pcmd->IdxOffset);
 				}
 				else {
 					OE_LOG_WARNING("ImDrawList::AddCallback not supported yet");
