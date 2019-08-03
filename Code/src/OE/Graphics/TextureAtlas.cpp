@@ -31,6 +31,18 @@ namespace OrbitEngine { namespace Graphics {
 		}
 	}
 
+	Math::UV TextureAtlas::getUVs(FrameIndex index) const
+	{
+		if (hasFrame(index))
+			return getFrame(index).uvs;
+		return Math::UV();
+	}
+
+	Texture* TextureAtlas::getTexture() const
+	{
+		return m_Texture;
+	}
+
 	Math::Vec2f TextureAtlas::getTexelSize() const
 	{
 		const TextureProperties& props = m_Texture->getProperties();

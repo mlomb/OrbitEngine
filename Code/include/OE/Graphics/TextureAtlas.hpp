@@ -17,6 +17,10 @@ namespace OrbitEngine { namespace Graphics {
 	public:
 		~TextureAtlas();
 
+		/// Get frame uv
+		Math::UV getUVs(FrameIndex index) const;
+		/// Get the underlying texture
+		Texture* getTexture() const;
 		Math::Vec2f getTexelSize() const override;
 
 		/**
