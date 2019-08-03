@@ -106,18 +106,23 @@ float sdHexagram(float2 p, float r) {
     return length(p)*sign(p.y);
 }
 
-float sdStar(float2 p, float r, int n, float m) {
+float sdStarInternal(float2 p, float r, int n, float m) {
     // next 4 lines can be precomputed for a given shape
     float an = 3.141593/float(n);
     float en = 6.283185/m;
     float2  acs = float2(cos(an),sin(an));
     float2  ecs = float2(cos(en),sin(en)); // ecs=float2(0,1) for regular polygon,
 
-    float bn = (atan2(p.y, p.x) % (int)(2.0 * an)) - an;
+    float bn = fmod(atan2(p.y, p.x), (2.0 * an)) - an;
     p = length(p)*float2(cos(bn),abs(sin(bn)));
     p -= r*acs;
     p += ecs*clamp(-dot(p,ecs), 0.0, r*acs.y/ecs.y);
     return length(p)*sign(p.x);
+}
+
+float sdStar(float2 p, float r, int n, float a) {
+	float m = 4.0 + a*a*(n*2.0-4.0);
+	return sdStarInternal(p, r, n, m);
 }
 
 float sdTrapezoid(float2 p, float r1, float r2, float he) {
@@ -220,6 +225,23 @@ float sdEllipse(float2 p, float2 ab) {
     return length(r-p) * sign(p.y-r.y);
 }
 
+float _sdFoilAndReuleauxInternal(float2 p, int n) {
+	float a = 3.141593 - atan2(p.x, p.y);
+	float ang = 3.141593/float(n);
+	float cc = cos(a - 2.0 * ang * floor(0.5 * (a - 3.141593)/ang + 0.5));
+	return cc + sqrt(1.0 + 2.0 * cos(ang) + cc * cc);
+}
+float sdFoil(float2 p, int n) {
+	float rl = _sdFoilAndReuleauxInternal(p, n);
+	// simulate distance
+	return smoothstep(rl + 2.0, rl, 4.0 - length(p) * 4.0);
+}
+float sdReuleaux(float2 p, int n) {
+	float rl = _sdFoilAndReuleauxInternal(p, n);
+	// simulate distance
+	return 1.0 - smoothstep(rl + 2.0, rl, length(p) * 4.0);
+}
+
 float sdBezier(float2 pos, float2 A, float2 B, float2 C) {    
     float2 a = B - A;
     float2 b = A - 2.0*B + C;
@@ -270,8 +292,7 @@ float sdAnnularShape(float d, float r) {
 	return abs(d) - r;
 }
 
-
-float opUnion(float d1, float d2) {  min(d1,d2); }
+float opUnion(float d1, float d2) { return min(d1,d2); }
 float opSubtraction(float d1, float d2) { return max(-d1,d2); }
 float opIntersection(float d1, float d2) { return max(d1,d2); }
 
