@@ -25,6 +25,17 @@ namespace OrbitEngine { namespace Graphics {
 	*/
 	BitmapRGB GenerateBitmapFromOutline(FT_Outline* outline, SDFMode mode, double range);
 
+	/**
+		@brief Generates a BitmapRGB from a SVG path using msdfgen's signed distance field method
+
+		@param[in] svg_path SVG path (e.j "M150 0 L75 200 L225 200 Z")
+		@param[in] mode See SDFMode.
+		@param[in] range Width of the range around the shape between the minimum and maximum representable signed distance in pixels
+		@param[in] scale scale all coordinates by this factor
+		@return The generated bitmap, that can be invalid if the generation failed
+	*/
+	BitmapRGB GenerateBitmapFromSVGPath(const std::string& svg_path, SDFMode mode, double range, double scale = 1);
+
 } }
 
 #endif
