@@ -177,7 +177,7 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 	}
 
 	EM_BOOL WindowEmscripten::EMS_Callback_Wheel(int eventType, const EmscriptenWheelEvent *wheelEvent, void *userData) {
-		InputManager::Get()->onInputWheel((float)wheelEvent->deltaY / 120.0f);
+		InputManager::Get()->onInputWheel((float)wheelEvent->deltaY / -120.0f);
 	}
 
 	EM_BOOL WindowEmscripten::EMS_Callback_MouseMove(int eventType, const EmscriptenMouseEvent *mouseEvent, void *userData) {
