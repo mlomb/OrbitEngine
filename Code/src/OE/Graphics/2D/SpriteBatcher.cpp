@@ -52,7 +52,7 @@ namespace OrbitEngine { namespace Graphics {
 		states->setBlending(BlendState::SRC_ALPHA);
 		states->setDepthTest(FunctionMode::DISABLED);
 		states->setStencil(FunctionMode::DISABLED);
-		states->setCullMode(CullMode::FRONT);
+		states->setCullMode(CullMode::NONE);
 
 		m_Mesh->drawIndexed(m_Count);
 	}
