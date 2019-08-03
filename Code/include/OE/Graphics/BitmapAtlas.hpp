@@ -76,10 +76,11 @@ namespace OrbitEngine { namespace Graphics {
 			@param[in] bitmaps map containing the desired indexes mapped to their corresponding bitmaps
 			@param[in] max_size maximum allowed size for the generated atlas. The generation may fail if its not possible to fit the bitmaps
 			@param[in] padding separation in pixels between each bitmap in the atlas
+			@param[in] background color of the unused pixels
 			@param[in] POT force the atlas generation to be a power of two
 			@return The BitmapAtlas instance or NULL if the operation failed
 		*/
-		static BitmapAtlas<T, N>* Generate(const std::map<FrameIndex, Bitmap<T, N>>& bitmaps, unsigned int max_size, unsigned int padding = 0, bool POT = false);
+		static BitmapAtlas<T, N>* Generate(const std::map<FrameIndex, Bitmap<T, N>>& bitmaps, unsigned int max_size, unsigned int padding = 0, const T background[N] = 0, bool POT = false);
 	};
 
 	typedef BitmapAtlas<unsigned char, 3> BitmapAtlasRGB;
@@ -113,7 +114,7 @@ namespace OrbitEngine { namespace Graphics {
 		return Math::Vec2f(1.0f / Bitmap<T, N>::m_Width, 1.0f / Bitmap<T, N>::m_Height);
 	}
 
-	template<typename T, unsigned int N> BitmapAtlas<T, N>* BitmapAtlas<T, N>::Generate(const std::map<FrameIndex, Bitmap<T, N>>& bitmaps, unsigned int max_size, unsigned int padding, bool POT) {
+	template<typename T, unsigned int N> BitmapAtlas<T, N>* BitmapAtlas<T, N>::Generate(const std::map<FrameIndex, Bitmap<T, N>>& bitmaps, unsigned int max_size, unsigned int padding, const T background[N], bool POT) {
 		std::vector<Misc::Packeable2D*> rects;
 
 		struct Entry : public Misc::Packeable2D {
@@ -146,7 +147,10 @@ namespace OrbitEngine { namespace Graphics {
 		}
 
 		BitmapAtlas<T, N>* atlas = new BitmapAtlas<T, N>(atlas_width, atlas_height);
-		atlas->clear();
+		if (background == NULL)
+			atlas->clear();
+		else
+			atlas->fill(background);
 
 		for (Misc::Packeable2D* p : rects) {
 			Entry* e = static_cast<Entry*>(p);

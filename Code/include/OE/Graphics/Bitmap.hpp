@@ -175,7 +175,8 @@ namespace OrbitEngine { namespace Graphics {
 	template<typename T, unsigned int N> Bitmap<T, N>::Bitmap(unsigned int w, unsigned int h, T* source)
 		: Bitmap(w, h)
 	{
-		memcpy(m_Pixels, source, w * h * N * sizeof(T));
+		if(source)
+			memcpy(m_Pixels, source, w * h * N * sizeof(T));
 	}
 
 	template<typename T, unsigned int N>
