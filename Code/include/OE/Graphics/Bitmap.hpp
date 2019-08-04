@@ -88,6 +88,8 @@ namespace OrbitEngine { namespace Graphics {
 		void flipBoth();
 		/// Returns a rotated copy of the bitmap 90 degrees clockwise
 		Bitmap<T, N> rotate90clockwise() const;
+		/// Crop the bitmap
+		Bitmap<T, N> crop(int x, int y, unsigned int w, unsigned int h) const;
 		/// Deletes the pixel data and makes the bitmap invalid
 		void destroy();
 
@@ -313,6 +315,21 @@ namespace OrbitEngine { namespace Graphics {
 			for (int x = 0; x < m_Width; x++) {
 				for (int i = 0; i < N; i++) {
 					result(m_Height - y - 1, x, i) = operator()(x, y, i);
+				}
+			}
+		}
+		return result;
+	}
+
+	template<typename T, unsigned int N> Bitmap<T, N> Bitmap<T, N>::crop(int x, int y, unsigned int w, unsigned int h) const {
+		Bitmap<T, N> result(
+			std::min(w, m_Width - x),
+			std::min(h, m_Height - y)
+		);
+		for (int yy = 0; yy < result.height(); yy++) {
+			for (int xx = 0; xx < result.width(); xx++) {
+				for (int i = 0; i < N; i++) {
+					result(xx, yy, i) = operator()(x + xx, y + yy, i);
 				}
 			}
 		}
