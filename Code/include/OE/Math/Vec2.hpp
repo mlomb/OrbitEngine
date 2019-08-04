@@ -37,6 +37,7 @@ namespace OrbitEngine { namespace Math {
 
 		float normalize();
 		float distanceTo(const Vec2<T>& b) const;
+		float angle() const;
 
 		static Vec2<T> Min(const Vec2<T>& a, const Vec2<T>& b);
 		static Vec2<T> Max(const Vec2<T>& a, const Vec2<T>& b);
