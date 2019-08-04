@@ -75,6 +75,7 @@ namespace OrbitEngine { namespace Graphics {
 			pushCall(temp);
 		}
 
+		m_Shader->bind();
 		BatchRenderer2D::end();
 		TextureArrayHandler::end();
 
