@@ -94,8 +94,11 @@ namespace OrbitEngine { namespace Graphics {
 				continue;
 			}
 
-			if (data == 0)
+			if (data == 0) {
+				for (size_t i = 0; i < dataPtrs.size(); i++)
+					delete dataPtrs[i];
 				return 0;
+			}
 			dataPtrs.push_back(data);
 		}
 
