@@ -211,7 +211,7 @@ namespace OrbitEngine { namespace Math {
 
 	template<typename T> inline Vec2<T> Vec2<T>::FromAngle(double angle)
 	{
-		return Vec2<T>(cos(angle), -sin(angle));
+		return Vec2<T>(cos(angle), sin(angle));
 	}
 	
 	template<typename T> inline float Vec2<T>::Distance(const Vec2<T>& a, const Vec2<T>& b)
