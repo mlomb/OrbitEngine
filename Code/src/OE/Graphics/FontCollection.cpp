@@ -98,9 +98,6 @@ namespace OrbitEngine {	namespace Graphics {
 
 			if (m_TextureAtlas->hasFrame(index) && entry.metrics.width > 0 && entry.metrics.height > 0) {
 				Math::Vec2f pos(pen.x + entry.metrics.H_bearingX, pen.y - entry.metrics.H_bearingY);
-				pos.x = (float)(int)pos.x;
-				pos.y = (float)(int)pos.y;
-
 				m_TextureAtlas->drawFrame(index, pos, Math::Vec2f(entry.metrics.width, entry.metrics.height), sr);
 			}
 			
@@ -114,34 +111,44 @@ namespace OrbitEngine {	namespace Graphics {
 		}
 	}
 
-	Math::Vec2i FontCollection::getBounds(const std::vector<GlyphCodepoint>& text, float size)
+	Math::Vec2f FontCollection::getBounds(const std::vector<GlyphCodepoint>& text, float size)
 	{
 		if (text.size() == 0)
 			return Math::Vec2i(0, 0);
 
-		float maxWidth = 0;
-		float x = 0;
+		Math::Vec2f pen(0, 0);
+		float maxWidth = 0.0f;
 		int lines = 1;
 
 		for (unsigned int i = 0; i < text.size(); i++) {
-			GlyphCodepoint c = text[i];
-			if (c == '\n' || c == '\r') {
+			GlyphCodepoint code = text[i];
+			if (code == '\n' || code == '\r') {
+				pen.x = 0;
 				lines++;
-				x = 0;
 				continue;
 			}
 
-			/*
-			if (x > 0)
-				x += getHorizontalKerning(text[i - 1], c);
-			x += m_Glyphs[c].H_advance;
-			*/
+			const auto& it = m_Collection.find(code);
+			if (it == m_Collection.end())
+				continue;
 
-			if (x > maxWidth)
-				maxWidth = x;
+			const auto& p = *(*it).second.rbegin();
+			GlyphRenderMode mode = p.first;
+			FrameIndex index = toIndex(code, mode);
+			const Entry& entry = p.second;
+
+			if (i + 1 < text.size()) {
+				const auto& kit = entry.kernings.find((GlyphCodepoint)text[i + 1]);
+				if (kit != entry.kernings.end())
+					pen.x += (*kit).second;
+			}
+
+			pen.x += entry.metrics.H_advance;
+
+			maxWidth = std::max(maxWidth, pen.x + entry.metrics.width);
 		}
 
-		return Math::Vec2i(maxWidth, /* m_MaxHeight * */ lines);
+		return Math::Vec2f(maxWidth, lines * size);
 	}
 
 	bool FontCollection::exportToFiles(const std::string& font_metadata, const std::string& atlas_metadata, const std::string& atlas_image)

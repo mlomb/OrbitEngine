@@ -96,7 +96,7 @@ namespace OrbitEngine {	namespace Graphics {
 		static FontCollection* Load(const std::string& font_metadata, const std::string& atlas_metadata, const std::string& atlas_image);
 
 		void drawText(const std::vector<GlyphCodepoint>& text, float size, const Math::Vec2f& position, SpriteRenderer& sr);
-		Math::Vec2i getBounds(const std::vector<GlyphCodepoint>& text, float size);
+		Math::Vec2f getBounds(const std::vector<GlyphCodepoint>& text, float size);
 
 		/**
 			@brief Add a single glyph to the collection
