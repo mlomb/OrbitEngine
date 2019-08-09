@@ -12,7 +12,7 @@ namespace OrbitEngine { namespace Graphics {
 
 	class SpriteRenderer : virtual public Renderer2D {
 	public:
-		void bindColor(const Math::Color& color);
+		void bindColor(const Math::Color4f& color);
 		void bindTexture(Texture* texture);
 
 		void rect(const Math::Vec2f& position, const Math::Vec2f& size);
@@ -22,10 +22,10 @@ namespace OrbitEngine { namespace Graphics {
 		virtual void begin();
 		virtual void end();
 		virtual int handleTexture(Texture* tex) = 0;
-		virtual void submitRect(const Math::Vec2f(&positions)[4], const Math::Vec2f(&uvs)[4], const Math::Color& color, unsigned int texture) = 0;
+		virtual void submitRect(const Math::Vec2f(&positions)[4], const Math::Vec2f(&uvs)[4], const Math::Color4f& color, unsigned int texture) = 0;
 
 	private:
-		Math::Color m_BindColor;
+		Math::Color4f m_BindColor;
 		unsigned int m_BindTexture;
 
 		// Little cache

@@ -2,7 +2,7 @@
 
 namespace OrbitEngine { namespace Graphics {
 
-	void SpriteRenderer::bindColor(const Math::Color& color)
+	void SpriteRenderer::bindColor(const Math::Color4f& color)
 	{
 		m_BindColor = color;
 	}
@@ -65,7 +65,7 @@ namespace OrbitEngine { namespace Graphics {
 	{
 		// Renderer2D::begin must be called by the derived class
 
-		m_BindColor = Math::Color(1.0f, 1.0f, 1.0f, 1.0f);
+		m_BindColor = Math::Color4f(1.0f, 1.0f, 1.0f, 1.0f);
 		m_BindTexture = 0;
 	}
 

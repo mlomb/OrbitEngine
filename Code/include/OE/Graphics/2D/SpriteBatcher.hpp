@@ -12,7 +12,7 @@ namespace OrbitEngine { namespace Graphics {
 	
 	struct Batch2DVertex {
 		Math::Vec2f position;
-		Math::Color color;
+		Math::Color4f color;
 		Math::Vec2f uv;
 		float tid;
 	};
@@ -34,7 +34,7 @@ namespace OrbitEngine { namespace Graphics {
 
 		Shader* m_Shader;
 
-		void submitRect(const Math::Vec2f(&positions)[4], const Math::Vec2f(&uvs)[4], const Math::Color& color, unsigned int texture) override;
+		void submitRect(const Math::Vec2f(&positions)[4], const Math::Vec2f(&uvs)[4], const Math::Color4f& color, unsigned int texture) override;
 	};
 } }
 

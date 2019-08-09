@@ -15,7 +15,7 @@ namespace OrbitEngine { namespace Graphics {
 			([]() {
 				VertexLayout* layout = new VertexLayout();
 				layout->push<Math::Vec2f>("POSITION"); // Vertex position
-				layout->push<Math::Color>("COLOR");    // Color
+				layout->push<Math::Color4f>("COLOR");    // Color
 				layout->push<Math::Vec2f>("TEXCOORD"); // UV's
 				layout->push<float>("TEXID");		   // TextureID
 				return layout;
@@ -57,7 +57,7 @@ namespace OrbitEngine { namespace Graphics {
 		m_Mesh->drawIndexed(m_Count);
 	}
 
-	void SpriteBatcher::submitRect(const Math::Vec2f(&positions)[4], const Math::Vec2f(&uvs)[4], const Math::Color& color, unsigned int texture)
+	void SpriteBatcher::submitRect(const Math::Vec2f(&positions)[4], const Math::Vec2f(&uvs)[4], const Math::Color4f& color, unsigned int texture)
 	{
 		pushVertex({ p_Transform * positions[0], color, uvs[0], (float)texture });
 		pushVertex({ p_Transform * positions[1], color, uvs[1], (float)texture });

@@ -29,7 +29,7 @@ namespace OrbitEngine { namespace Graphics {
 	}
 
 	template<class T>
-	void GenericLight<T>::setColor(Math::Color color)
+	void GenericLight<T>::setColor(Math::Color4f color)
 	{
 		p_Data.color = color;
 	}

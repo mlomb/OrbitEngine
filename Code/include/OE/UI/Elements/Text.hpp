@@ -28,7 +28,7 @@ namespace OrbitEngine {	namespace UI {
 		bool m_Rich = false;
 		bool m_BestFit = false;
 		RectAlignment m_TextAlignament = RectAlignment::MIDDLE_CENTER;
-		Math::Color m_Color = Math::Color(1, 1, 1, 1);
+		Math::Color4f m_Color = Math::Color4f(1, 1, 1, 1);
 		Math::Vec4f m_TextBounds;
 
 		void onRender(Graphics::PathRenderer2D& r2d);

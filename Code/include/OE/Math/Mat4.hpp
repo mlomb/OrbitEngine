@@ -5,6 +5,7 @@
 #include "OE/Math/Vec3.hpp"
 
 namespace OrbitEngine { namespace Math {
+	/// 4x4 matrix
 	struct Mat4 {
 		union {
 			struct {
@@ -17,6 +18,10 @@ namespace OrbitEngine { namespace Math {
 			float data[16];
 		};
 
+		/**
+			@brief Create a new matrix
+			@param[in] d Value along the diagonal
+		*/
 		Mat4(float d = 1.0f);
 
 		static Mat4 Identity();

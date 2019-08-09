@@ -20,7 +20,7 @@ namespace OrbitEngine { namespace Graphics {
 		~VertexLayout();
 
 		void push(VertexElement attrib);
-		template<typename T> void push(const std::string& name, const unsigned int size = 1, const bool normalized = false); // Unknown type
+		template<typename T> void push(const std::string& name, const unsigned int size = 1, const bool normalized = false);
 
 		inline unsigned int getStride() { return m_Stride; };
 		inline std::vector<VertexElement>& getElements() { return m_Childrens; };

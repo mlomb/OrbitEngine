@@ -23,14 +23,21 @@ namespace OrbitEngine { namespace Math {
 		T value;
 	};
 
-	/// Gradient used for animations.
-	/// time ∈ [0, 1]
+	/**
+		@brief Linear gradient used for animations.
+		@note time ∈ [0, 1]
+	*/
 	template<typename T>
 	class Gradient {
 	public:
 		/// Remove all stops
 		void reset() {
 			m_Stops.clear();
+		}
+
+		/// Check if there are no stops defined
+		bool empty() {
+			return m_Stops.size() == 0;
 		}
 
 		/// Add a stop
@@ -43,6 +50,9 @@ namespace OrbitEngine { namespace Math {
 
 		/// Evaluate the gradient
 		T evaluate(float time) {
+			if (empty())
+				return T();
+
 			GradientStop<T> *start = NULL, *stop = NULL;
 
 			auto it = m_Stops.begin();
@@ -51,12 +61,8 @@ namespace OrbitEngine { namespace Math {
 				if (stop->time > time)
 					break;
 			}
-			if (it == m_Stops.begin() || it == m_Stops.end()) {
-				if (stop == NULL)
-					return T();
-				else
-					return stop->value;
-			}
+			if (it == m_Stops.begin() || it == m_Stops.end())
+				return stop->value;
 			start = &(*(--it));
 			float frac = (time - start->time) / (stop->time - start->time);
 			return lerp(start->value, stop->value, frac);

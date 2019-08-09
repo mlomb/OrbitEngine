@@ -11,7 +11,7 @@ namespace OrbitEngine {	namespace UI {
 	void Resizer::onRender(Graphics::PathRenderer2D& r2d)
 	{
 		r2d.beginPath();
-		r2d.fillColor(Math::Color(1, 0, 0, 0.5));
+		r2d.fillColor(Math::Color4f(1, 0, 0, 0.5));
 		r2d.rect(getRenderPosition(), getRenderSize());
 		r2d.fill();
 	}

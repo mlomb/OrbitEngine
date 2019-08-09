@@ -10,18 +10,20 @@
 
 namespace OrbitEngine { namespace Graphics {
 	
+	class Texture;
 	class SpriteRenderer;
 	class ParticleEmitter;
 
 	struct Particle {
-		float remainingLife;
+		float life = 1.0f; // in seconds
+		float time = 1.0f; // [0, 1]
 
-		float size;
-		Math::Vec2f position;
-		Math::Color color;
+		float size = 1.0f, stretch = 1.0f;
+		Math::Vec2f position = Math::Vec2f(0, 0);
+		Math::Color4f color = Math::Color4f(1, 1, 1, 1);
+		Texture* texture = NULL;
 
-		Math::Vec2f velocity;
-		Math::Vec2f acceleration;
+		Math::Vec2f velocity = Math::Vec2f(0, 0);
 	};
 
 	class ParticleSystem {
@@ -32,10 +34,11 @@ namespace OrbitEngine { namespace Graphics {
 		void update(float deltaTime);
 		void render(SpriteRenderer& sr);
 
-		ParticleEmitter* createEmitter();
-
 		Particle* createParticle();
 		void releaseParticle(Particle* particle);
+
+		void registerEmitter(ParticleEmitter* emitter);
+		void unregisterEmitter(ParticleEmitter* emitter);
 
 	private:
 		Memory::MemoryPool* m_Pool;

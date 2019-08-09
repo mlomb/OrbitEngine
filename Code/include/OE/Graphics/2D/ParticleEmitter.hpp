@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "OE/Graphics/2D/ParticleSystem.hpp"
+#include "OE/Graphics/2D/ParticleModules.hpp"
 
 namespace OrbitEngine { namespace Graphics {
 	
@@ -18,34 +19,40 @@ namespace OrbitEngine { namespace Graphics {
 
 	class ParticleEmitter {
 	public:
-
-		void setPosition(const Math::Vec2f& position);
-		void setSimulationSpace(SimulationSpace simulationSpace);
-		void setTimeRate(float timeRate);
-		void setDistanceRate(float distanceRate);
-		void setLoop(bool loop);
-		void setDuration(float duration);
-		
-	private:
-		friend class ParticleSystem;
-		/// Use ParticleSystem::createEmitter to create an emitter
 		ParticleEmitter(ParticleSystem* system);
 		~ParticleEmitter();
 
+		void emit(unsigned int particles);
+
+		void setInitialLifetime(float lifetime);
+		void setPosition(const Math::Vec2f& position);
+		void setSimulationSpace(SimulationSpace simulationSpace);
+		void setLoop(bool loop);
+		void setDuration(float duration);
+
+		float getTime() const { return m_Time; }
+		Math::Vec2f getPosition() const { return m_Position; }
+		const std::vector<Particle*>& getParticles() const { return m_Particles; }
+		
+		EmissionModule emissionModule;
+		ShapeModule shapeModule;
+		SizeModule sizeModule;
+		ColorModule colorModule;
+		TextureModule textureModule;
+
+	private:
+		std::vector<ParticleModule*> m_Modules;
+
+		friend class ParticleSystem;
+
 		void update(float deltaTime);
-		void initParticle(Particle* particle);
-		void emit();
+		void render(SpriteRenderer& sr);
 
 		ParticleSystem* m_System;
 		std::vector<Particle*> m_Particles;
 
 		/// Current time
 		float m_Time;
-
-		float m_EmitTimeLast;
-		float m_EmitTimeAccum;
-		Math::Vec2f m_EmitPositionLast;
-		float m_EmitDistanceAccum;
 	private:
 		//////////////
 		//  TIMING  //
@@ -55,19 +62,11 @@ namespace OrbitEngine { namespace Graphics {
 		float m_Duration;
 		/// Repeat after the duration
 		bool m_Loop;
-
-		//////////////
-		// EMISSION //
-		//////////////
-		/// Number of particles to spawn per unit of time passed
-		float m_TimeRate;
-		/// Number of particles to spawn per unit of distance travelled
-		float m_DistanceRate;
-
-		//////////////
-		// POSITION //
-		//////////////
+		/// Initial lifetime of the particles
+		float m_InitialLifetime;
+		/// 
 		SimulationSpace m_SimulationSpace;
+		/// Position of the emitter
 		Math::Vec2f m_Position;
 	};
 } }

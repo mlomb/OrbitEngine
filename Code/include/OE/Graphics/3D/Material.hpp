@@ -19,7 +19,7 @@ namespace OrbitEngine { namespace Graphics {
 	};
 
 	struct MaterialUniforms {
-		Math::Color baseColor = Math::Color(1.0f, 1.0f, 1.0f, 1.0f);
+		Math::Color4f baseColor = Math::Color4f(1.0f, 1.0f, 1.0f, 1.0f);
 		float metallic = 0.5f;
 		float roughness = 0.5f;
 
@@ -38,11 +38,11 @@ namespace OrbitEngine { namespace Graphics {
 		Shader* use(ShaderDefinitions definitions = {});
 
 		void setMap(MaterialMapType mapType, Texture* texture);
-		inline void setBaseColor(Math::Color& color) { m_Uniforms.baseColor = color; };
+		inline void setBaseColor(Math::Color4f& color) { m_Uniforms.baseColor = color; };
 		inline void setMetallic(float metallic) { m_Uniforms.metallic = metallic; };
 		inline void setRoughness(float roughness) { m_Uniforms.roughness = roughness; };
 
-		inline Math::Color getBaseColor() { return m_Uniforms.baseColor; }
+		inline Math::Color4f getBaseColor() { return m_Uniforms.baseColor; }
 		inline float getMetallic() { return m_Uniforms.metallic; }
 		inline float getRoughness() { return m_Uniforms.roughness; }
 

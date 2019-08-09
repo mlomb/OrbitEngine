@@ -3,6 +3,7 @@
 #include "OE/Math/Vec2.hpp"
 #include "OE/Math/Vec3.hpp"
 #include "OE/Math/Vec4.hpp"
+#include "OE/Math/Color.hpp"
 
 #include "OE/Application/Context.hpp"
 
@@ -148,5 +149,15 @@ namespace OrbitEngine {	namespace Graphics {
 			break;
 #endif
 		}
+	}
+
+	template<> void VertexLayout::push<Math::Color3f>(const std::string& name, const unsigned int count, const bool normalized)
+	{
+		push<Math::Vec3f>(name, count, normalized);
+	}
+
+	template<> void VertexLayout::push<Math::Color4f>(const std::string& name, const unsigned int count, const bool normalized)
+	{
+		push<Math::Vec4f>(name, count, normalized);
 	}
 } }

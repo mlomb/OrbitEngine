@@ -1,23 +1,33 @@
 #include "OE/Graphics/2D/ParticleEmitter.hpp"
 
-#include "OE/Misc/Log.hpp"
+#include "OE/Graphics/2D/ParticleModules.hpp"
+#include "OE/Graphics/2D/SpriteRenderer.hpp"
 
 namespace OrbitEngine { namespace Graphics {
 
 	ParticleEmitter::ParticleEmitter(ParticleSystem* system) :
 		m_System(system),
 		m_Time(0),
-		m_EmitTimeLast(0),
-		m_EmitTimeAccum(0),
-		m_EmitPositionLast(Math::Vec2f()),
-		m_EmitDistanceAccum(0),
 		m_Duration(5),
 		m_Loop(false),
-		m_TimeRate(0),
-		m_DistanceRate(0),
 		m_SimulationSpace(SimulationSpace::LOCAL),
-		m_Position(0, 0)
+		m_Position(0, 0),
+		m_InitialLifetime(5.0f),
+
+		// Modules
+		emissionModule(this),
+		shapeModule(this),
+		sizeModule(this),
+		colorModule(this),
+		textureModule(this)
 	{
+		m_Modules.push_back(&emissionModule);
+		m_Modules.push_back(&shapeModule);
+		m_Modules.push_back(&sizeModule);
+		m_Modules.push_back(&colorModule);
+		m_Modules.push_back(&textureModule);
+
+		m_System->registerEmitter(this);
 	}
 
 	ParticleEmitter::~ParticleEmitter()
@@ -26,65 +36,79 @@ namespace OrbitEngine { namespace Graphics {
 		for (Particle* particle : m_Particles)
 			m_System->releaseParticle(particle);
 		m_Particles.clear();
+
+		m_System->unregisterEmitter(this);
 	}
 
 	void ParticleEmitter::update(float deltaTime)
 	{
 		m_Time += deltaTime;
-		if (m_Loop) {
+		if (m_Loop && m_Time >= m_Duration)
 			m_Time = fmod(m_Time, m_Duration);
-			m_EmitTimeLast = 0; // TODO: Fix
+
+		// update lifetime & release particles
+		auto it = m_Particles.begin();
+		while(it != m_Particles.end()) {
+			Particle* p = *it;
+			p->time -= deltaTime * (1.0f / p->life);
+
+			if (p->time <= 0.0f) {
+				m_System->releaseParticle(p);
+				it = m_Particles.erase(it);
+			}
+			else
+				++it;
 		}
 
-		if (m_Time < m_Duration)
-			emit();
+		// update modules
+		for (ParticleModule* module : m_Modules)
+			module->update(deltaTime);
 	}
 
-	void ParticleEmitter::initParticle(Particle* particle)
+	void ParticleEmitter::render(SpriteRenderer& sr)
 	{
-		particle->position = m_Position;
-		particle->color = Math::Color(1, 1, 1, 1);
-		particle->size = 10;
+		sr.resetTransform();
+
+		for (Particle* p : m_Particles) { // should we rely on this direct accesor?
+			Math::Vec2f pos, size;
+			size.x = p->size * p->stretch;
+			size.y = p->size;
+			pos = p->position;
+
+			if (m_SimulationSpace == SimulationSpace::LOCAL)
+				pos += m_Position;
+
+			sr.setTransform(Math::Mat4::Rotation(p->velocity.angle(), Math::Vec3f(0, 0, -1)) * Math::Mat4::Translation(pos));
+			sr.bindTexture(p->texture);
+			sr.bindColor(p->color);
+			sr.rect(Math::Vec2f(), size);
+		}
 	}
 
-	void ParticleEmitter::emit()
+	void ParticleEmitter::emit(unsigned int particles)
 	{
-		m_EmitTimeAccum += m_Time - m_EmitTimeLast;
-		m_EmitTimeLast = m_Time;
-
-		m_EmitDistanceAccum += m_Position.distanceTo(m_EmitPositionLast);
-		m_EmitPositionLast = m_Position;
-
-		int to_emit = 0;
-
-		if (m_TimeRate > 0) {
-			const float timeRate = 1.0f / m_TimeRate;
-
-			to_emit += (int)(m_EmitTimeAccum / timeRate);
-			m_EmitTimeAccum = fmod(m_EmitTimeAccum, timeRate);
-		}
-		if (m_DistanceRate > 0) {
-			const float distRate = 1.0f / m_DistanceRate;
-
-			to_emit += (int)(m_EmitDistanceAccum / distRate);
-			m_EmitDistanceAccum = fmod(m_EmitDistanceAccum, distRate);
-		}
-
-		OE_ASSERT(to_emit >= 0);
-
-		for (int i = 0; i < to_emit; i++) {
+		for (int i = 0; i < particles; i++) {
 			Particle* p = m_System->createParticle();
 			if (p) {
-				initParticle(p);
+				if (m_SimulationSpace == SimulationSpace::WORLD)
+					p->position = m_Position;
+				p->life = m_InitialLifetime;
+				p->time = 1.0f;
+
+				for (ParticleModule* module : m_Modules)
+					module->initParticle(p);
 				m_Particles.push_back(p);
 			}
 		}
 	}
 
+	void ParticleEmitter::setInitialLifetime(float lifetime)
+	{
+		m_InitialLifetime = lifetime;
+	}
+
 	void ParticleEmitter::setPosition(const Math::Vec2f& position) { m_Position = position; }
 	void ParticleEmitter::setSimulationSpace(SimulationSpace simulationSpace) { m_SimulationSpace = simulationSpace; }
-	void ParticleEmitter::setTimeRate(float timeRate) { m_TimeRate = timeRate; }
-	void ParticleEmitter::setDistanceRate(float distanceRate) { m_DistanceRate = distanceRate; }
 	void ParticleEmitter::setLoop(bool loop) { m_Loop = loop; }
 	void ParticleEmitter::setDuration(float duration) { m_Duration = duration; }
 } }

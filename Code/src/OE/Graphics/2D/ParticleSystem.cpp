@@ -1,7 +1,6 @@
 #include "OE/Graphics/2D/ParticleSystem.hpp"
 
 #include "OE/Graphics/2D/ParticleEmitter.hpp"
-#include "OE/Graphics/2D/SpriteRenderer.hpp"
 
 namespace OrbitEngine { namespace Graphics {
 	ParticleSystem::ParticleSystem(int maxParticles)
@@ -22,20 +21,8 @@ namespace OrbitEngine { namespace Graphics {
 
 	void ParticleSystem::render(SpriteRenderer& sr)
 	{
-		for (ParticleEmitter* emitter : m_Emitters) {
-			for (Particle* p : emitter->m_Particles) { // should we rely on this direct accesor?
-				sr.bindTexture(NULL);
-				sr.bindColor(p->color);
-				sr.rect(p->position, Math::Vec2f(p->size, p->size));
-			}
-		}
-	}
-
-	ParticleEmitter* ParticleSystem::createEmitter()
-	{
-		ParticleEmitter* emitter = new ParticleEmitter(this);
-		m_Emitters.push_back(emitter);
-		return emitter;
+		for (ParticleEmitter* emitter : m_Emitters)
+			emitter->render(sr);
 	}
 
 	Particle* ParticleSystem::createParticle()
@@ -46,5 +33,15 @@ namespace OrbitEngine { namespace Graphics {
 	void ParticleSystem::releaseParticle(Particle* particle)
 	{
 		m_Pool->Deallocate(static_cast<void*>(particle));
+	}
+
+	void ParticleSystem::registerEmitter(ParticleEmitter* emitter)
+	{
+		m_Emitters.push_back(emitter);
+	}
+
+	void ParticleSystem::unregisterEmitter(ParticleEmitter* emitter)
+	{
+		m_Emitters.erase(std::find(m_Emitters.begin(), m_Emitters.end(), emitter));
 	}
 } }

@@ -4,9 +4,9 @@
 #include "OE/Math/Vec2.hpp"
 
 namespace OrbitEngine { namespace Math {
+	/// 4-dimensional vector
 	template<typename T>
 	struct Vec4 {
-	public:
 		union {
 			T data[4];
 			struct { T x, y, z, w; };
@@ -54,8 +54,11 @@ namespace OrbitEngine { namespace Math {
 		static Vec4<T> Normalize(const Vec4<T>& a);
 	};
 
+	/// 4-dimensional integer vector
 	typedef Vec4<int>    Vec4i;
+	/// 4-dimensional float vector
 	typedef Vec4<float>  Vec4f;
+	/// 4-dimensional double vector
 	typedef Vec4<double> Vec4d;
 } }
 

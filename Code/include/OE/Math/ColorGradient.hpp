@@ -6,7 +6,24 @@
 
 namespace OrbitEngine { namespace Math {
 	
-	typedef Gradient<Color> ColorGradient;
+	/**
+		@brief Color gradient
+
+		If no alpha stops are provided, the alpha value will be set to 1.
+	*/
+	class ColorGradient {
+	public:
+		ColorGradient();
+
+		void reset();
+		void addAlphaStop(float time, float alpha);
+		void addColorStop(float time, const Color3f& color);
+		Color4f evaluate(float time);
+
+	private:
+		Gradient<Color3f> m_ColorGradient;
+		Gradient<float> m_AlphaGradient;
+	};
 
 } }
 

@@ -23,7 +23,7 @@ namespace OrbitEngine { namespace Graphics {
 		virtual ~Light() {};
 
 		virtual void setPosition(Math::Vec3f position) = 0;
-		virtual void setColor(Math::Color color) = 0;
+		virtual void setColor(Math::Color4f color) = 0;
 
 		virtual Math::Vec3f getPosition() = 0;
 
@@ -39,7 +39,7 @@ namespace OrbitEngine { namespace Graphics {
 		virtual ~GenericLight();
 
 		void setPosition(Math::Vec3f position) override;
-		void setColor(Math::Color color) override;
+		void setColor(Math::Color4f color) override;
 		void fillBuffer(Shader* shader) override;
 
 		Math::Vec3f getPosition() override;
@@ -51,7 +51,7 @@ namespace OrbitEngine { namespace Graphics {
 		struct Data {
 			Math::Vec3f position;
 			float pad;
-			Math::Color color;
+			Math::Color4f color;
 			T specific;
 		} p_Data;
 	private:

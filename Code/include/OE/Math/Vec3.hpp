@@ -2,10 +2,9 @@
 #define MATH_VEC3_H
 
 namespace OrbitEngine { namespace Math {
-
+	/// 3-dimensional vector
 	template<typename T>
 	struct Vec3 {
-	public:
 		union {
 			T data[3];
 			struct { T x, y, z; };
@@ -49,8 +48,11 @@ namespace OrbitEngine { namespace Math {
 		static Vec3<T> Cross(const Vec3<T>& a, const Vec3<T>& b);
 	};
 
+	/// 3-dimensional integer vector
 	typedef Vec3<int>    Vec3i;
+	/// 3-dimensional float vector
 	typedef Vec3<float>  Vec3f;
+	/// 3-dimensional double vector
 	typedef Vec3<double> Vec3d;
 } }
 

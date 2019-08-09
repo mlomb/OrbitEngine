@@ -2,10 +2,9 @@
 #define MATH_VEC2_HPP
 
 namespace OrbitEngine { namespace Math {
-
+	/// 2-dimensional vector
 	template<typename T>
 	struct Vec2 {
-	public:
 		union {
 			T data[2];
 			struct { T x, y; };
@@ -47,8 +46,11 @@ namespace OrbitEngine { namespace Math {
 		static float Distance(const Vec2<T>& a, const Vec2<T>& b);
 	};
 
+	/// 2-dimensional integer vector
 	typedef Vec2<int>    Vec2i;
+	/// 2-dimensional float vector
 	typedef Vec2<float>  Vec2f;
+	/// 2-dimensional double vector
 	typedef Vec2<double> Vec2d;
 } }
 
