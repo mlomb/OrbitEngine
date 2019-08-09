@@ -52,7 +52,7 @@ namespace OrbitEngine { namespace Math {
 
 	template<typename T>
 	inline T lerp(T v0, T v1, float t) {
-		return (1.f - t) * v0 + t * v1;
+		return v0 + (v1 - v0) * t;
 	}
 
 	template<typename T>
