@@ -22,7 +22,7 @@ namespace OrbitEngine { namespace Graphics {
 		ImGuiRenderer*       renderer = static_cast<ImGuiRenderer*>(viewport->RendererUserData);
 
 	void ImGui_ImplOE_CreateWindow(ImGuiViewport* viewport) {
-		Application::Window* window = new OrbitEngine::Application::Window();
+		Application::Window* window = new Application::Window();
 
 		if(viewport->Flags & ImGuiViewportFlags_NoDecoration)
 			window->setDisplayMode(Application::DisplayMode::BORDERLESS);
@@ -47,7 +47,7 @@ namespace OrbitEngine { namespace Graphics {
 	void ImGui_ImplOE_UpdateWindow(ImGuiViewport* viewport) {
 		GET_PTRS;
 
-		// done in begin()
+		// done in ImGuiRenderer::begin()
 		//window->processEvents();
 
 		viewport->PlatformRequestMove = true;

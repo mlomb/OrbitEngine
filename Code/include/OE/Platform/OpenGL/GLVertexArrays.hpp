@@ -5,6 +5,10 @@
 #include "OE/Graphics/API/Mesh.hpp"
 #include "OE/Platform/OpenGL/OpenGL.hpp"
 
+namespace OrbitEngine { namespace Application { namespace priv { 
+	class GLContext;
+} } }
+
 namespace OrbitEngine { namespace Graphics {
 	class VertexBuffer;
 
@@ -21,6 +25,8 @@ namespace OrbitEngine { namespace Graphics {
 		
 		static GLenum TopologyToGL(Topology topology);
 	private:
+		/// VAOs can't be shared across contexts
+		Application::priv::GLContext* m_Context;
 		GLuint m_ID;
 
 		Topology m_Topology;

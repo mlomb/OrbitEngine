@@ -1,6 +1,7 @@
 #include "OE/Platform/OpenGL/GLVertexArrays.hpp"
 
 #include "OE/Platform/OpenGL/GLVertexBuffer.hpp"
+#include "OE/Platform/OpenGL/GLContext.hpp"
 #include "OE/Graphics/API/Mesh.hpp"
 
 namespace OrbitEngine { namespace Graphics {
@@ -8,6 +9,8 @@ namespace OrbitEngine { namespace Graphics {
 		: m_Topology(topology)
 	{
 		OE_CHECK_GL(glGenVertexArrays(1, &m_ID));
+
+		m_Context = Application::priv::GLContext::GetCurrent();
 	}
 
 	GLVertexArrays::~GLVertexArrays()

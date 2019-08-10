@@ -48,7 +48,7 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 		if (active)
 			s_CurrentContext = this;
 		else
-			s_CurrentContext = 0;
+			s_CurrentContext = NULL;
 	}
 
 	void ContextImpl::resizeContext(Math::Vec2i size)
