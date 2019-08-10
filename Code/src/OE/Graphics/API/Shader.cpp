@@ -17,23 +17,6 @@
 
 namespace OrbitEngine {	namespace Graphics {
 
-	void Shader::attachFromFile(ShaderType type, std::string& path, bool binary)
-	{
-		std::vector<char> buffer = System::File::Read(path);
-
-		if (binary)
-			attachFromBinary(type, buffer);
-		else {
-			std::string source(buffer.begin(), buffer.end());
-			attachFromSource(type, source);
-		}
-	}
-
-	ShaderReflection* Shader::getReflection()
-	{
-		return p_Reflection;
-	}
-
 	Shader::Shader()
 	{
 		p_Reflection = ShaderReflection::Create();
@@ -65,5 +48,22 @@ namespace OrbitEngine {	namespace Graphics {
 		default:
 			return nullptr;
 		}
+	}
+
+	void Shader::attachFromFile(ShaderType type, std::string& path, bool binary)
+	{
+		std::vector<char> buffer = System::File::Read(path);
+
+		if (binary)
+			attachFromBinary(type, buffer);
+		else {
+			std::string source(buffer.begin(), buffer.end());
+			attachFromSource(type, source);
+		}
+	}
+	
+	ShaderReflection* Shader::getReflection()
+	{
+		return p_Reflection;
 	}
 } }

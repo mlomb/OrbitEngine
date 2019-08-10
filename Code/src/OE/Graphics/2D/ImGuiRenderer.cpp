@@ -390,8 +390,8 @@ namespace OrbitEngine { namespace Graphics {
 		states->setCullMode(CullMode::NONE);
 		
 		m_Shader->bind();
-		m_UPVMatrix->bind(0, Graphics::ShaderType::VERTEX);
-		m_UPVMatrix->setData(Math::Mat4::Orthographic(
+		m_UPVMatrix->bind("PVMatrix", m_Shader);
+		setPVMatrix(Math::Mat4::Orthographic(
 			draw_data->DisplayPos.x,
 			draw_data->DisplayPos.x + draw_data->DisplaySize.x,
 			draw_data->DisplayPos.y + draw_data->DisplaySize.y,

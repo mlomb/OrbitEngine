@@ -38,7 +38,7 @@ namespace OrbitEngine {	namespace Graphics {
 			return;
 		}
 
-		glBindBufferBase(GL_UNIFORM_BUFFER, slot, m_ID);
+		glBindBufferBase(GL_UNIFORM_BUFFER, (GLuint)slot, m_ID);
 	}
 } }
 

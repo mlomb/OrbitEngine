@@ -11,6 +11,7 @@ namespace OrbitEngine {	namespace Graphics {
 	public:
 		virtual void setData(const T& data) = 0;
 		virtual void bind(unsigned int slot, ShaderType shader) const = 0;
+
 		void bind(const std::string& name, Shader* shader) const;
 
 		static UniformsPack<T>* Create();
@@ -53,7 +54,7 @@ namespace OrbitEngine {	namespace Graphics {
 #endif
 		}
 
-		OE_ASSERT(true);
+		OE_ASSERT(false);
 		return 0;
 	}
 } }

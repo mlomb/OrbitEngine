@@ -25,7 +25,6 @@ namespace OrbitEngine { namespace Graphics {
 
 	protected:
 		VertexLayout* m_VertexLayout;
-		Shader* m_Shader;
 		Mesh* m_Mesh;
 
 		V* m_pVertices;
@@ -70,7 +69,6 @@ namespace OrbitEngine { namespace Graphics {
 		Renderer2D::end();
 
 		m_Mesh->getVBO()->unmapPointer();
-		m_UPVMatrix->bind(0, Graphics::ShaderType::VERTEX);
 	}
 } }
 

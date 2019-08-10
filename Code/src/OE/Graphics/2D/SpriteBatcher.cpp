@@ -43,6 +43,8 @@ namespace OrbitEngine { namespace Graphics {
 	void SpriteBatcher::end()
 	{
 		m_Shader->bind();
+		m_UPVMatrix->bind("PVMatrix", m_Shader);
+
 		BatchRenderer2D::end();
 		TextureArrayHandler::end();
 		SpriteRenderer::end();

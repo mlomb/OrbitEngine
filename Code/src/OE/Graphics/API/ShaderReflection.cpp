@@ -11,9 +11,11 @@
 #endif
 
 namespace OrbitEngine {	namespace Graphics {
+
 	ShaderReflection::~ShaderReflection()
 	{
 	}
+
 	ShaderReflection::ShaderReflection()
 	{
 	}

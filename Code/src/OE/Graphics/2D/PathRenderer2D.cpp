@@ -22,27 +22,10 @@ namespace OrbitEngine { namespace Graphics {
 		)
 	{
 		m_ScissorStack = new Misc::ScissorStack();
-		m_UniformDataPack = UniformsPack<PathRendererUniformData>::Create();
 		m_Shader = ShaderLoader::Vector2D();
+		m_UniformDataPack = UniformsPack<PathRendererUniformData>::Create();
 
 		TextureArrayHandler::init(m_Shader);
-
-#if OE_OPENGL_ANY
-		if (Application::Context::GetCurrentAPI() == OPENGL
-#if OE_OPENGL_ES
-			|| Application::Context::GetCurrentAPI() == OPENGL_ES
-#endif
-			) {
-			GLShader* glShader = (GLShader*)m_Shader;
-			glShader->bind();
-
-			// TODO: Remove
-			glShader->bindUBO("PVMatrix", 0);
-			glShader->bindUBO("Data", 1);
-			
-			glShader->unbind();
-		}
-#endif
 	}
 
 	PathRenderer2D::~PathRenderer2D()
@@ -76,6 +59,9 @@ namespace OrbitEngine { namespace Graphics {
 		}
 
 		m_Shader->bind();
+		m_UPVMatrix->bind("PVMatrix", m_Shader);
+		m_UniformDataPack->bind("Data", m_Shader);
+
 		BatchRenderer2D::end();
 		TextureArrayHandler::end();
 
@@ -86,7 +72,6 @@ namespace OrbitEngine { namespace Graphics {
 		unsigned int i = 0;
 		for (PathRendererCall* call : m_RenderCalls) {
 			m_UniformDataPack->setData(call->data);
-			m_UniformDataPack->bind(1, ShaderType::FRAGMENT);
 
 			if (call->pathsCount > 0) {
 				/* Fill */

@@ -30,8 +30,7 @@ namespace OrbitEngine {	namespace Graphics {
 		void setUniform4f(const GLchar* name, const Math::Vec4f& vector) const;
 		void setUniformMat4(const GLchar* name, const Math::Mat4& matrix) const;
 
-		void bindUBO(const GLchar* name, const unsigned int uboSlot) const;
-		void bindUBO(const unsigned int block_index, const unsigned int uboSlot) const;
+		void bindUBO(const GLuint block_index, const GLuint uboSlot) const;
 	private:
 		GLuint m_ID = -1;
 

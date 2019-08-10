@@ -1,10 +1,10 @@
 #ifndef GRAPHICS_SHADER_REFLECTION_HPP
 #define GRAPHICS_SHADER_REFLECTION_HPP
 
-#include "OE/Graphics/API/Shader.hpp"
-
 #include <vector>
 #include <string>
+
+#include "OE/Graphics/API/Shader.hpp"
 
 namespace OrbitEngine {	namespace Graphics {
 	struct ShaderBufferReflection {

@@ -76,14 +76,15 @@ namespace OrbitEngine {	namespace Graphics {
 		}
 
 		OE_CHECK_GL(glValidateProgram(m_ID));
-
+		
 		// This causes the shader to compile asynchronously :/
 		bind();
 		static_cast<GLShaderReflection*>(p_Reflection)->reflect(m_ID);
 
-		/* Bind the UBOs automatically */
+		// Bind the UBOs automatically
+		// For convenience, we set bind each UBO so its index match the binding point
 		for (const auto& buffer : p_Reflection->getAllBuffers())
-			bindUBO(buffer.name.c_str(), buffer.slot);
+			bindUBO(buffer.slot, buffer.slot);
 	}
 	
 	void GLShader::bind() const
@@ -98,7 +99,7 @@ namespace OrbitEngine {	namespace Graphics {
 
 	void GLShader::attachFromBinary(ShaderType type, const std::vector<char>& binary)
 	{
-		OE_LOG_FATAL("This isn't supported in OpenGL")
+		OE_LOG_FATAL("This isn't supported in OpenGL");
 	}
 
 	GLint GLShader::getUniformLocation(const GLchar* name) const {
@@ -138,13 +139,7 @@ namespace OrbitEngine {	namespace Graphics {
 		glUniform1iv(getUniformLocation(name), count, value);
 	}
 
-	void GLShader::bindUBO(const GLchar* name, const unsigned int uboSlot) const
-	{
-		OE_LOG_DEBUG("Binding to shader " << m_ID << " UBO " << name << " in slot " << uboSlot);
-		bindUBO(getUniformBlockIndex(name), uboSlot);
-	}
-	
-	void GLShader::bindUBO(const unsigned int block_index, const unsigned int uboSlot) const
+	void GLShader::bindUBO(const GLuint block_index, const GLuint uboSlot) const
 	{
 		glUniformBlockBinding(m_ID, block_index, uboSlot);
 	}

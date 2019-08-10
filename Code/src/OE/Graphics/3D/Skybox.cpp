@@ -46,7 +46,7 @@ namespace OrbitEngine { namespace Graphics {
 
 		m_MatricesUniforms.vmatrix.vw_matrix = Math::Mat4::Inverse(Math::Mat4::Transpose(camera->getProjectionMatrix() * view));
 		m_PVMatrices->setData(m_MatricesUniforms);
-		m_PVMatrices->bind(0, Graphics::ShaderType::VERTEX);
+		//m_PVMatrices->bind(0, Graphics::ShaderType::VERTEX);
 
 		States* states = Application::priv::ContextImpl::GetCurrent()->getGlobalStates();
 
