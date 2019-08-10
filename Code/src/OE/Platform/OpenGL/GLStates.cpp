@@ -175,6 +175,9 @@ namespace OrbitEngine { namespace Graphics {
 
 	void GLStates::GLEnableDisableColorMask(GLboolean enabled)
 	{
+		if (cache(0x8E52 /* GL_SAMPLE_MASK_VALUE */, enabled))
+			return;
+
 		OE_CHECK_GL(glColorMask(enabled, enabled, enabled, enabled));
 	}
 } }
