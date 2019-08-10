@@ -16,7 +16,6 @@ namespace OrbitEngine {	namespace Graphics {
 		~GLShader();
 
 		void bind() const override;
-		void unbind() const override;
 
 		void attachFromBinary(ShaderType type, const std::vector<char>& binary) override;
 		void attachFromSource(ShaderType type, const std::string& source) override;

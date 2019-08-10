@@ -26,7 +26,6 @@ namespace OrbitEngine { namespace Graphics {
 
 		Renderer2D::RenderQuadScreen();
 
-		shader->unbind();
 		FrameBuffer::Pop();
 
 		p_Texture = m_BRDFFrameBuffer->getColorTextures()[0];

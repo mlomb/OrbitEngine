@@ -16,7 +16,6 @@ namespace OrbitEngine {	namespace Graphics {
 		void attachFromSource(ShaderType type, const std::string& source) override;
 		void finalize() override;
 		void bind() const override;
-		void unbind() const override;
 
 		static std::string GetD3DShaderTarget(ShaderType type);
 	private:

@@ -25,8 +25,6 @@ namespace OrbitEngine { namespace Graphics {
 				texIDs[i] = i;
 			}
 			glShader->setUniform1iv("textures", texIDs, (sizeof(texIDs) / sizeof(*texIDs)));
-
-			glShader->unbind();
 		}
 #endif
 	}

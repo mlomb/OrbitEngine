@@ -116,7 +116,6 @@ namespace OrbitEngine { namespace Graphics {
 			s_CaptureCube->drawIndexed(36);
 		}
 
-		s_PrefilterCapture->unbind();
 		FrameBuffer::Pop();
 	}
 

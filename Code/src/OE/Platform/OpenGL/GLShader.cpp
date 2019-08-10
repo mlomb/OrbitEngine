@@ -2,6 +2,8 @@
 
 #include "OE/Platform/OpenGL/OpenGL.hpp"
 #include "OE/Platform/OpenGL/GLShaderReflection.hpp"
+#include "OE/Platform/OpenGL/GLContext.hpp"
+#include "OE/Platform/OpenGL/GLStates.hpp"
 
 namespace OrbitEngine {	namespace Graphics {
 	GLShader::GLShader()
@@ -89,12 +91,11 @@ namespace OrbitEngine {	namespace Graphics {
 	
 	void GLShader::bind() const
 	{
-		OE_CHECK_GL(glUseProgram(m_ID));
-	}
+		GLStates* states = static_cast<GLStates*>(Application::priv::GLContext::GetCurrent()->getGlobalStates());
+		if (states->cache(0x8677 /* GL_PROGRAM_BINDING_ARB */, m_ID))
+			return;
 
-	void GLShader::unbind() const
-	{
-		OE_CHECK_GL(glUseProgram(0));
+		OE_CHECK_GL(glUseProgram(m_ID));
 	}
 
 	void GLShader::attachFromBinary(ShaderType type, const std::vector<char>& binary)

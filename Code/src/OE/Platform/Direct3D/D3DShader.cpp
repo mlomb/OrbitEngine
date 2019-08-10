@@ -72,12 +72,6 @@ namespace OrbitEngine {	namespace Graphics {
 		Application::priv::D3DContext::GetCurrent()->getDeviceContext()->PSSetShader(m_PixelShader ? m_PixelShader : 0, nullptr, 0);
 	}
 
-	void D3DShader::unbind() const
-	{
-		Application::priv::D3DContext::GetCurrent()->getDeviceContext()->VSSetShader(NULL, nullptr, 0);
-		Application::priv::D3DContext::GetCurrent()->getDeviceContext()->PSSetShader(NULL, nullptr, 0);
-	}
-
 	std::string D3DShader::GetD3DShaderTarget(ShaderType type)
 	{
 		switch (type)

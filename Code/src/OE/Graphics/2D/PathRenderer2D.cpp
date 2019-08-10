@@ -126,8 +126,6 @@ namespace OrbitEngine { namespace Graphics {
 
 			states->setStencil(FunctionMode::DISABLED);
 		}
-
-		m_Shader->unbind();
 	}
 
 	Misc::ScissorStack* PathRenderer2D::getScissorStack() const
