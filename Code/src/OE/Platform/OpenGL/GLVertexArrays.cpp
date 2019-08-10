@@ -3,6 +3,8 @@
 #include "OE/Platform/OpenGL/GLVertexBuffer.hpp"
 #include "OE/Platform/OpenGL/GLContext.hpp"
 #include "OE/Graphics/API/Mesh.hpp"
+#include "OE/Platform/OpenGL/GLContext.hpp"
+#include "OE/Platform/OpenGL/GLStates.hpp"
 
 namespace OrbitEngine { namespace Graphics {
 	GLVertexArrays::GLVertexArrays(Topology topology)
@@ -20,7 +22,15 @@ namespace OrbitEngine { namespace Graphics {
 
 	void GLVertexArrays::bind() const
 	{
+		GLStates* states = static_cast<GLStates*>(Application::priv::GLContext::GetCurrent()->getGlobalStates());
+		if (states->cache(0x85B5 /* GL_VERTEX_ARRAY_BINDING */, m_ID))
+			return;
+
 		OE_CHECK_GL(glBindVertexArray(m_ID));
+
+		// invalidate buffer bindings
+		states->cache(GL_ARRAY_BUFFER, 0);
+		states->cache(GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
 
 	void GLVertexArrays::drawElements(const unsigned int count, const unsigned int offset) const
@@ -50,7 +60,6 @@ namespace OrbitEngine { namespace Graphics {
 			OE_CHECK_GL(glVertexAttribPointer(i, layout[i].count, layout[i].type, layout[i].normalized, bufferLayout->getStride(), (const GLvoid*)(layout[i].offset)));
 		}
 		m_Buffers.push_back(buffer);
-		OE_CHECK_GL(glBindVertexArray(0));
 	}
 
 	GLenum GLVertexArrays::TopologyToGL(Topology topology)

@@ -137,7 +137,11 @@ namespace OrbitEngine { namespace Graphics {
 	void GLTexture::bind(unsigned int slot)
 	{
 		GLStates* states = static_cast<GLStates*>(Application::priv::GLContext::GetCurrent()->getGlobalStates());
-		states->bindTexture(slot, m_Target, m_ID);
+		if (states->cache((slot + 1) * m_Target, m_ID))
+			return;
+
+		OE_CHECK_GL(glActiveTexture(GL_TEXTURE0 + slot));
+		OE_CHECK_GL(glBindTexture(m_Target, m_ID));
 	}
 
 	GLenum GLTexture::TextureFormatToGL(TextureFormat format)

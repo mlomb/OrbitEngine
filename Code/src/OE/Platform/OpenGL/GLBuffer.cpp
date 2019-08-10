@@ -2,6 +2,8 @@
 
 #include "OE/Application/Context.hpp"
 #include "OE/Misc/Log.hpp"
+#include "OE/Platform/OpenGL/GLContext.hpp"
+#include "OE/Platform/OpenGL/GLStates.hpp"
 
 namespace OrbitEngine {	namespace Graphics {
 	GLBuffer::GLBuffer(unsigned int target, unsigned int usage, const unsigned int size, const void* data)
@@ -22,6 +24,10 @@ namespace OrbitEngine {	namespace Graphics {
 	}
 
 	void GLBuffer::bind() const {
+		GLStates* states = static_cast<GLStates*>(Application::priv::GLContext::GetCurrent()->getGlobalStates());
+		if (states->cache(m_Target, m_ID))
+			return;
+
 		OE_CHECK_GL(glBindBuffer(m_Target, m_ID));
 	}
 
