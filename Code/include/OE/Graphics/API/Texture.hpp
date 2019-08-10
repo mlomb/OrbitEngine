@@ -85,8 +85,6 @@ namespace OrbitEngine { namespace Graphics {
 		virtual void copy(Texture* source) = 0;
 		virtual void* getData() = 0; // you must delete the pointer after using it
 
-		static void Unbind(const unsigned int slot);
-
 		inline unsigned int getMipmapLevelsCount() { return m_Properties.sampleProperties.mipmapping ? m_MipLevels : 1; };
 
 		TextureProperties getProperties() const { return m_Properties; }

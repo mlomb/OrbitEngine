@@ -19,8 +19,6 @@ namespace OrbitEngine { namespace Graphics {
 		void copy(Texture* source) override;
 		void* getData() override;
 
-		static void Unbind(const unsigned int slot);
-
 		inline GLuint getID() const { return m_ID; };
 
 		static GLenum TextureFormatToGL(TextureFormat format);

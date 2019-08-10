@@ -45,8 +45,8 @@ namespace OrbitEngine { namespace Graphics {
 			std::map<MaterialMapType, Texture*>::iterator it2 = m_Maps.find(type);
 			if (it2 != m_Maps.end() && it2->second != 0)
 				it2->second->bind(i);
-			else
-				Texture::Unbind(i);
+			//else
+			//	Texture::Unbind(i);
 		}
 
 		return shader;

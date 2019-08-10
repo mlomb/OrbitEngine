@@ -132,25 +132,6 @@ namespace OrbitEngine { namespace Graphics {
 		return Load(files, sampleProperties);
 	}
 
-	void Texture::Unbind(const unsigned int slot)
-	{
-		switch (Application::Context::GetCurrentAPI()) {
-#if OE_OPENGL_ANY
-		case OPENGL:
-#if OE_OPENGL_ES
-		case OPENGL_ES:
-#endif
-			GLTexture::Unbind(slot);
-			break;
-#endif
-#if OE_D3D
-		case DIRECT3D:
-			//D3DTexture::Unbind(slot);
-			break;
-#endif
-		}
-	}
-
 	unsigned int Texture::CalculateMipLevelsCount(unsigned int width, unsigned int height)
 	{
 		unsigned int mips = 1;

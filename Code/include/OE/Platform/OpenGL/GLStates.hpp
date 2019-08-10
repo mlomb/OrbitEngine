@@ -14,15 +14,20 @@ namespace OrbitEngine { namespace Graphics {
 		void setDepthTest(FunctionMode depthMode) override;
 		void setStencil(FunctionMode stencilMode, StencilOperation operation) override;
 		void setScissor(Math::Scissor* scissor) override;
+
+		void bindTexture(unsigned int slot, GLenum target, GLuint id);
 		
-		void GLEnableDisable(GLenum type, bool enabled);
-		void GLEnableDisableColorMask(bool enabled);
+		void GLEnableDisable(GLenum type, GLboolean enabled);
+		void GLEnableDisableColorMask(GLboolean enabled);
 
 		static GLenum CullModeToGL(CullMode cullMode);
 		static GLenum FunctionModeToGL(FunctionMode functionMode);
 
 	private:
-		std::unordered_map<GLenum, bool> m_GLCache;
+		std::unordered_map<GLenum, GLuint> m_GLCache;
+
+		// returns true if the cache hits
+		bool cache(GLenum key, GLuint value);
 	};
 } }
 

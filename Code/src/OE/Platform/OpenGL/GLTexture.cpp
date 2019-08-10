@@ -4,6 +4,8 @@
 
 #include "OE/Graphics/API/FrameBuffer.hpp"
 #include "OE/Application/Context.hpp"
+#include "OE/Platform/OpenGL/GLContext.hpp"
+#include "OE/Platform/OpenGL/GLStates.hpp"
 
 namespace OrbitEngine { namespace Graphics {
 	GLTexture::GLTexture(TextureProperties properties, std::vector<void*> data)
@@ -134,21 +136,8 @@ namespace OrbitEngine { namespace Graphics {
 
 	void GLTexture::bind(unsigned int slot)
 	{
-		glActiveTexture(GL_TEXTURE0 + slot);
-		glBindTexture(m_Target, m_ID);
-	}
-
-	void GLTexture::Unbind(const unsigned int slot)
-	{
-		glActiveTexture(GL_TEXTURE0 + slot);
-
-		//glBindTexture(GL_TEXTURE_1D, 0);
-		//glBindTexture(GL_TEXTURE_1D_ARRAY, 0);
-		glBindTexture(GL_TEXTURE_2D, 0);
-		//glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
-		//glBindTexture(GL_TEXTURE_3D, 0);
-		//glBindTexture(GL_TEXTURE_3D_ARRAY, 0);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+		GLStates* states = static_cast<GLStates*>(Application::priv::GLContext::GetCurrent()->getGlobalStates());
+		states->bindTexture(slot, m_Target, m_ID);
 	}
 
 	GLenum GLTexture::TextureFormatToGL(TextureFormat format)

@@ -20,16 +20,16 @@ namespace OrbitEngine { namespace Graphics {
 			switch (blendState)
 			{
 			case BlendState::SRC_ALPHA:
-				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+				OE_CHECK_GL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 				break;
 			case BlendState::ONE_ALPHA:
-				glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+				OE_CHECK_GL(glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA));
 				break;
 			case BlendState::ONE_ONE:
-				glBlendFunc(GL_ONE, GL_ONE);
+				OE_CHECK_GL(glBlendFunc(GL_ONE, GL_ONE));
 				break;
 			case BlendState::ONE_ZERO:
-				glBlendFunc(GL_ONE, GL_ZERO);
+				OE_CHECK_GL(glBlendFunc(GL_ONE, GL_ZERO));
 				break;
 			}
 			break;
@@ -54,10 +54,9 @@ namespace OrbitEngine { namespace Graphics {
 			GLEnableDisable(GL_CULL_FACE, true);
 
 			if (cullMode != CullMode::WIREFRAME)
-				glCullFace(CullModeToGL(cullMode));
+				OE_CHECK_GL(glCullFace(CullModeToGL(cullMode)));
 		}
 	}
-
 
 	void GLStates::setDepthTest(FunctionMode depthMode)
 	{
@@ -65,7 +64,7 @@ namespace OrbitEngine { namespace Graphics {
 		GLEnableDisable(GL_DEPTH_TEST, enabled);
 		if (!enabled)
 			return;
-		glDepthFunc(FunctionModeToGL(depthMode));
+		OE_CHECK_GL(glDepthFunc(FunctionModeToGL(depthMode)));
 	}
 
 	void GLStates::setStencil(FunctionMode stencilMode, StencilOperation operation)
@@ -75,20 +74,20 @@ namespace OrbitEngine { namespace Graphics {
 		if (!enabled)
 			return;
 
-		glStencilMask(0xff);
-		glStencilFunc(FunctionModeToGL(stencilMode), 0x0, 0xff);
+		OE_CHECK_GL(glStencilMask(0xff));
+		OE_CHECK_GL(glStencilFunc(FunctionModeToGL(stencilMode), 0x0, 0xff));
 
 		switch (operation)
 		{
 		case StencilOperation::ZERO:
-			glStencilOp(GL_ZERO, GL_ZERO, GL_ZERO);
+			OE_CHECK_GL(glStencilOp(GL_ZERO, GL_ZERO, GL_ZERO));
 			break;
 		case StencilOperation::KEEP:
-			glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+			OE_CHECK_GL(glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP));
 			break;
 		case StencilOperation::SEPARATE_INCR_DECR:
-			glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_KEEP, GL_INCR_WRAP);
-			glStencilOpSeparate(GL_BACK, GL_KEEP, GL_KEEP, GL_DECR_WRAP);
+			OE_CHECK_GL(glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_KEEP, GL_INCR_WRAP));
+			OE_CHECK_GL(glStencilOpSeparate(GL_BACK, GL_KEEP, GL_KEEP, GL_DECR_WRAP));
 			break;
 		}
 	}
@@ -99,13 +98,23 @@ namespace OrbitEngine { namespace Graphics {
 
 		GLEnableDisable(GL_SCISSOR_TEST, enabled);
 
-		if (enabled)
-			glScissor(
+		if (enabled) {
+			OE_CHECK_GL(glScissor(
 				scissor->rect.x,
 				FrameBuffer::GetCurrentSize().y - (scissor->rect.w + scissor->rect.y),
 				scissor->rect.z,
 				scissor->rect.w
-			);
+			));
+		}
+	}
+
+	void GLStates::bindTexture(unsigned int slot, GLenum target, GLuint id)
+	{
+		if (cache((slot + 1) * target, id))
+			return;
+		
+		OE_CHECK_GL(glActiveTexture(GL_TEXTURE0 + slot));
+		OE_CHECK_GL(glBindTexture(target, id));
 	}
 
 	GLenum GLStates::CullModeToGL(CullMode cullMode)
@@ -149,24 +158,32 @@ namespace OrbitEngine { namespace Graphics {
 		return 0;
 	}
 
-	void GLStates::GLEnableDisable(GLenum type, bool enabled)
+	bool GLStates::cache(GLenum key, GLuint value)
 	{
-		auto it = m_GLCache.find(type);
+		auto it = m_GLCache.find(key);
 		if (it != m_GLCache.end()) {
-			if ((*it).second == enabled)
-				return; // hit
+			if ((*it).second == value)
+				return true; // hit
 		}
-
-		if (enabled)
-			glEnable(type);
-		else
-			glDisable(type);
-
-		m_GLCache[type] = enabled;
+		m_GLCache[key] = value;
+		return false;
 	}
 
-	void GLStates::GLEnableDisableColorMask(bool enabled)
+	void GLStates::GLEnableDisable(GLenum type, GLboolean enabled)
 	{
-		glColorMask(enabled, enabled, enabled, enabled);
+		if (cache(type, enabled))
+			return;
+
+		if (enabled) {
+			OE_CHECK_GL(glEnable(type));
+		}
+		else {
+			OE_CHECK_GL(glDisable(type));
+		}
+	}
+
+	void GLStates::GLEnableDisableColorMask(GLboolean enabled)
+	{
+		OE_CHECK_GL(glColorMask(enabled, enabled, enabled, enabled));
 	}
 } }
