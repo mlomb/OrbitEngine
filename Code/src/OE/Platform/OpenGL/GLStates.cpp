@@ -17,22 +17,25 @@ namespace OrbitEngine { namespace Graphics {
 			break;
 		default:
 			GLEnableDisable(GL_BLEND, true);
-			switch (blendState)
-			{
-			case BlendState::SRC_ALPHA:
-				OE_CHECK_GL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-				break;
-			case BlendState::ONE_ALPHA:
-				OE_CHECK_GL(glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA));
-				break;
-			case BlendState::ONE_ONE:
-				OE_CHECK_GL(glBlendFunc(GL_ONE, GL_ONE));
-				break;
-			case BlendState::ONE_ZERO:
-				OE_CHECK_GL(glBlendFunc(GL_ONE, GL_ZERO));
+
+			if (!cache(GL_BLEND_SRC, (int)blendState)) {
+				switch (blendState)
+				{
+				case BlendState::SRC_ALPHA:
+					OE_CHECK_GL(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+					break;
+				case BlendState::ONE_ALPHA:
+					OE_CHECK_GL(glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA));
+					break;
+				case BlendState::ONE_ONE:
+					OE_CHECK_GL(glBlendFunc(GL_ONE, GL_ONE));
+					break;
+				case BlendState::ONE_ZERO:
+					OE_CHECK_GL(glBlendFunc(GL_ONE, GL_ZERO));
+					break;
+				}
 				break;
 			}
-			break;
 		}
 	}
 
