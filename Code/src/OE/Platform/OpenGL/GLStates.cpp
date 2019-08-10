@@ -151,12 +151,18 @@ namespace OrbitEngine { namespace Graphics {
 
 	void GLStates::GLEnableDisable(GLenum type, bool enabled)
 	{
-		// TODO Cache states
+		auto it = m_GLCache.find(type);
+		if (it != m_GLCache.end()) {
+			if ((*it).second == enabled)
+				return; // hit
+		}
 
 		if (enabled)
 			glEnable(type);
 		else
 			glDisable(type);
+
+		m_GLCache[type] = enabled;
 	}
 
 	void GLStates::GLEnableDisableColorMask(bool enabled)

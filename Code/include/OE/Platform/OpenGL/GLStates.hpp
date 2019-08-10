@@ -1,6 +1,8 @@
 #ifndef GRAPHICS_GLSTATES_HPP
 #define GRAPHICS_GLSTATES_HPP
 
+#include <unordered_map>
+
 #include "OE/Graphics/API/States.hpp"
 #include "OE/Platform/OpenGL/OpenGL.hpp"
 
@@ -18,6 +20,9 @@ namespace OrbitEngine { namespace Graphics {
 
 		static GLenum CullModeToGL(CullMode cullMode);
 		static GLenum FunctionModeToGL(FunctionMode functionMode);
+
+	private:
+		std::unordered_map<GLenum, bool> m_GLCache;
 	};
 } }
 
