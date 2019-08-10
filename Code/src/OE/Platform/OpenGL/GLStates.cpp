@@ -108,15 +108,6 @@ namespace OrbitEngine { namespace Graphics {
 		}
 	}
 
-	void GLStates::bindTexture(unsigned int slot, GLenum target, GLuint id)
-	{
-		if (cache((slot + 1) * target, id))
-			return;
-		
-		OE_CHECK_GL(glActiveTexture(GL_TEXTURE0 + slot));
-		OE_CHECK_GL(glBindTexture(target, id));
-	}
-
 	GLenum GLStates::CullModeToGL(CullMode cullMode)
 	{
 		switch (cullMode)

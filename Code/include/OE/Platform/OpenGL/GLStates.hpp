@@ -15,7 +15,8 @@ namespace OrbitEngine { namespace Graphics {
 		void setStencil(FunctionMode stencilMode, StencilOperation operation) override;
 		void setScissor(Math::Scissor* scissor) override;
 
-		void bindTexture(unsigned int slot, GLenum target, GLuint id);
+		// returns true if the cache hits
+		bool cache(GLenum key, GLuint value);
 		
 		void GLEnableDisable(GLenum type, GLboolean enabled);
 		void GLEnableDisableColorMask(GLboolean enabled);
@@ -25,9 +26,6 @@ namespace OrbitEngine { namespace Graphics {
 
 	private:
 		std::unordered_map<GLenum, GLuint> m_GLCache;
-
-		// returns true if the cache hits
-		bool cache(GLenum key, GLuint value);
 	};
 } }
 
