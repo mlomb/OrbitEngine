@@ -220,7 +220,7 @@ target_compile_definitions(OrbitEngine PUBLIC FREEIMAGE_LIB FREEIMAGE_COLORORDER
 if(OE_WINDOWS)
 
 elseif(OE_EMSCRIPTEN)
-	target_link_libraries(OrbitEngine PUBLIC "-s USE_WEBGL2=1 -s FULL_ES3=1 -s ALLOW_MEMORY_GROWTH=1 -s ASSERTIONS=2 -s WASM=1 -s MODULARIZE=1")
+	target_link_libraries(OrbitEngine PUBLIC "-s USE_WEBGL2=1 -s FULL_ES3=1 -s ALLOW_MEMORY_GROWTH=1 -s ASSERTIONS=2 -s WASM=1 -s MODULARIZE=1 -s EXIT_RUNTIME=1")
 elseif(OE_ANDROID)
     list(APPEND OE_LIBRARIES android log)
 elseif(OE_LINUX)
