@@ -18,7 +18,7 @@ namespace OrbitEngine { namespace Graphics {
 		default:
 			GLEnableDisable(GL_BLEND, true);
 
-			if (!cache(GL_BLEND_SRC, (int)blendState)) {
+			if (!cache(0x0BE1 /* GL_BLEND_SRC */, (int)blendState)) {
 				switch (blendState)
 				{
 				case BlendState::SRC_ALPHA:
