@@ -33,6 +33,7 @@ namespace OrbitEngine { namespace Graphics {
 		int handleTexture(Texture* tex) override;
 
 		Shader* m_Shader;
+		unsigned int m_IndexCount;
 
 		void submitRect(const Math::Vec2f(&positions)[4], const Math::Vec2f(&uvs)[4], const Math::Color4f& color, unsigned int texture) override;
 	};

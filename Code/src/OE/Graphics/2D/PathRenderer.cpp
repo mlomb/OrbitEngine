@@ -4,6 +4,7 @@
 #include <cstring>
 
 #include "OE/Math/Math.hpp"
+#include "OE/Misc/Log.hpp"
 
 namespace OrbitEngine { namespace Graphics {
 	PathRenderer::PathRenderer()
@@ -187,6 +188,7 @@ namespace OrbitEngine { namespace Graphics {
 
 	void PathRenderer::pushCommands(float* data, int size)
 	{
+		OE_ASSERT(m_CommandsSize + size < sizeof(float) * MAX_DRAW_COMMANDS_BUFFER_SIZE);
 		std::memcpy(&m_CommandsBuffer[m_CommandsSize], data, size * sizeof(float));
 		m_CommandsSize += size;
 	}
@@ -469,6 +471,8 @@ namespace OrbitEngine { namespace Graphics {
 
 	void PathRenderer::__addPath()
 	{
+		OE_ASSERT(m_NPaths + 1 < MAX_PATHS_BUFFER_SIZE);
+
 		Path* path = &m_Paths[m_NPaths];
 		std::memset(path, 0, sizeof(*path));
 		path->offset = m_NPoints;
@@ -479,6 +483,8 @@ namespace OrbitEngine { namespace Graphics {
 
 	void PathRenderer::__addPoint(const Math::Vec2f& position)
 	{
+		OE_ASSERT(m_NPoints + 1 < MAX_POINTS_BUFFER_SIZE);
+
 		PathPoint* point = &m_Points[m_NPoints];
 
 		std::memset(point, 0, sizeof(*point));

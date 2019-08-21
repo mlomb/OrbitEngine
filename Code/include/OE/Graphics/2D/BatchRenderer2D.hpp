@@ -22,18 +22,21 @@ namespace OrbitEngine { namespace Graphics {
 		void end() override;
 
 		void pushVertex(const V& v);
+		unsigned int getVertexCount() const;
 
 	protected:
 		VertexLayout* m_VertexLayout;
 		Mesh* m_Mesh;
 
+	private:
 		V* m_pVertices;
 		unsigned int m_Count;
+		unsigned int m_BatchSize;
 	};
 
 
 	template<typename V> inline BatchRenderer2D<V>::BatchRenderer2D(VertexLayout* layout, unsigned int batchSize, Topology batchTopology)
-		: m_VertexLayout(layout), m_pVertices(NULL), m_Count(0)
+		: m_VertexLayout(layout), m_pVertices(NULL), m_Count(0), m_BatchSize(batchSize)
 	{
 		std::vector<V> vertices = std::vector<V>(batchSize);
 		std::vector<unsigned short> indices = Mesh::GenerateIndices(batchTopology, batchSize);
@@ -50,8 +53,16 @@ namespace OrbitEngine { namespace Graphics {
 
 	template<typename V> inline void BatchRenderer2D<V>::pushVertex(const V& v)
 	{
+		OE_ASSERT(m_Count < m_BatchSize);
+
 		*m_pVertices = v;
 		m_pVertices++;
+		m_Count++;
+	}
+
+	template<typename V> unsigned int BatchRenderer2D<V>::getVertexCount() const
+	{
+		return m_Count;
 	}
 
 	template<typename V> inline void BatchRenderer2D<V>::begin()

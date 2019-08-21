@@ -38,6 +38,7 @@ namespace OrbitEngine { namespace Graphics {
 		BatchRenderer2D::begin();
 		TextureArrayHandler::begin();
 		SpriteRenderer::begin();
+		m_IndexCount = 0;
 	}
 
 	void SpriteBatcher::end()
@@ -56,7 +57,7 @@ namespace OrbitEngine { namespace Graphics {
 		states->setStencil(FunctionMode::DISABLED);
 		states->setCullMode(CullMode::NONE);
 
-		m_Mesh->drawIndexed(m_Count);
+		m_Mesh->drawIndexed(m_IndexCount);
 	}
 
 	void SpriteBatcher::submitRect(const Math::Vec2f(&positions)[4], const Math::Vec2f(&uvs)[4], const Math::Color4f& color, unsigned int texture)
@@ -66,7 +67,7 @@ namespace OrbitEngine { namespace Graphics {
 		pushVertex({ p_Transform * positions[2], color, uvs[2], (float)texture });
 		pushVertex({ p_Transform * positions[3], color, uvs[3], (float)texture });
 
-		m_Count += 6;
+		m_IndexCount += 6;
 	}
 	
 	int SpriteBatcher::handleTexture(Texture* tex)

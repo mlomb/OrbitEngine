@@ -147,10 +147,9 @@ namespace OrbitEngine { namespace Graphics {
 	void PathRenderer2D::pushVertex(const Math::Vec2f& position, const Math::Vec2f& uv)
 	{
 		BatchRenderer2D::pushVertex({ p_Transform * position, uv });
-		m_Count++;
 	}
 
 	unsigned int PathRenderer2D::getVertexOffset() {
-		return m_Count;
+		return getVertexCount();
 	};
 } }
