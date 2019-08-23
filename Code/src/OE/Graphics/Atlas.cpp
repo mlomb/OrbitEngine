@@ -34,6 +34,10 @@ namespace OrbitEngine { namespace Graphics {
 				writer.Int(p.second.h);
 				writer.Key("f");
 				writer.Bool(p.second.flipped);
+				if (p.second.meta.anchor.x != 0.5f) { writer.Key("ax"); writer.Double(p.second.meta.anchor.x); }
+				if (p.second.meta.anchor.y != 0.5f) { writer.Key("ay"); writer.Double(p.second.meta.anchor.y); }
+				if (p.second.meta.pivot.x  != 0.5f) { writer.Key("px"); writer.Double(p.second.meta.pivot.x);  }
+				if (p.second.meta.pivot.y  != 0.5f) { writer.Key("py"); writer.Double(p.second.meta.pivot.y);  }
 				writer.EndObject();
 			}
 
@@ -73,14 +77,22 @@ namespace OrbitEngine { namespace Graphics {
 							frame["w"].IsInt() &&
 							frame["h"].IsInt() &&
 							frame["f"].IsBool()) {
+
+							// meta
+							FrameMetadata meta = FrameMetadata();
+							if (frame.HasMember("ax") && frame["ax"].IsDouble()) meta.anchor.x = frame["ax"].GetDouble();
+							if (frame.HasMember("ay") && frame["ay"].IsDouble()) meta.anchor.y = frame["ay"].GetDouble();
+							if (frame.HasMember("px") && frame["px"].IsDouble()) meta.pivot.x = frame["px"].GetDouble();
+							if (frame.HasMember("py") && frame["py"].IsDouble()) meta.pivot.y = frame["py"].GetDouble();
+
 							if (!this->addFrame(
 								(FrameIndex)frame["i"].GetUint(),
 								frame["x"].GetInt(),
 								frame["y"].GetInt(),
 								frame["w"].GetInt(),
 								frame["h"].GetInt(),
-								frame["f"].GetBool()
-								)) {
+								frame["f"].GetBool(),
+								meta)) {
 								OE_LOG_WARNING("frame couldn't be added");
 							}
 						} else OE_LOG_WARNING("a frame is malformed");
@@ -101,7 +113,7 @@ namespace OrbitEngine { namespace Graphics {
 		return Misc::WriteJSON(metadata, buffer);
 	}
 
-	bool Atlas::addFrame(FrameIndex index, int x, int y, int w, int h, bool flipped) {
+	bool Atlas::addFrame(FrameIndex index, int x, int y, int w, int h, bool flipped, FrameMetadata meta) {
 		if (hasFrame(index))
 			return false;
 
@@ -111,6 +123,7 @@ namespace OrbitEngine { namespace Graphics {
 		frame.w = w;
 		frame.h = h;
 		frame.flipped = flipped;
+		frame.meta = meta;
 
 		const Math::Vec2f texelSize = getTexelSize();
 

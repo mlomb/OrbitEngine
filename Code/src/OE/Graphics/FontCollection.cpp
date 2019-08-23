@@ -154,10 +154,10 @@ namespace OrbitEngine {	namespace Graphics {
 	bool FontCollection::exportToFiles(const std::string& font_metadata, const std::string& atlas_metadata, const std::string& atlas_image)
 	{
 		// generate atlas
-		std::map<FrameIndex, BitmapRGBA> bitmaps;
+		std::map<FrameIndex, std::pair<BitmapRGBA, Atlas::FrameMetadata>> bitmaps;
 		for (auto& p : m_Collection)
 			for (auto& p2 : p.second)
-				bitmaps.emplace(toIndex(p.first, p2.first), p2.second.bitmap);
+				bitmaps.emplace(toIndex(p.first, p2.first), std::make_pair(p2.second.bitmap, Atlas::FrameMetadata()));
 		BitmapAtlasRGBA* atlas = BitmapAtlasRGBA::Generate(bitmaps, 2048, 1);
 		if (!atlas)
 			return false;

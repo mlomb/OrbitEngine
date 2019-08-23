@@ -56,11 +56,12 @@ namespace OrbitEngine { namespace Graphics {
 			@param[in] bitmap Bitmap to write
 			@param[in] x, y location to write the bitmap
 			@param[in] flip if the input bitmap must be rotated 90 degrees clockwise
+			@param[in] meta additional metadata
 			@return Whether the frame was added correctly
 			@note The operation may fail if the bitmap is invalid, the coordinates are out of bounds or
 				  the index provided was already in use
 		*/
-		bool addFrame(FrameIndex index, const Bitmap<T, N>& bitmap, int x, int y, bool flip);
+		bool addFrame(FrameIndex index, const Bitmap<T, N>& bitmap, int x, int y, bool flip, FrameMetadata meta);
 
 		/**
 			@brief Export the bitmap atlas to disk
@@ -73,14 +74,14 @@ namespace OrbitEngine { namespace Graphics {
 
 		/**
 			@brief Generate an atlas from bitmaps
-			@param[in] bitmaps map containing the desired indexes mapped to their corresponding bitmaps
+			@param[in] bitmaps map containing the desired indexes mapped to their corresponding bitmaps and metadata
 			@param[in] max_size maximum allowed size for the generated atlas. The generation may fail if its not possible to fit the bitmaps
 			@param[in] padding separation in pixels between each bitmap in the atlas
 			@param[in] background color of the unused pixels
 			@param[in] POT force the atlas generation to be a power of two
 			@return The BitmapAtlas instance or NULL if the operation failed
 		*/
-		static BitmapAtlas<T, N>* Generate(const std::map<FrameIndex, Bitmap<T, N>>& bitmaps, unsigned int max_size, unsigned int padding = 0, const T background[N] = 0, bool POT = false);
+		static BitmapAtlas<T, N>* Generate(const std::map<FrameIndex, std::pair<Bitmap<T, N>, FrameMetadata>>& bitmaps, unsigned int max_size, unsigned int padding = 0, const T background[N] = 0, bool POT = false);
 	};
 
 	typedef BitmapAtlas<unsigned char, 3> BitmapAtlasRGB;
@@ -94,14 +95,14 @@ namespace OrbitEngine { namespace Graphics {
 	template<typename T, unsigned int N> BitmapAtlas<T, N>::~BitmapAtlas() {
 	}
 
-	template<typename T, unsigned int N> bool BitmapAtlas<T, N>::addFrame(FrameIndex index, const Bitmap<T, N>& bitmap, int x, int y, bool flip) {
+	template<typename T, unsigned int N> bool BitmapAtlas<T, N>::addFrame(FrameIndex index, const Bitmap<T, N>& bitmap, int x, int y, bool flip, FrameMetadata meta) {
 		if (!bitmap.valid()) // bitmap is invalid
 			return false;
 		if (x < 0 || y < 0 || x > Bitmap<T, N>::m_Width || y > Bitmap<T, N>::m_Height) // out of bounds
 			return false;
-		if (!Atlas::addFrame(index, x, y, flip ? bitmap.height() : bitmap.width(), flip ? bitmap.width() : bitmap.height(), flip))
+		if (!Atlas::addFrame(index, x, y, flip ? bitmap.height() : bitmap.width(), flip ? bitmap.width() : bitmap.height(), flip, meta))
 			return false;
-		// this shouldn't fail
+		// next line shouldn't fail
 		Bitmap<T, N>::write(flip ? bitmap.rotate90clockwise() : bitmap, x, y);
 		return true;
 	}
@@ -114,19 +115,20 @@ namespace OrbitEngine { namespace Graphics {
 		return Math::Vec2f(1.0f / Bitmap<T, N>::m_Width, 1.0f / Bitmap<T, N>::m_Height);
 	}
 
-	template<typename T, unsigned int N> BitmapAtlas<T, N>* BitmapAtlas<T, N>::Generate(const std::map<FrameIndex, Bitmap<T, N>>& bitmaps, unsigned int max_size, unsigned int padding, const T background[N], bool POT) {
+	template<typename T, unsigned int N> BitmapAtlas<T, N>* BitmapAtlas<T, N>::Generate(const std::map<FrameIndex, std::pair<Bitmap<T, N>, FrameMetadata>>& bitmaps, unsigned int max_size, unsigned int padding, const T background[N], bool POT) {
 		std::vector<Misc::Packeable2D*> rects;
 
 		struct Entry : public Misc::Packeable2D {
-			Entry(int index, const Bitmap<T, N>& bitmap, unsigned int padding)
-				: Misc::Packeable2D(), index(index), bitmap(bitmap) { w = bitmap.width() + padding; h = bitmap.height() + padding; }
+			Entry(int index, const Bitmap<T, N>& bitmap, FrameMetadata metadata, unsigned int padding)
+				: Misc::Packeable2D(), index(index), bitmap(bitmap), metadata(metadata) { w = bitmap.width() + padding; h = bitmap.height() + padding; }
 			const int index;
 			const Bitmap<T, N>& bitmap;
+			const FrameMetadata metadata;
 		};
 
 		rects.reserve(bitmaps.size());
 		for (auto& p : bitmaps) {
-			rects.push_back(new Entry(p.first, p.second, padding));
+			rects.push_back(new Entry(p.first, p.second.first, p.second.second, padding));
 		}
 
 		unsigned int atlas_width, atlas_height;
@@ -154,7 +156,7 @@ namespace OrbitEngine { namespace Graphics {
 
 		for (Misc::Packeable2D* p : rects) {
 			Entry* e = static_cast<Entry*>(p);
-			atlas->addFrame(e->index, e->bitmap, e->x, e->y, e->flipped);
+			atlas->addFrame(e->index, e->bitmap, e->x, e->y, e->flipped, e->metadata);
 			delete e;
 		}
 

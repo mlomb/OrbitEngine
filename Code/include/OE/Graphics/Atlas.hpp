@@ -39,18 +39,32 @@ namespace OrbitEngine { namespace Graphics {
 	*/
 	class Atlas {
 	public:
+		/// Holds additional information of a frame
+		struct FrameMetadata {
+			Math::Vec2f anchor = Math::Vec2f(0.5, 0.5);
+			Math::Vec2f pivot = Math::Vec2f(0.5, 0.5);
+		};
+
 		/// Holds the information to locate a frame
 		struct Frame {
 			int x, y, w, h;
 			bool flipped;
 			Math::UV uvs;
+			FrameMetadata meta;
 		};
+
+		/// Returns texel sizes in both dimensions (1.0f / size)
+		virtual Math::Vec2f getTexelSize() const = 0;
 
 		/// Returns whether the provided index already exists
 		bool hasFrame(FrameIndex index) const;
 
-		/// Returns texel sizes in both dimensions (1.0f / size)
-		virtual Math::Vec2f getTexelSize() const = 0;
+		/**
+			@brief Get a constant reference of a frame
+			@param[in] index requested frame index
+			@warning You must check if the frame exists (\ref hasFrame) before calling this function
+		*/
+		const Frame& getFrame(FrameIndex index) const;
 
 	protected:
 		Atlas();
@@ -70,18 +84,11 @@ namespace OrbitEngine { namespace Graphics {
 			@param[in] x,y location of the frame
 			@param[in] w,h sizes of the frame
 			@param[in] flipped if the provided frame is rotated 90 degrees clockwise
+			@param[in] meta additional metadata
 			@return Whether the operation was successful
 			@note The operation may fail if the index provided was already in use
 		*/
-		bool addFrame(FrameIndex index, int x, int y, int w, int h, bool flipped);
-
-	protected:
-		/**
-			@brief Get a constant reference of a frame
-			@param[in] index requested frame index
-			@warning You must check if the frame exists (\ref hasFrame) before calling this function
-		*/
-		const Frame& getFrame(FrameIndex index) const;
+		bool addFrame(FrameIndex index, int x, int y, int w, int h, bool flipped = false, FrameMetadata meta = FrameMetadata());
 
 	private:
 		std::unordered_map<FrameIndex, Frame> m_Frames;
