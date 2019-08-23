@@ -340,7 +340,7 @@ namespace msdfgen {
 
 namespace OrbitEngine { namespace Graphics {
 
-	BitmapRGB GenerateFromShape(msdfgen::Shape& shape, SDFMode mode, double range) {
+	BitmapRGB GenerateFromShape(msdfgen::Shape& shape, SDFMode mode, double range, Math::Vec2i& center) {
 		//if (!shape.validate())
 		//	return BitmapRGB();
 
@@ -360,6 +360,9 @@ namespace OrbitEngine { namespace Graphics {
 
 		int width = std::round(w);
 		int height = std::round(h);
+
+		center.x = std::round(translate.x);
+		center.y = h - std::round(translate.y);
 
 		if (mode == SDFMode::SDF || mode == SDFMode::PSDF) {
 			msdfgen::Bitmap<float, 1> buff(width, height);
@@ -384,14 +387,15 @@ namespace OrbitEngine { namespace Graphics {
 	{
 		msdfgen::Shape shape;
 		outlineToShape(outline, shape);
-		return GenerateFromShape(shape, mode, range);
+		Math::Vec2i center;
+		return GenerateFromShape(shape, mode, range, center);
 	}
 
-	BitmapRGB GenerateBitmapFromSVGPath(const std::string& svg_path, SDFMode mode, double range, double scale)
+	BitmapRGB GenerateBitmapFromSVGPath(const std::string& svg_path, SDFMode mode, double range, Math::Vec2i& center, double scale)
 	{
 		msdfgen::Shape shape;
 		msdfgen::buildFromPath(shape, svg_path.c_str(), scale);
-		return GenerateFromShape(shape, mode, range);
+		return GenerateFromShape(shape, mode, range, center);
 	}
 
 } }
