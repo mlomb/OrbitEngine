@@ -88,7 +88,7 @@ namespace OrbitEngine { namespace Graphics {
 			@return Whether the operation was successful
 			@note The operation may fail if the index provided was already in use
 		*/
-		bool addFrame(FrameIndex index, int x, int y, int w, int h, bool flipped = false, FrameMetadata meta = FrameMetadata());
+		bool addFrame(FrameIndex index, int x, int y, int w, int h, bool flipped, FrameMetadata meta);
 
 	private:
 		std::unordered_map<FrameIndex, Frame> m_Frames;
