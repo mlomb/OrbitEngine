@@ -49,13 +49,31 @@ namespace OrbitEngine { namespace Math {
 			(b.x * a._11) + (b.y * a._21) + a._41,
 			(b.x * a._12) + (b.y * a._22) + a._42);
 	}
-
+	
 	inline Vec3f operator*(const Mat4& a, const Vec3f& b)
 	{
 		return Vec3f(
 			(b.x * a._11) + (b.y * a._21) + (b.z * a._31) + a._41,
-			(b.x * a._12) + (b.y * a._22) + (b.z * a._31) + a._42,
+			(b.x * a._12) + (b.y * a._22) + (b.z * a._32) + a._42,
 			(b.x * a._13) + (b.y * a._23) + (b.z * a._33) + a._43);
+	}
+
+	inline Vec4f operator*(const Mat4& a, const Vec4f& b)
+	{
+		return Vec4f(
+			(b.x * a._11) + (b.y * a._21) + (b.z * a._31) + (b.w * a._41),
+			(b.x * a._12) + (b.y * a._22) + (b.z * a._32) + (b.w * a._42),
+			(b.x * a._13) + (b.y * a._23) + (b.z * a._33) + (b.w * a._43),
+			(b.x * a._14) + (b.y * a._24) + (b.z * a._34) + (b.w * a._44));
+	}
+
+	inline Vec4f operator*(const Vec4f& a, const Mat4& b)
+	{
+		return Vec4f(
+			(a.x * b._11) + (a.y * b._12) + (a.z * b._13) + (a.w * b._14),
+			(a.x * b._21) + (a.y * b._22) + (a.z * b._23) + (a.w * b._24),
+			(a.x * b._31) + (a.y * b._32) + (a.z * b._33) + (a.w * b._34),
+			(a.x * b._41) + (a.y * b._42) + (a.z * b._43) + (a.w * b._44));
 	}
 
 	inline Mat4 Mat4::Identity() {
