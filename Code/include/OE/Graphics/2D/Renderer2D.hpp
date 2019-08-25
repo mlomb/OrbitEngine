@@ -13,7 +13,7 @@ namespace OrbitEngine { namespace Graphics {
 	public:
 		virtual ~Renderer2D() {};
 
-		void setPVMatrix(const Math::Mat4& matrix);
+		void setPVMatrices(const Math::Mat4& projection_matrix, const Math::Mat4& view_matrix = Math::Mat4::Identity());
 		void setTransform(const Math::Mat4& matrix);
 		void resetTransform();
 
@@ -24,6 +24,8 @@ namespace OrbitEngine { namespace Graphics {
 	protected:
 		Renderer2D();
 
+		Math::Mat4 p_ProjectionMatrix;
+		Math::Mat4 p_ViewMatrix;
 		Math::Mat4 p_Transform;
 
 		UniformsPack<Math::Mat4>* m_UPVMatrix;

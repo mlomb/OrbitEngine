@@ -61,7 +61,7 @@ namespace OrbitEngine { namespace Graphics {
 		m_Shader->bind();
 		m_UPVMatrix->bind("PVMatrix", m_Shader);
 		m_UniformDataPack->bind("Data", m_Shader);
-
+		
 		BatchRenderer2D::end();
 		TextureArrayHandler::end();
 
@@ -140,7 +140,10 @@ namespace OrbitEngine { namespace Graphics {
 			m_TrianglesCall = nullptr;
 			pushCall(temp);
 		}
-		call->data.scissor = Math::Vec4f((float)m_ScissorStack->get().rect.x, (float)m_ScissorStack->get().rect.y, (float)m_ScissorStack->get().rect.z, (float)m_ScissorStack->get().rect.w);
+		Math::Vec4f rect = m_ScissorStack->get().rect;
+		Math::Vec2f top_left = p_ViewMatrix * Math::Vec4f(rect.x, rect.y, 0, 1).xy;
+		Math::Vec2f bottom_right = p_ViewMatrix * Math::Vec4f(rect.x + rect.z, rect.y + rect.w, 0, 1).xy;
+		call->data.scissor = Math::Vec4f(top_left, bottom_right - top_left);
 		m_RenderCalls.push_back(call);
 	}
 

@@ -14,13 +14,15 @@ namespace OrbitEngine { namespace Graphics {
 		: p_Transform(Math::Mat4::Identity())
 	{
 		m_UPVMatrix = Graphics::UniformsPack<Math::Mat4>::Create();
-		m_UPVMatrix->setData(Math::Mat4::Orthographic(0.0f, 1000.0f, 1000.0f, 0.0f, -1.0f, 1.0f));
+		setPVMatrices(Math::Mat4::Orthographic(0.0f, 1000.0f, 1000.0f, 0.0f, -1.0f, 1.0f));
 	}
 
 
-	void Renderer2D::setPVMatrix(const Math::Mat4& matrix)
+	void Renderer2D::setPVMatrices(const Math::Mat4& projection_matrix, const Math::Mat4& view_matrix)
 	{
-		m_UPVMatrix->setData(matrix);
+		p_ProjectionMatrix = projection_matrix;
+		p_ViewMatrix = view_matrix;
+		m_UPVMatrix->setData(p_ViewMatrix * p_ProjectionMatrix);
 	}
 
 	void Renderer2D::setTransform(const Math::Mat4& matrix)
