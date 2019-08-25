@@ -11,8 +11,8 @@ namespace OrbitEngine { namespace Misc {
 			return Math::Scissor(
 				std::max(old.rect.x, added.rect.x),
 				std::max(old.rect.y, added.rect.y),
-				std::min(old.rect.z, std::max(0, added.rect.z)), // size >= 0
-				std::min(old.rect.w, std::max(0, added.rect.w))
+				std::min(old.rect.z, std::max(0.0f, added.rect.z)), // size >= 0
+				std::min(old.rect.w, std::max(0.0f, added.rect.w))
 			);
 		};
 	};

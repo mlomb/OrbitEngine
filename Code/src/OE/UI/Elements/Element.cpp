@@ -84,7 +84,7 @@ namespace OrbitEngine { namespace UI {
 
 		m_ClipToBounds = false;
 		if (m_ClipToBounds) {
-			Math::Scissor scissor(Math::Vec4i(m_RenderRect.xy, m_RenderRect.zw));
+			Math::Scissor scissor(Math::Vec4f(m_RenderRect.xy, m_RenderRect.zw));
 			r2d.getScissorStack()->pushStack(scissor);
 		}
 
