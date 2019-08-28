@@ -48,6 +48,11 @@ namespace OrbitEngine {
 #define OE_LOG_ERROR(message) OE_LOG(message, OrbitEngine::LOG_ERROR)
 #define OE_LOG_FATAL(message) OE_LOG(message, OrbitEngine::LOG_FATAL)
 
+// disable debug messages
+#if !OE_DEBUG
+	#define OE_LOG_DEBUG(message)
+#endif
+
 #if OE_WINDOWS
 	#define OE_LOG_FATAL_SHOWBOX_AND_EXIT(message) \
 	{ \
@@ -64,7 +69,7 @@ namespace OrbitEngine {
 	#define OE_LOG_FATAL_SHOWBOX_AND_EXIT(message) OE_LOG_FATAL(message)
 #endif
 
-#ifdef OE_DEBUG
+#if OE_DEBUG
 #define OE_ASSERT_MSG(condition, msg) \
 { \
 	if(!(condition)){ \
@@ -80,7 +85,7 @@ namespace OrbitEngine {
 	} \
 };
 #else
-#define OE_ASSERT_MSG(condition, msg)
+	#define OE_ASSERT_MSG(condition, msg)
 #endif
 
 #define NOARG
