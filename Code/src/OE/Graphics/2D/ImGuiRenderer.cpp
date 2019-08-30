@@ -231,13 +231,15 @@ namespace OrbitEngine { namespace Graphics {
 		{
 			System::IOStream* stream = new System::IOStream("Resources/Fonts/Roboto-Regular.ttf", System::AccessMode::READ);
 
-			size_t size = stream->getFilesize();
-			void* data = malloc(size);
-			stream->read(data, sizeof(char), size);
+			if (stream->isOpen()) {
+				size_t size = stream->getFilesize();
+				void* data = malloc(size);
+				stream->read(data, sizeof(char), size);
 
+				// ! ImGui will take ownership of the data
+				io.Fonts->AddFontFromMemoryTTF(data, size, 17.0f);
+			}
 			delete stream;
-			// ! ImGui will take ownership of the data
-			io.Fonts->AddFontFromMemoryTTF(data, size, 17.0f);
 
 			unsigned char* pixels;
 			int width, height;
