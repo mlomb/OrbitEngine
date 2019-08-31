@@ -36,6 +36,7 @@ namespace OrbitEngine { namespace Graphics {
 			m_TempVertexs[3] = mat.multiply(m_TempVertexs[3]);
 		}
 		*/
+		/*
 		if (flipX) {
 			// TODO See WRONG
 			m_TempUVs[0] = uvs._4;
@@ -57,8 +58,9 @@ namespace OrbitEngine { namespace Graphics {
 			m_TempUVs[2] = uvs._3;
 			m_TempUVs[3] = uvs._4;
 		}
+		*/
 
-		submitRect(m_TempVertexs, m_TempUVs, m_BindColor, m_BindTexture);
+		submitRect(m_TempVertexs, uvs.arr, m_BindColor, m_BindTexture);
 	}
 
 	void SpriteRenderer::begin()
