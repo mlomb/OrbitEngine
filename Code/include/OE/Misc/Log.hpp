@@ -50,7 +50,7 @@ namespace OrbitEngine {
 
 // disable debug messages
 #if !OE_DEBUG
-	#define OE_LOG_DEBUG(message)
+	#define OE_LOG_DEBUG(message) {};
 #endif
 
 #if OE_WINDOWS
@@ -85,7 +85,7 @@ namespace OrbitEngine {
 	} \
 };
 #else
-	#define OE_ASSERT_MSG(condition, msg)
+	#define OE_ASSERT_MSG(condition, msg) {};
 #endif
 
 #define NOARG
