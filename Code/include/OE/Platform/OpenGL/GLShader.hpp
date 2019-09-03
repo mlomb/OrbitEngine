@@ -1,6 +1,8 @@
 #ifndef GRAPHICS_GLSHADER_HPP
 #define GRAPHICS_GLSHADER_HPP
 
+#include <unordered_map>
+
 #include "OE/Platform/OpenGL/OpenGL.hpp"
 #include "OE/Graphics/API/Shader.hpp"
 
@@ -21,19 +23,21 @@ namespace OrbitEngine {	namespace Graphics {
 		void attachFromSource(ShaderType type, const std::string& source) override;
 		void finalize() override;
 
-		void setUniform1i(const GLchar* name, int value) const;
-		void setUniform1iv(const GLchar* name, int* value, int count) const;
-		void setUniform1f(const GLchar* name, float value) const;
-		void setUniform2f(const GLchar* name, const Math::Vec2f& vector) const;
-		void setUniform3f(const GLchar* name, const Math::Vec3f& vector) const;
-		void setUniform4f(const GLchar* name, const Math::Vec4f& vector) const;
-		void setUniformMat4(const GLchar* name, const Math::Mat4& matrix) const;
+		void setUniform1i(const std::string& name, int value);
+		void setUniform1iv(const std::string& name, int* value, int count);
+		void setUniform1f(const std::string& name, float value);
+		void setUniform2f(const std::string& name, const Math::Vec2f& vector);
+		void setUniform3f(const std::string& name, const Math::Vec3f& vector);
+		void setUniform4f(const std::string& name, const Math::Vec4f& vector);
+		void setUniformMat4(const std::string& name, const Math::Mat4& matrix);
+
 
 		void bindUBO(const GLuint block_index, const GLuint uboSlot) const;
 	private:
 		GLuint m_ID = -1;
+		std::unordered_map<std::string, GLuint> m_UniformLocationCache;
 
-		GLint getUniformLocation(const GLchar* name) const;
+		GLint getUniformLocation(const std::string& name);
 		GLint getUniformBlockIndex(const GLchar* name) const;
 	};
 } }

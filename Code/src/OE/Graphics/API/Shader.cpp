@@ -19,12 +19,10 @@ namespace OrbitEngine {	namespace Graphics {
 
 	Shader::Shader()
 	{
-		p_Reflection = ShaderReflection::Create();
 	}
 	
 	Shader::~Shader()
 	{
-		delete p_Reflection;
 	}
 
 	Shader* Shader::Create()
@@ -61,9 +59,15 @@ namespace OrbitEngine {	namespace Graphics {
 			attachFromSource(type, source);
 		}
 	}
-	
-	ShaderReflection* Shader::getReflection()
+
+	void Shader::attach(ShaderType type, const std::string& source, const ShaderReflection& reflection)
 	{
-		return p_Reflection;
+		attachFromSource(type, source);
+		p_Reflections[type] = reflection;
+	}
+
+	const ShaderReflections& Shader::getReflections() const
+	{
+		return p_Reflections;
 	}
 } }

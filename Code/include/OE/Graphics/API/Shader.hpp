@@ -6,9 +6,10 @@
 #include <map>
 #include <set>
 
-namespace OrbitEngine {	namespace Graphics {
-	class ShaderReflection;
+#include "OE/Graphics/API/ShaderReflection.hpp"
 
+namespace OrbitEngine {	namespace Graphics {
+	
 	enum ShaderType {
 		UNKNOWN = 0,
 		VERTEX,
@@ -19,6 +20,7 @@ namespace OrbitEngine {	namespace Graphics {
 	};
 
 	typedef std::map<ShaderType, std::string> ShaderSources;
+	typedef std::map<ShaderType, ShaderReflection> ShaderReflections;
 	typedef std::set<std::string> ShaderDefinitions;
 
 	class Shader {
@@ -28,18 +30,20 @@ namespace OrbitEngine {	namespace Graphics {
 		static Shader* Create();
 
 		void attachFromFile(ShaderType type, std::string& path, bool binary = false);
-		ShaderReflection* getReflection();
 
+		void attach(ShaderType type, const std::string& source, const ShaderReflection& reflection);
 		virtual void attachFromSource(ShaderType type, const std::string& source) = 0;
 		virtual void attachFromBinary(ShaderType type, const std::vector<char>& binary) = 0;
 		virtual void finalize() = 0;
 
 		virtual void bind() const = 0;
+
+		const ShaderReflections& getReflections() const;
 		
 	protected:
-		ShaderReflection* p_Reflection;
-
 		Shader();
+
+		ShaderReflections p_Reflections;
 	};
 	
 } }

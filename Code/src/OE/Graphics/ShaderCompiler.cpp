@@ -39,9 +39,8 @@ namespace OrbitEngine { namespace Graphics {
 			Application::priv::GLContext* glcontext = reinterpret_cast<Application::priv::GLContext*>(context);
 			switch (glcontext->getInfo().major) {
 			case 1:
-				return Xsc::OutputShaderVersion::ESSL100;
 			case 2:
-				return Xsc::OutputShaderVersion::ESSL300;
+				return Xsc::OutputShaderVersion::ESSL100;
 			case 3:
 				switch (glcontext->getInfo().minor) {
 				case 0: return Xsc::OutputShaderVersion::ESSL300;
@@ -96,16 +95,18 @@ namespace OrbitEngine { namespace Graphics {
 		return Xsc::OutputShaderVersion::GLSL;
 	}
 	
-	std::string ShaderCompiler::CrossCompileHLSL(const std::string hlslSource, ShaderType shaderType, std::string entryPoint)
+	ShaderCompilationResult ShaderCompiler::CrossCompileHLSL(const std::string hlslSource, ShaderType shaderType, std::string entryPoint)
 	{
+		Application::priv::ContextImpl* context = Application::priv::ContextImpl::GetCurrent();
+
 		bool isD3D = false;
 #if OE_D3D
-		isD3D = Application::Context::GetCurrentAPI() == RenderAPI::DIRECT3D;
+		isD3D = context->getAPI() == RenderAPI::DIRECT3D;
 #endif
+		ShaderReflection reflection;
 
 		auto inputStream = std::make_shared<std::istringstream>(hlslSource);
 		std::ostringstream outputStream;
-		std::string output;
 
 		Xsc::ShaderInput inputDesc;
 		inputDesc.sourceCode = inputStream;
@@ -116,7 +117,7 @@ namespace OrbitEngine { namespace Graphics {
 		Xsc::ShaderOutput outputDesc;
 		outputDesc.shaderVersion = OutputShaderVersionFromCurrentContext();
 		outputDesc.sourceCode = &outputStream;
-		outputDesc.options.autoBinding = true;
+		//outputDesc.options.autoBinding = true;
 		outputDesc.options.allowExtensions = true;
 		outputDesc.options.preserveComments = false;
 		outputDesc.options.optimize = true;
@@ -129,38 +130,124 @@ namespace OrbitEngine { namespace Graphics {
 		try
 		{
 			// TODO Replace the default StdLog -> OE_LOG_*
-			Xsc::StdLog log;
-			bool result = Xsc::CompileShader(inputDesc, outputDesc, &log, 0);
-			if (result) {
-				output = outputStream.str();
+			Xsc::StdLog xsc_log;
+			Xsc::Reflection::ReflectionData xsc_reflection;
+			bool result = Xsc::CompileShader(inputDesc, outputDesc, &xsc_log, &xsc_reflection);
+			if (!result) {
+				OE_LOG_WARNING("Couldn't cross compile the shader!");
+				xsc_log.PrintAll();
 			}
 			else {
-				OE_LOG_WARNING("Couldn't cross compile the shader!");
-				log.PrintAll();
+				// parse reflection
+				for (Xsc::Reflection::Attribute u : xsc_reflection.uniforms) {
+					reflection.uniforms.push_back({ u.name, 0, 0 });
+				}
+				for (Xsc::Reflection::ConstantBuffer cb : xsc_reflection.constantBuffers) {
+					ShaderBuffer buff;
+					buff.name = cb.name;
+					buff.slot = 0;
+					buff.size = cb.size == 0xFFFFFFFF ? -1 : 0;
+					buff.padding = cb.padding;
+
+					for (Xsc::Reflection::Field& f : cb.fields) {
+						buff.uniforms.push_back({ f.name, f.size, f.offset });
+					}
+
+					reflection.buffers.push_back(buff);
+				}
 			}
 		}
 		catch (const std::exception& e)
 		{
 			OE_LOG_ERROR(e.what());
+			return { "" };
 		}
 
+		//////////////////////////
+		/// Post process shader //
+		//////////////////////////
 		/*
-		OE_LOG_DEBUG("------------------------");
-		OE_LOG_DEBUG("Shader Input:");
-		OE_LOG_DEBUG(hlslSource);
-		OE_LOG_DEBUG("Shader Output:");
-		OE_LOG_DEBUG(output);
-		OE_LOG_DEBUG("------------------------");
+		// Convert this
+		layout(std140, row_major) uniform Block
+		{
+			highp float a;
+			highp float b;
+			highp float c;
+		};
+
+		// To this
+		uniform highp float a;
+		uniform highp float b;
+		uniform highp float c;
 		*/
+		bool dismantled_ubos = false;
 
 #if OE_OPENGL_ANY
-		if (Application::Context::GetCurrentAPI() == OPENGL
+		if (context->getAPI() == OPENGL
 #if OE_OPENGL_ES
-			|| Application::Context::GetCurrentAPI() == OPENGL_ES
+			|| context->getAPI() == OPENGL_ES
+#endif
+			) {
+			Application::priv::GLContext* glcontext = reinterpret_cast<Application::priv::GLContext*>(context);
+			dismantled_ubos = !glcontext->getInfo().ubo_support;
+		}
+#endif
+
+		std::stringstream ss(outputStream.str());
+		std::ostringstream oo;
+		std::string line;
+
+		bool inside_ubo_definition = false;
+
+		while (std::getline(ss, line, '\n')) {
+			if (line.find("layout(std140) uniform") != std::string::npos ||
+				line.find("layout(std140, row_major) uniform") != std::string::npos) {
+				inside_ubo_definition = true;
+				if (dismantled_ubos) {
+					std::getline(ss, line, '{'); // crop until {
+					continue;
+				}
+			}
+			if (line.size() > 0) {
+				if (inside_ubo_definition) {
+					if (line == "};") {
+						inside_ubo_definition = false;
+						if(dismantled_ubos)
+							continue;
+					}
+					if(dismantled_ubos)
+						oo << "uniform ";
+				}
+			}
+			oo << line << '\n';
+		}
+		std::string source = oo.str();
+
+		//OE_LOG_DEBUG("------------------------");
+		//OE_LOG_DEBUG(" ---- HLSL5 -> " << (int)outputDesc.shaderVersion << " ---- ");
+		//OE_LOG_DEBUG("Shader Input:");
+		//OE_LOG_DEBUG(hlslSource);
+		//OE_LOG_DEBUG("Shader Output:");
+		//OE_LOG_DEBUG(source);
+		//OE_LOG_DEBUG("------------------------");
+		
+#if OE_OPENGL_ANY
+		if (context->getAPI() == OPENGL
+#if OE_OPENGL_ES
+			|| context->getAPI() == OPENGL_ES
 #endif
 			) {
 			static bool glsl_optimizer_initialized = false;
 			static glslopt_ctx* ctx = NULL;
+
+			glslopt_shader_type type;
+			switch (shaderType)
+			{
+			case VERTEX: type = glslopt_shader_type::kGlslOptShaderVertex; break;
+			case FRAGMENT: type = glslopt_shader_type::kGlslOptShaderFragment; break;
+			default:
+				return { source, reflection }; // not supported by glsl-optimize
+			}
 
 			if (!glsl_optimizer_initialized) {
 				glslopt_target targetVersion;
@@ -182,29 +269,31 @@ namespace OrbitEngine { namespace Graphics {
 					targetVersion = glslopt_target::kGlslTargetOpenGL;
 					break;
 				default:
-					return output; // not supported by glsl-optimize
+					return { source, reflection }; // not supported by glsl-optimize
 				}
 				ctx = glslopt_initialize(targetVersion);
 				// call glslopt_cleanup?
 			}
 
-			glslopt_shader_type type;
-			switch (shaderType)
-			{
-			case VERTEX: type = glslopt_shader_type::kGlslOptShaderVertex; break;
-			case FRAGMENT: type = glslopt_shader_type::kGlslOptShaderFragment; break;
-			default:
-				return output; // not supported by glsl-optimize
+			std::string input = source;
+			if (outputDesc.shaderVersion == Xsc::OutputShaderVersion::ESSL100) {
+				// workaround due
+				// error: GLSL 1.00 ES should be selected using `#version 100'
+				if (input.size() > 15) { // "#version 100 es"
+					// remove ' es'
+					input.erase(input.begin() + 12);
+					input.erase(input.begin() + 12);
+					input.erase(input.begin() + 12);
+				}
 			}
-
-			glslopt_shader* shader = glslopt_optimize(ctx, type, output.c_str(), kGlslOptionSkipPreprocessor);
+			
+			glslopt_shader* shader = glslopt_optimize(ctx, type, input.c_str(), kGlslOptionSkipPreprocessor);
 			if (glslopt_get_status(shader)) {
-				output = glslopt_get_output(shader);
-				/*
-				OE_LOG_DEBUG("Shader optimized output:");
-				OE_LOG_DEBUG(output);
-				OE_LOG_DEBUG("------------------------");
-				*/
+				source = glslopt_get_output(shader);
+				
+				//OE_LOG_DEBUG("Shader optimized output:");
+				//OE_LOG_DEBUG(source);
+				//OE_LOG_DEBUG("------------------------");
 			}
 			else {
 				OE_LOG_WARNING("Couldn't run glsl-optimizer on shader! " << glslopt_get_log(shader));
@@ -213,6 +302,6 @@ namespace OrbitEngine { namespace Graphics {
 		}
 #endif
 
-		return output;
+		return { source, reflection };
 	}
 } }

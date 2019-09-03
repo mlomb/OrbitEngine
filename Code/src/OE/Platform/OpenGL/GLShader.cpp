@@ -1,7 +1,6 @@
 #include "OE/Platform/OpenGL/GLShader.hpp"
 
 #include "OE/Platform/OpenGL/OpenGL.hpp"
-#include "OE/Platform/OpenGL/GLShaderReflection.hpp"
 #include "OE/Platform/OpenGL/GLContext.hpp"
 #include "OE/Platform/OpenGL/GLStates.hpp"
 
@@ -81,12 +80,20 @@ namespace OrbitEngine {	namespace Graphics {
 		
 		// This causes the shader to compile asynchronously :/
 		bind();
-		static_cast<GLShaderReflection*>(p_Reflection)->reflect(m_ID);
 
 		// Bind the UBOs automatically
-		// For convenience, we set bind each UBO so its index match the binding point
-		for (const auto& buffer : p_Reflection->getAllBuffers())
-			bindUBO(buffer.slot, buffer.slot);
+		for (auto& pair : p_Reflections) {
+			for (ShaderBuffer& buff : pair.second.buffers) {
+				buff.slot = OE_CHECK_GL(glGetUniformBlockIndex(m_ID, buff.name.c_str()));
+				if (buff.slot == 0xFFFFFFFFu /* GL_INVALID_INDEX */) {
+					OE_LOG_WARNING("GL_INVALID_INDEX received when querying the UBO index for " << buff.name);
+				}
+				else {
+					// For convenience, we set bind each UBO so its index match the binding point
+					bindUBO(buff.slot, buff.slot);
+				}
+			}
+		}
 	}
 	
 	void GLShader::bind() const
@@ -103,45 +110,51 @@ namespace OrbitEngine {	namespace Graphics {
 		OE_LOG_FATAL("This isn't supported in OpenGL");
 	}
 
-	GLint GLShader::getUniformLocation(const GLchar* name) const {
-		return glGetUniformLocation(m_ID, name);
+	GLint GLShader::getUniformLocation(const std::string& name)
+	{
+		auto it = m_UniformLocationCache.find(name);
+		if (it != m_UniformLocationCache.end())
+			return (*it).second;
+		GLint location = OE_CHECK_GL(glGetUniformLocation(m_ID, name.c_str()));
+		m_UniformLocationCache.insert(std::make_pair(name, location));
+		return location;
 	}
-
+	
 	GLint GLShader::getUniformBlockIndex(const GLchar* name) const
 	{
-		return glGetUniformBlockIndex(m_ID, name);
+		return OE_CHECK_GL(glGetUniformBlockIndex(m_ID, name));
 	}
 
-	void GLShader::setUniform1f(const GLchar* name, float value) const {
+	void GLShader::setUniform1f(const std::string& name, float value) {
 		glUniform1f(getUniformLocation(name), value);
 	}
 
-	void GLShader::setUniform1i(const GLchar* name, int value) const {
+	void GLShader::setUniform1i(const std::string& name, int value) {
 		glUniform1i(getUniformLocation(name), value);
 	}
 
-	void GLShader::setUniform2f(const GLchar* name, const Math::Vec2f& vector) const {
+	void GLShader::setUniform2f(const std::string& name, const Math::Vec2f& vector) {
 		glUniform2f(getUniformLocation(name), vector.x, vector.y);
 	}
 
-	void GLShader::setUniform3f(const GLchar* name, const Math::Vec3f& vector) const {
+	void GLShader::setUniform3f(const std::string& name, const Math::Vec3f& vector) {
 		glUniform3f(getUniformLocation(name), vector.x, vector.y, vector.z);
 	}
 
-	void GLShader::setUniform4f(const GLchar* name, const Math::Vec4f& vector) const {
+	void GLShader::setUniform4f(const std::string& name, const Math::Vec4f& vector) {
 		glUniform4f(getUniformLocation(name), vector.x, vector.y, vector.z, vector.w);
 	}
 
-	void GLShader::setUniformMat4(const GLchar* name, const Math::Mat4& matrix) const {
+	void GLShader::setUniformMat4(const std::string& name, const Math::Mat4& matrix) {
 		glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, &matrix._11);
 	}
 
-	void GLShader::setUniform1iv(const GLchar* name, int* value, int count) const {
+	void GLShader::setUniform1iv(const std::string& name, int* value, int count) {
 		glUniform1iv(getUniformLocation(name), count, value);
 	}
 
 	void GLShader::bindUBO(const GLuint block_index, const GLuint uboSlot) const
 	{
-		glUniformBlockBinding(m_ID, block_index, uboSlot);
+		OE_CHECK_GL(glUniformBlockBinding(m_ID, block_index, uboSlot));
 	}
 } }

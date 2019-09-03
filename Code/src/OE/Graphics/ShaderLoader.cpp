@@ -18,8 +18,10 @@ namespace OrbitEngine { namespace Graphics {
 		ShaderSources sources = LoadShaderSources(path);
 
 		Shader* shader = Shader::Create();
-		for (const auto& kv : sources)
-			shader->attachFromSource(kv.first, ShaderCompiler::CrossCompileHLSL(kv.second, kv.first));
+		for (const auto& kv : sources) {
+			auto result = ShaderCompiler::CrossCompileHLSL(kv.second, kv.first);
+			shader->attach(kv.first, result.source, result.reflection);
+		}
 		shader->finalize();
 
 		return shader;

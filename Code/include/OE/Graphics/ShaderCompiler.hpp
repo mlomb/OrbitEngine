@@ -6,6 +6,12 @@
 #include "OE/Graphics/API/Shader.hpp"
 
 namespace OrbitEngine { namespace Graphics {
+
+	struct ShaderCompilationResult {
+		std::string source;
+		ShaderReflection reflection;
+	};
+
 	class ShaderCompiler {
 	public:
 		/*
@@ -14,7 +20,7 @@ namespace OrbitEngine { namespace Graphics {
 			If the API is Direct3D then the shader
 			will only be preprocessed
 		*/
-		static std::string CrossCompileHLSL(const std::string hlslSource, ShaderType shaderType, std::string entryPoint = "main");
+		static ShaderCompilationResult CrossCompileHLSL(const std::string hlslSource, ShaderType shaderType, std::string entryPoint = "main");
 	private:
 
 		ShaderCompiler() {};

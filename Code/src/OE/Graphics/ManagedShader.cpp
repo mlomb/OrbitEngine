@@ -37,8 +37,8 @@ namespace OrbitEngine { namespace Graphics {
 
 			for (const auto& kv : p_Sources) {
 				std::string hlslSource = strDefinitions + kv.second;
-				std::string compiledSource = ShaderCompiler::CrossCompileHLSL(hlslSource, kv.first);
-				shader->attachFromSource(kv.first, compiledSource);
+				auto result = ShaderCompiler::CrossCompileHLSL(hlslSource, kv.first);
+				shader->attach(kv.first, result.source, result.reflection);
 			}
 
 			shader->finalize();

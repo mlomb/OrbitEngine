@@ -1,7 +1,6 @@
 #include "OE/Platform/Direct3D/D3DShader.hpp"
 
 #include "OE/Platform/Direct3D/D3DContext.hpp"
-#include "OE/Platform/Direct3D/D3DShaderReflection.hpp"
 #include "OE/Misc/Log.hpp"
 
 namespace OrbitEngine {	namespace Graphics {
@@ -31,10 +30,6 @@ namespace OrbitEngine {	namespace Graphics {
 		if (FAILED(hr)) {
 			OE_LOG_FATAL("Error creating D3D shader!");
 		}
-
-		/* Reflect shader */
-		D3DShaderReflection* d3dReflection = static_cast<D3DShaderReflection*>(p_Reflection);
-		d3dReflection->reflect(binary, type);
 	}
 
 	void D3DShader::attachFromSource(ShaderType type, const std::string& source)

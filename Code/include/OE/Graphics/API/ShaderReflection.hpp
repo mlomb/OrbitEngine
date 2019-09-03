@@ -4,30 +4,24 @@
 #include <vector>
 #include <string>
 
-#include "OE/Graphics/API/Shader.hpp"
-
 namespace OrbitEngine {	namespace Graphics {
-	struct ShaderBufferReflection {
+	struct ShaderUniform {
 		std::string name;
-		unsigned int slot;
-		ShaderType shaderType;
+		size_t size;
+		size_t offset;
 	};
 
-	class ShaderReflection {
-	public:
-		virtual ~ShaderReflection();
+	struct ShaderBuffer {
+		std::string name;
+		size_t size;
+		size_t padding;
+		unsigned int slot;
+		std::vector<ShaderUniform> uniforms;
+	};
 
-		std::vector<ShaderBufferReflection> getBuffers(const std::string& name) const;
-		std::vector<ShaderBufferReflection> getAllBuffers() const;
-
-		static ShaderReflection* Create();
-	protected:
-		ShaderReflection();
-
-		void addBuffer(ShaderBufferReflection buffer);
-
-	private:
-		std::vector<ShaderBufferReflection> m_Buffers;
+	struct ShaderReflection {
+		std::vector<ShaderBuffer> buffers;
+		std::vector<ShaderUniform> uniforms; // global uniforms
 	};
 } }
 

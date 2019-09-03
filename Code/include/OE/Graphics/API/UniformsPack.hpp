@@ -32,9 +32,12 @@ namespace OrbitEngine {	namespace Graphics {
 	inline void UniformsPack<T>::bind(const std::string& name, Shader* shader) const
 	{
 		shader->bind();
-		auto buffers = shader->getReflection()->getBuffers(name);
-		for (auto& buffer : buffers)
-			bind(buffer.slot, buffer.shaderType);
+		for (const auto& p : shader->getReflections()) {
+			for (auto& buff : p.second.buffers) {
+				if(buff.name == name)
+					bind(buff.slot, p.first);
+			}
+		}
 	}
 
 	template<class T>
