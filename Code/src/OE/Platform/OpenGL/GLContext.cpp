@@ -73,19 +73,34 @@ namespace OrbitEngine { namespace Application { namespace priv {
 		std::istringstream iss(extensions);
 		std::copy(std::istream_iterator<std::string>(iss), std::istream_iterator<std::string>(), std::back_inserter(p_ContextInfo.extensions));
 
+		// Features
+		p_ContextInfo.ubo_support = 
+			// desktop >= 3.1
+			(!p_ContextInfo.ES && (p_ContextInfo.major > 3 || (p_ContextInfo.major == 3 && p_ContextInfo.minor >= 1))) ||
+			// es >= 3
+			(p_ContextInfo.ES && (p_ContextInfo.major >= 3)) ||
+			// has the extension https://www.khronos.org/registry/OpenGL/extensions/ARB/ARB_uniform_buffer_object.txt
+			isExtensionAvailable("GL_ARB_uniform_buffer_object");
+
 		OE_LOG_INFO("-- OpenGL" << (p_ContextInfo.ES ? " ES" : "") << " Context Info --");
 		OE_LOG_INFO("Vendor: " << p_ContextInfo.vendor);
 		OE_LOG_INFO("Renderer: " << p_ContextInfo.renderer);
 		OE_LOG_INFO("Version: " << p_ContextInfo.version);
 		OE_LOG_INFO("Major.Minor: " << p_ContextInfo.major << "." << p_ContextInfo.minor);
 		OE_LOG_INFO("Extensions count: " << p_ContextInfo.extensions.size());
-		
 		OE_LOG_INFO("Shading version: " << std::string(glGetString(GL_SHADING_LANGUAGE_VERSION) ? reinterpret_cast<const char*>(glGetString(GL_SHADING_LANGUAGE_VERSION)) : ""));
+
+		OE_LOG_INFO("  UBOs support: " << p_ContextInfo.ubo_support);
 		OE_LOG_INFO("-------------------------");
 	}
 
 	void GLContext::makeCurrent(bool active)
 	{
 		ContextImpl::makeCurrent(active);
+	}
+
+	bool GLContext::isExtensionAvailable(const std::string& ext) const
+	{
+		return std::find(p_ContextInfo.extensions.begin(), p_ContextInfo.extensions.end(), ext) != p_ContextInfo.extensions.end();
 	}
 } } }

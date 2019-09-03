@@ -12,6 +12,8 @@ namespace OrbitEngine { namespace Application { namespace priv {
 		std::string renderer;
 		std::string version;
 		std::vector<std::string> extensions;
+
+		bool ubo_support;
 	};
 
 	class GLContext : public ContextImpl {
@@ -25,6 +27,7 @@ namespace OrbitEngine { namespace Application { namespace priv {
 		const std::string getName() override;
 		const RenderAPI getAPI() override;
 		const GLContextInfo& getInfo() { return p_ContextInfo; }
+		bool isExtensionAvailable(const std::string& ext) const;
 
 		static GLContext* GetCurrent() { return (GLContext*)ContextImpl::GetCurrent(); };
 	protected:
