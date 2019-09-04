@@ -230,7 +230,7 @@ namespace OrbitEngine { namespace Graphics {
 		//OE_LOG_DEBUG("Shader Output:");
 		//OE_LOG_DEBUG(source);
 		//OE_LOG_DEBUG("------------------------");
-		
+
 #if OE_OPENGL_ANY
 		if (context->getAPI() == OPENGL
 #if OE_OPENGL_ES
@@ -275,22 +275,10 @@ namespace OrbitEngine { namespace Graphics {
 				// call glslopt_cleanup?
 			}
 
-			std::string input = source;
-			if (outputDesc.shaderVersion == Xsc::OutputShaderVersion::ESSL100) {
-				// workaround due
-				// error: GLSL 1.00 ES should be selected using `#version 100'
-				if (input.size() > 15) { // "#version 100 es"
-					// remove ' es'
-					input.erase(input.begin() + 12);
-					input.erase(input.begin() + 12);
-					input.erase(input.begin() + 12);
-				}
-			}
-			
-			glslopt_shader* shader = glslopt_optimize(ctx, type, input.c_str(), kGlslOptionSkipPreprocessor);
+			glslopt_shader* shader = glslopt_optimize(ctx, type, source.c_str(), kGlslOptionSkipPreprocessor);
 			if (glslopt_get_status(shader)) {
 				source = glslopt_get_output(shader);
-				
+
 				//OE_LOG_DEBUG("Shader optimized output:");
 				//OE_LOG_DEBUG(source);
 				//OE_LOG_DEBUG("------------------------");

@@ -82,15 +82,17 @@ namespace OrbitEngine {	namespace Graphics {
 		bind();
 
 		// Bind the UBOs automatically
-		for (auto& pair : p_Reflections) {
-			for (ShaderBuffer& buff : pair.second.buffers) {
-				buff.slot = OE_CHECK_GL(glGetUniformBlockIndex(m_ID, buff.name.c_str()));
-				if (buff.slot == 0xFFFFFFFFu /* GL_INVALID_INDEX */) {
-					OE_LOG_WARNING("GL_INVALID_INDEX received when querying the UBO index for " << buff.name);
-				}
-				else {
-					// For convenience, we set bind each UBO so its index match the binding point
-					bindUBO(buff.slot, buff.slot);
+		if (Application::priv::GLContext::GetCurrent()->getInfo().ubo_support) {
+			for (auto& pair : p_Reflections) {
+				for (ShaderBuffer& buff : pair.second.buffers) {
+					buff.slot = OE_CHECK_GL(glGetUniformBlockIndex(m_ID, buff.name.c_str()));
+					if (buff.slot == 0xFFFFFFFFu /* GL_INVALID_INDEX */) {
+						OE_LOG_WARNING("GL_INVALID_INDEX received when querying the UBO index for " << buff.name);
+					}
+					else {
+						// For convenience, we set bind each UBO so its index match the binding point
+						bindUBO(buff.slot, buff.slot);
+					}
 				}
 			}
 		}
