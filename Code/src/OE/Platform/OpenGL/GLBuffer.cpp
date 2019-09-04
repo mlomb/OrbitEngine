@@ -23,6 +23,11 @@ namespace OrbitEngine {	namespace Graphics {
 		OE_CHECK_GL(glDeleteBuffers(1, &m_ID));
 	}
 
+	GLuint GLBuffer::getID() const
+	{
+		return m_ID;
+	}
+
 	void GLBuffer::bind() const {
 		GLStates* states = static_cast<GLStates*>(Application::priv::GLContext::GetCurrent()->getGlobalStates());
 		if (states->cache(m_Target, m_ID))

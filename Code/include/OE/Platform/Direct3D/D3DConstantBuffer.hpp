@@ -12,7 +12,8 @@ namespace OrbitEngine { namespace Graphics {
 	public:
 		D3DConstantBuffer() : D3DBuffer(sizeof(CB), 0, BufferType::CONSTANT) {};
 
-		void bind(unsigned int slot, ShaderType shader) const override;
+		void bind(const ShaderBuffer& buffer, ShaderType shader_type, Shader* shader) const override;
+		void bind(unsigned int slot, ShaderType shader) const;
 		void bind() const override;
 
 		void setData(const CB& data) override;
@@ -22,6 +23,12 @@ namespace OrbitEngine { namespace Graphics {
 	inline void D3DConstantBuffer<CB>::setData(const CB& data)
 	{
 		D3DMappedResource::setData(sizeof(CB), &data);
+	}
+
+	template<class CB>
+	inline void D3DConstantBuffer<CB>::bind(const ShaderBuffer& buffer, ShaderType shader_type, Shader* shader) const
+	{
+		bind(buffer.slot, shader_type);
 	}
 
 	template<class CB>

@@ -3,6 +3,7 @@
 
 #include "OE/Platform/OpenGL/GLBuffer.hpp"
 #include "OE/Platform/OpenGL/GLContext.hpp"
+#include "OE/Platform/OpenGL/GLShader.hpp"
 
 #include "OE/Graphics/API/UniformsPack.hpp"
 #include "OE/Graphics/API/Shader.hpp"
@@ -11,62 +12,96 @@
 
 namespace OrbitEngine {	namespace Graphics {
 	template <class T>
-	class GLUniformBuffer : public UniformsPack<T>, public GLBuffer {
+	class GLUniformBuffer : public UniformsPack<T> {
 	public:
 		GLUniformBuffer();
 		~GLUniformBuffer();
 
 		void setData(const T& data) override;
-		void bind(unsigned int slot, ShaderType shader) const override;
+		void bind(const ShaderBuffer& buffer, ShaderType shader_type, Shader* shader) const override;
 
 	private:
+		GLBuffer* m_Buffer;
 		// internal copy of the data in case UBOs are not available
 		T* m_Data;
 	};
 
 	template<class T>
-	inline GLUniformBuffer<T>::GLUniformBuffer() : GLBuffer(GL_UNIFORM_BUFFER, GL_STREAM_DRAW), m_Data(NULL) {
-		GLBuffer::bind();
-		GLBuffer::setData(sizeof(T), 0);
+	inline GLUniformBuffer<T>::GLUniformBuffer() : m_Buffer(NULL), m_Data(NULL) {
+		Application::priv::GLContext* glctx = Application::priv::GLContext::GetCurrent();
+		if (glctx->getInfo().ubo_support) {
+			m_Buffer = new GLBuffer(GL_UNIFORM_BUFFER, GL_STREAM_DRAW);
+			m_Buffer->bind();
+			m_Buffer->setData(sizeof(T), 0);
+		}
+		else {
+			m_Data = static_cast<T*>(malloc(sizeof(T)));
+		}
 	}
 
 	template<class T>
 	inline GLUniformBuffer<T>::~GLUniformBuffer()
 	{
-		if(m_Data)
+		if (m_Buffer)
+			delete m_Buffer;
+		if (m_Data)
 			delete m_Data;
 	}
 
 	template<class T>
 	inline void GLUniformBuffer<T>::setData(const T& data)
 	{
-		Application::priv::GLContext* glctx = Application::priv::GLContext::GetCurrent();
-		if (glctx->getInfo().ubo_support) {
-			GLBuffer::setData(sizeof(T), &data);
+		if (m_Buffer) {
+			m_Buffer->setData(sizeof(T), &data);
 		}
 		else {
-			// keep a copy to the data
-			// don't use the GLBuffer
-			if (m_Data == NULL)
-				m_Data = static_cast<T*>(malloc(sizeof(T)));
 			memcpy(m_Data, &data, sizeof(T));
 		}
 	}
 
 	template<class T>
-	inline void GLUniformBuffer<T>::bind(unsigned int slot, ShaderType shaderType) const
+	inline void GLUniformBuffer<T>::bind(const ShaderBuffer& buffer, ShaderType shader_type, Shader* shader) const
 	{
-		Application::priv::GLContext* glctx = Application::priv::GLContext::GetCurrent();
-		if (glctx->getInfo().ubo_support) {
-			if (slot > GL_MAX_UNIFORM_BUFFER_BINDINGS) {
+		if (m_Buffer) {
+			if (buffer.slot > GL_MAX_UNIFORM_BUFFER_BINDINGS) {
 				OE_LOG_WARNING("Max slot uniform buffer exceeded!");
 				return;
 			}
 
-			glBindBufferBase(GL_UNIFORM_BUFFER, (GLuint)slot, m_ID);
+			glBindBufferBase(GL_UNIFORM_BUFFER, (GLuint)buffer.slot, m_Buffer->getID());
 		}
 		else {
-			// TODO: Bind individual uniforms
+			GLShader* glshader = static_cast<GLShader*>(shader);
+			// Bind individual uniforms
+			for (const ShaderUniform& uniform : buffer.uniforms) {
+				//GLint location = glshader->getUniformLocation(uniform.name);
+				void* ptr = m_Data + uniform.offset;
+
+				switch (uniform.type) {
+				case ShaderUniformType::FLOAT:
+					switch (uniform.dimensions[1]) { // columns
+					case 1: // scalars
+						switch (uniform.dimensions[0]) { // rows
+						case 1: glshader->setUniform1f(uniform.name, *static_cast<float*>(ptr)); break;
+						case 2: glshader->setUniform2f(uniform.name, *static_cast<Math::Vec2f*>(ptr)); break;
+						case 3: glshader->setUniform3f(uniform.name, *static_cast<Math::Vec3f*>(ptr)); break;
+						case 4: glshader->setUniform4f(uniform.name, *static_cast<Math::Vec4f*>(ptr)); break;
+						default: OE_LOG_WARNING("Unhandled scalar dimension.");
+						}
+						break;
+					case 4:
+						switch (uniform.dimensions[0]) { // rows
+						case 4: glshader->setUniformMat4(uniform.name, *static_cast<Math::Mat4*>(ptr)); break;
+						default: OE_LOG_WARNING("Unhandled col=4 # rows.");
+						}
+						break;
+					default: OE_LOG_WARNING("Unhandled # of columns.");
+					}
+
+					break;
+				default: OE_LOG_WARNING("Unhandled type.");
+				}
+			}
 		}
 	}
 } }

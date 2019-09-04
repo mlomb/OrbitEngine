@@ -139,9 +139,11 @@ namespace OrbitEngine { namespace Graphics {
 			}
 			else {
 				// parse reflection
-				for (Xsc::Reflection::Attribute u : xsc_reflection.uniforms) {
-					reflection.uniforms.push_back({ u.name, 0, 0 });
-				}
+				/*
+					This needs a complete refactor:
+					UBOs, Uniforms, Shader reflection, etc
+				*/
+
 				for (Xsc::Reflection::ConstantBuffer cb : xsc_reflection.constantBuffers) {
 					ShaderBuffer buff;
 					buff.name = cb.name;
@@ -150,7 +152,17 @@ namespace OrbitEngine { namespace Graphics {
 					buff.padding = cb.padding;
 
 					for (Xsc::Reflection::Field& f : cb.fields) {
-						buff.uniforms.push_back({ f.name, f.size, f.offset });
+						ShaderUniformType type = ShaderUniformType::UNKNOWN;
+						switch (f.type) {
+						case Xsc::Reflection::FieldType::Bool:   type = ShaderUniformType::BOOL;   break;
+						case Xsc::Reflection::FieldType::Int:    type = ShaderUniformType::INT;    break;
+						case Xsc::Reflection::FieldType::UInt:   type = ShaderUniformType::UINT;   break;
+						case Xsc::Reflection::FieldType::Half:   type = ShaderUniformType::HALF;   break;
+						case Xsc::Reflection::FieldType::Float:  type = ShaderUniformType::FLOAT;  break;
+						case Xsc::Reflection::FieldType::Double: type = ShaderUniformType::DOUBLE; break;
+						}
+
+						buff.uniforms.push_back({ f.name, type, f.size, f.offset, { f.dimensions[0], f.dimensions[1] } });
 					}
 
 					reflection.buffers.push_back(buff);

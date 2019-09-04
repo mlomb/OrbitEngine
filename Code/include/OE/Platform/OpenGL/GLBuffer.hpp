@@ -8,6 +8,11 @@
 namespace OrbitEngine {	namespace Graphics {
 	class GLBuffer : public virtual Buffer {
 	public:
+		GLBuffer(unsigned int target, unsigned int usage, const unsigned int size = 0, const void* data = 0);
+		~GLBuffer();
+
+		GLuint getID() const;
+
 		void bind() const override;
 		void resize(const unsigned int size) override;
 		void setData(const unsigned int size, const void* data) override;
@@ -19,9 +24,6 @@ namespace OrbitEngine {	namespace Graphics {
 	protected:
 		GLuint m_ID;
 		GLuint m_Target, m_Usage;
-
-		GLBuffer(unsigned int target, unsigned int usage, const unsigned int size = 0, const void* data = 0);
-		~GLBuffer();
 	};
 } }
 

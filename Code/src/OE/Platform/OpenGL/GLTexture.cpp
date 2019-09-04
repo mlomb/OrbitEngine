@@ -191,15 +191,14 @@ namespace OrbitEngine { namespace Graphics {
 			return GL_RG32F;
 		case RGB:
 		case RGB8:
-			return GL_RGB8;
+			return GL_RGB;
 		case RGB32F:
 			return GL_RGB32F;
 		case RGB16F:
 			return GL_RGB16F;
 		case RGBA:
-			return GL_RGBA;
 		case RGBA8:
-			return GL_RGBA8;
+			return GL_RGBA;
 		case RGBA32F:
 			return GL_RGBA32F;
 #if OE_OPENGL_ES

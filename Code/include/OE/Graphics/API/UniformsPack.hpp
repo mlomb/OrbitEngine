@@ -10,7 +10,7 @@ namespace OrbitEngine {	namespace Graphics {
 	class UniformsPack {
 	public:
 		virtual void setData(const T& data) = 0;
-		virtual void bind(unsigned int slot, ShaderType shader) const = 0;
+		virtual void bind(const ShaderBuffer& buffer, ShaderType shader_type, Shader* shader) const = 0;
 
 		void bind(const std::string& name, Shader* shader) const;
 
@@ -35,7 +35,7 @@ namespace OrbitEngine {	namespace Graphics {
 		for (const auto& p : shader->getReflections()) {
 			for (auto& buff : p.second.buffers) {
 				if(buff.name == name)
-					bind(buff.slot, p.first);
+					bind(buff, p.first, shader);
 			}
 		}
 	}

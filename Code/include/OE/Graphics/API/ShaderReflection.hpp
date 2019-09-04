@@ -5,10 +5,24 @@
 #include <string>
 
 namespace OrbitEngine {	namespace Graphics {
+
+	enum class ShaderUniformType {
+		UNKNOWN,
+		BOOL,
+		INT,
+		UINT,
+		HALF,
+		FLOAT,
+		DOUBLE,
+	};
+
 	struct ShaderUniform {
 		std::string name;
+		ShaderUniformType type;
 		size_t size;
 		size_t offset;
+		// rows, cols
+		unsigned int dimensions[2] = { 1, 1 };
 	};
 
 	struct ShaderBuffer {
@@ -21,7 +35,7 @@ namespace OrbitEngine {	namespace Graphics {
 
 	struct ShaderReflection {
 		std::vector<ShaderBuffer> buffers;
-		std::vector<ShaderUniform> uniforms; // global uniforms
+		//std::vector<ShaderUniform> uniforms; // global uniforms
 	};
 } }
 

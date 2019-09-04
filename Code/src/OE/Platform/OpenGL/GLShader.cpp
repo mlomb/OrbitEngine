@@ -148,7 +148,8 @@ namespace OrbitEngine {	namespace Graphics {
 	}
 
 	void GLShader::setUniformMat4(const std::string& name, const Math::Mat4& matrix) {
-		glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, &matrix._11);
+		const Math::Mat4 transposed = Math::Mat4::Transpose(matrix);
+		glUniformMatrix4fv(getUniformLocation(name), 1, GL_FALSE, &transposed._11);
 	}
 
 	void GLShader::setUniform1iv(const std::string& name, int* value, int count) {
