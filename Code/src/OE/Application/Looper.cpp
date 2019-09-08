@@ -11,7 +11,6 @@ namespace OrbitEngine { namespace Application {
 		: m_Context(context), m_Loopeable(loopeable)
 	{
 		m_Window = m_Context->getWindow();
-		m_Ticker = new Misc::Ticker();
 
 		m_Running = false;
 		m_Initialized = false;
@@ -19,7 +18,6 @@ namespace OrbitEngine { namespace Application {
 
 	Looper::~Looper()
 	{
-		delete m_Ticker;
 	}
 
 	void Looper::setLoopeable(Loopeable* loopeable)
@@ -73,12 +71,12 @@ namespace OrbitEngine { namespace Application {
 					m_Initialized = true;
 					m_Loopeable->init(m_Context);
 				}
-				m_Loopeable->update(m_Ticker->getFrameDelta());
+				m_Loopeable->update(m_Ticker.getFrameDelta());
 				m_Loopeable->render();
 			}
 
 			m_Context->present();
-			m_Ticker->tick();
+			m_Ticker.tick();
 		}
 
 		// this should be here?
@@ -91,7 +89,7 @@ namespace OrbitEngine { namespace Application {
 		}
 	}
 	
-	Misc::Ticker* Looper::getTicker() const
+	const Misc::Ticker& Looper::getTicker() const
 	{
 		return m_Ticker;
 	}

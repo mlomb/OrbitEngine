@@ -18,7 +18,7 @@ namespace OrbitEngine {	namespace Application {
 
 		virtual void stop();
 		virtual void loop();
-		Misc::Ticker* getTicker() const;
+		const Misc::Ticker& getTicker() const;
 
 	protected:
 
@@ -29,8 +29,8 @@ namespace OrbitEngine {	namespace Application {
 
 		bool m_Running;
 		bool m_Initialized;
+		Misc::Ticker m_Ticker;
 		Loopeable* m_Loopeable;
-		Misc::Ticker* m_Ticker;
 		Window* m_Window;
 		Context* m_Context;
 	};

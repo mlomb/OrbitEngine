@@ -14,6 +14,7 @@ namespace OrbitEngine { namespace Misc {
 		m_FPS = 0;
 
 		m_TotalTicks = 0;
+		m_Start = System::System::Get()->currentNano();
 	}
 
 	void Ticker::tick()
@@ -40,7 +41,11 @@ namespace OrbitEngine { namespace Misc {
 		}
 	}
 
-	long long Ticker::getTimeSinceLastTick() {
+	long long Ticker::getTimeSinceLastTick() const {
 		return System::System::Get()->currentNano() - m_TicksTimer;
+	}
+
+	long long Ticker::getTimeSinceStart() const {
+		return System::System::Get()->currentNano() - m_Start;
 	}
 } }
