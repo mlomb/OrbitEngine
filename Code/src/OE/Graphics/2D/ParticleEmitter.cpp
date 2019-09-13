@@ -81,7 +81,7 @@ namespace OrbitEngine { namespace Graphics {
 			sr.setTransform(Math::Mat4::Rotation(p->velocity.angle(), Math::Vec3f(0, 0, -1)) * Math::Mat4::Translation(pos));
 			sr.bindTexture(p->texture);
 			sr.bindColor(p->color);
-			sr.rect(Math::Vec2f(), size);
+			sr.rect(size * -0.5f, size);
 		}
 	}
 
