@@ -15,8 +15,18 @@ namespace OrbitEngine { namespace Graphics {
 
 	void ParticleSystem::update(float deltaTime)
 	{
-		for (ParticleEmitter* emitter : m_Emitters)
-			emitter->update(deltaTime);
+		auto it = m_Emitters.begin();
+		while (it != m_Emitters.end()) {
+			ParticleEmitter* emitter = *it;
+			if (emitter->m_ShouldBeDeleted && emitter->m_Time >= emitter->m_Duration && emitter->m_Particles.size() == 0) {
+				delete emitter;
+				it = m_Emitters.erase(it);
+			}
+			else {
+				emitter->update(deltaTime);
+				++it;
+			}
+		}
 	}
 
 	void ParticleSystem::render(SpriteRenderer& sr)

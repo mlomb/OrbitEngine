@@ -7,6 +7,8 @@ namespace OrbitEngine { namespace Graphics {
 
 	ParticleEmitter::ParticleEmitter(ParticleSystem* system) :
 		m_System(system),
+		m_ShouldBeDeleted(false),
+
 		m_Time(0),
 		m_Duration(5),
 		m_Loop(false),
@@ -37,7 +39,8 @@ namespace OrbitEngine { namespace Graphics {
 			m_System->releaseParticle(particle);
 		m_Particles.clear();
 
-		m_System->unregisterEmitter(this);
+		if(!m_ShouldBeDeleted)
+			m_System->unregisterEmitter(this);
 	}
 
 	void ParticleEmitter::update(float deltaTime)
@@ -78,11 +81,16 @@ namespace OrbitEngine { namespace Graphics {
 			if (m_SimulationSpace == SimulationSpace::LOCAL)
 				pos += m_Position;
 
-			sr.setTransform(Math::Mat4::Rotation(p->velocity.angle(), Math::Vec3f(0, 0, -1)) * Math::Mat4::Translation(pos));
+			sr.setTransform(Math::Mat4::Translation(size * -0.5f) * Math::Mat4::Rotation(Math::Vec2f::Normalize(p->velocity).angle(), Math::Vec3f(0, 0, -1)) * Math::Mat4::Translation(pos));
 			sr.bindTexture(p->texture);
 			sr.bindColor(p->color);
-			sr.rect(size * -0.5f, size);
+			sr.rect(Math::Vec2f(), size);
 		}
+	}
+
+	void ParticleEmitter::autoDeleteWhenDone()
+	{
+		m_ShouldBeDeleted = true;
 	}
 
 	void ParticleEmitter::emit(unsigned int particles)

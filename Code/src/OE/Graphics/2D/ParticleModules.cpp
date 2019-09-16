@@ -35,6 +35,9 @@ namespace OrbitEngine { namespace Graphics {
 		const float time = m_Emitter->getTime();
 		const Math::Vec2f& pos = m_Emitter->getPosition();
 
+		if (time > m_Emitter->getDuration())
+			return;
+
 		if (time < m_EmitTimeLast) // cycle loop
 			m_EmitTimeLast = 0; // TODO: Wrong
 

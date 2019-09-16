@@ -22,6 +22,7 @@ namespace OrbitEngine { namespace Graphics {
 		ParticleEmitter(ParticleSystem* system);
 		~ParticleEmitter();
 
+		void autoDeleteWhenDone();
 		void emit(unsigned int particles);
 
 		void setInitialLifetime(float lifetime);
@@ -31,6 +32,7 @@ namespace OrbitEngine { namespace Graphics {
 		void setDuration(float duration);
 
 		float getTime() const { return m_Time; }
+		float getDuration() const { return m_Duration; }
 		Math::Vec2f getPosition() const { return m_Position; }
 		const std::vector<Particle*>& getParticles() const { return m_Particles; }
 		
@@ -53,6 +55,8 @@ namespace OrbitEngine { namespace Graphics {
 
 		/// Current time
 		float m_Time;
+		/// Should be deleted after its done?
+		bool m_ShouldBeDeleted;
 	private:
 		//////////////
 		//  TIMING  //
