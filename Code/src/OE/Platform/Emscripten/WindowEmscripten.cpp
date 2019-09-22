@@ -165,9 +165,9 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 		if (keyEvent->keyCode < OE_MAX_KEYS) {
 			Key key = Key(keyEvent->keyCode);
 			InputManager::Get()->onInputKey(key, eventType == EMSCRIPTEN_EVENT_KEYDOWN);
-			bool isNavKey = key == Key::BACKSPACE ||
-							key == Key::TAB;
-			return isNavKey;
+			//bool isNavKey = key == Key::BACKSPACE ||
+			//				key == Key::TAB;
+			//return isNavKey;
 		}
 	}
 
