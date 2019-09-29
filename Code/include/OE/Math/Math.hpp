@@ -71,6 +71,23 @@ namespace OrbitEngine { namespace Math {
 		return (std::max)(min_, (std::min)(input, max_));
 	}
 
+	/// Returns the smallest difference between two angles
+	/// @see https://math.stackexchange.com/a/110236/709577
+	template<typename T>
+	inline T minAngleDifference(T current, T target) {
+		float a = target - current;
+		float b = target - current + 2 * PI;
+		float c = target - current - 2 * PI;
+
+		float aa = abs(a);
+		float ab = abs(b);
+		float ac = abs(c);
+
+		if (aa < ab && aa < ac) return a;
+		if (ab < aa && ab < ac) return b;
+		return c;
+	}
+
 	/// Extract the sign of the parameter
 	template<typename T>
 	inline T sign(T input)
