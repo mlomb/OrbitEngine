@@ -374,7 +374,6 @@ namespace OrbitEngine { namespace Graphics {
 			center.y = h - std::round(translate.y);
 		}
 
-
 		shape.normalize();
 		edgeColoringSimple(shape, 3.0);
 
@@ -385,14 +384,12 @@ namespace OrbitEngine { namespace Graphics {
 			else
 				generatePseudoSDF(buff, shape, range, 1, translate);
 			Bitmap<float, 1> nbuff(buff.operator float* (), width, height); // no copy
-			nbuff.flipVertically();
 			return ConvertBitmap<float, 1, unsigned char, 3>(nbuff);
 		}
 		else { // mode == SDFMode::MSDF
 			msdfgen::Bitmap<float, 3> buff(width, height);
 			generateMSDF(buff, shape, range, 1, translate);
 			Bitmap<float, 3> nbuff = Bitmap<float, 3>(buff.operator float* (), width, height); // no copy
-			nbuff.flipVertically();
 			return ConvertBitmap<float, 3, unsigned char, 3>(nbuff);
 		}
 	}
