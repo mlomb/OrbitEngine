@@ -340,7 +340,7 @@ namespace msdfgen {
 
 namespace OrbitEngine { namespace Graphics {
 
-	BitmapRGB GenerateFromShape(msdfgen::Shape& shape, SDFMode mode, double range, Math::Vec2i& center) {
+	BitmapRGB GenerateFromShape(msdfgen::Shape& shape, SDFMode mode, double range, Math::Vec2i& center, bool square) {
 		//if (!shape.validate())
 		//	return BitmapRGB();
 
@@ -351,18 +351,32 @@ namespace OrbitEngine { namespace Graphics {
 		if (l > r || b > t)
 			return BitmapRGB();
 
+		int width, height;
+		msdfgen::Vector2 translate;
+
 		double w = r - l + range;
 		double h = t - b + range;
-		msdfgen::Vector2 translate(-l + range / 2.0, -b + range / 2.0);
+
+		if (square) {
+			width = height = std::round(std::max(w, h));
+
+			center.x = width / 2.0;
+			center.y = height / 2.0;
+
+			translate = (center.x, center.y);
+		} else {
+			width = std::round(w);
+			height = std::round(h);
+
+			translate = (-l + range / 2.0, -b + range / 2.0);
+
+			center.x = std::round(translate.x);
+			center.y = h - std::round(translate.y);
+		}
+
 
 		shape.normalize();
 		edgeColoringSimple(shape, 3.0);
-
-		int width = std::round(w);
-		int height = std::round(h);
-
-		center.x = std::round(translate.x);
-		center.y = h - std::round(translate.y);
 
 		if (mode == SDFMode::SDF || mode == SDFMode::PSDF) {
 			msdfgen::Bitmap<float, 1> buff(width, height);
@@ -388,14 +402,14 @@ namespace OrbitEngine { namespace Graphics {
 		msdfgen::Shape shape;
 		outlineToShape(outline, shape);
 		Math::Vec2i center;
-		return GenerateFromShape(shape, mode, range, center);
+		return GenerateFromShape(shape, mode, range, center, false);
 	}
 
-	BitmapRGB GenerateBitmapFromSVGPath(const std::string& svg_path, SDFMode mode, double range, Math::Vec2i& center, double scale)
+	BitmapRGB GenerateBitmapFromSVGPath(const std::string& svg_path, SDFMode mode, double range, Math::Vec2i& center, double scale, bool square)
 	{
 		msdfgen::Shape shape;
 		msdfgen::buildFromPath(shape, svg_path.c_str(), scale);
-		return GenerateFromShape(shape, mode, range, center);
+		return GenerateFromShape(shape, mode, range, center, square);
 	}
 
 } }
