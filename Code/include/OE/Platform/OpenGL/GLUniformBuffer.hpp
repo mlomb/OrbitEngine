@@ -99,7 +99,13 @@ namespace OrbitEngine {	namespace Graphics {
 					}
 
 					break;
-				default: OE_LOG_WARNING("Unhandled type.");
+				case ShaderUniformType::INT:
+					if (uniform.dimensions[0] == 1 && uniform.dimensions[1] == 1) {
+						glshader->setUniform1i(uniform.name, *static_cast<int*>(ptr)); break;
+					}
+					else OE_LOG_WARNING("Unhandled dimensions for ints.");
+					break;
+				default: OE_LOG_WARNING("Unhandled type: " << (int)uniform.type);
 				}
 			}
 		}
