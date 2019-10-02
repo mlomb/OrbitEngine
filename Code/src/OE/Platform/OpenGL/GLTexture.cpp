@@ -56,10 +56,15 @@ namespace OrbitEngine { namespace Graphics {
 
 	void GLTexture::applyParameters()
 	{
+		const Application::priv::GLContextInfo& context_info = Application::priv::GLContext::GetCurrent()->getInfo();
+
+		bool supports_r_pname = !(context_info.ES && context_info.major == 2);
+
 		bind(0);
 		glTexParameteri(m_Target, GL_TEXTURE_WRAP_S, m_Wrap);
 		glTexParameteri(m_Target, GL_TEXTURE_WRAP_T, m_Wrap);
-		glTexParameteri(m_Target, GL_TEXTURE_WRAP_R, m_Wrap);
+		if(supports_r_pname)
+			glTexParameteri(m_Target, GL_TEXTURE_WRAP_R, m_Wrap);
 		glTexParameteri(m_Target, GL_TEXTURE_MAG_FILTER, m_Filter);
 		glTexParameteri(m_Target, GL_TEXTURE_MIN_FILTER, m_Filter);
 
