@@ -95,6 +95,26 @@ namespace OrbitEngine { namespace Graphics {
 		return Xsc::OutputShaderVersion::GLSL;
 	}
 	
+	void resolveFields(const std::string& prefix, size_t offset, const Xsc::Reflection::ReflectionData& xsc_reflection, const std::vector<Xsc::Reflection::Field>& fields, std::vector<ShaderUniform>& uniforms) {
+		for (const Xsc::Reflection::Field& f : fields) {
+			ShaderUniformType type = ShaderUniformType::UNKNOWN;
+			switch (f.type) {
+			case Xsc::Reflection::FieldType::Bool:   type = ShaderUniformType::BOOL;   break;
+			case Xsc::Reflection::FieldType::Int:    type = ShaderUniformType::INT;    break;
+			case Xsc::Reflection::FieldType::UInt:   type = ShaderUniformType::UINT;   break;
+			case Xsc::Reflection::FieldType::Half:   type = ShaderUniformType::HALF;   break;
+			case Xsc::Reflection::FieldType::Float:  type = ShaderUniformType::FLOAT;  break;
+			case Xsc::Reflection::FieldType::Double: type = ShaderUniformType::DOUBLE; break;
+			case Xsc::Reflection::FieldType::Record:
+				const Xsc::Reflection::Record& record = xsc_reflection.records[f.typeRecordIndex];
+				resolveFields(f.name, offset + f.offset, xsc_reflection, record.fields, uniforms);
+				continue;
+			}
+
+			uniforms.push_back({ (prefix.size() > 0 ? prefix + "." : "") + f.name, type, f.size, offset + f.offset, { f.dimensions[0], f.dimensions[1] } });
+		}
+	}
+
 	ShaderCompilationResult ShaderCompiler::CrossCompileHLSL(const std::string hlslSource, ShaderType shaderType, std::string entryPoint)
 	{
 		Application::priv::ContextImpl* context = Application::priv::ContextImpl::GetCurrent();
@@ -139,11 +159,6 @@ namespace OrbitEngine { namespace Graphics {
 			}
 			else {
 				// parse reflection
-				/*
-					This needs a complete refactor:
-					UBOs, Uniforms, Shader reflection, etc
-				*/
-
 				for (Xsc::Reflection::ConstantBuffer cb : xsc_reflection.constantBuffers) {
 					ShaderBuffer buff;
 					buff.name = cb.name;
@@ -151,19 +166,7 @@ namespace OrbitEngine { namespace Graphics {
 					buff.size = cb.size == 0xFFFFFFFF ? -1 : 0;
 					buff.padding = cb.padding;
 
-					for (Xsc::Reflection::Field& f : cb.fields) {
-						ShaderUniformType type = ShaderUniformType::UNKNOWN;
-						switch (f.type) {
-						case Xsc::Reflection::FieldType::Bool:   type = ShaderUniformType::BOOL;   break;
-						case Xsc::Reflection::FieldType::Int:    type = ShaderUniformType::INT;    break;
-						case Xsc::Reflection::FieldType::UInt:   type = ShaderUniformType::UINT;   break;
-						case Xsc::Reflection::FieldType::Half:   type = ShaderUniformType::HALF;   break;
-						case Xsc::Reflection::FieldType::Float:  type = ShaderUniformType::FLOAT;  break;
-						case Xsc::Reflection::FieldType::Double: type = ShaderUniformType::DOUBLE; break;
-						}
-
-						buff.uniforms.push_back({ f.name, type, f.size, f.offset, { f.dimensions[0], f.dimensions[1] } });
-					}
+					resolveFields("", 0, xsc_reflection, cb.fields, buff.uniforms);
 
 					reflection.buffers.push_back(buff);
 				}
