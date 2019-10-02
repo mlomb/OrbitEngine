@@ -75,7 +75,7 @@ namespace OrbitEngine {	namespace Graphics {
 			// Bind individual uniforms
 			for (const ShaderUniform& uniform : buffer.uniforms) {
 				//GLint location = glshader->getUniformLocation(uniform.name);
-				void* ptr = m_Data + uniform.offset;
+				void* ptr = reinterpret_cast<void*>(reinterpret_cast<unsigned char*>(m_Data) + uniform.offset);
 
 				switch (uniform.type) {
 				case ShaderUniformType::FLOAT:
