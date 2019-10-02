@@ -230,15 +230,26 @@ namespace OrbitEngine { namespace Graphics {
 
 	GLenum GLTexture::TextureWrapToGL(TextureWrap wrap)
 	{
+		// supported by all platforms
 		switch (wrap)
 		{
 		case REPEAT:
 			return GL_REPEAT;
 		case MIRROR_REPEAT:
 			return GL_MIRRORED_REPEAT;
+		}
+
+#if OE_OPENGL_ES
+		const Application::priv::GLContextInfo& context_info = Application::priv::GLContext::GetCurrent()->getInfo();
+		if (context_info.ES && context_info.major == 2) {
+			// OpenGLES 2.0 only supports CLAMP_TO_EDGE
+			return GL_CLAMP_TO_EDGE;
+		}
+#endif
+
+		switch(wrap) {
 		case CLAMP:
-#if !OE_OPENGL_ES
-		// TDOO See this
+#if !OE_EMSCRIPTEN
 			return GL_CLAMP;
 #endif
 		case CLAMP_TO_EDGE:
