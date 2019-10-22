@@ -15,6 +15,7 @@ namespace OrbitEngine { namespace Graphics {
 
 		static Shader* Batch2D() { return LoadInternalShader("Batch2D"); };
 		static Shader* Vector2D() { return LoadInternalShader("Vector2D"); };
+		static Shader* Text2D() { return LoadInternalShader("Text2D"); };
 		static Shader* IntegrateBRDF() { return LoadInternalShader("IntegrateBRDF"); };
 		static Shader* Skybox() { return LoadInternalShader("Skybox"); };
 		static Shader* PrefilterEnvMap() { return LoadInternalShader("PrefilterEnvMap"); };

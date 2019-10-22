@@ -9,7 +9,11 @@ namespace OrbitEngine { namespace Graphics {
 
 	void SpriteRenderer::bindTexture(Texture* texture)
 	{
-		m_BindTexture = handleTexture(texture);
+		int index = handleTexture(texture);
+		if (texture && index == 0) {
+			OE_LOG_WARNING("Binding texture was not possible");
+		}
+		m_BindTexture = index;
 	}
 
 	void SpriteRenderer::rect(const Math::Vec2f& position, const Math::Vec2f& size)

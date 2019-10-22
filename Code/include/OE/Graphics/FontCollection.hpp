@@ -55,6 +55,7 @@ namespace OrbitEngine {	namespace Graphics {
 				{
 					"i": 87, // codepoint
 					"m": 4, // render mode
+					"s": 22, // original font size
 					"w": 19, // width
 					"h": 14, // height
 					"ha": 19, // horizontal advance
@@ -95,7 +96,6 @@ namespace OrbitEngine {	namespace Graphics {
 		*/
 		static FontCollection* Load(const std::string& font_metadata, const std::string& atlas_metadata, const std::string& atlas_image);
 
-		void drawText(const std::vector<GlyphCodepoint>& text, float size, const Math::Vec2f& position, SpriteRenderer& sr);
 		Math::Vec2f getBounds(const std::vector<GlyphCodepoint>& text, float size);
 
 		/**
@@ -131,6 +131,8 @@ namespace OrbitEngine {	namespace Graphics {
 		*/
 		bool exportToFiles(const std::string& font_metadata, const std::string& atlas_metadata, const std::string& atlas_image);
 
+		static FrameIndex toIndex(GlyphCodepoint code, GlyphRenderMode mode);
+
 	private:
 		FontCollection(TextureAtlas* atlas);
 
@@ -138,6 +140,7 @@ namespace OrbitEngine {	namespace Graphics {
 		struct Entry {
 			GlyphMetrics metrics;
 			std::unordered_map<GlyphCodepoint, int> kernings; // in pixels
+			FontSize original_size;
 
 			// only valid during build
 			BitmapRGBA bitmap;
@@ -154,6 +157,8 @@ namespace OrbitEngine {	namespace Graphics {
 		/// Pointer to the atlas texture. May be NULL if the collection is not built
 		TextureAtlas* m_TextureAtlas;
 		std::unordered_map<GlyphCodepoint, std::map<GlyphRenderMode, Entry>> m_Collection;
+
+		friend class TextRenderer2D;
 	};
 
 } }

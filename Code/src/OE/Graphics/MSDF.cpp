@@ -363,12 +363,14 @@ namespace OrbitEngine { namespace Graphics {
 			center.x = width / 2.0;
 			center.y = height / 2.0;
 
-			translate = (center.x, center.y);
+			translate.x = center.x;
+			translate.y = center.y;
 		} else {
 			width = std::round(w);
 			height = std::round(h);
 
-			translate = (-l + range / 2.0, -b + range / 2.0);
+			translate.x = -l + range / 2.0;
+			translate.y = -b + range / 2.0;
 
 			center.x = std::round(translate.x);
 			center.y = h - std::round(translate.y);

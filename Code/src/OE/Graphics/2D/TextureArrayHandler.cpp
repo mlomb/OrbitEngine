@@ -60,7 +60,7 @@ namespace OrbitEngine { namespace Graphics {
 				return i + 1;
 
 		if (p_Textures.size() >= OE_2D_MAX_TEXTURES) {
-			OE_LOG_WARNING("Renderer2D: maximum of binded textured exceeded");
+			OE_LOG_WARNING("TextureArrayHandler: maximum of binded textured exceeded");
 			return 0;
 		}
 

@@ -123,7 +123,7 @@ namespace OrbitEngine { namespace Graphics {
 
 		// render glyph
 		if (sdf) {
-			const double sdf_range = 16.0;
+			const double sdf_range = 10.0;
 			SDFMode sdf_mode;
 			switch (mode) {
 			default:
@@ -135,6 +135,7 @@ namespace OrbitEngine { namespace Graphics {
 			if (!rgb.valid())
 				return false;
 			bitmap = ConvertBitmap<unsigned char, 3, unsigned char, 4>(rgb);
+			bitmap.flipVertically();
 			return true;
 		}
 		else {

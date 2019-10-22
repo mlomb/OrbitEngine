@@ -1,0 +1,109 @@
+#shadertype VERTEX
+cbuffer PVMatrix : register(b0)
+{
+	matrix pv_matrix;
+};
+
+struct Input {
+	float2 position : POSITION;
+	float4 color : COLOR1;
+	float4 borderColor : COLOR2;
+	float2 uv : TEXCOORD;
+	float texid : TEXID;
+	float mode : TEXID2;
+	float border : TEXID3;
+};
+
+struct Output {
+	float4 position : SV_POSITION;
+	float4 color : COLOR1;
+	float4 borderColor : COLOR2;
+	float2 uv : TEXCOORD;
+	float texid : TEXID;
+	float mode : TEXID2;
+	float border : TEXID3;
+};
+
+Output main(Input input) {
+	Output output;
+
+    output.position = mul(pv_matrix, float4(input.position.x, input.position.y, 0, 1));
+	output.color = input.color;
+	output.borderColor = input.borderColor;
+	output.uv = input.uv;
+	output.texid = input.texid;
+	output.mode = input.mode;
+	output.border = input.border;
+
+	return output;
+}
+
+#shadertype FRAGMENT
+
+struct Input {
+	float4 position : SV_POSITION;
+	float4 color : COLOR1;
+	float4 borderColor : COLOR2;
+	float2 uv : TEXCOORD;
+	float texid : TEXID;
+	float mode : TEXID2;
+	float border : TEXID3;
+};
+
+Texture2D textures[16];
+SamplerState samplers[16];
+
+float4 resolveTexture2DArr(float texid, float2 uv) {
+	// Waterfall code incoming
+	if (texid == 1) return textures[0].Sample(samplers[0], uv);
+	else if (texid == 2) return textures[1].Sample(samplers[1], uv);
+	else if (texid == 3) return textures[2].Sample(samplers[2], uv);
+	else if (texid == 4) return textures[3].Sample(samplers[3], uv);
+	else if (texid == 5) return textures[4].Sample(samplers[4], uv);
+	else if (texid == 6) return textures[5].Sample(samplers[5], uv);
+	else if (texid == 7) return textures[6].Sample(samplers[6], uv);
+	else if (texid == 8) return textures[7].Sample(samplers[7], uv);
+	else if (texid == 9) return textures[8].Sample(samplers[8], uv);
+	else if (texid == 10) return textures[9].Sample(samplers[9], uv);
+	else if (texid == 11) return textures[10].Sample(samplers[10], uv);
+	else if (texid == 12) return textures[11].Sample(samplers[11], uv);
+	else if (texid == 13) return textures[12].Sample(samplers[12], uv);
+	else if (texid == 14) return textures[13].Sample(samplers[13], uv);
+	else if (texid == 15) return textures[14].Sample(samplers[14], uv);
+	else if (texid == 16) return textures[15].Sample(samplers[15], uv);
+	return float4(1, 0, 1, 1);
+}
+
+float median(float r, float g, float b) {
+    return max(min(r, g), min(max(r, g), b));
+}
+float sigDist(float3 msdf, float mode) {
+    if(mode == 3.0)
+        return median(msdf.r, msdf.g, msdf.b);
+    return msdf.r;
+}
+float outline(float width, float distance, float aaf) {
+	return 1.0 - smoothstep(width - aaf, width + aaf, distance);
+}
+float4 layer(float4 foreground, float4 background) {
+    return foreground * foreground.a + background * (1.0 - foreground.a);
+}
+
+float4 main(Input input) : SV_TARGET{
+    float4 sampled = resolveTexture2DArr(input.texid, input.uv);
+	float4 color = input.color;
+
+    if(input.mode == 0.0 || input.mode == 4.0) {
+        color *= sampled;
+    } else { // some kind of SDF
+        float distance = 1.0 - sigDist(sampled.rgb, input.mode);
+		float aaf = fwidth(distance) * 0.5;
+		
+		color = layer(
+			float4(input.color.rgb, outline(0.5, distance, aaf)),
+			float4(input.borderColor.rgb, outline(0.5 + input.border * 0.5, distance, aaf))
+		);
+    }
+    
+	return color;
+}

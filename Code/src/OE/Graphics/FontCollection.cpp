@@ -10,11 +10,6 @@
 
 namespace OrbitEngine {	namespace Graphics {
 	
-	FrameIndex toIndex(GlyphCodepoint code, GlyphRenderMode mode) {
-		const int MAX_UNICODE = 0x10FFFF;
-		return mode * MAX_UNICODE + code;
-	}
-
 	FontCollection* FontCollection::Load(const std::string& font_metadata, const std::string& atlas_metadata, const std::string& atlas_image)
 	{
 		rapidjson::Document meta = Misc::ReadJSON(font_metadata);
@@ -43,6 +38,8 @@ namespace OrbitEngine {	namespace Graphics {
 		if (!font->getGlyph(codepoint, size, mode, entry.bitmap, entry.metrics))
 			return false;
 
+		entry.original_size = size;
+
 		m_Collection[codepoint].emplace(mode, entry);
 
 		return true;
@@ -65,50 +62,6 @@ namespace OrbitEngine {	namespace Graphics {
 			}
 		}
 		return c;
-	}
-
-	void FontCollection::drawText(const std::vector<GlyphCodepoint>& text, float size, const Math::Vec2f& position, SpriteRenderer& sr) {
-		// TODO: Apply size to the mix
-		// TODO: Use the different render modes
-		// TODO: Make a Text shader...
-
-		if (text.size() == 0)
-			return;
-
-		Math::Vec2f pen(0, 0/*m_Instance->m_MaxBearing - getHeight(string) + m_Instance->m_MaxHeight*/);
-		pen.x += position.x;
-		pen.y += position.y;
-
-		for (unsigned int i = 0; i < text.size(); i++) {
-			GlyphCodepoint code = text[i];
-			if (code == '\n' || code == '\r') {
-				pen.x = position.x;
-				pen.y += size;
-				continue;
-			}
-
-			const auto& it = m_Collection.find(code);
-			if (it == m_Collection.end())
-				continue;
-
-			const auto& p = *(*it).second.rbegin();
-			GlyphRenderMode mode = p.first;
-			FrameIndex index = toIndex(code, mode);
-			const Entry& entry = p.second;
-
-			if (m_TextureAtlas->hasFrame(index) && entry.metrics.width > 0 && entry.metrics.height > 0) {
-				Math::Vec2f pos(pen.x + entry.metrics.H_bearingX, pen.y - entry.metrics.H_bearingY);
-				m_TextureAtlas->drawFrame(index, pos, Math::Vec2f(entry.metrics.width, entry.metrics.height), sr);
-			}
-			
-			if (i + 1 < text.size()) {
-				const auto& kit = entry.kernings.find((GlyphCodepoint)text[i + 1]);
-				if(kit != entry.kernings.end())
-					pen.x += (*kit).second;
-			}
-			
-			pen.x += entry.metrics.H_advance;
-		}
 	}
 
 	Math::Vec2f FontCollection::getBounds(const std::vector<GlyphCodepoint>& text, float size)
@@ -137,7 +90,7 @@ namespace OrbitEngine {	namespace Graphics {
 			FrameIndex index = toIndex(code, mode);
 			const Entry& entry = p.second;
 
-			if (i + 1 < text.size()) {
+			if (i + 1 < (int)text.size()) {
 				const auto& kit = entry.kernings.find((GlyphCodepoint)text[i + 1]);
 				if (kit != entry.kernings.end())
 					pen.x += (*kit).second;
@@ -177,6 +130,12 @@ namespace OrbitEngine {	namespace Graphics {
 		return Misc::WriteJSON(font_metadata, buffer);
 	}
 
+	FrameIndex FontCollection::toIndex(GlyphCodepoint code, GlyphRenderMode mode)
+	{
+		const int MAX_UNICODE = 0x10FFFF;
+		return mode * MAX_UNICODE + code;
+	}
+
 	FontCollection::FontCollection(TextureAtlas* atlas)
 		: m_TextureAtlas(atlas)
 	{
@@ -208,6 +167,9 @@ namespace OrbitEngine {	namespace Graphics {
 					writer.Uint(p.first);
 					writer.Key("m");
 					writer.Int(p2.first);
+
+					writer.Key("s");
+					writer.Uint(p2.second.original_size);
 
 					const GlyphMetrics& metrics = p2.second.metrics;
 					writer.Key("w");
@@ -261,6 +223,7 @@ namespace OrbitEngine {	namespace Graphics {
 					if (glyph.IsObject()) {
 						if (glyph.HasMember("i") &&
 							glyph.HasMember("m") &&
+							glyph.HasMember("s") &&
 							glyph.HasMember("w") &&
 							glyph.HasMember("h") &&
 							glyph.HasMember("ha") &&
@@ -272,6 +235,7 @@ namespace OrbitEngine {	namespace Graphics {
 
 							glyph["i"].IsUint() &&
 							glyph["m"].IsInt() &&
+							glyph["s"].IsUint() &&
 							glyph["w"].IsInt() &&
 							glyph["h"].IsInt() &&
 							glyph["ha"].IsInt() &&
@@ -288,6 +252,7 @@ namespace OrbitEngine {	namespace Graphics {
 							}
 
 							Entry entry;
+							entry.original_size = glyph["s"].GetUint();
 							entry.metrics.width = glyph["w"].GetInt();
 							entry.metrics.height = glyph["h"].GetInt();
 							entry.metrics.H_advance = glyph["ha"].GetInt();

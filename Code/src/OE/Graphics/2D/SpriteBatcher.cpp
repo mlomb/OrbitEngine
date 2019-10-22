@@ -15,7 +15,7 @@ namespace OrbitEngine { namespace Graphics {
 			([]() {
 				VertexLayout* layout = new VertexLayout();
 				layout->push<Math::Vec2f>("POSITION"); // Vertex position
-				layout->push<Math::Color4f>("COLOR");    // Color
+				layout->push<Math::Color4f>("COLOR");  // Color
 				layout->push<Math::Vec2f>("TEXCOORD"); // UV's
 				layout->push<float>("TEXID");		   // TextureID
 				return layout;
