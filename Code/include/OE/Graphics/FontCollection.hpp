@@ -96,8 +96,6 @@ namespace OrbitEngine {	namespace Graphics {
 		*/
 		static FontCollection* Load(const std::string& font_metadata, const std::string& atlas_metadata, const std::string& atlas_image);
 
-		Math::Vec2f getBounds(const std::vector<GlyphCodepoint>& text, float size);
-
 		/**
 			@brief Add a single glyph to the collection
 			@param[in] font Font to extract the glyph

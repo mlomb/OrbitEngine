@@ -64,46 +64,6 @@ namespace OrbitEngine {	namespace Graphics {
 		return c;
 	}
 
-	Math::Vec2f FontCollection::getBounds(const std::vector<GlyphCodepoint>& text, float size)
-	{
-		if (text.size() == 0)
-			return Math::Vec2i(0, 0);
-
-		Math::Vec2f pen(0, 0);
-		float maxWidth = 0.0f;
-		int lines = 1;
-
-		for (unsigned int i = 0; i < text.size(); i++) {
-			GlyphCodepoint code = text[i];
-			if (code == '\n' || code == '\r') {
-				pen.x = 0;
-				lines++;
-				continue;
-			}
-
-			const auto& it = m_Collection.find(code);
-			if (it == m_Collection.end())
-				continue;
-
-			const auto& p = *(*it).second.rbegin();
-			GlyphRenderMode mode = p.first;
-			FrameIndex index = toIndex(code, mode);
-			const Entry& entry = p.second;
-
-			if (i + 1 < (int)text.size()) {
-				const auto& kit = entry.kernings.find((GlyphCodepoint)text[i + 1]);
-				if (kit != entry.kernings.end())
-					pen.x += (*kit).second;
-			}
-
-			pen.x += entry.metrics.H_advance;
-
-			maxWidth = std::max(maxWidth, pen.x + entry.metrics.width);
-		}
-
-		return Math::Vec2f(maxWidth, lines * size);
-	}
-
 	bool FontCollection::exportToFiles(const std::string& font_metadata, const std::string& atlas_metadata, const std::string& atlas_image)
 	{
 		// generate atlas

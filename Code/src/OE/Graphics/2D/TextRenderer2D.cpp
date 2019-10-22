@@ -111,7 +111,7 @@ namespace OrbitEngine { namespace Graphics {
 
 				m_IndexCount += 6;
 			}
-			
+
 			if (i + 1 < text.size()) {
 				const auto& kit = entry.kernings.find((GlyphCodepoint)text[i + 1]);
 				if(kit != entry.kernings.end())
@@ -121,4 +121,45 @@ namespace OrbitEngine { namespace Graphics {
 			pen.x += advance;
 		}
 	}
+
+	Math::Vec2f TextRenderer2D::getBounds(const std::vector<GlyphCodepoint>& text, TextStyle style, FontCollection* font)
+	{
+		if (text.size() == 0)
+			return Math::Vec2i(0, 0);
+
+		Math::Vec2f pen(0, 0);
+		float maxWidth = 0.0f;
+		int lines = 1;
+
+		for (unsigned int i = 0; i < text.size(); i++) {
+			GlyphCodepoint code = text[i];
+			if (code == '\n' || code == '\r') {
+				pen.x = 0;
+				lines++;
+				continue;
+			}
+
+			const auto& it = font->m_Collection.find(code);
+			if (it == font->m_Collection.end())
+				continue;
+
+			const auto& p = *(*it).second.rbegin();
+			const FontCollection::Entry& entry = p.second;
+
+			float scale = style.size / (float)entry.original_size;
+
+			if (i + 1 < text.size()) {
+				const auto& kit = entry.kernings.find((GlyphCodepoint)text[i + 1]);
+				if (kit != entry.kernings.end())
+					pen.x += (float)(*kit).second * scale;
+			}
+
+			pen.x += (float)entry.metrics.H_advance * scale;
+
+			maxWidth = std::max(maxWidth, pen.x + entry.metrics.width);
+		}
+
+		return Math::Vec2f(maxWidth, lines * style.size);
+	}
+
 } }

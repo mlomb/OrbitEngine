@@ -33,6 +33,7 @@ namespace OrbitEngine { namespace Graphics {
 		void end() override;
 
 		void drawText(const std::vector<GlyphCodepoint>& text, const Math::Vec2f& position, TextStyle style, FontCollection* font);
+		Math::Vec2f getBounds(const std::vector<GlyphCodepoint>& text, TextStyle style, FontCollection* font);
 
 	private:
 		Shader* m_Shader;
