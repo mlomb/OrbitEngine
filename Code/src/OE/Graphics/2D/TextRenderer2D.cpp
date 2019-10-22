@@ -2,6 +2,7 @@
 
 #include "OE/Graphics/ShaderLoader.hpp"
 #include "OE/Graphics/TextureAtlas.hpp"
+#include "OE/Graphics/API/States.hpp"
 
 namespace OrbitEngine { namespace Graphics {
 
@@ -40,12 +41,6 @@ namespace OrbitEngine { namespace Graphics {
 
 	void TextRenderer2D::end()
 	{
-		if (m_Shader) {
-			delete m_Shader;
-			m_Shader = ShaderLoader::Text2D();
-			TextureArrayHandler::init(m_Shader);
-		}
-
 		m_Shader->bind();
 		m_UPVMatrix->bind("PVMatrix", m_Shader);
 
