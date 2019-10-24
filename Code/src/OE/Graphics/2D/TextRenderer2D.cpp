@@ -156,7 +156,7 @@ namespace OrbitEngine { namespace Graphics {
 
 			pen.x += (float)entry.metrics.H_advance * scale;
 
-			maxWidth = std::max(maxWidth, pen.x + entry.metrics.width);
+			maxWidth = std::max(maxWidth, pen.x);
 		}
 
 		return Math::Vec2f(maxWidth, lines * style.size);
