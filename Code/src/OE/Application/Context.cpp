@@ -2,6 +2,12 @@
 
 #include "OE/Config.hpp"
 #include "OE/Application/Window.hpp"
+#include "OE/Application/ContextImpl.hpp"
+#include "OE/Misc/Log.hpp"
+
+#if OE_LINUX
+	#include "OE/Platform/X11/WindowLinux.hpp"
+#endif
 
 #if OE_OPENGL
 	#if OE_WINDOWS
@@ -71,7 +77,7 @@ namespace OrbitEngine {	namespace Application {
 		case RenderAPI::OPENGL_ES:
 	#if OE_EMSCRIPTEN
 			if(sharedContext)
-				OE_LOG_ERROR("Sharing context is not possible in WebGL!");
+				OE_LOG_ERROR("Sharing contexts is not possible in WebGL!");
 			setPimpl(new priv::WebGLContext(emscriptenWindow));
 	#else
 			setPimpl(new priv::EGLContext(windowImpl, reinterpret_cast<priv::EGLContext*>(sharedContextImpl)));

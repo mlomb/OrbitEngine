@@ -50,6 +50,7 @@ namespace OrbitEngine {
 
 // disable debug messages
 #if !OE_DEBUG
+	#undef OE_LOG_DEBUG
 	#define OE_LOG_DEBUG(message) {};
 #endif
 

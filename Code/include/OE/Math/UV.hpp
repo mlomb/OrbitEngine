@@ -12,10 +12,7 @@ namespace OrbitEngine { namespace Math {
 		UV(const Vec2f& _1, const Vec2f& _2, const Vec2f& _3, const Vec2f& _4)
 			: _1(_1), _2(_2), _3(_3), _4(_4) { };
 
-		union {
-			Vec2f arr[4];
-			struct { Vec2f _1, _2, _3, _4; };
-		};
+		Vec2f _1, _2, _3, _4;
 
 		/// Get UV coordinates by index
 		Vec2f getUV(int pos) const {

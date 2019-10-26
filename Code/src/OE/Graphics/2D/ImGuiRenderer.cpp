@@ -1,8 +1,8 @@
 #include "OE/Graphics/2D/ImGuiRenderer.hpp"
 
 #include "OE/Graphics/ShaderLoader.hpp"
-#ifdef OE_OPENGL_ANY
-#include "OE/Platform/OpenGL/GLShader.hpp"
+#if OE_OPENGL_ANY
+	#include "OE/Platform/OpenGL/GLShader.hpp"
 #endif
 
 #include "OE/Application/Context.hpp"
@@ -404,8 +404,8 @@ namespace OrbitEngine { namespace Graphics {
 		for (int n = 0; n < draw_data->CmdListsCount; n++) {
 			const ImDrawList* cmd_list = draw_data->CmdLists[n];
 
-			m_Mesh->getVBO()->setData((GLsizeiptr)cmd_list->VtxBuffer.Size * sizeof(ImDrawVert), (const GLvoid*)cmd_list->VtxBuffer.Data);
-			m_Mesh->getIBO()->setData((GLsizeiptr)cmd_list->IdxBuffer.Size * sizeof(ImDrawIdx), (const GLvoid*)cmd_list->IdxBuffer.Data);
+			m_Mesh->getVBO()->setData((ptrdiff_t)cmd_list->VtxBuffer.Size * sizeof(ImDrawVert), (const void*)cmd_list->VtxBuffer.Data);
+			m_Mesh->getIBO()->setData((ptrdiff_t)cmd_list->IdxBuffer.Size * sizeof(ImDrawIdx), (const void*)cmd_list->IdxBuffer.Data);
 
 			for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++) {
 				const ImDrawCmd* pcmd = &cmd_list->CmdBuffer[cmd_i];

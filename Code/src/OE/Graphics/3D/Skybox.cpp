@@ -8,8 +8,10 @@
 #include "OE/Application/Context.hpp"
 #include "OE/Application/ContextImpl.hpp"
 
-#include "OE/Platform/OpenGL/GLShader.hpp"
-#include "OE/Platform/OpenGL/GLFrameBuffer.hpp"
+#if OE_OPENGL_ANY
+	#include "OE/Platform/OpenGL/GLShader.hpp"
+	#include "OE/Platform/OpenGL/GLFrameBuffer.hpp"
+#endif
 
 namespace OrbitEngine { namespace Graphics {
 
@@ -18,11 +20,13 @@ namespace OrbitEngine { namespace Graphics {
 	{
 		m_Shader = ShaderLoader::Skybox();
 
+#if OE_OPENGL_ANY
 		if (Application::Context::GetCurrentAPI() == RenderAPI::OPENGL) {
 			GLShader* glShader = (GLShader*)m_Shader;
 			glShader->bind();
 			glShader->setUniform1i("cubeMap", 0);
 		}
+#endif
 	}
 
 	void Skybox::render(Misc::Camera* camera)

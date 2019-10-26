@@ -64,7 +64,7 @@ namespace OrbitEngine { namespace Graphics {
 		}
 		*/
 
-		submitRect(m_TempVertexs, uvs.arr, m_BindColor, m_BindTexture);
+		submitRect(m_TempVertexs, (const Math::Vec2f(&)[4])(uvs._1), m_BindColor, m_BindTexture);
 	}
 
 	void SpriteRenderer::begin()

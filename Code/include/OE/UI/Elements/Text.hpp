@@ -3,8 +3,8 @@
 
 #include <string>
 
-#include "OE/UI/Elements/Element.hpp"
 #include "OE/Graphics/FontCollection.hpp"
+#include "OE/UI/Elements/Element.hpp"
 
 #include "OE/Math/Color.hpp"
 

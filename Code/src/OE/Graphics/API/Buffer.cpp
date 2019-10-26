@@ -1,6 +1,7 @@
 #include "OE/Graphics/API/Buffer.hpp"
 
 #include "OE/Application/Context.hpp"
+#include "OE/Misc/Log.hpp"
 
 #if OE_OPENGL_ANY
 	#include "OE/Platform/OpenGL/GLIndexBuffer.hpp"

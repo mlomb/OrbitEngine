@@ -2,6 +2,7 @@
 #define MISC_JSON_HPP
 
 #undef GetObject
+#undef Bool
 
 #include <rapidjson/document.h>
 #include <rapidjson/writer.h>

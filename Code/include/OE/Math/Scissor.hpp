@@ -19,10 +19,10 @@ namespace OrbitEngine { namespace Math {
 			: Scissor(Math::Vec4f(-DEFAULT_SCISSOR_EXTENT, -DEFAULT_SCISSOR_EXTENT, 2 * DEFAULT_SCISSOR_EXTENT, 2 * DEFAULT_SCISSOR_EXTENT)) {};
 
 		union {
-			struct {
+			/*struct Rect {
 				Math::Vec2f position;
 				Math::Vec2f size;
-			};
+			};*/
 			Math::Vec4f rect;
 		};
 	};

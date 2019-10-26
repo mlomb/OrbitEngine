@@ -7,8 +7,8 @@ namespace OrbitEngine {	namespace Misc {
 	template<typename T>
 	class SharedObject : public SharedReference {
 	public:
-		T* Get();
-		T* GetAndReference();
+		T* GetShared();
+		T* GetSharedAndReference();
 
 	protected:
 		virtual T* Create() = 0;
@@ -35,13 +35,13 @@ namespace OrbitEngine {	namespace Misc {
 	}
 
 	template<typename T>
-	inline T* SharedObject<T>::Get()
+	inline T* SharedObject<T>::GetShared()
 	{
 		return m_SharedObject;
 	}
 
 	template<typename T>
-	inline T* SharedObject<T>::GetAndReference()
+	inline T* SharedObject<T>::GetSharedAndReference()
 	{
 		Reference();
 		return m_SharedObject;

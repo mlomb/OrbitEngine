@@ -4,7 +4,7 @@
 #include "OE/Misc/Log.hpp"
 #include "OE/Graphics/API/FrameBuffer.hpp"
 
-#ifdef OE_OPENGL_ANY
+#if OE_OPENGL_ANY
 	#include "OE/Platform/OpenGL/GLStates.hpp"
 #endif
 #if OE_D3D
@@ -66,7 +66,7 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 		// TODO We should move this to the constructor
 		if (m_States == NULL) {
 			switch (GetCurrentAPI()) {
-#ifdef OE_OPENGL_ANY
+#if OE_OPENGL_ANY
 			case OPENGL:
 #if OE_OPENGL_ES
 			case OPENGL_ES:

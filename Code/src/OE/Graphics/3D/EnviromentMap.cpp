@@ -76,8 +76,8 @@ namespace OrbitEngine { namespace Graphics {
 		if (s_PrefilterCapture == nullptr) {
 			s_PrefilterCapture = ShaderLoader::PrefilterEnvMap();
 			setViewMatrices(s_PrefilterCapture);
-			if (Application::Context::GetCurrentAPI() == RenderAPI::OPENGL)
-				((GLShader*)s_PrefilterCapture)->setUniform1i("environment", 0);
+			/*if (Application::Context::GetCurrentAPI() == RenderAPI::OPENGL)
+				((GLShader*)s_PrefilterCapture)->setUniform1i("environment", 0);*/
 		}
 
 		if (m_PrefilteredEnvMap == nullptr) {
@@ -100,8 +100,8 @@ namespace OrbitEngine { namespace Graphics {
 		s_PrefilterCapture->bind();
 		//Renderer::SetCullMode(CullMode::NONE);
 
-		auto gls = (GLShader*)s_PrefilterCapture;
-		gls->setUniformMat4("pr_matrix", fixedCubeProj);
+		/*auto gls = (GLShader*)s_PrefilterCapture;
+		gls->setUniformMat4("pr_matrix", fixedCubeProj);*/
 
 		m_EnviromentMap->bind(0);
 
@@ -111,7 +111,7 @@ namespace OrbitEngine { namespace Graphics {
 			m_PrefilteredEnvMap->useMip(i);
 			m_PrefilteredEnvMap->clear();
 
-			gls->setUniform1f("roughness", (float)i / (float)(mipLevels - 1));
+			/*gls->setUniform1f("roughness", (float)i / (float)(mipLevels - 1));*/
 
 			s_CaptureCube->drawIndexed(36);
 		}
@@ -121,11 +121,11 @@ namespace OrbitEngine { namespace Graphics {
 
 	void EnviromentMap::setViewMatrices(Shader* shader)
 	{
-		if (Application::Context::GetCurrentAPI() == RenderAPI::OPENGL) {
+		/*if (Application::Context::GetCurrentAPI() == RenderAPI::OPENGL) {
 			GLShader* glShader = (GLShader*)shader;
 			glShader->bind();
 			//for (int i = 0; i < 6; ++i)
 			//	glShader->setUniformMat4(("viewMatrices[" + std::to_string(i) + "]").c_str(), s_CubeFaces[i] * Math::Mat4::Scale(Math::Vec3f(10, 10, 10)));
-		}
+		}*/
 	}
 } }

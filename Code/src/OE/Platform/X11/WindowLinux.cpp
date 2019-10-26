@@ -1,14 +1,15 @@
 #include "WindowLinux.hpp"
 
+#include "OE/Misc/Log.hpp"
 #include "OE/Platform/X11/X11Display.hpp"
 #include "OE/Platform/OpenGL/OpenGL.hpp"
 
 namespace OrbitEngine {	namespace Application { namespace priv {
-	WindowLinux::WindowLinux(WindowProperties properties)
-		: WindowImpl(properties)
+	WindowLinux::WindowLinux()
+		: WindowImpl()
 	{
 		// Open connection
-		m_Display = X11Display::Instance()->GetAndReference();
+		m_Display = X11Display::Get()->GetSharedAndReference();
 		int XScreen = DefaultScreen(m_Display);
 		::Window XRoot = RootWindow(m_Display, XScreen);
 
@@ -69,8 +70,6 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 			return;
 		}
 
-		setTitle(p_Properties.title.c_str());
-
 		loadAtoms();
 		
 		// Show the window
@@ -79,7 +78,7 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 
 	WindowLinux::WindowLinux(WindowNativeHandle handle)
 	{
-		m_Display = X11Display::Instance()->GetAndReference();
+		m_Display = X11Display::Get()->GetSharedAndReference();
 		m_Window = handle;
 
 		// Is ok to leave m_VisualInfo NULL?
@@ -88,6 +87,7 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 	}
 
 	void WindowLinux::processEvents() {
+		InputManager* input_manager = InputManager::Get();
 		XEvent event;
 
 		while (XPending(m_Display))
@@ -105,7 +105,7 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 				case ConfigureNotify:
 				{
 					XConfigureEvent xce = event.xconfigure;
-					p_Properties.resolution = Math::Vec2i(xce.width, xce.height);
+					p_Size = Math::Vec2i(xce.width, xce.height);
 				}
 				break;
 				case KeyPress:
@@ -113,24 +113,26 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 				{
 					Key key = TranslateKey(event.xkey.keycode);
 					//OE_LOG_DEBUG("keycode: " << event.xkey.keycode << " -> " << (char)event.xkey.keycode << "  Key: " << key << " -> " << (char)key);
-					p_InputManager->onInputKey(key, event.type == KeyPress);
+					input_manager->onInputKey(key, event.type == KeyPress);
 				}
 				break;
 				case ButtonPress:
 				case ButtonRelease:
 					//OE_LOG_DEBUG("button: " << event.xbutton.button);
-					p_InputManager->onInputMouseButton(Button(event.xbutton.button - 1), event.type == ButtonPress);
+					input_manager->onInputMouseButton(Button(event.xbutton.button - 1), event.type == ButtonPress);
 				break;
 				case FocusIn:
 				case FocusOut:
-					p_InputManager->onInputFocus(event.type == FocusIn);
+					p_Focused = event.type == FocusIn;
 				break;
 				case MotionNotify:
-					p_InputManager->onInputMouseMove(event.xmotion.x, event.xmotion.y);
+					input_manager->onInputMouseMove(event.xmotion.x, event.xmotion.y);
 				break;
 			}
 		}
 
+		/*
+		// TODO: Re-do
 		bool shouldBeGrabbed = p_InputManager->hasFocus() && p_InputManager->m_CursorMode == CursorMode::GRABBED;
 		if(shouldBeGrabbed && !m_Grabbed){
 			XGrabPointer(m_Display, m_Window, True, 0, GrabModeAsync, GrabModeAsync, m_Window, None, CurrentTime);
@@ -146,6 +148,7 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 			XWarpPointer(m_Display, None, m_Window, 0, 0, 0, 0, center.x, center.y);
 			// TODO Not working...
 		}
+		*/
 
 		WindowImpl::processEvents();
 	}
@@ -165,7 +168,7 @@ namespace OrbitEngine {	namespace Application { namespace priv {
         	XFree(m_VisualInfo);
 		if (m_Display){
 			XDestroyWindow(m_Display, m_Window);
-			X11Display::Instance()->DeReference();
+			X11Display::Get()->DeReference();
 			m_Display = NULL;
 		}
 	}
@@ -182,16 +185,47 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 		return m_VisualInfo;
 	}
 
-	void WindowLinux::setTitle(const char* title)
-	{
+	bool WindowLinux::isMinimized() const {
+		return false;
+	}
+
+	bool WindowLinux::setDisplayMode(DisplayMode mode) {
+		return false;
+	}
+	
+	bool WindowLinux::setCursor(Cursor cursor) {
+		return false;
+	}
+	
+	bool WindowLinux::setTitle(const std::string& title) {
 		// Set the window properties
 		XTextProperty titleTextProp;
-		titleTextProp.value = (unsigned char*)title;
+		titleTextProp.value = (unsigned char*)title.c_str();
 		titleTextProp.encoding = XA_STRING;
 		titleTextProp.format = 8;
-		titleTextProp.nitems = strlen(title);
+		titleTextProp.nitems = title.length();
 
 		XSetWMProperties(m_Display, m_Window, &titleTextProp, &titleTextProp, NULL, 0, NULL, NULL, NULL);
+	}
+	
+	bool WindowLinux::setPosition(const Math::Vec2i& position) {
+		return false;
+	}
+	
+	bool WindowLinux::setSize(const Math::Vec2i& size) {
+		return false;
+	}
+	
+	bool WindowLinux::setVisibility(bool visible) {
+		return false;
+	}
+	
+	bool WindowLinux::requestFocus() {
+		return false;
+	}
+	
+	bool WindowLinux::setAlpha(float alpha) {
+		return false;
 	}
 
 	Key WindowLinux::TranslateKey(int key) {

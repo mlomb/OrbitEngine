@@ -22,10 +22,11 @@ namespace OrbitEngine { namespace Graphics {
 
 		switch (Application::Context::GetCurrentAPI())
 		{
+#if OE_OPENGL_ANY
 		case RenderAPI::OPENGL:
-#if OE_OPENGL_ES
+	#if OE_OPENGL_ES
 		case RenderAPI::OPENGL_ES:
-#endif
+	#endif
 			GLShader* glShader = (GLShader*)shader;
 			glShader->bind();
 			for (int i = 0; i < 4; i++)
@@ -34,6 +35,7 @@ namespace OrbitEngine { namespace Graphics {
 				glShader->setUniform1i(("map_" + MapTypeToString(type)).c_str(), i);
 			}
 			break;
+#endif
 		}
 		s_MaterialUniformsBuffer->setData(m_Uniforms);
 		s_MaterialUniformsBuffer->bind("MaterialBuffer", shader);

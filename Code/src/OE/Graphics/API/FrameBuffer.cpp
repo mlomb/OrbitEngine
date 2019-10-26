@@ -1,6 +1,7 @@
 #include "OE/Graphics/API/FrameBuffer.hpp"
 
 #include "OE/Application/ContextImpl.hpp"
+#include "OE/Misc/Log.hpp"
 
 #if OE_OPENGL_ANY
 	#include "OE/Platform/OpenGL/GLFrameBuffer.hpp"

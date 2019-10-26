@@ -12,6 +12,7 @@ namespace OrbitEngine { namespace System { namespace priv {
 
 		const char* getName() override;
 		long long currentNano() override;
+		std::vector<MonitorDesc> getMonitors() override;
 
 	protected:
 

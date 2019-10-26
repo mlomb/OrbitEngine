@@ -1,5 +1,6 @@
 #include "OE/Graphics/2D/TextRenderer2D.hpp"
 
+#include "OE/Application/ContextImpl.hpp"
 #include "OE/Graphics/ShaderLoader.hpp"
 #include "OE/Graphics/TextureAtlas.hpp"
 #include "OE/Graphics/API/States.hpp"
