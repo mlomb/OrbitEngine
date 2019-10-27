@@ -17,7 +17,7 @@ namespace OrbitEngine { namespace System { namespace priv {
 		return std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 	}
 	
-	std::vector<MonitorDesc> getMonitors() {
+	std::vector<MonitorDesc> SystemLinux::getMonitors() {
 		// TODO
 		return std::vector<MonitorDesc>();
 	}
