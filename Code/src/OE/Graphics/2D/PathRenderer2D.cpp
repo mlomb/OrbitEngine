@@ -60,7 +60,6 @@ namespace OrbitEngine { namespace Graphics {
 
 		m_Shader->bind();
 		m_UPVMatrix->bind("PVMatrix", m_Shader);
-		m_UniformDataPack->bind("Data", m_Shader);
 		
 		BatchRenderer2D::end();
 		TextureArrayHandler::end();
@@ -72,6 +71,7 @@ namespace OrbitEngine { namespace Graphics {
 		unsigned int i = 0;
 		for (PathRendererCall* call : m_RenderCalls) {
 			m_UniformDataPack->setData(call->data);
+			m_UniformDataPack->bind("Data", m_Shader);
 
 			if (call->pathsCount > 0) {
 				/* Fill */

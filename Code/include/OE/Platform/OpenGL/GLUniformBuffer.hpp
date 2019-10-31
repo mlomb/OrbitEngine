@@ -17,6 +17,7 @@ namespace OrbitEngine {	namespace Graphics {
 		GLUniformBuffer();
 		~GLUniformBuffer();
 
+		// If UBOs are disabled bind *must* be called after setData
 		void setData(const T& data) override;
 		void bind(const ShaderBuffer& buffer, ShaderType shader_type, Shader* shader) const override;
 

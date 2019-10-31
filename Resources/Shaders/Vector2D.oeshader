@@ -24,6 +24,8 @@ Output main(Input input) {
 }
 
 #shadertype FRAGMENT
+#include TextureArray.oeshader
+
 struct Input {
 	float4 position : SV_POSITION;
 	float2 uv : TEXCOORD;
@@ -49,9 +51,6 @@ cbuffer Data
 	float pad4, pad5;
 };
 
-Texture2D textures[16];
-SamplerState samplers[16];
-
 float calcScissor(float2 p) {
 	float2 pos = scissor.xy;
 	float2 size = scissor.zw;
@@ -69,27 +68,6 @@ float sdroundrect(float2 pt, float2 ext, float rad) {
 	float2 ext2 = ext - float2(rad, rad);
 	float2 d = abs(pt) - ext2;
 	return min(max(d.x, d.y), 0.0) + length(max(d, 0.0)) - rad;
-}
-
-float4 resolveTexture2DArr(float texid, float2 uv) {
-	// Waterfall code incoming
-	if (texid == 1) return textures[0].Sample(samplers[0], uv);
-	else if (texid == 2) return textures[1].Sample(samplers[1], uv);
-	else if (texid == 3) return textures[2].Sample(samplers[2], uv);
-	else if (texid == 4) return textures[3].Sample(samplers[3], uv);
-	else if (texid == 5) return textures[4].Sample(samplers[4], uv);
-	else if (texid == 6) return textures[5].Sample(samplers[5], uv);
-	else if (texid == 7) return textures[6].Sample(samplers[6], uv);
-	else if (texid == 8) return textures[7].Sample(samplers[7], uv);
-	else if (texid == 9) return textures[8].Sample(samplers[8], uv);
-	else if (texid == 10) return textures[9].Sample(samplers[9], uv);
-	else if (texid == 11) return textures[10].Sample(samplers[10], uv);
-	else if (texid == 12) return textures[11].Sample(samplers[11], uv);
-	else if (texid == 13) return textures[12].Sample(samplers[12], uv);
-	else if (texid == 14) return textures[13].Sample(samplers[13], uv);
-	else if (texid == 15) return textures[14].Sample(samplers[14], uv);
-	else if (texid == 16) return textures[15].Sample(samplers[15], uv);
-	return float4(1, 0, 1, 1);
 }
 
 float aa(float d) {

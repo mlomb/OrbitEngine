@@ -36,8 +36,6 @@ namespace OrbitEngine { namespace Graphics {
 
 	void TextureArrayHandler::end()
 	{
-		for (unsigned int i = 0; i < p_Textures.size(); i++)
-			p_Textures[i]->bind(i);
 #if OE_OPENGL_ES
 		if (Application::Context::GetCurrentAPI() == OPENGL_ES) {
 			if (p_Textures.size() > 0) {
@@ -48,6 +46,8 @@ namespace OrbitEngine { namespace Graphics {
 			}
 		}
 #endif
+		for (unsigned int i = 0; i < p_Textures.size(); i++)
+			p_Textures[i]->bind(i);
 	}
 
 	int TextureArrayHandler::handleTexture(Texture* tex)
