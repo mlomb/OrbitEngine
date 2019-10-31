@@ -12,7 +12,7 @@
 namespace OrbitEngine {	namespace Application { namespace priv {
 	class WindowEmscripten : public WindowImpl {
 	public:
-		WindowEmscripten();
+		WindowEmscripten(const std::string& selector = "canvas");
 		~WindowEmscripten();
 
 		void processEvents() override;
@@ -30,8 +30,11 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 		WindowNativeHandle getWindowNativeHandle() override;
 		DisplayNativeHandle getDisplayNativeHandle() override;
 		
+		std::string getSelector() const;
+		
 		static std::string CursorToCSS(const Cursor cursor);
 	private:
+		std::string m_Selector;
 		bool m_PointerLock;
 
 		bool isPointerLockActive();

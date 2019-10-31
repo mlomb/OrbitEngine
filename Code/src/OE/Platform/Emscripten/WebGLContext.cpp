@@ -17,13 +17,13 @@ namespace OrbitEngine { namespace Application { namespace priv {
 
 		attributes.stencil = true;
 
-		m_ContextHandle = emscripten_webgl_create_context(0, &attributes);
+		m_ContextHandle = emscripten_webgl_create_context(window->getSelector().c_str(), &attributes);
 		if(m_ContextHandle == NULL) {
 			OE_LOG_WARNING("WebGL2 is not available, fallback to WebGL 1.");
 			
 			attributes.majorVersion = 1;
 			attributes.minorVersion = 0;
-			m_ContextHandle = emscripten_webgl_create_context(0, &attributes);
+			m_ContextHandle = emscripten_webgl_create_context(window->getSelector().c_str(), &attributes);
 			if(m_ContextHandle == NULL) {
 				OE_LOG_FATAL("An error ocurred creating the WebGL context!");
 				return;

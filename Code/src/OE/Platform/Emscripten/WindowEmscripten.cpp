@@ -4,23 +4,25 @@
 #include "OE/Misc/Log.hpp"
 
 namespace OrbitEngine {	namespace Application { namespace priv {
-	WindowEmscripten::WindowEmscripten()
-		: WindowImpl()
+	WindowEmscripten::WindowEmscripten(const std::string& selector)
+		: WindowImpl(), m_Selector(selector)
 	{
 		updateSizeFromHTML();
+		
+		const char* c_selector = m_Selector.c_str();
 
-    	emscripten_set_fullscreenchange_callback("#document", this, 0, EMS_Callback_FullscreenChange);
-		emscripten_set_resize_callback(NULL, this, false, &WindowEmscripten::EMS_Callback_ResizeCanvas);
-		emscripten_set_focus_callback(NULL, this, false, &WindowEmscripten::EMS_Callback_Focus);
-		emscripten_set_blur_callback(NULL, this, false, &WindowEmscripten::EMS_Callback_Focus);
+    	emscripten_set_fullscreenchange_callback(EMSCRIPTEN_EVENT_TARGET_DOCUMENT, this, 0, EMS_Callback_FullscreenChange);
+		emscripten_set_resize_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, false, &WindowEmscripten::EMS_Callback_ResizeCanvas);
+		emscripten_set_focus_callback(c_selector, this, false, &WindowEmscripten::EMS_Callback_Focus);
+		emscripten_set_blur_callback(c_selector, this, false, &WindowEmscripten::EMS_Callback_Focus);
 
-		emscripten_set_keypress_callback(NULL, this, false, &WindowEmscripten::EMS_Callback_KeyPress);
-		emscripten_set_keydown_callback(NULL, this, false, &WindowEmscripten::EMS_Callback_Key);
-		emscripten_set_keyup_callback(NULL, this, false, &WindowEmscripten::EMS_Callback_Key);
-		emscripten_set_wheel_callback(NULL, this, false, &WindowEmscripten::EMS_Callback_Wheel);
-		emscripten_set_mousemove_callback(NULL, this, false, &WindowEmscripten::EMS_Callback_MouseMove);
-		emscripten_set_mouseup_callback(NULL, this, false, &WindowEmscripten::EMS_Callback_MouseButton);
-		emscripten_set_mousedown_callback(NULL, this, false, &WindowEmscripten::EMS_Callback_MouseButton);
+		emscripten_set_keypress_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, false, &WindowEmscripten::EMS_Callback_KeyPress);
+		emscripten_set_keydown_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, false, &WindowEmscripten::EMS_Callback_Key);
+		emscripten_set_keyup_callback(EMSCRIPTEN_EVENT_TARGET_WINDOW, this, false, &WindowEmscripten::EMS_Callback_Key);
+		emscripten_set_wheel_callback(c_selector, this, false, &WindowEmscripten::EMS_Callback_Wheel);
+		emscripten_set_mousemove_callback(c_selector, this, false, &WindowEmscripten::EMS_Callback_MouseMove);
+		emscripten_set_mouseup_callback(c_selector, this, false, &WindowEmscripten::EMS_Callback_MouseButton);
+		emscripten_set_mousedown_callback(c_selector, this, false, &WindowEmscripten::EMS_Callback_MouseButton);
 
 		// Do we start with the focus?
 		p_Focused = true;
@@ -125,7 +127,7 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 
 		if(p_DisplayMode != DisplayMode::FULLSCREEN){
 			// If we are not in fullscreen, we use the css size values
-			emscripten_get_element_css_size(NULL, &w, &h);
+			emscripten_get_element_css_size(m_Selector.c_str(), &w, &h);
 		} else {
 			// If we are in fullscreen we use the window inner dimensions
 			w = EM_ASM_INT_V({
@@ -137,7 +139,7 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 			});
 		}
 
-		emscripten_set_canvas_size(w, h);
+		emscripten_set_canvas_element_size(m_Selector.c_str(), w, h);
 
 		p_Size = Math::Vec2i(w, h);
 	}
@@ -149,16 +151,19 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 		else
 			window->p_DisplayMode = DisplayMode::WINDOWED;
 		window->updateSizeFromHTML();
+		return true;
 	}
 
 	EM_BOOL WindowEmscripten::EMS_Callback_ResizeCanvas(int eventType, const EmscriptenUiEvent *uiEvent, void *userData) {
 		WindowEmscripten* window = static_cast<WindowEmscripten*>(userData);
 		window->updateSizeFromHTML();
+		return true;
 	}
 
 	EM_BOOL WindowEmscripten::EMS_Callback_Focus(int eventType, const EmscriptenFocusEvent *focusEvent, void *userData) {
 		WindowEmscripten* window = static_cast<WindowEmscripten*>(userData);
 		window->p_Focused = eventType == EMSCRIPTEN_EVENT_FOCUS;
+		return true;
 	}
 
 	EM_BOOL WindowEmscripten::EMS_Callback_Key(int eventType, const EmscriptenKeyboardEvent *keyEvent, void *userData) {
@@ -169,15 +174,18 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 			//				key == Key::TAB;
 			//return isNavKey;
 		}
+		return true;
 	}
 
 	EM_BOOL OrbitEngine::Application::priv::WindowEmscripten::EMS_Callback_KeyPress(int eventType, const EmscriptenKeyboardEvent* keyEvent, void* userData)
 	{
 		InputManager::Get()->onInputChar((unsigned int)keyEvent->charCode);
+		return true;
 	}
 
 	EM_BOOL WindowEmscripten::EMS_Callback_Wheel(int eventType, const EmscriptenWheelEvent *wheelEvent, void *userData) {
 		InputManager::Get()->onInputWheel((float)wheelEvent->deltaY / -120.0f);
+		return true;
 	}
 
 	EM_BOOL WindowEmscripten::EMS_Callback_MouseMove(int eventType, const EmscriptenMouseEvent *mouseEvent, void *userData) {
@@ -185,8 +193,9 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 		if(window->m_PointerLock){
 			InputManager::Get()->onInputMouseMove(-mouseEvent->movementX, -mouseEvent->movementY, true);
 		} else {
-			InputManager::Get()->onInputMouseMove(mouseEvent->canvasX, mouseEvent->canvasY);
+			InputManager::Get()->onInputMouseMove(mouseEvent->targetX, mouseEvent->targetY);
 		}
+		return true;
 	}
 
 	EM_BOOL WindowEmscripten::EMS_Callback_MouseButton(int eventType, const EmscriptenMouseEvent *mouseEvent, void *userData) {
@@ -198,6 +207,11 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 		case 2: btn = Button::RIGHT; break;
 		}
 		InputManager::Get()->onInputMouseButton(btn, eventType == EMSCRIPTEN_EVENT_MOUSEDOWN);
+		return true;
+	}
+	
+	std::string WindowEmscripten::getSelector() const {
+		return m_Selector;
 	}
 
 	std::string WindowEmscripten::CursorToCSS(const Cursor cursor){
