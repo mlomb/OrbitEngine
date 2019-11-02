@@ -141,6 +141,7 @@ typedef ptrdiff_t GLsizeiptr;
 	GLE(void, BindBuffer, GLenum target, GLuint buffer) \
 	GLE(void, DeleteBuffers, GLsizei n, const GLuint *buffers) \
 	GLE(void, BindAttribLocation, GLuint program, GLuint index, const GLchar *name) \
+	GLE(GLint, GetAttribLocation, GLuint program, const GLchar *name) \
 	GLE(GLint, GetUniformLocation, GLuint program, const GLchar *name) \
 	GLE(void, Uniform4f, GLint location, GLfloat v0, GLfloat v1, GLfloat v2, GLfloat v3) \
 	GLE(void, Uniform4fv, GLint location, GLsizei count, const GLfloat *value) \

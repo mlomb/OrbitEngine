@@ -23,6 +23,7 @@ namespace OrbitEngine { namespace Graphics {
 	{
 		m_ScissorStack = new Misc::ScissorStack();
 		m_Shader = ShaderLoader::Vector2D();
+		m_Shader->matchLayout(m_Mesh);
 		m_UniformDataPack = UniformsPack<PathRendererUniformData>::Create();
 
 		TextureArrayHandler::init(m_Shader);

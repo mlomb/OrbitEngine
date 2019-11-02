@@ -20,7 +20,7 @@ namespace OrbitEngine { namespace Graphics {
 		virtual void begin() override;
 		virtual void end() override;
 
-		static void RenderQuadScreen();
+		static void RenderQuadScreen(Shader* shader);
 	protected:
 		Renderer2D();
 

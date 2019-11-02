@@ -152,7 +152,7 @@ namespace OrbitEngine { namespace Graphics {
 			/* --- */
 
 			l->fillBuffer(shader);
-			Renderer2D::RenderQuadScreen();
+			Renderer2D::RenderQuadScreen(shader);
 		}
 
 		/* Dirty AND TEMPORARY method to unbind the GBuffer */

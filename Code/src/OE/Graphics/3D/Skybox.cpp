@@ -55,6 +55,6 @@ namespace OrbitEngine { namespace Graphics {
 		States* states = Application::priv::ContextImpl::GetCurrent()->getGlobalStates();
 
 		states->setDepthTest(FunctionMode::LESS_EQUAL);
-		Renderer2D::RenderQuadScreen();
+		Renderer2D::RenderQuadScreen(m_Shader);
 	}
 } }

@@ -260,6 +260,7 @@ namespace OrbitEngine { namespace Graphics {
 		m_Mesh = Mesh::Create(layout, true);
 
 		m_Shader = ShaderLoader::LoadRawShader("Resources/Shaders/ImGui.oeshader");
+		m_Shader->matchLayout(m_Mesh);
 	}
 
 	ImGuiRenderer::~ImGuiRenderer()

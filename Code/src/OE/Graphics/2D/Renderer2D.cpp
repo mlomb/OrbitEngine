@@ -45,7 +45,7 @@ namespace OrbitEngine { namespace Graphics {
 		FrameBuffer::Prepare();
 	}
 
-	void Renderer2D::RenderQuadScreen()
+	void Renderer2D::RenderQuadScreen(Shader* shader)
 	{
 		struct Vertex2DSimple {
 			Math::Vec2f position;
@@ -79,6 +79,7 @@ namespace OrbitEngine { namespace Graphics {
 			vertices.clear();
 			triangles.clear();
 		}
+		shader->matchLayout(s_Quad);
 		s_Quad->drawIndexed(6);
 	}
 } }

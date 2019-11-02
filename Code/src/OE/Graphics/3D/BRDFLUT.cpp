@@ -24,7 +24,7 @@ namespace OrbitEngine { namespace Graphics {
 		FrameBuffer::Prepare();
 		shader->bind();
 
-		Renderer2D::RenderQuadScreen();
+		Renderer2D::RenderQuadScreen(shader);
 
 		FrameBuffer::Pop();
 

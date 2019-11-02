@@ -7,6 +7,7 @@
 #include <set>
 
 #include "OE/Graphics/API/ShaderReflection.hpp"
+#include "OE/Graphics/API/Mesh.hpp"
 
 namespace OrbitEngine {	namespace Graphics {
 	
@@ -37,6 +38,7 @@ namespace OrbitEngine {	namespace Graphics {
 		virtual void finalize() = 0;
 
 		virtual void bind() const = 0;
+		virtual void matchLayout(Mesh* mesh) const { };
 
 		const ShaderReflections& getReflections() const;
 		

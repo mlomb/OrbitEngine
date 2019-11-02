@@ -3,6 +3,7 @@
 #include "OE/Platform/OpenGL/OpenGL.hpp"
 #include "OE/Platform/OpenGL/GLContext.hpp"
 #include "OE/Platform/OpenGL/GLStates.hpp"
+#include "OE/Graphics/API/VertexLayout.hpp"
 
 namespace OrbitEngine {	namespace Graphics {
 	GLShader::GLShader()
@@ -159,5 +160,24 @@ namespace OrbitEngine {	namespace Graphics {
 	void GLShader::bindUBO(const GLuint block_index, const GLuint uboSlot) const
 	{
 		OE_CHECK_GL(glUniformBlockBinding(m_ID, block_index, uboSlot));
+	}
+
+	void GLShader::matchLayout(Mesh* mesh) const
+	{
+		int i = 0;
+		VertexLayout* vertexLayout = mesh->getVBO()->getLayout();
+		const std::vector<VertexElement>& layout = vertexLayout->getElements();
+
+		mesh->draw(0, 0); // quick hack to force the generation of the VAO
+
+		bind();
+		for (const ShaderAttribute& sattr : p_Reflections.at(ShaderType::VERTEX).inputAttributes) {
+			GLint loc = OE_CHECK_GL(glGetAttribLocation(m_ID, sattr.name.c_str()));
+			if (loc >= 0) {
+				OE_CHECK_GL(glEnableVertexAttribArray(loc));
+				OE_CHECK_GL(glVertexAttribPointer(loc, layout[i].count, layout[i].type, layout[i].normalized, vertexLayout->getStride(), (const GLvoid*)(layout[i].offset)));
+			}
+			i++;
+		}
 	}
 } }

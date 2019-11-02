@@ -25,6 +25,7 @@ namespace OrbitEngine { namespace Graphics {
 			)
 	{
 		m_Shader = ShaderLoader::Text2D();
+		m_Shader->matchLayout(m_Mesh);
 		TextureArrayHandler::init(m_Shader);
 	}
 

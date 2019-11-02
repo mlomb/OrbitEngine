@@ -31,8 +31,9 @@ namespace OrbitEngine {	namespace Graphics {
 		void setUniform4f(const std::string& name, const Math::Vec4f& vector);
 		void setUniformMat4(const std::string& name, const Math::Mat4& matrix);
 
-
 		void bindUBO(const GLuint block_index, const GLuint uboSlot) const;
+
+		void matchLayout(Mesh* mesh) const override;
 	private:
 		GLuint m_ID = -1;
 		std::unordered_map<std::string, GLuint> m_UniformLocationCache;

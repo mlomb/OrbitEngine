@@ -33,9 +33,13 @@ namespace OrbitEngine {	namespace Graphics {
 		std::vector<ShaderUniform> uniforms;
 	};
 
+	struct ShaderAttribute {
+		std::string name;
+	};
+
 	struct ShaderReflection {
 		std::vector<ShaderBuffer> buffers;
-		//std::vector<ShaderUniform> uniforms; // global uniforms
+		std::vector<ShaderAttribute> inputAttributes, outputAttributes;
 	};
 } }
 

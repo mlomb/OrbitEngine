@@ -17,14 +17,15 @@ namespace OrbitEngine { namespace Graphics {
 				layout->push<Math::Vec2f>("POSITION"); // Vertex position
 				layout->push<Math::Color4f>("COLOR");  // Color
 				layout->push<Math::Vec2f>("TEXCOORD"); // UV's
-				layout->push<float>("TEXID");		   // TextureID
+				layout->push<float>("TEXID");   // TextureID
 				return layout;
 			})(),
 			numSprites * 4,
 			Topology::TRIANGLES
-			)
+			), m_IndexCount(0)
 	{
 		m_Shader = ShaderLoader::Batch2D();
+		m_Shader->matchLayout(m_Mesh);
 		TextureArrayHandler::init(m_Shader);
 	}
 
@@ -66,7 +67,7 @@ namespace OrbitEngine { namespace Graphics {
 		pushVertex({ p_Transform * positions[1], color, uvs[1], (float)texture });
 		pushVertex({ p_Transform * positions[2], color, uvs[2], (float)texture });
 		pushVertex({ p_Transform * positions[3], color, uvs[3], (float)texture });
-
+		
 		m_IndexCount += 6;
 	}
 	
