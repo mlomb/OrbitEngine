@@ -174,13 +174,13 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 			//				key == Key::TAB;
 			//return isNavKey;
 		}
-		return true;
+		return false;
 	}
 
 	EM_BOOL OrbitEngine::Application::priv::WindowEmscripten::EMS_Callback_KeyPress(int eventType, const EmscriptenKeyboardEvent* keyEvent, void* userData)
 	{
 		InputManager::Get()->onInputChar((unsigned int)keyEvent->charCode);
-		return true;
+		return false;
 	}
 
 	EM_BOOL WindowEmscripten::EMS_Callback_Wheel(int eventType, const EmscriptenWheelEvent *wheelEvent, void *userData) {
