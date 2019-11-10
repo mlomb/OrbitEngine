@@ -2,9 +2,9 @@ include(${CMAKE_CURRENT_LIST_DIR}/Config.cmake)
 
 macro(OE_add_resources folder target)
 	if(EMSCRIPTEN)
-		set(virtual_folder ${virtual_folder}/vfs)
+		set(virtual_folder /vfs)
 	elseif(ANDROID)
-		set(virtual_folder ${virtual_folder}/APK/assets)
+		set(virtual_folder /APK/assets)
 	endif()
 
 	get_filename_component(folder_name ${folder} NAME)
