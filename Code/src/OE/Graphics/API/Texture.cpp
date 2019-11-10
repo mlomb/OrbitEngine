@@ -72,27 +72,7 @@ namespace OrbitEngine { namespace Graphics {
 #endif
 			void* data = ReadImage(files[i], w, h, bpp, f32b); // We assume formats will match
 
-			switch (bpp) {
-			case 8:
-				properties.formatProperties.format = R8;
-				break;
-			case 16:
-				properties.formatProperties.format = R16;
-				break;
-			case 24:
-				properties.formatProperties.format = RGB;
-				break;
-			case 32:
-				properties.formatProperties.format = RGBA;
-				break;
-			case 96:
-				properties.formatProperties.format = RGB32F;
-				properties.formatProperties.dataType = FLOAT;
-				break;
-			default:
-				OE_LOG_WARNING("Unsupported bit depth in " << files[i]);
-				continue;
-			}
+			properties.formatProperties = FormatPropertiesFromBPP(bpp);
 
 			if (data == 0) {
 				for (size_t i = 0; i < dataPtrs.size(); i++)
@@ -124,6 +104,20 @@ namespace OrbitEngine { namespace Graphics {
 	{
 		TextureSampleProperties sampleProperties;
 		return Load(file, sampleProperties);
+	}
+
+	Texture* Texture::Load(char* file_data, size_t file_size)
+	{
+		TextureProperties properties;
+		unsigned int w, h, bpp;
+
+		unsigned char* data = ReadImage(reinterpret_cast<unsigned char*>(file_data), file_size, w, h, bpp);
+
+		properties.width = w;
+		properties.height = h;
+		properties.formatProperties = FormatPropertiesFromBPP(bpp);
+
+		return Create(properties, data);
 	}
 
 	Texture* Texture::Load(std::vector<std::string> files)
@@ -169,6 +163,31 @@ namespace OrbitEngine { namespace Graphics {
 			return 0;
 		}
 
+	}
+
+	TextureFormatProperties Texture::FormatPropertiesFromBPP(unsigned int bpp)
+	{
+		TextureFormatProperties fp;
+		fp.dataType = UNSIGNED_BYTE;
+		switch (bpp) {
+		case 8:
+			fp.format = R8;
+			break;
+		case 16:
+			fp.format = R16;
+			break;
+		case 24:
+			fp.format = RGB;
+			break;
+		case 32:
+			fp.format = RGBA;
+			break;
+		case 96:
+			fp.format = RGB32F;
+			fp.dataType = FLOAT;
+			break;
+		}
+		return fp;
 	}
 
 	Texture::Texture(TextureProperties properties)

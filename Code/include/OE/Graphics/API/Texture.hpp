@@ -79,6 +79,7 @@ namespace OrbitEngine { namespace Graphics {
 		static Texture* Load(std::string file, TextureSampleProperties& sampleProperties);
 		static Texture* Load(std::vector<std::string> files);
 		static Texture* Load(std::string file);
+		static Texture* Load(char* filed_data, size_t file_size);
 
 		virtual void bind(unsigned int slot) = 0;
 		virtual void setData(void* data, unsigned int offset = 0) = 0;
@@ -91,6 +92,7 @@ namespace OrbitEngine { namespace Graphics {
 
 		static unsigned int CalculateMipLevelsCount(unsigned int width, unsigned int height);
 		static unsigned int BPPFromFormat(TextureFormat format);
+		static TextureFormatProperties FormatPropertiesFromBPP(unsigned int bpp);
 	protected:
 		Texture(TextureProperties properties);
 

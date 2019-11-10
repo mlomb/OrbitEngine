@@ -17,6 +17,18 @@ namespace OrbitEngine { namespace Graphics {
 	unsigned char* ReadImage(const std::string& path, unsigned int& width, unsigned int& height, unsigned int& bpp, bool force32bits = false);
 
 	/**
+		@brief Reads an image from disk
+
+		@param[in] file_data file binary data
+		@param[in] file_size file size
+		@param[out] width,height Read image dimensions
+		@param[out] bpp Read image bits per pixel
+		@param[in] force32bits Force any 24bit image to load as a 32bit image
+		@return Raw pointer to the pixel data. Remember to delete it after its used
+	*/
+	unsigned char* ReadImage(unsigned char* file_data, size_t file_size, unsigned int& width, unsigned int& height, unsigned int& bpp, bool force32bits = false);
+
+	/**
 		@brief Writes a PNG file to disk
 
 		@param[in] path File location

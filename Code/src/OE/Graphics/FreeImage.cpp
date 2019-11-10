@@ -45,41 +45,8 @@ namespace OrbitEngine { namespace Graphics {
 		}
 	}
 
-	unsigned char* ReadImage(const std::string& path, unsigned int& width, unsigned int& height, unsigned int& bpp, bool force32bits)
+	unsigned char* ReadImage(FIBITMAP* dib, unsigned int& width, unsigned int& height, unsigned int& bpp, bool force32bits)
 	{
-		init();
-
-		System::IOStream* fileStream = System::File::Open(path);
-
-		FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
-		FIBITMAP* dib = NULL;
-
-		width = 0;
-		height = 0;
-		bpp = 0;
-
-		fif = FreeImage_GetFileTypeFromHandle(&freeImage_io, fileStream);
-		if (fif == FIF_UNKNOWN) {
-			OE_LOG_WARNING("Can't determinate the format of the image: " << path);
-			delete fileStream;
-			return nullptr;
-		}
-
-		if (FreeImage_FIFSupportsReading(fif)) {
-			dib = FreeImage_LoadFromHandle(fif, &freeImage_io, fileStream, 0);
-		}
-		else {
-			OE_LOG_WARNING("Unsupported format in FreeImage: " << path);
-			delete fileStream;
-			return nullptr;
-		}
-
-		if (!dib) {
-			OE_LOG_WARNING("Problem reading the image: " << path);
-			delete fileStream;
-			return nullptr;
-		}
-
 		width = FreeImage_GetWidth(dib);
 		height = FreeImage_GetHeight(dib);
 		bpp = FreeImage_GetBPP(dib);
@@ -118,11 +85,87 @@ namespace OrbitEngine { namespace Graphics {
 		unsigned char* data = (unsigned char*)malloc(size);
 		memcpy(data, bits, size);
 		FreeImage_Unload(dib);
-		delete fileStream;
 
 		OE_ASSERT(data);
 		OE_ASSERT(width);
 		OE_ASSERT(height);
+
+		return data;
+	}
+
+	unsigned char* ReadImage(unsigned char* file_data, size_t file_size, unsigned int& width, unsigned int& height, unsigned int& bpp, bool force32bits)
+	{
+		init();
+
+		FIMEMORY* fm = FreeImage_OpenMemory(file_data, file_size);
+
+		FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
+		FIBITMAP* dib = NULL;
+
+		width = 0;
+		height = 0;
+		bpp = 0;
+
+		fif = FreeImage_GetFileTypeFromMemory(fm, 0);
+		if (fif == FIF_UNKNOWN) {
+			OE_LOG_WARNING("Can't determinate the format of the in-memory image");
+			FreeImage_CloseMemory(fm);
+			return nullptr;
+		}
+
+		if (FreeImage_FIFSupportsReading(fif)) {
+			dib = FreeImage_LoadFromMemory(fif, fm, 0);
+		}
+		else {
+			OE_LOG_WARNING("Unsupported format in in-memory image");
+			FreeImage_CloseMemory(fm);
+			return nullptr;
+		}
+
+		unsigned char* data = ReadImage(dib, width, height, bpp, force32bits);
+		FreeImage_CloseMemory(fm);
+
+		return data;
+	}
+
+	unsigned char* ReadImage(const std::string& path, unsigned int& width, unsigned int& height, unsigned int& bpp, bool force32bits)
+	{
+		init();
+
+		System::IOStream* fileStream = System::File::Open(path);
+
+		FREE_IMAGE_FORMAT fif = FIF_UNKNOWN;
+		FIBITMAP* dib = NULL;
+
+		width = 0;
+		height = 0;
+		bpp = 0;
+
+		fif = FreeImage_GetFileTypeFromHandle(&freeImage_io, fileStream);
+		if (fif == FIF_UNKNOWN) {
+			OE_LOG_WARNING("Can't determinate the format of the image: " << path);
+			delete fileStream;
+			return nullptr;
+		}
+
+		if (FreeImage_FIFSupportsReading(fif)) {
+			dib = FreeImage_LoadFromHandle(fif, &freeImage_io, fileStream, 0);
+		}
+		else {
+			OE_LOG_WARNING("Unsupported format in FreeImage: " << path);
+			delete fileStream;
+			return nullptr;
+		}
+
+		if (!dib) {
+			OE_LOG_WARNING("Problem reading the image: " << path);
+			delete fileStream;
+			return nullptr;
+		}
+
+		unsigned char* data = ReadImage(dib, width, height, bpp, force32bits);
+
+		delete fileStream;
 
 		return data;
 	}
