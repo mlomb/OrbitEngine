@@ -1,6 +1,8 @@
 include(${CMAKE_CURRENT_LIST_DIR}/Config.cmake)
 
 macro(OE_add_resources folder target)
+	set(virtual_folder "")
+	
 	if(EMSCRIPTEN)
 		set(virtual_folder /vfs)
 	elseif(ANDROID)
