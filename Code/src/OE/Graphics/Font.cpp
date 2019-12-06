@@ -146,6 +146,15 @@ namespace OrbitEngine { namespace Graphics {
 			unsigned int w = m_Face->glyph->bitmap.width;
 			unsigned int h = m_Face->glyph->bitmap.rows;
 
+			// Fix for some fonts :( (ex TwemojiMozilla.ttf)
+			if (metrics.width == 0 && metrics.height == 0) {
+				metrics.height = size;
+				metrics.width = (double)size / (double)((double)h / (double)w); // keep aspect
+				metrics.H_bearingX = metrics.width * 0.1;
+				metrics.H_bearingY = metrics.height * 0.9;
+				metrics.H_advance = metrics.width * 1.1 + metrics.H_bearingX;
+			}
+
 			switch (pixel_mode) {
 			case FT_Pixel_Mode::FT_PIXEL_MODE_GRAY:
 			{
