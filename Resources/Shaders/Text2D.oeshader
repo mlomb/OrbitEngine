@@ -77,8 +77,8 @@ float4 main(Input input) : SV_TARGET{
 		float aaf = fwidth(distance) * 0.5;
 		
 		color = layer(
-			float4(input.color.rgb, outline(0.5, distance, aaf)),
-			float4(input.borderColor.rgb, outline(0.5 + input.border * 0.5, distance, aaf))
+			float4(input.color.rgb, outline(0.5, distance, aaf) * input.color.a),
+			float4(input.borderColor.rgb, outline(0.5 + input.border * 0.5, distance, aaf) * input.borderColor.a)
 		);
     }
     
