@@ -37,9 +37,16 @@ namespace OrbitEngine {	namespace Graphics {
 		std::string name;
 	};
 
+	struct ShaderResource {
+		std::string name;
+		bool referenced;
+		// TODO: type...
+	};
+
 	struct ShaderReflection {
 		std::vector<ShaderBuffer> buffers;
 		std::vector<ShaderAttribute> inputAttributes, outputAttributes;
+		std::vector<ShaderResource> resources;
 	};
 } }
 

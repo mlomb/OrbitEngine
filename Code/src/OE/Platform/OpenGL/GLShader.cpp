@@ -97,6 +97,24 @@ namespace OrbitEngine {	namespace Graphics {
 				}
 			}
 		}
+
+		// Bind resources automatically
+		for (auto& pair : p_Reflections) {
+			int index = 0;
+			for (ShaderResource& res : pair.second.resources) {
+				GLint loc = getUniformLocation(res.name.c_str());
+				if (res.referenced && loc == -1) {
+					OE_LOG_WARNING("Texture is being referenced and querying the location got -1.");
+				}
+				else if (!res.referenced && loc != -1) {
+					OE_LOG_WARNING("Texture is NOT being referenced and querying the location got " << loc << ".");
+				}
+				else {
+					glUniform1i(loc, index);
+				}
+				index++;
+			}
+		}
 	}
 	
 	void GLShader::bind() const

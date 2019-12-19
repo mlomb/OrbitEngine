@@ -36,7 +36,7 @@ namespace OrbitEngine {	namespace Graphics {
 		void matchLayout(Mesh* mesh) const override;
 	private:
 		GLuint m_ID = -1;
-		std::unordered_map<std::string, GLuint> m_UniformLocationCache;
+		std::unordered_map<std::string, GLint> m_UniformLocationCache;
 
 		GLint getUniformLocation(const std::string& name);
 		GLint getUniformBlockIndex(const GLchar* name) const;

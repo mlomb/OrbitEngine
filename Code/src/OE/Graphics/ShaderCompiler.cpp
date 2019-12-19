@@ -176,6 +176,9 @@ namespace OrbitEngine { namespace Graphics {
 				for (Xsc::Reflection::Attribute at : xsc_reflection.outputAttributes) {
 					reflection.outputAttributes.push_back({ at.name });
 				}
+				for (Xsc::Reflection::Resource re : xsc_reflection.resources) {
+					reflection.resources.push_back({ re.name, re.referenced });
+				}
 			}
 		}
 		catch (const std::exception& e)
