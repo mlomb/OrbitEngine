@@ -10,8 +10,8 @@ namespace OrbitEngine { namespace Misc {
 
 		void tick();
 
-		float getFrameDelta() const { return m_FrameDelta; }
-		float getFrameDeltaMS() const { return m_FrameDelta * ONE_SECOND_IN_NANO / 1000000; }
+		double getFrameDelta() const { return m_FrameDelta; }
+		double getFrameDeltaMS() const { return m_FrameDelta * ONE_SECOND_IN_NANO / 1000000; }
 		unsigned short getFPS() const { return m_FPS; }
 		unsigned long getTotalTicks() const { return m_TotalTicks; }
 
@@ -20,7 +20,7 @@ namespace OrbitEngine { namespace Misc {
 	private:
 		long long m_Start;
 		long long m_Now, m_TicksTimer, m_FPSTimer;
-		float m_FrameDelta;
+		double m_FrameDelta;
 		unsigned short m_FPSCounter, m_FPS;
 		unsigned long m_TotalTicks;
 	};

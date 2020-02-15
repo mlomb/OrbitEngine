@@ -22,7 +22,7 @@ namespace OrbitEngine { namespace Misc {
 		m_TotalTicks++;
 
 		m_Now = System::System::Get()->currentNano();
-		m_FrameDelta = (m_Now - m_TicksTimer) / (float)ONE_SECOND_IN_NANO;
+		m_FrameDelta = (m_Now - m_TicksTimer) / (double)ONE_SECOND_IN_NANO;
 		if (m_TicksTimer == -1) m_FrameDelta = 0;
 		m_TicksTimer = m_Now;
 		m_FPSCounter++;
