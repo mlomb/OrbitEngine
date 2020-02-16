@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Splashscreen</title>
+    <style>
+        @font-face {
+            font-family: "Poppins";
+            src: url("/fonts/Poppins-Regular.ttf");
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", "Roboto", sans-serif;
+        }
+        .container {
+            background: #212121;
+            -webkit-app-region: drag;
+            text-align: center;
+            user-select: none;
+            overflow: hidden;
+            height: 100vh;
+            color: white;
+            padding: 15px;
+        }
+        .logo {
+            display: inline-block;
+            background-color: white;
+            background-image: url(/logo.png);
+            width: 100px;
+            height: 100px;
+        }
+        .title {
+            font-size: 26px;
+        }
+        .init {
+            margin-top: 7px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo"></div>
+        <p class="title">OrbitEngine</p>
+        <p class="init">Initializing...</p>
+    </div>
+</body>
+</html>

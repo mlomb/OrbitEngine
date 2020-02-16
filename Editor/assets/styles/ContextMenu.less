@@ -1,0 +1,80 @@
+@context-menu-width: 300px;
+
+* {
+    --context-menu-bg: var(--back-2);
+    --context-menu-hover: var(--back-3);
+    --context-menu-divisor: var(--back-3);
+}
+
+.context-menu {
+    user-select: none;
+
+    ul {
+        display: none;
+        position: absolute;
+        top: 32px;
+        left: 0;
+        width: @context-menu-width;
+        list-style: none;
+        padding: 8px 0;
+        margin: 0;
+        background: var(--context-menu-bg);
+        box-shadow: 0px 3px 7px 1px rgba(0, 0, 0, 0.8);
+        cursor: default;
+    
+        a {
+            user-drag: none;
+            -webkit-user-drag: none;
+            text-decoration: none;
+            color: #cdcdcd;
+        }
+    
+        hr {
+            margin: 6px 8px;
+            border: 0.5px solid var(--context-menu-divisor);
+        }
+
+        li {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: left;
+            height: 30px;
+            padding: 0 22px;
+            cursor: pointer;
+            
+            &.more:after {
+                position: absolute;
+                top: 50%;
+                right: 6px;
+                transform: translateY(-50%);
+
+                width: 16px;
+                height: 16px;
+                background-image: url(../../assets/icons/chevron-right.png);
+                background-size: 16px 16px;
+                content: "";
+            }
+            
+            &:hover {
+                background: var(--context-menu-hover);
+    
+                a {
+                    color: white;
+                }
+    
+                & > a + ul {
+                    display: inline;
+                    position: absolute;
+                    top: -8px;
+                    left: auto;
+                    right: -@context-menu-width;
+                }
+            }
+        }
+    }
+
+    & > ul {
+        display: inline;
+    }
+}
