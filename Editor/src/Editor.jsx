@@ -7,15 +7,11 @@ import '../assets/styles/Editor.less';
 
 import { isDevMode, isElectron } from './ApplicationContext';
 
-import Menu from './components/Menu.jsx';
-import StatusBar from './components/StatusBar.jsx';
-import WorkspaceSelector from './components/WorkspaceSelector.jsx';
-
-if(isElectron()) {
-    const { spawn } = require('child_process');
-    var child = spawn("node", ["worker.js"], { stdio: ['inherit', 'inherit', 'inherit', 'ipc'] });
-    console.log(child);
-}
+import Menu from '@components/Menu.jsx';
+import StatusBar from '@components/StatusBar.jsx';
+import WorkspaceSelector from '@components/WorkspaceSelector.jsx';
+import Button from '@components/ui/Button.jsx';
+import EngineService from '@service/EngineService';
 
 let tab = {
     content: <div>Tab Content</div>,
@@ -65,6 +61,7 @@ let groups = {
               ...tab, id: 't5', title: 'basic demo', content: (
                 <div>
                   This panel won't be removed from layout even when last Tab is closed
+                  <Button>Boot Service</Button>
                 </div>
               ),
               closable: false,
@@ -81,6 +78,10 @@ let groups = {
   }
 ;
 export default class Editor extends React.Component {
+
+    componentDidMount() {
+        EngineService.boot();
+    }
 
     render() {
         return (

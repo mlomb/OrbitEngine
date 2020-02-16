@@ -1,8 +1,7 @@
 cmake_minimum_required(VERSION 3.12.4)
-project(Editor)
+project(EditorService)
 
-# custom for now
-add_subdirectory("../../OrbitEngine" OrbitEngine)
+add_subdirectory("../.." OrbitEngine)
 
 file(GLOB_RECURSE SRC
     "src/*.h"
@@ -12,7 +11,17 @@ file(GLOB_RECURSE SRC
     "src/*.cpp"
 )
 
-add_executable(EditorNative ${SRC})
+add_executable(EditorService ${SRC})
 
-target_link_libraries(EditorNative OrbitEngine)
-target_include_directories(EditorNative PUBLIC "src")
+target_link_libraries(EditorService OrbitEngine)
+target_include_directories(EditorService PUBLIC "src")
+
+add_custom_command(
+	TARGET EditorService
+	POST_BUILD 
+	COMMAND
+		"${CMAKE_COMMAND}" -E copy 
+		"$<TARGET_FILE:EditorService>"
+		"../../public/native/$<TARGET_FILE_NAME:EditorService>" 
+	COMMENT "Copying to native directory"
+)

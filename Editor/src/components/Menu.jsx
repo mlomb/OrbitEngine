@@ -10,16 +10,22 @@ export default class Menu extends React.Component {
             <div className="menu">
                 <div className="logo"></div>
                 <ul className="items">
-                    <li><a href="#">File</a>
-                        <ContextMenu/></li>
-                    <li><a href="#">Edit</a>
-                        <ContextMenu/></li>
+                    <li>
+                        <a href="#">File</a>
+                        <ContextMenu/>
+                    </li>
+                    <li>
+                        <a href="#">Edit</a>
+                        <ContextMenu/>
+                    </li>
                     <li>
                         <a href="#">Selection</a>
                         <ContextMenu/>
                     </li>
-                    <li><a href="#">View</a>
-                        <ContextMenu/></li>
+                    <li>
+                        <a href="#">View</a>
+                        <ContextMenu/>
+                    </li>
                     <li>
                         <a href="#">Help</a>
                         <ContextMenu/>

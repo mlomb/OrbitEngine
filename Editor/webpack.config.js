@@ -37,7 +37,13 @@ module.exports = (config) => ({
 		path: dist,
 		publicPath: target === 'web' ? '/' : '',
 		filename: "static/[name]." + (devMode ? '[hash:5].js' : '[hash:16].js'),
-	},
+    },
+    resolve: {
+        alias: {
+            '@service': path.resolve(__dirname, 'src/service'),
+            '@components': path.resolve(__dirname, 'src/components'),
+        }
+    },
 	module: {
 		rules: [
 			{

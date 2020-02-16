@@ -6,7 +6,8 @@
 		"dev": "cross-env NODE_ENV=development TARGET=web webpack-dev-server",
 		"pack": "cross-env NODE_ENV=production TARGET=web webpack",
 		"electron:dev": "concurrently --kill-others --names \"webpack, electron\" \"cross-env NODE_ENV=development TARGET=electron webpack-dev-server\" \"electron ./src/electron/main.js\"",
-		"electron:pack": "cross-env NODE_ENV=production TARGET=electron webpack && electron-packager ./dist --asar --overwrite"
+		"electron:pack": "cross-env NODE_ENV=production TARGET=electron webpack && electron-packager ./dist --overwrite --asar.unpack=*.{node,exe,dll} --icon=./assets/icons/logo.ico",
+		"native:cmake": "cd native/build && cmake .."
 	},
 	"author": "mlomb",
 	"license": "MIT",
@@ -37,9 +38,7 @@
 		"url-loader": "^3.0.0",
 		"webpack": "^4.41.5",
 		"webpack-cli": "^3.3.10",
-		"webpack-dev-server": "^3.10.1"
-	},
-	"dependencies": {
+		"webpack-dev-server": "^3.10.1",
 		"rc-dock": "^2.4.11",
 		"react": "^16.12.0",
 		"react-dom": "^16.12.0"
