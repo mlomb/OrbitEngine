@@ -1,7 +1,7 @@
 node_modules/
 dist/
-native/build
+native/build/*
 Workspace/
 package-lock.json
 OrbitEngine**/
-
+!.keep
