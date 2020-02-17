@@ -7,7 +7,8 @@
 		"pack": "cross-env NODE_ENV=production TARGET=web webpack",
 		"electron:dev": "concurrently --kill-others --names \"webpack, electron\" \"cross-env NODE_ENV=development TARGET=electron webpack-dev-server\" \"electron ./src/electron/main.js\"",
 		"electron:pack": "cross-env NODE_ENV=production TARGET=electron webpack && electron-packager ./dist --overwrite --asar.unpack=*.{node,exe,dll} --icon=./assets/icons/logo.ico",
-		"native:cmake": "cd native/build && cmake .."
+		"native:cmake": "cd native/build && cmake ..",
+		"native:build:win": "cd native/build && msbuild EditorService.sln"
 	},
 	"author": "mlomb",
 	"license": "MIT",

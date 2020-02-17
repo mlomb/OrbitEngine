@@ -1,0 +1,28 @@
+name: Build Editor
+
+on: [push]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@master
+    
+    - name: Setup MSBuild.exe
+      uses: warrenbuckley/Setup-MSBuild@v1
+      
+    - name: Install Node dependencies
+      working-directory: Editor
+      run: npm i
+      
+    - name: Generate the Editor Service solution
+      working-directory: Editor
+      run: npm run native:cmake
+      
+    - name: Build the Editor Service for Windows
+      working-directory: Editor
+      run: npm run native:build:win
+      
+    - name: Build and pack the Editor
+      run: npm run electron:pack
