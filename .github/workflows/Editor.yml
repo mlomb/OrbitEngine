@@ -28,4 +28,5 @@ jobs:
       run: npm run native:build:win
       
     - name: Build and pack the Editor
+      working-directory: Editor
       run: npm run electron:pack
