@@ -62,6 +62,7 @@ class EngineService extends EventEmitter {
     }
 
     onData(data) {
+        this.emit('frame', data);
         console.log("DATA", data.length);
     }
 }

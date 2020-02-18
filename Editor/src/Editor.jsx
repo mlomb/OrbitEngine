@@ -9,6 +9,7 @@ import { isDevMode, isElectron } from './ApplicationContext';
 
 import Menu from '@components/Menu.jsx';
 import StatusBar from '@components/StatusBar.jsx';
+import RenderOutput from '@components/RenderOutput.jsx';
 import WorkspaceSelector from '@components/WorkspaceSelector.jsx';
 import Button from '@components/ui/Button.jsx';
 import EngineService from '@service/EngineService';
@@ -59,10 +60,7 @@ let groups = {
           tabs: [
             {
               ...tab, id: 't5', title: 'basic demo', content: (
-                <div>
-                  This panel won't be removed from layout even when last Tab is closed
-                  <Button>Boot Service</Button>
-                </div>
+                  <RenderOutput/>
               ),
               closable: false,
               group: 'main'

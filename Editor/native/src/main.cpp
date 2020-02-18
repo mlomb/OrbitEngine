@@ -1,5 +1,6 @@
 
 #include <iostream>
+#include <random>
 
 #include "windows.h"
 #include <WinUser.h>
@@ -14,25 +15,45 @@ using namespace OrbitEngine::Misc;
 HANDLE hPipe;
 int image_width = 1920;
 int image_height = 1080;
-int image_size = 4 * image_width * image_height;
+int image_size = 3 * image_width * image_height;
 unsigned char* image = NULL;
+
+using namespace std;
+
+random_device rd;
+mt19937 engine(rd());
+uniform_int_distribution<> dist(0, 255);
 
 class Service : public Loopeable {
 public:
 	void render() {
 		if (!image) {
 			image = (unsigned char*)malloc(image_size);
-
+			
 			for (int x = 0; x < image_width; x++) {
 				for (int y = 0; y < image_height; y++) {
-					int p = (y * image_width + x) * 4;
+					int p = (y * image_width + x) * 3;
 					image[p + 0] = 255;
 					image[p + 1] = 0;
 					image[p + 2] = 0;
-					image[p + 3] = 255;
 				}
 			}
+			
 		}
+
+		/*
+		for (int x = 0; x < image_width; x++) {
+			for (int y = 0; y < image_height; y++) {
+				int p = (y * image_width + x) * 3;
+				image[p + 0] = rand() % 255;
+				image[p + 1] = rand() % 255;
+				image[p + 2] = rand() % 255;
+			}
+		}
+		*/
+
+		for (int i = 0; i < image_size; i++)
+			image[i] = rand() % 255;
 
 		BOOL bResult;
 		DWORD cbBytes;
