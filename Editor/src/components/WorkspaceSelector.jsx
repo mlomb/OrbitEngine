@@ -3,7 +3,7 @@ import React from 'react';
 import Icon from './ui/Icon.jsx';
 import Button from './ui/Button.jsx';
 
-import '../../assets/styles/WorkspaceSelector.less';
+import '@styles/WorkspaceSelector.less';
 
 class RecentWorkspaces extends React.Component {
     render() {

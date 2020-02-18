@@ -40,6 +40,8 @@ module.exports = (config) => ({
     },
     resolve: {
         alias: {
+            '@assets': path.resolve(__dirname, 'assets'),
+            '@styles': path.resolve(__dirname, 'assets/styles'),
             '@service': path.resolve(__dirname, 'src/service'),
             '@components': path.resolve(__dirname, 'src/components'),
         }

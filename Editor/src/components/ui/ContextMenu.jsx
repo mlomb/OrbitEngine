@@ -1,6 +1,6 @@
 import React from 'react';
 
-import '../../../assets/styles/ContextMenu.less';
+import '@styles/ContextMenu.less';
 
 import Icon from './Icon.jsx';
 

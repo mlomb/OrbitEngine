@@ -2,8 +2,8 @@ import React from 'react';
 import DockLayout from 'rc-dock';
 
 import 'rc-dock/style/index.less';
-import '../assets/styles/dock.less';
-import '../assets/styles/Editor.less';
+import '@styles/dock.less';
+import '@styles/Editor.less';
 
 import { isDevMode, isElectron } from './ApplicationContext';
 
