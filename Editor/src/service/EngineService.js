@@ -29,9 +29,12 @@ class EngineService extends EventEmitter {
     }
 
     boot() {
-        if(!isDevMode)
+        if(!isDevMode()) {
             this.spawnService();
-        this.initConnection();
+            setTimeout(this.initConnection.bind(this), 1000);
+        } else {
+            this.initConnection();
+        }
     }
 
     spawnService() {
@@ -58,12 +61,12 @@ class EngineService extends EventEmitter {
     }
 
     initConnection() {
+        console.log("Connecting to IPC");
         this.ipcService.connect(this.ipcPath);
     }
 
     onData(data) {
         this.emit('frame', data);
-        console.log("DATA", data.length);
     }
 }
 

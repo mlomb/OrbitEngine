@@ -109,11 +109,6 @@ module.exports = (config) => ({
     },
 	plugins: [
         new CleanWebpackPlugin(dist),
-		new webpack.DefinePlugin({
-            "process.env.BUILD_HASH": JSON.stringify(git.short() + (git.isDirty() ? '-dirty' : '')),
-            "process.env.BUILD_TIME": JSON.stringify(new Date()),
-            "process.env.TARGET": JSON.stringify(target)
-        }),
         new HtmlWebpackPlugin({
             template: './assets/index.html',
             chunks: ['vendor', 'index'],
@@ -136,7 +131,13 @@ module.exports = (config) => ({
             /* For Electron */
             { from: 'src/electron', to: dist },
             { from: 'package.json', to: dist }
-        ]))
+        ])),
+		new webpack.DefinePlugin({
+            "__ENV__.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
+            "__ENV__.BUILD_HASH": JSON.stringify(git.short() + (git.isDirty() ? '-dirty' : '')),
+            "__ENV__.BUILD_TIME": JSON.stringify(new Date()),
+            "__ENV__.TARGET": JSON.stringify(target)
+        })
     ],
 	devServer: {
         host: '0.0.0.0',
