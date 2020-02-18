@@ -1,5 +1,5 @@
-const devMode = process.env.NODE_ENV !== 'production';
-const target = process.env.TARGET;
+const devMode = __ENV__.NODE_ENV !== 'production';
+const target = __ENV__.TARGET;
 
 export function isDevMode() {
     return devMode;
@@ -15,3 +15,6 @@ export function getElectronWindow() {
     else
         return require('electron').remote.getCurrentWindow();
 }
+
+console.log('isDevMode', isDevMode());
+console.log('isElectron', isElectron());

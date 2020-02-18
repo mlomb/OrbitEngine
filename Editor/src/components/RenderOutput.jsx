@@ -3,6 +3,8 @@ import * as twgl from 'twgl.js';
 
 import EngineService from '@service/EngineService';
 
+import '@styles/RenderOutput.less';
+
 const vs = `
 attribute vec4 a_position;
 varying vec2 v_texcoord;
@@ -32,6 +34,10 @@ const verts = [
 ];
 
 export default class RenderOutput extends React.Component {
+
+    state = {
+        stats: null
+    };
 
     constructor(props) {
         super(props);
@@ -66,13 +72,15 @@ export default class RenderOutput extends React.Component {
         // subscribe to frame updates
         EngineService.on('frame', this.onFrame_func);
 
-        let ro = new ResizeObserver(this.resized.bind(this));
-        ro.observe(canvas.parentElement);
+        this.resizeObserver = new ResizeObserver(this.resized.bind(this));
+        this.resizeObserver.observe(canvas.parentElement);
     }
 
     onFrame(frame) {
+        this.rps_accum++;
         if(this.rAF !== null) {
             // frame skipped
+            this.sps_accum++;
         }
         this.last_frame = frame;
         this.requestFrame();
@@ -84,7 +92,7 @@ export default class RenderOutput extends React.Component {
         }
     }
 
-    frame() {
+    frame(time) {
         this.rAF = null;
 
         const { gl } = this;
@@ -98,19 +106,40 @@ export default class RenderOutput extends React.Component {
         gl.bindTexture(gl.TEXTURE_2D, this.tex);
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, canvas.width, canvas.height, 0, gl.RGB, gl.UNSIGNED_BYTE, this.last_frame);
         gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+        if(!this.last_time || time - this.last_time > 1000) {
+            this.setState({
+                stats: {
+                    frames_ps: this.fps_accum || '-',
+                    skipped_ps: this.sps_accum || '-',
+                    received_ps: this.rps_accum || '-',
+                }
+            });
+
+            this.fps_accum = 0;
+            this.sps_accum = 0;
+            this.rps_accum = 0;
+            this.last_time = time;
+        }
+        this.fps_accum++;
     }
 
     resized() {
+        const { gl } = this;
         const canvas = this.canvasRef.current;
 
         canvas.width = canvas.parentElement.clientWidth;
         canvas.height = canvas.parentElement.clientHeight;
+
+        gl.viewport(0, 0, canvas.width, canvas.height);
 
         this.requestFrame();
     }
 
     componentWillUnmount() {
         EngineService.off('frame', this.onFrame_func);
+
+        this.resizeObserver.disconnect();
 
         if(this.rAF) {
             cancelAnimationFrame(this.rAF);
@@ -131,5 +160,20 @@ export default class RenderOutput extends React.Component {
         this.program = undefined;
     }
 
-    render = () => <canvas ref={this.canvasRef}></canvas>;
+    render = () => (
+        <div className="render-output">
+            {this.state.stats ?
+                <div className="stats">
+                    <table>
+                        <tbody>
+                            <tr><td>FPS</td><td>{`${this.state.stats.frames_ps}`}</td></tr>
+                            <tr><td>RPS</td><td>{`${this.state.stats.received_ps}`}</td></tr>
+                            <tr><td>SPS</td><td>{`${this.state.stats.skipped_ps}`}</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            : null}
+            <canvas ref={this.canvasRef}></canvas>
+        </div>
+    );
 }

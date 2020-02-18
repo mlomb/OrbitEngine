@@ -13,8 +13,8 @@ using namespace OrbitEngine::Application;
 using namespace OrbitEngine::Misc;
 
 HANDLE hPipe;
-int image_width = 1920;
-int image_height = 1080;
+int image_width = 2550;
+int image_height = 1296;
 int image_size = 3 * image_width * image_height;
 unsigned char* image = NULL;
 
@@ -23,6 +23,12 @@ using namespace std;
 random_device rd;
 mt19937 engine(rd());
 uniform_int_distribution<> dist(0, 255);
+
+static int g_seed = 24235;
+inline int fastrand() {
+	g_seed = (214013 * g_seed + 2531011);
+	return (g_seed >> 16) & 0x7FFF;
+}
 
 class Service : public Loopeable {
 public:
@@ -52,8 +58,9 @@ public:
 		}
 		*/
 
-		for (int i = 0; i < image_size; i++)
-			image[i] = rand() % 255;
+		for (int i = 0; i < image_size; i += 3) {
+			image[i] = image[i+1] = image[i+2] = fastrand() % 255;
+		}
 
 		BOOL bResult;
 		DWORD cbBytes;

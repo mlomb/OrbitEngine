@@ -47,8 +47,7 @@ let groups = {
               tabs: [{
                 ...tab, id: 't3', title: 'Min Size', content: (
                   <div>
-                    <p>This tab has a minimal size</p>
-                    150 x 150 px
+                    <p>Tab Content</p>
                   </div>
                 ), minWidth: 150, minHeight: 150,
               }, {...tab, id: 't4', title: 'Tab 4'}],
@@ -59,7 +58,7 @@ let groups = {
           size: 1000,
           tabs: [
             {
-              ...tab, id: 't5', title: 'basic demo', content: (
+              ...tab, id: 't5', title: 'Render Output', content: (
                   <RenderOutput/>
               ),
               closable: false,

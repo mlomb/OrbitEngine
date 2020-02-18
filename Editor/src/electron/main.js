@@ -38,6 +38,8 @@ app.on('ready', () => {
             window.show();
             loading.hide();
             loading.close();
+            loading.destroy();
+            loading = null;
         });
         
         window.loadURL(getLocalURL('index.html'));
