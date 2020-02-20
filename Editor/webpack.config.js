@@ -11,6 +11,8 @@ const dist = path.resolve(process.cwd(), 'dist');
 const devMode = process.env.NODE_ENV !== 'production';
 const target = process.env.TARGET;
 
+console.log("devMode:", devMode);
+
 const postcssPlugins = [
     //require('stylelint'),
     require('autoprefixer')
@@ -85,7 +87,7 @@ module.exports = (config) => ({
             }
 		]
     },
-	optimization: {
+	optimization: devMode ? { minimize: false } : {
         minimize: true,
         mangleWasmImports: true,
 		minimizer: devMode ? [] : [
