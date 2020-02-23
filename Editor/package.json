@@ -37,7 +37,12 @@
 		"postcss-loader": "^3.0.0",
 		"rc-dock": "^2.4.11",
 		"react": "^16.12.0",
+		"react-dnd": "^10.0.2",
+		"react-dnd-html5-backend": "^10.0.2",
 		"react-dom": "^16.12.0",
+		"react-icons": "^3.9.0",
+		"react-virtualized-auto-sizer": "^1.0.2",
+		"react-window": "^1.8.5",
 		"style-loader": "^1.1.2",
 		"terser-webpack-plugin": "^2.3.2",
 		"twgl.js": "^4.14.2",
@@ -45,5 +50,6 @@
 		"webpack": "^4.41.5",
 		"webpack-cli": "^3.3.10",
 		"webpack-dev-server": "^3.10.1"
-	}
+	},
+	"dependencies": {}
 }

@@ -1,5 +1,7 @@
 import React from 'react';
 import DockLayout from 'rc-dock';
+import Backend from 'react-dnd-html5-backend'
+import { DndProvider } from 'react-dnd'
 
 import 'rc-dock/style/index.less';
 import '@styles/dock.less';
@@ -12,10 +14,42 @@ import StatusBar from '@components/StatusBar.jsx';
 import RenderOutput from '@components/RenderOutput.jsx';
 import WorkspaceSelector from '@components/WorkspaceSelector.jsx';
 import Button from '@components/ui/Button.jsx';
+import HierarchyTree from '@components/HierarchyTree.jsx';
 import EngineService from '@service/EngineService';
 
+class Test extends React.Component {
+    state = {
+        testTree: []
+    };
+
+    componentDidMount() {
+        this.setState({ testTree: this.generateSampleData() });
+    }
+
+    generateSampleData(depth = 1) {
+        let to_generate = (depth == 1 ? 1 : 0) + Math.floor(Math.random() * 8);
+        let result = [];
+    
+        for(let i = 0; i < to_generate; i++) {
+            result.push({
+                uid: '' + Math.random(),
+                title: Math.random(),
+                expanded: Math.random() > 0.5,
+                //dragDisabled: false,
+                children: (Math.random() > Math.pow(2, depth) / 64) ? this.generateSampleData(depth + 1) : []
+            });
+        }
+    
+        return result;
+    }
+    
+    render() {
+        return <HierarchyTree data={this.state.testTree} />
+    }
+}
+
 let tab = {
-    content: <div>Tab Content</div>,
+    content: <Test/>,
     closable: false,
     group: 'normal'
 };
@@ -85,7 +119,11 @@ export default class Editor extends React.Component {
             <div className={`page-container ${isElectron() ? 'electron' : 'web'} ${isDevMode() ? 'dev' : 'prod'}`}>
                 <Menu/>
                 <div className="main">
-                    {<DockLayout dropMode="edge" groups={groups} defaultLayout={layout}/>}
+                    {
+                    <DndProvider backend={Backend}>
+                        <DockLayout dropMode="edge" groups={groups} defaultLayout={layout}/>}
+                    </DndProvider>
+                    }
                     {/*<WorkspaceSelector/>*/}
                 </div>
                 <StatusBar/>
