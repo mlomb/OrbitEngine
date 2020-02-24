@@ -17,6 +17,8 @@ import Button from '@components/ui/Button.jsx';
 import HierarchyTree from '@components/HierarchyTree.jsx';
 import EngineService from '@service/EngineService';
 
+var total_generated = 0;
+
 class Test extends React.Component {
     state = {
         testTree: []
@@ -24,20 +26,20 @@ class Test extends React.Component {
 
     componentDidMount() {
         this.setState({ testTree: this.generateSampleData() });
+        console.log(total_generated);
     }
 
     generateSampleData(depth = 1) {
-        let to_generate = (depth == 1 ? 1 : 0) + Math.floor(Math.random() * 8);
+        let to_generate = (depth == 1 ? 1 : 0) + Math.floor(Math.random() * 15);
         let result = [];
     
         for(let i = 0; i < to_generate; i++) {
-            let uid = '' + Math.floor(Math.random() * 100000);
+            total_generated++;
+            let uid = '' + Math.floor(Math.random() * 100000000);
             result.push({
                 uid: uid,
                 title: uid,
-                expanded: Math.random() > 0.5,
-                //dragDisabled: false,
-                children: (Math.random() > Math.pow(2, depth) / 64) ? this.generateSampleData(depth + 1) : []
+                children: (Math.random() > Math.pow(2, depth) / 128) ? this.generateSampleData(depth + 1) : []
             });
         }
     
@@ -103,7 +105,7 @@ let groups = {
         },
         {
           size: 200,
-          tabs: [{...tab, id: 't8', title: 'Tab 8'}],
+          tabs: [{...tab, content: <span>Test</span>, id: 't8', title: 'Tab 8'}],
         },
       ]
     }

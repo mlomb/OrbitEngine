@@ -6,6 +6,8 @@ import { useDrag, useDrop } from 'react-dnd';
 
 import '@styles/HierarchyTree.less';
 
+import Highlight from '@components/ui/Highlight.jsx';
+
 /*
     data format
 
@@ -26,6 +28,13 @@ function traverse(items, fn, depth = 0) {
         if(fn(item, depth))
             traverse(item.children, fn, depth + 1);
     }
+}
+
+function flatten(into, node){
+    if(node == null) return into;
+    if(Array.isArray(node)) return node.reduce(flatten, into);
+    into.push(node);
+    return flatten(into, node.children);
 }
 
 function isParent(flat_tree_data, parent_uid, child_uid) {
@@ -59,7 +68,7 @@ function isParent(flat_tree_data, parent_uid, child_uid) {
 }
 
 
-const TreeRow = ({ row, style, isSelected, isParent }) => {
+const TreeRow = ({ row, style, isSelected, isParent, searchPattern }) => {
 
 
     const [{ isDragging }, drag] = useDrag({
@@ -95,11 +104,12 @@ const TreeRow = ({ row, style, isSelected, isParent }) => {
             className={["row", isSelected ? "selected" : "", isOver && canDrop ? "can-drop" : "", isOver && !canDrop ? "cant-drop" : ""].join(' ')}
             data-uid={row.uid}
             tabIndex={0}
+            title={row.title}
             >
             <div className="caret">
                 {row.children.length > 0 ? (row.expanded ? <AiOutlineCaretDown /> : <AiFillCaretRight />) : null}
             </div>
-            <span>{row.title}</span>
+            <span><Highlight text={row.title} pattern={searchPattern} /></span>
         </div>
     ));
 };
@@ -170,6 +180,7 @@ export default class HierarchyTree extends React.Component {
 
     render() {
         let flat_tree_data = []; // expanded items
+
         traverse(this.props.data, (item, depth) => {
             item.depth = depth;
             item.expanded = this.state.expanded.includes(item.uid);
@@ -177,16 +188,17 @@ export default class HierarchyTree extends React.Component {
             if(this.state.search_term.length > 0) {
                 if(item.title.includes(this.state.search_term)) {
                     flat_tree_data.push(item);
-                    return item.expanded;
+                    return true;
                 } else {
-                    return item.expanded;
+                    return true;
                 }
             }
             flat_tree_data.push(item);
-            return item.expanded;
+            return item.expanded || true;
         });
 
         const isParent_func = (p, c) => isParent(flat_tree_data, p, c);
+        const searchPattern = this.state.search_term.length > 0 ? this.state.search_term : null;
 
         return (
             <div className="hierarchy-tree">
@@ -219,6 +231,7 @@ export default class HierarchyTree extends React.Component {
                                     row={flat_tree_data[index]}
                                     isSelected={this.state.selection === flat_tree_data[index].uid}
                                     isParent={isParent_func}
+                                    searchPattern={searchPattern}
                                 />
                             )}
                         </List>
