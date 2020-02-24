@@ -31,9 +31,10 @@ class Test extends React.Component {
         let result = [];
     
         for(let i = 0; i < to_generate; i++) {
+            let uid = '' + Math.floor(Math.random() * 100000);
             result.push({
-                uid: '' + Math.random(),
-                title: Math.random(),
+                uid: uid,
+                title: uid,
                 expanded: Math.random() > 0.5,
                 //dragDisabled: false,
                 children: (Math.random() > Math.pow(2, depth) / 64) ? this.generateSampleData(depth + 1) : []
