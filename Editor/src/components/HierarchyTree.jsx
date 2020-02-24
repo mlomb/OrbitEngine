@@ -109,7 +109,9 @@ export default class HierarchyTree extends React.Component {
     state = {
         focused: false,
         selection: null,
-        expanded: []
+        expanded: [],
+
+        search_term: ""
     };
 
     constructor(props) {
@@ -117,6 +119,8 @@ export default class HierarchyTree extends React.Component {
         
         this.treeRef = React.createRef();
         this.searchInputRef = React.createRef();
+
+        this.setSearchTerm_func = this.setSearchTerm.bind(this);
     }
 
     onMouseDown(e) {
@@ -160,12 +164,24 @@ export default class HierarchyTree extends React.Component {
         this.setState({ focused: false });
     }
 
+    setSearchTerm(e) {
+        this.setState({ search_term: e.target.value });
+    }
+
     render() {
         let flat_tree_data = []; // expanded items
         traverse(this.props.data, (item, depth) => {
             item.depth = depth;
             item.expanded = this.state.expanded.includes(item.uid);
-
+            
+            if(this.state.search_term.length > 0) {
+                if(item.title.includes(this.state.search_term)) {
+                    flat_tree_data.push(item);
+                    return item.expanded;
+                } else {
+                    return item.expanded;
+                }
+            }
             flat_tree_data.push(item);
             return item.expanded;
         });
@@ -176,7 +192,7 @@ export default class HierarchyTree extends React.Component {
             <div className="hierarchy-tree">
                 <div className="top-bar">
                     <AiOutlineSearch className="icon" onClick={() => this.searchInputRef.current.focus()} />
-                    <input type="text" placeholder="Search..." ref={this.searchInputRef} />
+                    <input type="text" placeholder="Search..." ref={this.searchInputRef} value={this.state.search_term} onChange={this.setSearchTerm_func} />
                     <div className="add">
                         <AiOutlinePlus/>
                     </div>

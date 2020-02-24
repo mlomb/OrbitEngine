@@ -61,9 +61,9 @@ let groups = {
         tabLocked: true
     },
     normal: {
-        floatable: false,
+        floatable: true,
         maximizable: false,
-        tabLocked: true
+        tabLocked: false
     }
 }
   
