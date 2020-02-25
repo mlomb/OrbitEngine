@@ -6,6 +6,8 @@ import AutoSizer from 'react-virtualized-auto-sizer';
 
 import '@styles/List.less';
 
+import Highlight from '@components/ui/Highlight.jsx';
+
 /*
     itemHeight: number,
     data: [{ uid: string, title: string }, ...],
@@ -44,9 +46,6 @@ export default class List extends React.Component {
             let selectionIndex = this.props.data.findIndex(i => i.uid === this.state.selection);
             let newSelectionIndex = this.props.customNavigation ? this.props.customNavigation(selectionIndex, this.props.data[selectionIndex], e.key) : -1;
 
-            if(newSelectionIndex === null)
-                return; // discard
-
             if(newSelectionIndex === -1) {
                 switch(e.key) {
                     case 'Home':
@@ -59,8 +58,14 @@ export default class List extends React.Component {
                     case 'ArrowDown':
                         newSelectionIndex = selectionIndex + (e.key === 'ArrowUp' ? -1 : 1);
                         break;
+                    default:
+                        newSelectionIndex = null;
+                        break;
                 }
             }
+
+            if(newSelectionIndex === null)
+                return; // discard
 
             newSelectionIndex = Math.max(0, Math.min(this.props.data.length - 1, newSelectionIndex));
 
@@ -85,7 +90,7 @@ export default class List extends React.Component {
 
         const isSelected = this.state.selection === row.uid;
         
-        const titleElement = <span>{row.title}</span>;
+        const titleElement = <Highlight text={row.title} pattern={this.props.searchPattern} />;
         const element =
             <div
                 className={["row", isSelected ? "selected" : ""].join(' ')}

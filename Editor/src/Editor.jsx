@@ -14,6 +14,7 @@ import StatusBar from '@components/StatusBar.jsx';
 import RenderOutput from '@components/RenderOutput.jsx';
 import WorkspaceSelector from '@components/WorkspaceSelector.jsx';
 import Button from '@components/ui/Button.jsx';
+import HeaderSearchBar from '@components/HeaderSearchBar.jsx';
 import HierarchyTree from '@components/HierarchyTree.jsx';
 import List from '@components/List.jsx';
 import EngineService from '@service/EngineService';
@@ -22,6 +23,7 @@ var total_generated = 0;
 
 class HierarchyTreeTest extends React.Component {
     state = {
+        search_term: "",
         testTree: []
     };
 
@@ -48,7 +50,12 @@ class HierarchyTreeTest extends React.Component {
     }
 
     render() {
-        return <HierarchyTree data={this.state.testTree} />
+        return (
+            <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <HeaderSearchBar searchTerm={this.state.search_term} setSearchTerm={(t) => this.setState({ search_term: t })} />
+                <HierarchyTree data={this.state.testTree} searchPattern={this.state.search_term} />
+            </div>
+        );
     }
 }
 

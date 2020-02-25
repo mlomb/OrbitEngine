@@ -1,13 +1,12 @@
 import React from 'react';
-//import { FixedSizeList as List } from "react-window";
-import List from './List.jsx';
-import AutoSizer from "react-virtualized-auto-sizer";
-import { AiFillCaretRight, AiOutlineCaretDown, AiOutlineSearch, AiOutlinePlus } from 'react-icons/ai';
+
+import { AiFillCaretRight, AiOutlineCaretDown } from 'react-icons/ai';
 import { useDrag, useDrop } from 'react-dnd';
 
 import '@styles/HierarchyTree.less';
 
 import Highlight from '@components/ui/Highlight.jsx';
+import List from '@components/List.jsx';
 
 /*
     data format
@@ -105,43 +104,15 @@ const TreeRow = () => {
 export default class HierarchyTree extends React.Component {
 
     state = {
-        expanded: [],
-
-        search_term: ""
+        expanded: []
     };
 
     constructor(props) {
         super(props);
         
         this.treeRef = React.createRef();
-        this.searchInputRef = React.createRef();
-
-        this.setSearchTerm_func = this.setSearchTerm.bind(this);
 
         this.flat_tree_data = [];
-    }
-
-    onMouseDown(e) {
-        let clickedRowElement = e.target.closest('.tree .row');
-        let rowUID = null;
-
-        let new_state = { };
-
-        if(clickedRowElement) {
-            rowUID = clickedRowElement.getAttribute('data-uid');
-        }
-
-        let clickedOnCaret = e.target.closest('.caret') !== null;
-        if(clickedOnCaret) {
-            // expand/contract
-        } else {
-            new_state.selection = rowUID;
-        }
-
-        this.setState(new_state, () => {
-            // focus onMouseDown
-            //setTimeout(() => this.treeRef.current.focus()); // must be done in the next tick
-        });
     }
 
     setExpanded(uid, expanded) {
@@ -153,10 +124,6 @@ export default class HierarchyTree extends React.Component {
             new_expanded = this.state.expanded.filter(x => x !== uid);
         }
         this.setState({ expanded: new_expanded });
-    }
-
-    setSearchTerm(e) {
-        this.setState({ search_term: e.target.value });
     }
 
     renderRow({ row, titleElement }) {
@@ -212,6 +179,7 @@ export default class HierarchyTree extends React.Component {
             item.expanded = this.state.expanded.includes(item.uid);
             item.parent = parent ? parent.uid : null;
             
+            /*
             if(this.state.search_term.length > 0) {
                 if(item.title.includes(this.state.search_term)) {
                     this.flat_tree_data.push(item);
@@ -220,23 +188,21 @@ export default class HierarchyTree extends React.Component {
                     return true;
                 }
             }
+            */
+
             this.flat_tree_data.push(item);
             return item.expanded;
         });
 
-        const isParent_func = (p, c) => isParent(this.flat_tree_data, p, c);
-        const searchPattern = this.state.search_term.length > 0 ? this.state.search_term : null;
-
         return (
             <div className="hierarchy-tree">
-                <div className="top-bar">
-                    <AiOutlineSearch className="icon" onClick={() => this.searchInputRef.current.focus()} />
-                    <input type="text" placeholder="Search..." ref={this.searchInputRef} value={this.state.search_term} onChange={this.setSearchTerm_func} />
-                    <div className="add">
-                        <AiOutlinePlus/>
-                    </div>
-                </div>
-                <List data={this.flat_tree_data} itemHeight={25} renderRow={this.renderRow.bind(this)} customNavigation={this.customNavigation.bind(this)} />
+                <List
+                    data={this.flat_tree_data}
+                    itemHeight={25}
+                    renderRow={this.renderRow.bind(this)}
+                    customNavigation={this.customNavigation.bind(this)}
+                    searchPattern={this.props.searchPattern}
+                    />
             </div>
         );
     }
