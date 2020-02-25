@@ -111,8 +111,6 @@ export default class HierarchyTree extends React.Component {
         super(props);
         
         this.treeRef = React.createRef();
-
-        this.flat_tree_data = [];
     }
 
     setExpanded(uid, expanded) {
@@ -138,7 +136,9 @@ export default class HierarchyTree extends React.Component {
         );
     }
 
-    customNavigation(currentIndex, row, key) {
+    customNavigation(currentIndex, visible_items, key) {
+        const row = visible_items[currentIndex];
+
         if(!row)
             return -1;
 
@@ -149,7 +149,7 @@ export default class HierarchyTree extends React.Component {
                 return null;
             } else {
                 // set selection to parent
-                return this.flat_tree_data.findIndex(i => i.uid === row.parent);
+                return visible_items.findIndex(i => i.uid === row.parent);
             }
         } else if(key === 'ArrowRight') {
             if(row.children.length > 0 && !row.expanded) {
@@ -159,8 +159,8 @@ export default class HierarchyTree extends React.Component {
             } else {
                 // set selection to next row with children.length > 0
                 currentIndex++;
-                while(currentIndex < this.flat_tree_data.length) {
-                    if(this.flat_tree_data[currentIndex].children.length > 0)
+                while(currentIndex < visible_items.length) {
+                    if(visible_items[currentIndex].children.length > 0)
                         return currentIndex;
                     currentIndex++;
                 }
@@ -171,36 +171,56 @@ export default class HierarchyTree extends React.Component {
         return -1; // fallback default
     }
 
-    render() {
-        this.flat_tree_data = []; // expanded items
+    // Note: this function should run fast
+    customFilter(data, pattern) {
+        let flat_tree_data = []; // expanded items
+        
+        const isSearching = pattern && (pattern instanceof RegExp || pattern.length > 0);
+        let pending = [];
 
-        traverse(this.props.data, (item, parent, depth) => {
-            item.depth = depth;
-            item.expanded = this.state.expanded.includes(item.uid);
-            item.parent = parent ? parent.uid : null;
-            
-            /*
-            if(this.state.search_term.length > 0) {
-                if(item.title.includes(this.state.search_term)) {
-                    this.flat_tree_data.push(item);
-                    return true;
+        // sacar afuera para la optimizacion jit
+        const DFS = (items, parent) => {
+            for(let item of items) {
+                // fill common data
+                item.depth = parent ? parent.depth + 1 : 0;
+                item.parent = parent ? parent.uid : null;
+                item.expanded = isSearching || this.state.expanded.includes(item.uid);
+                item.children = item.children || [];
+
+                const shouldBeVisible = isSearching ? (pattern instanceof RegExp ? pattern.test(item.title) : item.title.includes(pattern)) : true;
+
+                if(shouldBeVisible) {
+                    if(isSearching) {
+                        flat_tree_data.push(...pending);
+                        pending = [];
+                    }
+                    flat_tree_data.push(item);
                 } else {
-                    return true;
+                    pending.push(item);
                 }
+
+                if(item.children.length > 0 && item.expanded) {
+                    DFS(item.children, item);
+                }
+
+                pending.pop();
             }
-            */
+        };
 
-            this.flat_tree_data.push(item);
-            return item.expanded;
-        });
+        DFS(data, null);
 
+        return flat_tree_data;
+    }
+
+    render() {
         return (
             <div className="hierarchy-tree">
                 <List
-                    data={this.flat_tree_data}
+                    data={this.props.data}
                     itemHeight={25}
                     renderRow={this.renderRow.bind(this)}
                     customNavigation={this.customNavigation.bind(this)}
+                    customFilter={this.customFilter.bind(this)}
                     searchPattern={this.props.searchPattern}
                     />
             </div>

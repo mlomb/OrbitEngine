@@ -12,7 +12,7 @@ import Highlight from '@components/ui/Highlight.jsx';
     itemHeight: number,
     data: [{ uid: string, title: string }, ...],
     renderRow: ({ row, titleElement }) => React.Component,
-    customNavigation: (currentIndex, row, key) => number (the next index, -1 to default, null to discard)
+    customNavigation: (currentIndex: number, visible_items: [...], key: string) => number (the next index, -1 to default, null to discard)
 */
 export default class List extends React.Component {
 
@@ -23,11 +23,22 @@ export default class List extends React.Component {
     constructor(props) {
         super(props);
 
+        this.visible_items = null;
+
         this.containerRef = React.createRef();
         this.listRef = React.createRef();
     }
 
+    filter(items, pattern) {
+        if(!pattern || pattern.length === 0)
+            return items; // no filter
+        return items.filter(pattern instanceof RegExp ? x => pattern.test(x.title) : x => x.title.includes(pattern));
+    }
+
     setSelection(uid) {
+        if(this.state.selection === uid)
+            return;
+
         this.setState({ selection: uid });
         this.containerRef.current.focus(); // re gain focus, may be lost to a child component re rendering
     }
@@ -35,16 +46,16 @@ export default class List extends React.Component {
     // Keyboard Navigation
     onKeyDown(e) {
         const isNavigationKey = e.keyCode >= 35 && e.keyCode <= 40; // arrows & home & end (deprecated keyCode?)
-        const { data } = this.props;
+        const { visible_items } = this;
 
         if(isNavigationKey) {
             e.preventDefault();
 
-            if(this.props.data.length === 0)
+            if(visible_items.length === 0)
                 return;
 
-            let selectionIndex = this.props.data.findIndex(i => i.uid === this.state.selection);
-            let newSelectionIndex = this.props.customNavigation ? this.props.customNavigation(selectionIndex, this.props.data[selectionIndex], e.key) : -1;
+            let selectionIndex = visible_items.findIndex(i => i.uid === this.state.selection);
+            let newSelectionIndex = this.props.customNavigation ? this.props.customNavigation(selectionIndex, visible_items, e.key) : -1;
 
             if(newSelectionIndex === -1) {
                 switch(e.key) {
@@ -52,7 +63,7 @@ export default class List extends React.Component {
                         newSelectionIndex = 0; // first
                         break;
                     case 'End':
-                        newSelectionIndex = this.props.data.length - 1; // last
+                        newSelectionIndex = visible_items.length - 1; // last
                         break;
                     case 'ArrowUp':
                     case 'ArrowDown':
@@ -67,9 +78,9 @@ export default class List extends React.Component {
             if(newSelectionIndex === null)
                 return; // discard
 
-            newSelectionIndex = Math.max(0, Math.min(this.props.data.length - 1, newSelectionIndex));
+            newSelectionIndex = Math.max(0, Math.min(visible_items.length - 1, newSelectionIndex));
 
-            this.setSelection(data[newSelectionIndex].uid);
+            this.setSelection(visible_items[newSelectionIndex].uid);
             this.listRef.current.scrollToItem(newSelectionIndex, "auto"); // scroll to the selected item
         }
     }
@@ -80,13 +91,13 @@ export default class List extends React.Component {
             const clickY = e.pageY - ReactDOM.findDOMNode(this.listRef.current).getBoundingClientRect().y;
             
             // avoid clicks on the scrollbar
-            if(clickY > this.props.itemHeight * this.props.data.length)
+            if(clickY > this.props.itemHeight * this.visible_items.length)
                 this.setState({ selection: null });
         }
     }
 
     renderRow({ index, style }) {
-        const row = this.props.data[index];
+        const row = this.visible_items[index];
 
         const isSelected = this.state.selection === row.uid;
         
@@ -105,7 +116,8 @@ export default class List extends React.Component {
     }
 
     render() {
-        let data = this.props.data;
+        // apply filter
+        this.visible_items = (this.props.customFilter || this.filter.bind(this))(this.props.data, this.props.searchPattern);
 
         return (
             <div
@@ -120,9 +132,9 @@ export default class List extends React.Component {
                         ref={this.listRef}
                         width={width}
                         height={height}
-                        itemCount={data.length}
+                        itemCount={this.visible_items.length}
                         itemSize={this.props.itemHeight}
-                        itemKey={i => data[i].uid}>
+                        itemKey={i => this.visible_items[i].uid}>
                         {memo(this.renderRow.bind(this), areEqual)}
                     </FixedSizeList>
                 )}
