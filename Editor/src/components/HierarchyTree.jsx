@@ -1,5 +1,6 @@
 import React from 'react';
-import { FixedSizeList as List } from "react-window";
+//import { FixedSizeList as List } from "react-window";
+import List from './List.jsx';
 import AutoSizer from "react-virtualized-auto-sizer";
 import { AiFillCaretRight, AiOutlineCaretDown, AiOutlineSearch, AiOutlinePlus } from 'react-icons/ai';
 import { useDrag, useDrop } from 'react-dnd';
@@ -209,6 +210,8 @@ export default class HierarchyTree extends React.Component {
                         <AiOutlinePlus/>
                     </div>
                 </div>
+                <List data={flat_tree_data} itemHeight={25} />
+                {/*
                 <div className="tree"
                     ref={this.treeRef}
                     tabIndex={0}
@@ -217,7 +220,7 @@ export default class HierarchyTree extends React.Component {
                     onBlur={this.onBlur.bind(this)}
                     >
                     <AutoSizer>
-                    {({ height, width }) => (
+                    {({ width, height }) => (
                         <List
                             width={width}
                             height={height}
@@ -238,6 +241,7 @@ export default class HierarchyTree extends React.Component {
                     )}
                     </AutoSizer>
                 </div>
+                            */}
             </div>
         );
     }

@@ -15,11 +15,12 @@ import RenderOutput from '@components/RenderOutput.jsx';
 import WorkspaceSelector from '@components/WorkspaceSelector.jsx';
 import Button from '@components/ui/Button.jsx';
 import HierarchyTree from '@components/HierarchyTree.jsx';
+import List from '@components/List.jsx';
 import EngineService from '@service/EngineService';
 
 var total_generated = 0;
 
-class Test extends React.Component {
+class HierarchyTreeTest extends React.Component {
     state = {
         testTree: []
     };
@@ -45,14 +46,43 @@ class Test extends React.Component {
     
         return result;
     }
-    
+
     render() {
         return <HierarchyTree data={this.state.testTree} />
     }
 }
 
+
+class ListTest extends React.Component {
+    state = {
+        testList: []
+    };
+
+    componentDidMount() {
+        this.setState({ testList: this.generateSampleData() });
+    }
+
+    generateSampleData() {
+        let result = [];
+    
+        for(let i = 0; i < 30; i++) {
+            let uid = '' + Math.floor(Math.random() * 100000000);
+            result.push({
+                uid: uid,
+                title: uid
+            });
+        }
+    
+        return result;
+    }
+    
+    render() {
+        return <List data={this.state.testList} itemHeight={25} />
+    }
+}
+
 let tab = {
-    content: <Test/>,
+    content: <HierarchyTreeTest/>,
     closable: false,
     group: 'normal'
 };
@@ -78,7 +108,7 @@ let groups = {
           size: 200,
           children: [
             {
-              tabs: [{...tab, id: 't1', title: 'Tab 1'}, {...tab, id: 't2', title: 'Tab 2'}],
+              tabs: [{...tab, id: 't1', title: 'Hierarchy Tree'}],
             },
             {
               tabs: [{
@@ -105,7 +135,7 @@ let groups = {
         },
         {
           size: 200,
-          tabs: [{...tab, content: <span>Test</span>, id: 't8', title: 'Tab 8'}],
+          tabs: [{...tab, content: <ListTest/>, id: 't8', title: 'List'}],
         },
       ]
     }
@@ -122,15 +152,14 @@ export default class Editor extends React.Component {
             <div className={`page-container ${isElectron() ? 'electron' : 'web'} ${isDevMode() ? 'dev' : 'prod'}`}>
                 <Menu/>
                 <div className="main">
-                    {
                     <DndProvider backend={Backend}>
-                        <DockLayout dropMode="edge" groups={groups} defaultLayout={layout}/>}
+                        <DockLayout dropMode="edge" groups={groups} defaultLayout={layout}/>
                     </DndProvider>
-                    }
-                    {/*<WorkspaceSelector/>*/}
                 </div>
                 <StatusBar/>
             </div>
         );
     }
 }
+
+// {/*<WorkspaceSelector/>*/}
