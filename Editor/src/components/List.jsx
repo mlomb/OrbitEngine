@@ -6,6 +6,12 @@ import AutoSizer from 'react-virtualized-auto-sizer';
 
 import '@styles/List.less';
 
+/*
+    itemHeight: number,
+    data: [{ uid: string, title: string }, ...],
+    renderRow: ({ row, titleElement }) => React.Component,
+    customNavigation: (currentIndex, row, key) => number (the next index, -1 to default, null to discard)
+*/
 export default class List extends React.Component {
 
     state = {
@@ -26,7 +32,7 @@ export default class List extends React.Component {
 
     // Keyboard Navigation
     onKeyDown(e) {
-        const isNavigationKey = e.keyCode >= 35 && e.keyCode <= 40; // arrows & home & end
+        const isNavigationKey = e.keyCode >= 35 && e.keyCode <= 40; // arrows & home & end (deprecated keyCode?)
         const { data } = this.props;
 
         if(isNavigationKey) {
@@ -36,24 +42,26 @@ export default class List extends React.Component {
                 return;
 
             let selectionIndex = this.props.data.findIndex(i => i.uid === this.state.selection);
-            let newSelectionIndex = -1;
-            
-            switch(e.keyCode) {
-                case 36: // Home
-                    newSelectionIndex = 0; // first
-                    break;
-                case 35: // End
-                    newSelectionIndex = this.props.data.length - 1; // last
-                    break;
-                case 37:
-                case 38:
-                case 39:
-                case 40:
-                    // arrows
-                    newSelectionIndex = selectionIndex + (e.keyCode === 38 ? -1 : 1);
-                    break;
+            let newSelectionIndex = this.props.customNavigation ? this.props.customNavigation(selectionIndex, this.props.data[selectionIndex], e.key) : -1;
+
+            if(newSelectionIndex === null)
+                return; // discard
+
+            if(newSelectionIndex === -1) {
+                switch(e.key) {
+                    case 'Home':
+                        newSelectionIndex = 0; // first
+                        break;
+                    case 'End':
+                        newSelectionIndex = this.props.data.length - 1; // last
+                        break;
+                    case 'ArrowUp':
+                    case 'ArrowDown':
+                        newSelectionIndex = selectionIndex + (e.key === 'ArrowUp' ? -1 : 1);
+                        break;
+                }
             }
-            
+
             newSelectionIndex = Math.max(0, Math.min(this.props.data.length - 1, newSelectionIndex));
 
             this.setSelection(data[newSelectionIndex].uid);
@@ -77,13 +85,15 @@ export default class List extends React.Component {
 
         const isSelected = this.state.selection === row.uid;
         
+        const titleElement = <span>{row.title}</span>;
         const element =
             <div
                 className={["row", isSelected ? "selected" : ""].join(' ')}
-                style={style}
+                style={{ ...style, height: this.props.itemHeight }}
                 tabIndex={-1}
+                title={row.title}
                 onClick={() => this.setSelection(row.uid)}>
-                {row.title}
+                {this.props.renderRow ? this.props.renderRow({ row, titleElement }) : titleElement}
             </div>;
 
         return element;

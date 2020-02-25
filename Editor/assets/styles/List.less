@@ -2,10 +2,44 @@
 .list {
     width: 100%;
     height: 100%;
+    background: var(--back-4);
 
     .row {
+        display: flex;
+        flex-direction: row;
+        justify-content: left;
+        align-items: center;
+
+        color: #d0d0d0;
+        background: transparent;
+        white-space: nowrap;
+        cursor: default;
+        user-select: none;
+        font-size: 15px;
+        will-change: transform;
+
+        &:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.07);
+        }
+
         &.selected {
+            color: white;
+            background: #606060;
+        }
+        
+        &.can-drop {
             background: cyan;
+        }
+
+        &.cant-drop {
+            background: red;
+        }
+    }
+
+    &:focus-within {
+        .row.selected {
+            background: var(--accent-1);
         }
     }
 }
