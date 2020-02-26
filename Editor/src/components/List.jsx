@@ -25,6 +25,7 @@ export default class List extends React.Component {
         super(props);
 
         this.visible_items = null;
+        this.pattern = null;
 
         this.containerRef = React.createRef();
         this.listRef = React.createRef();
@@ -102,7 +103,7 @@ export default class List extends React.Component {
 
         const isSelected = this.state.selection === row.uid;
         
-        const titleElement = <Highlight text={row.title} pattern={this.props.searchPattern} />;
+        const titleElement = <Highlight text={row.title} pattern={this.pattern} />;
         const element =
             <div
                 className={["row", isSelected ? "selected" : ""].join(' ')}
@@ -118,15 +119,15 @@ export default class List extends React.Component {
 
     render() {
         // apply filter
-        let pattern = null;
-        if(this.props.searchPattern instanceof RegExp)
-            pattern = this.props.searchPattern;
-        else if(this.props.searchPattern) {
+        this.pattern = null;
+        if(this.props.searchPattern instanceof RegExp) {
+            this.pattern = this.props.searchPattern;
+        } else if(this.props.searchPattern) {
             // Escape RegExp Function: https://github.com/bvaughn/highlight-words-core/blob/eb170f8a78c7926b613e72733267f3243696113c/src/utils.js#L172
-            pattern = new RegExp(this.props.searchPattern.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&'), 'gi'); // case insensitive
+            this.pattern = new RegExp('(' + this.props.searchPattern.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&') + ')', 'gi'); // case insensitive
         }
 
-        this.visible_items = (this.props.customFilter || this.filter.bind(this))(this.props.data, pattern);
+        this.visible_items = (this.props.customFilter || this.filter.bind(this))(this.props.data, this.pattern);
 
         return (
             <div
