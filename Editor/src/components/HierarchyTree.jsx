@@ -175,7 +175,7 @@ export default class HierarchyTree extends React.Component {
     customFilter(data, pattern) {
         let flat_tree_data = []; // expanded items
         
-        const isSearching = pattern && (pattern instanceof RegExp || pattern.length > 0);
+        const isSearching = pattern instanceof RegExp;
         let pending = [];
 
         // sacar afuera para la optimizacion jit
@@ -187,7 +187,7 @@ export default class HierarchyTree extends React.Component {
                 item.expanded = isSearching || this.state.expanded.includes(item.uid);
                 item.children = item.children || [];
 
-                const shouldBeVisible = isSearching ? (pattern instanceof RegExp ? pattern.test(item.title) : item.title.includes(pattern)) : true;
+                const shouldBeVisible = isSearching ? pattern.test(item.title) : true;
 
                 if(shouldBeVisible) {
                     if(isSearching) {

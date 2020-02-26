@@ -12,7 +12,8 @@ import Highlight from '@components/ui/Highlight.jsx';
     itemHeight: number,
     data: [{ uid: string, title: string }, ...],
     renderRow: ({ row, titleElement }) => React.Component,
-    customNavigation: (currentIndex: number, visible_items: [...], key: string) => number (the next index, -1 to default, null to discard)
+    customNavigation: (currentIndex: number, visible_items: [...], key: string) => number, // (the next index, -1 to default, null to discard)
+    customFilter: (items: [...], pattern: RegExp) => [...]
 */
 export default class List extends React.Component {
 
@@ -30,9 +31,9 @@ export default class List extends React.Component {
     }
 
     filter(items, pattern) {
-        if(!pattern || pattern.length === 0)
+        if(!pattern)
             return items; // no filter
-        return items.filter(pattern instanceof RegExp ? x => pattern.test(x.title) : x => x.title.includes(pattern));
+        return items.filter(x => pattern.test(x.title));
     }
 
     setSelection(uid) {
@@ -117,7 +118,15 @@ export default class List extends React.Component {
 
     render() {
         // apply filter
-        this.visible_items = (this.props.customFilter || this.filter.bind(this))(this.props.data, this.props.searchPattern);
+        let pattern = null;
+        if(this.props.searchPattern instanceof RegExp)
+            pattern = this.props.searchPattern;
+        else if(this.props.searchPattern) {
+            // Escape RegExp Function: https://github.com/bvaughn/highlight-words-core/blob/eb170f8a78c7926b613e72733267f3243696113c/src/utils.js#L172
+            pattern = new RegExp(this.props.searchPattern.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&'), 'gi'); // case insensitive
+        }
+
+        this.visible_items = (this.props.customFilter || this.filter.bind(this))(this.props.data, pattern);
 
         return (
             <div
