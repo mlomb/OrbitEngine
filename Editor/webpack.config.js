@@ -30,46 +30,48 @@ module.exports = (config) => ({
         electron: 'empty',
         Buffer: false
     } : undefined,
-	mode: devMode ? 'development' : 'production',
-	devtool: devMode ? 'inline-source-map' : false,
-	entry: {
-        index: './src/index.jsx'
+    mode: devMode ? 'development' : 'production',
+    devtool: devMode ? 'inline-source-map' : false,
+    entry: {
+        index: path.resolve(__dirname, 'src/index.jsx')
     },
-	output: {
-		path: dist,
-		publicPath: target === 'web' ? '/' : '',
-		filename: "static/[name]." + (devMode ? '[hash:5].js' : '[hash:16].js'),
+    output: {
+        path: dist,
+        publicPath: target === 'web' ? '/' : '',
+        filename: "static/[name]." + (devMode ? '[hash:5].js' : '[hash:16].js'),
     },
     resolve: {
         alias: {
             '@assets': path.resolve(__dirname, 'assets'),
             '@public': path.resolve(__dirname, 'public'),
             '@styles': path.resolve(__dirname, 'assets/styles'),
+            '@src': path.resolve(__dirname, 'src'),
             '@service': path.resolve(__dirname, 'src/service'),
             '@components': path.resolve(__dirname, 'src/components'),
-        }
+        },
+        extensions: [ '.ts', '.tsx', '.js', '.jsx' ]
     },
-	module: {
-		rules: [
-			{
-				test: /\.jsx?$/,
-				exclude: [/node_modules/],
-				use: {
-					loader: 'babel-loader',
-					options: {
-                        presets: ['@babel/preset-env', '@babel/preset-react'],
+    module: {
+        rules: [
+            {
+                test: /\.(ts|tsx|jsx|js)$/,
+                exclude: [/node_modules/],
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        presets: ['@babel/preset-env', '@babel/preset-react', '@babel/typescript'],
                         plugins: ['@babel/plugin-proposal-class-properties']
-					}
-				}
-			},
+                    }
+                }
+            },
             {
                 test: /\.(svg|png|jpe?g|gif|mp4|woff|woff2|eot|ttf)$/,
                 loader: "url-loader",
-				options: {
+                options: {
                     limit: 2048,
-					name: "static/[hash:8].[ext]",
+                    name: "static/[hash:8].[ext]",
                     esModule: false
-				}
+                }
             },
             {
                 test: /\.(c|le)ss$/, 
@@ -85,15 +87,15 @@ module.exports = (config) => ({
                     'less-loader'
                 ]
             }
-		]
+        ]
     },
-	optimization: devMode ? { minimize: false } : {
+    optimization: devMode ? { minimize: false } : {
         minimize: true,
         mangleWasmImports: true,
-		minimizer: devMode ? [] : [
-			new TerserPlugin({
-				cache: true,
-				parallel: true,
+        minimizer: devMode ? [] : [
+            new TerserPlugin({
+                cache: true,
+                parallel: true,
                 sourceMap: devMode,
                 extractComments: true,
                 terserOptions: {
@@ -109,7 +111,7 @@ module.exports = (config) => ({
             })
         ]
     },
-	plugins: [
+    plugins: [
         new CleanWebpackPlugin(dist),
         new HtmlWebpackPlugin({
             template: './assets/index.html',
@@ -134,16 +136,16 @@ module.exports = (config) => ({
             { from: 'src/electron', to: dist },
             { from: 'package.json', to: dist }
         ])),
-		new webpack.DefinePlugin({
+        new webpack.DefinePlugin({
             "__ENV__.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
             "__ENV__.BUILD_HASH": JSON.stringify(git.short() + (git.isDirty() ? '-dirty' : '')),
             "__ENV__.BUILD_TIME": JSON.stringify(new Date()),
             "__ENV__.TARGET": JSON.stringify(target)
         })
     ],
-	devServer: {
+    devServer: {
         host: '0.0.0.0',
         disableHostCheck: true,
         inline: true
-	}
+    }
 });

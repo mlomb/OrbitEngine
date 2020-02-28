@@ -1,3 +1,5 @@
+declare var __ENV__: any;
+
 const devMode = __ENV__.NODE_ENV !== 'production';
 const target = __ENV__.TARGET;
 

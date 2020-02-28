@@ -8,6 +8,10 @@ import { remote } from 'electron';
 import { isDevMode } from '../ApplicationContext';
 
 class EngineService extends EventEmitter {
+
+    private ipcPath: string;
+    private ipcService: Socket;
+
     constructor() {
         super();
 
@@ -65,7 +69,7 @@ class EngineService extends EventEmitter {
         this.ipcService.connect(this.ipcPath);
     }
 
-    onData(data) {
+    onData(data: any) {
         this.emit('frame', data);
     }
 }
