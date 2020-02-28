@@ -45,7 +45,7 @@ class HierarchyTreeTest extends React.Component {
                 children: (Math.random() > Math.pow(2, depth) / 128) ? this.generateSampleData(depth + 1) : []
             });
         }
-    
+
         return result;
     }
 
@@ -156,7 +156,7 @@ export default class Editor extends React.Component {
 
     render() {
         return (
-            <div className={`page-container ${isElectron() ? 'electron' : 'web'} ${isDevMode() ? 'dev' : 'prod'}`}>
+            <div className={`page-container ${isElectron ? 'electron' : 'web'} ${isDevMode ? 'dev' : 'prod'}`}>
                 <Menu/>
                 <div className="main">
                     <DndProvider backend={Backend}>

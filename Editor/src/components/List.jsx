@@ -3,10 +3,61 @@ import ReactDOM from 'react-dom';
 
 import { FixedSizeList, areEqual } from 'react-window';
 import AutoSizer from 'react-virtualized-auto-sizer';
+import isEqual from 'react-fast-compare';
 
 import '@styles/List.less';
 
 import Highlight from '@components/ui/Highlight.jsx';
+
+const ListRow = memo((props) => {
+    const { row, style, isSelected, highlightPattern } = props;
+    const { setSelection, renderRow } = props;
+
+    console.log("Rendered", row.uid);
+
+    const titleElement = <Highlight text={row.title} pattern={highlightPattern} />;
+    //titleElement = <input className="edit" type="text" value={row.title}/>;
+
+    const element =
+        <div
+            className={["row", isSelected ? "selected" : ""].join(' ')}
+            style={style}
+            tabIndex={-1}
+            title={row.title}
+            onClick={() => setSelection(row.uid)}>
+            {renderRow ? renderRow({ row, titleElement }) : titleElement}
+        </div>;
+
+    return element;
+
+}, (prevProps, nextProps) => 
+    isEqual(prevProps.style, nextProps.style) &&
+    prevProps.rowAreEqual === nextProps.rowAreEqual && // ===
+    (prevProps.rowAreEqual ? prevProps.rowAreEqual(prevProps, nextProps) : true) &&
+    prevProps.row.uid === nextProps.row.uid &&
+    prevProps.row.title === nextProps.row.title &&
+    prevProps.isSelected === nextProps.isSelected &&
+    prevProps.renderRow === nextProps.renderRow && // ===
+    (prevProps.highlightPattern || 'null').toString() === (nextProps.highlightPattern || 'null').toString()
+);
+
+const ListRowWrapper = (props) => {
+    const { items, selection, highlightPattern } = props.data;
+    const { setSelection, renderRow, rowAreEqual } = props.data;
+    const row = items[props.index];
+
+    return <ListRow
+        style={props.style}
+        row={row}
+        isSelected={selection === row.uid}
+        highlightPattern={highlightPattern}
+
+        setSelection={setSelection}
+        renderRow={renderRow}
+        rowAreEqual={rowAreEqual}
+    />;
+};
+
 
 /*
     itemHeight: number,
@@ -29,6 +80,9 @@ export default class List extends React.Component {
 
         this.containerRef = React.createRef();
         this.listRef = React.createRef();
+
+        this.itemKey = i => this.visible_items[i].uid;
+        this.setSelection_func = this.setSelection.bind(this);
     }
 
     filter(items, pattern) {
@@ -98,23 +152,9 @@ export default class List extends React.Component {
         }
     }
 
-    renderRow({ index, style }) {
-        const row = this.visible_items[index];
-
-        const isSelected = this.state.selection === row.uid;
-        
-        const titleElement = <Highlight text={row.title} pattern={this.pattern} />;
-        const element =
-            <div
-                className={["row", isSelected ? "selected" : ""].join(' ')}
-                style={{ ...style, height: this.props.itemHeight }}
-                tabIndex={-1}
-                title={row.title}
-                onClick={() => this.setSelection(row.uid)}>
-                {this.props.renderRow ? this.props.renderRow({ row, titleElement }) : titleElement}
-            </div>;
-
-        return element;
+    // Also gain focus
+    onMouseUp() {
+        this.containerRef.current.focus();
     }
 
     render() {
@@ -126,6 +166,9 @@ export default class List extends React.Component {
             // Escape RegExp Function: https://github.com/bvaughn/highlight-words-core/blob/eb170f8a78c7926b613e72733267f3243696113c/src/utils.js#L172
             this.pattern = new RegExp('(' + this.props.searchPattern.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&') + ')', 'gi'); // case insensitive
         }
+        
+        console.log("============= RENDERING LIST =============");
+        
 
         this.visible_items = (this.props.customFilter || this.filter.bind(this))(this.props.data, this.pattern);
 
@@ -135,7 +178,8 @@ export default class List extends React.Component {
                 className="list"
                 tabIndex={0}
                 onKeyDown={this.onKeyDown.bind(this)}
-                onMouseDown={this.onMouseDown.bind(this)}>
+                onMouseDown={this.onMouseDown.bind(this)}
+                onMouseUp={this.onMouseUp.bind(this)}>
                 <AutoSizer>
                 {({ width, height }) => (
                     <FixedSizeList
@@ -144,8 +188,16 @@ export default class List extends React.Component {
                         height={height}
                         itemCount={this.visible_items.length}
                         itemSize={this.props.itemHeight}
-                        itemKey={i => this.visible_items[i].uid}>
-                        {memo(this.renderRow.bind(this), areEqual)}
+                        itemKey={this.itemKey}
+                        itemData={{
+                            items: this.visible_items,
+                            selection: this.state.selection,
+
+                            setSelection: this.setSelection_func,
+                            renderRow: this.props.renderRow,
+                            rowAreEqual: this.props.rowAreEqual,
+                        }}>
+                        {ListRowWrapper}
                     </FixedSizeList>
                 )}
                 </AutoSizer>

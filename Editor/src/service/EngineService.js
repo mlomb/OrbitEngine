@@ -29,7 +29,7 @@ class EngineService extends EventEmitter {
     }
 
     boot() {
-        if(!isDevMode()) {
+        if(!isDevMode) {
             this.spawnService();
             setTimeout(this.initConnection.bind(this), 1000);
         } else {

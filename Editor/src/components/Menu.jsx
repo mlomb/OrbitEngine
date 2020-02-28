@@ -31,7 +31,7 @@ export default class Menu extends React.Component {
                         <ContextMenu/>
                     </li>
                 </ul>
-                {isElectron() ?
+                {isElectron ?
                     <div className="win-buttons">
                         <button onClick={() => getElectronWindow().minimize()}><Icon icon="minimize"/></button>
                         <button onClick={() => getElectronWindow().isMaximized() ? getElectronWindow().unmaximize() : getElectronWindow().maximize() }><Icon icon="maximize"/></button>

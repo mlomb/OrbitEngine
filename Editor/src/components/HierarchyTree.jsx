@@ -111,6 +111,11 @@ export default class HierarchyTree extends React.Component {
         super(props);
         
         this.treeRef = React.createRef();
+
+        this.renderRow_func = this.renderRow.bind(this);
+        this.rowAreEqual_func = this.rowAreEqual.bind(this);
+        this.customNavigation_func = this.customNavigation.bind(this);
+        this.customFilter_func = this.customFilter.bind(this);
     }
 
     setExpanded(uid, expanded) {
@@ -126,14 +131,22 @@ export default class HierarchyTree extends React.Component {
 
     renderRow({ row, titleElement }) {
         return (
-            <div className="hierarchy-row" style={{ paddingLeft: 3 + 20 * row.depth }}
-                >
+            <div className="hierarchy-row" style={{ paddingLeft: 3 + 20 * row.depth }}>
                 <div className="caret" onClick={() => this.setExpanded(row.uid, !row.expanded)}>
                     {row.children.length > 0 ? (row.expanded ? <AiOutlineCaretDown /> : <AiFillCaretRight />) : null}
                 </div>
                 {titleElement}
             </div>
         );
+    }
+
+    rowAreEqual(prevProps, nextProps) {
+        // This will change
+        // I don't like the idea of List calling rowAreEqual
+        return true;
+        
+        return prevProps.row.expanded === nextProps.row.expanded &&
+               prevProps.row.depth === nextProps.row.depth;
     }
 
     customNavigation(currentIndex, visible_items, key) {
@@ -218,9 +231,10 @@ export default class HierarchyTree extends React.Component {
                 <List
                     data={this.props.data}
                     itemHeight={25}
-                    renderRow={this.renderRow.bind(this)}
-                    customNavigation={this.customNavigation.bind(this)}
-                    customFilter={this.customFilter.bind(this)}
+                    renderRow={this.renderRow_func}
+                    rowAreEqual={this.rowAreEqual_func}
+                    customNavigation={this.customNavigation_func}
+                    customFilter={this.customFilter_func}
                     searchPattern={this.props.searchPattern}
                     />
             </div>
