@@ -26,6 +26,7 @@ module.exports = (config) => ({
         fs: 'empty',
         net: 'empty',
         tls: 'empty',
+        __dirname: true,
         child_process: 'empty',
         electron: 'empty',
         Buffer: false
@@ -48,6 +49,8 @@ module.exports = (config) => ({
             '@src': path.resolve(__dirname, 'src'),
             '@service': path.resolve(__dirname, 'src/service'),
             '@components': path.resolve(__dirname, 'src/components'),
+
+            '7zip': path.resolve(__dirname, 'node_modules/win-7zip/index.js')
         },
         extensions: [ '.ts', '.tsx', '.js', '.jsx' ]
     },

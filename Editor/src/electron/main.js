@@ -2,6 +2,7 @@ const { app, BrowserWindow } = require('electron');
 const path = require('path')
 const url = require('url')
 const devMode = !app.isPackaged;
+const devTools = require('electron-devtools-installer');
 
 function getLocalURL(filename) {
     return devMode ? `http://localhost:8080/${filename}` : url.format({
@@ -10,6 +11,9 @@ function getLocalURL(filename) {
         slashes: true
     });
 }
+
+// https://github.com/electron/electron/issues/18397
+app.allowRendererProcessReuse = true;
 
 app.on('ready', () => {
     let loading = new BrowserWindow({
@@ -40,6 +44,11 @@ app.on('ready', () => {
             loading.close();
             loading.destroy();
             loading = null;
+            
+            if(devMode) {
+                devTools.default(devTools.REACT_DEVELOPER_TOOLS);
+                devTools.default(devTools.REACT_PERF);
+            }
         });
         
         window.loadURL(getLocalURL('index.html'));
