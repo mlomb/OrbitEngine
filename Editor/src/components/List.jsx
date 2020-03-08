@@ -13,7 +13,7 @@ const ListRow = memo((props) => {
     const { row, style, isSelected, highlightPattern } = props;
     const { setSelection, renderRow } = props;
 
-    console.log("Rendered", row.uid);
+    //console.log("Rendered", row.uid);
 
     const titleElement = <Highlight text={row.title} pattern={highlightPattern} />;
     //titleElement = <input className="edit" type="text" value={row.title}/>;
@@ -31,6 +31,7 @@ const ListRow = memo((props) => {
     return element;
 
 }, (prevProps, nextProps) => 
+    false && // TODO: This will change
     isEqual(prevProps.style, nextProps.style) &&
     prevProps.rowAreEqual === nextProps.rowAreEqual && // ===
     (prevProps.rowAreEqual ? prevProps.rowAreEqual(prevProps, nextProps) : true) &&
@@ -167,9 +168,6 @@ export default class List extends React.Component {
             this.pattern = new RegExp('(' + this.props.searchPattern.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, '\\$&') + ')', 'gi'); // case insensitive
         }
         
-        console.log("============= RENDERING LIST =============");
-        
-
         this.visible_items = (this.props.customFilter || this.filter.bind(this))(this.props.data, this.pattern);
 
         return (

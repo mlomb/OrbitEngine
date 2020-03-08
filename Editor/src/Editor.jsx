@@ -90,6 +90,7 @@ class ListTest extends React.Component {
 
 let tab = {
     content: <HierarchyTreeTest/>,
+    cached: true,
     closable: false,
     group: 'normal'
 };
