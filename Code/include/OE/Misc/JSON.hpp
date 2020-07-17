@@ -4,6 +4,7 @@
 #undef GetObject
 #undef Bool
 
+#include <string>
 #include <rapidjson/document.h>
 #include <rapidjson/writer.h>
 
