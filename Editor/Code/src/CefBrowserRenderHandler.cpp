@@ -16,6 +16,6 @@ namespace OrbitEngine { namespace Editor {
 
 	void CefBrowserRenderHandler::OnPaint(CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList& dirtyRects, const void* buffer, int width, int height)
 	{
-		printf("frame %p\n", this);
+		printf("%i > frame %p\n", GetCurrentThreadId(), this);
 	}
 } }

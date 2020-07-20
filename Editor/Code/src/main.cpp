@@ -3,6 +3,7 @@
 #include "EditorWindow.hpp"
 
 #include <OE/Misc/Log.hpp>
+#include <OE/Misc/Ticker.hpp>
 
 int main(int argc, char* argv[]) {
 	CefEnableHighDPISupport();
@@ -18,7 +19,8 @@ int main(int argc, char* argv[]) {
 		return exit_code;
 
 	CefSettings settings;
-	//settings.multi_threaded_message_loop = true; // TODO: investigate this possibility
+	settings.windowless_rendering_enabled = true;
+	settings.multi_threaded_message_loop = false;
 	settings.remote_debugging_port = 9222;
 
 	if (!CefInitialize(args, settings, nullptr, NULL)) {
@@ -28,39 +30,33 @@ int main(int argc, char* argv[]) {
 	using namespace OrbitEngine;
 	using namespace OrbitEngine::Editor;
 	using namespace OrbitEngine::Application;
+	using namespace OrbitEngine::Misc;
 
-	EditorWindow* ew1 = new EditorWindow();
-	ew1->create();
+	Ticker ticker;
+	std::vector<EditorWindow*> windows;
 
-	EditorWindow* ew2 = new EditorWindow();
-	ew2->create();
+	windows.push_back(new EditorWindow());
+	windows.push_back(new EditorWindow());
+	for (EditorWindow* w : windows)
+		w->create();
 
-	bool d1, d2;
-	do {
-		d1 = ew1->active();
-		d2 = ew2->active();
-
-		if(d1) ew1->work();
-		if(d2) ew2->work();
+	while (windows.size() > 0) {
+		for (auto it = windows.begin(); it != windows.end();) {
+			EditorWindow* w = *it;
+			if (w->active()) {
+				w->work();
+				it++;
+			}
+			else {
+				it = windows.erase(it);
+				delete w;
+			}
+		}
 
 		CefDoMessageLoopWork();
-	} while (d1 || d2);
 
-	delete ew1;
-	delete ew2;
-	/*
-	Window* window = new Window();
-	window->setTitle("OrbitEngine Editor");
-
-	Context* context = new Context(RenderAPI::OPENGL, window);
-
-	// ready
-	window->setVisibility(true);
-
-	while (!window->destroyRequested()) {
-		window->processEvents();
+		ticker.tick();
 	}
-	*/
 
 	CefShutdown();
 
