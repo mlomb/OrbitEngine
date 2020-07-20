@@ -275,3 +275,6 @@ endif()
 
 # C++11
 useCXX11(OrbitEngine)
+
+# Editor
+add_subdirectory(Editor)

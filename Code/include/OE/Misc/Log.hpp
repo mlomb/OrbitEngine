@@ -60,14 +60,20 @@ namespace OrbitEngine {
 		OE_LOG_FATAL(message) \
 		std::ostringstream os_; \
 		os_ << message << "\n\nThe application may now exit."; \
-		MessageBox(NULL, \
+		MessageBoxA(NULL, \
 				   os_.str().c_str(), \
 				   "OrbitEngine - FATAL", \
 				   MB_ICONERROR | MB_OK); \
 		OE_BREAK \
+		exit(1); \
 	}
 #else
-	#define OE_LOG_FATAL_SHOWBOX_AND_EXIT(message) OE_LOG_FATAL(message)
+	#define OE_LOG_FATAL_SHOWBOX_AND_EXIT(message) \
+	{ \
+		OE_LOG_FATAL(message) \
+		OE_BREAK \
+		exit(1); \
+	}
 #endif
 
 #if OE_DEBUG

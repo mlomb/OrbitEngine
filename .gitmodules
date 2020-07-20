@@ -23,3 +23,6 @@
 	path = Dependencies/imgui
 	url = https://github.com/ocornut/imgui.git
 	branch = docking
+[submodule "Dependencies/cef-cmake"]
+	path = Dependencies/cef-cmake
+	url = https://github.com/mlomb/cef-cmake.git
