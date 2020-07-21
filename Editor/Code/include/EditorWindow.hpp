@@ -29,7 +29,8 @@ namespace OrbitEngine { namespace Editor {
 		void work();
 		bool active() const;
 
-		Texture* getBrowserBlitTexture() const;
+		Vec2i getSize() const;
+		void blitBrowser(const void* data, int width, int height);
 
 	private:
 		CefRefPtr<CefBrowserClient> m_Client;

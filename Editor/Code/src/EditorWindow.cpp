@@ -50,26 +50,19 @@ namespace OrbitEngine { namespace Editor {
 		else {
 			m_Window->processEvents();
 
+			m_Context->resizeContext(m_Window->getSize());
+			m_Context->makeCurrent();
+			m_Context->prepare();
+
 			Vec2i window_size = m_Window->getSize();
 			if (window_size != m_LastSize) {
-				m_Context->resizeContext(window_size);
+				printf("%i x %i\n", m_Window->getSize().x, m_Window->getSize().y);
+
 				m_Browser->GetHost()->WasResized();
 				m_LastSize = window_size;
 
-				// recreate blit texture
-				if (m_BlitBrowserTexture)
-					delete m_BlitBrowserTexture;
-				TextureProperties props;
-				props.formatProperties.format = RGBA;
-				props.width = m_LastSize.x;
-				props.height = m_LastSize.y;
-				props.textureBufferMode = DYNAMIC;
-				m_BlitBrowserTexture = Texture::Create(props, nullptr);
 			}
 
-			m_Window->getSize();
-			m_Context->makeCurrent();
-			m_Context->prepare();
 			render();
 			m_Context->present();
 		}
@@ -80,10 +73,43 @@ namespace OrbitEngine { namespace Editor {
 		return m_Window || m_Browser;
 	}
 
-	Texture* EditorWindow::getBrowserBlitTexture() const
+	Vec2i EditorWindow::getSize() const
 	{
-		m_Context->makeCurrent(); // TODO: don't
-		return m_BlitBrowserTexture;
+		return m_Window ? m_Window->getSize() : Vec2i(100, 100);
+	}
+
+	void EditorWindow::blitBrowser(const void* data, int width, int height)
+	{
+		// printf("%i > frame %p %p\n", GetCurrentThreadId(), this, data);
+
+		if (!m_Context || !active())
+			return;
+
+		m_Context->makeCurrent();
+
+		// recreate blit texture
+		if (m_BlitBrowserTexture) {
+			if (m_BlitBrowserTexture->getProperties().width != width ||
+				m_BlitBrowserTexture->getProperties().height != height) {
+				// WARNING: sizes doesn't match
+				printf("%i > SIZES DONT MATCH\n", GetCurrentThreadId());
+				delete m_BlitBrowserTexture;
+				m_BlitBrowserTexture = nullptr;
+				// TODO: is this the way to go?
+			}
+		}
+
+		// recreate
+		if (!m_BlitBrowserTexture) {
+			TextureProperties props;
+			props.formatProperties.format = RGBA;
+			props.width = width;
+			props.height = height;
+			props.textureBufferMode = DYNAMIC;
+			m_BlitBrowserTexture = Texture::Create(props, nullptr);
+		}
+
+		m_BlitBrowserTexture->setData(const_cast<void*>(data)); // should be const void*
 	}
 
 	void EditorWindow::destroy()
@@ -100,7 +126,7 @@ namespace OrbitEngine { namespace Editor {
 
 	void EditorWindow::init()
 	{
-		m_SpriteBatcher = new SpriteBatcher(1000); // no need for many quads
+		m_SpriteBatcher = new SpriteBatcher(10); // no need for many quads
 	}
 
 	void EditorWindow::render()
@@ -113,7 +139,8 @@ namespace OrbitEngine { namespace Editor {
 
 		m_SpriteBatcher->bindColor(Color4f(1.0, 1.0, 1.0, 1.0));
 		m_SpriteBatcher->bindTexture(m_BlitBrowserTexture);
-		m_SpriteBatcher->rect(Vec2f(0, 0), Vec2f(500, 500));
+		auto size = m_BlitBrowserTexture ? Vec2f(m_BlitBrowserTexture->getProperties().width, m_BlitBrowserTexture->getProperties().height) : Vec2f();
+		m_SpriteBatcher->rect(Vec2f(0, size.y), Vec2f(size.x, -size.y));
 
 		m_SpriteBatcher->end();
 	}
