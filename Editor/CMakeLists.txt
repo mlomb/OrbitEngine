@@ -23,3 +23,8 @@ target_include_directories(OrbitEngine-Editor PUBLIC
 )
 
 target_link_libraries(OrbitEngine-Editor OrbitEngine cefdll_wrapper)
+
+# temporal fix: copy Resources folder
+add_custom_command(TARGET OrbitEngine-Editor POST_BUILD
+				   COMMAND ${CMAKE_COMMAND} -E copy_directory
+				   ${CMAKE_CURRENT_SOURCE_DIR}/../Resources ${CMAKE_CURRENT_BINARY_DIR}/Resources)

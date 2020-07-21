@@ -3,10 +3,16 @@
 
 #include "Cef.hpp"
 
+#include <OE/Graphics/API/Texture.hpp>
+
 namespace OrbitEngine { namespace Editor {
+	using namespace OrbitEngine::Graphics;
+
+	class EditorWindow;
+
 	class CefBrowserRenderHandler : public CefRenderHandler {
 	public:
-		CefBrowserRenderHandler();
+		CefBrowserRenderHandler(EditorWindow* window);
 		~CefBrowserRenderHandler();
 
 		void GetViewRect(CefRefPtr<CefBrowser> browser, CefRect& rect) override;
@@ -19,6 +25,8 @@ namespace OrbitEngine { namespace Editor {
 					 int height) override;
 
 	private:
+		EditorWindow* m_Window;
+
 		IMPLEMENT_REFCOUNTING(CefBrowserRenderHandler);
 	};
 } }

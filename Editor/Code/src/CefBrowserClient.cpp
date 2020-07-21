@@ -3,9 +3,11 @@
 #include "CefBrowserRenderHandler.hpp"
 
 namespace OrbitEngine { namespace Editor {
-	CefBrowserClient::CefBrowserClient()
+
+	CefBrowserClient::CefBrowserClient(EditorWindow* window)
+		: m_Window(window)
 	{
-		m_RenderHandler = new CefBrowserRenderHandler();
+		m_RenderHandler = new CefBrowserRenderHandler(window);
 	}
 
 	CefBrowserClient::~CefBrowserClient()

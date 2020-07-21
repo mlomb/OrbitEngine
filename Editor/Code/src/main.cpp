@@ -17,12 +17,12 @@ int main(int argc, char* argv[]) {
 	int exit_code = CefExecuteProcess(args, nullptr, nullptr);
 	if (exit_code >= 0)
 		return exit_code;
-
+	
 	CefSettings settings;
 	settings.windowless_rendering_enabled = true;
 	settings.multi_threaded_message_loop = false;
 	settings.remote_debugging_port = 9222;
-
+	
 	if (!CefInitialize(args, settings, nullptr, NULL)) {
 		OE_LOG_FATAL_SHOWBOX_AND_EXIT("Failed to initialize CEF")
 	}
