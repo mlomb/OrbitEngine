@@ -8,7 +8,7 @@
 int main(int argc, char* argv[]) {
 	CefEnableHighDPISupport();
 
-#if _WIN32
+#if OE_WINDOWS
 	CefMainArgs args(GetModuleHandle(NULL));
 #else
 	CefMainArgs args(argc, argv);
@@ -21,7 +21,9 @@ int main(int argc, char* argv[]) {
 	CefSettings settings;
 	settings.windowless_rendering_enabled = true;
 	settings.multi_threaded_message_loop = false;
+#if OE_DEBUG
 	settings.remote_debugging_port = 9222;
+#endif
 	
 	if (!CefInitialize(args, settings, nullptr, NULL)) {
 		OE_LOG_FATAL_SHOWBOX_AND_EXIT("Failed to initialize CEF")
@@ -41,6 +43,10 @@ int main(int argc, char* argv[]) {
 		w->create();
 
 	while (windows.size() > 0) {
+		CefDoMessageLoopWork();
+
+		ticker.tick();
+
 		for (auto it = windows.begin(); it != windows.end();) {
 			EditorWindow* w = *it;
 			if (w->active()) {
@@ -53,9 +59,8 @@ int main(int argc, char* argv[]) {
 			}
 		}
 
-		CefDoMessageLoopWork();
-
-		ticker.tick();
+		for (EditorWindow* w : windows)
+			w->present();
 	}
 
 	CefShutdown();

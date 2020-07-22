@@ -168,6 +168,8 @@ namespace OrbitEngine { namespace Graphics {
 		case RGB32F:
 		case RGB16F:
 			return GL_RGB;
+		case BGRA:
+			return GL_BGRA_EXT;
 		case SRC_ALPHA:
 			return GL_ALPHA;
 		case LUMINANCE_ALPHA:
@@ -203,6 +205,7 @@ namespace OrbitEngine { namespace Graphics {
 			return GL_RGB16F;
 		case RGBA:
 		case RGBA8:
+		case BGRA:
 			return GL_RGBA;
 		case RGBA32F:
 			return GL_RGBA32F;

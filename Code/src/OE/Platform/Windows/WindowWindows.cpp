@@ -220,6 +220,11 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 		return true;
 	}
 
+	void WindowWindows::setResizingCallback(std::function<void(void)> cb)
+	{
+		m_ResizingCallback = cb;
+	}
+
 	void WindowWindows::processEvents()
 	{
 		WindowImpl::processEvents();
@@ -450,6 +455,12 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 		case WM_SIZE:
 		{
 			p_Size = Math::Vec2i(LOWORD(lParam), HIWORD(lParam));
+			return FALSE;
+		}
+		case WM_SIZING:
+		{
+			if(m_ResizingCallback)
+				m_ResizingCallback();
 			return FALSE;
 		}
 		case WM_SETFOCUS:

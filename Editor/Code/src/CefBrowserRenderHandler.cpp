@@ -18,7 +18,6 @@ namespace OrbitEngine { namespace Editor {
 	
 	void CefBrowserRenderHandler::GetViewRect(CefRefPtr<CefBrowser> browser, CefRect& rect)
 	{
-		printf("%i > ASKED FOR SIZE\n", GetCurrentThreadId());
 		auto size = m_Window->getSize();
 		rect = CefRect(0, 0, size.x, size.y);
 	}

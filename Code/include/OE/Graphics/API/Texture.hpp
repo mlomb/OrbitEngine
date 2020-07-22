@@ -16,6 +16,7 @@ namespace OrbitEngine { namespace Graphics {
 		RGBA,
 		RGBA8,
 		RGBA32F,
+		BGRA,
 		SRC_ALPHA,
 		LUMINANCE_ALPHA,
 		DEPTH,

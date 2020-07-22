@@ -28,6 +28,7 @@ namespace OrbitEngine { namespace Editor {
 		void create();
 		void work();
 		bool active() const;
+		void present();
 
 		Vec2i getSize() const;
 		void blitBrowser(const void* data, int width, int height);

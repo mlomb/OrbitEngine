@@ -1,6 +1,8 @@
 #ifndef APPLICATION_WINDOW_WINDOWS_HPP
 #define APPLICATION_WINDOW_WINDOWS_HPP
 
+#include <functional>
+
 #include "OE\Application\WindowImpl.hpp"
 #include "OE\Platform\Windows\WindowClass.hpp"
 
@@ -29,6 +31,8 @@ namespace OrbitEngine {
 		bool requestFocus() override;
 		bool setAlpha(float alpha) override;
 
+		void setResizingCallback(std::function<void(void)> cb);
+
 		void processEvents() override;
 
 		DisplayNativeHandle getDisplayNativeHandle() override;
@@ -49,6 +53,8 @@ namespace OrbitEngine {
 
 		Math::Vec2i m_LastFreeCursorPosition;
 		Cursor m_CursorTarget;
+
+		std::function<void(void)> m_ResizingCallback;
 
 		LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	};
