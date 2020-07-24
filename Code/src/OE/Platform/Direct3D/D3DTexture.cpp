@@ -195,6 +195,8 @@ namespace OrbitEngine { namespace Graphics {
 			return DXGI_FORMAT_R16G16B16A16_FLOAT;
 		case RGBA32F:
 			return DXGI_FORMAT_R32G32B32A32_FLOAT;
+		case BGRA:
+			return DXGI_FORMAT_B8G8R8A8_UNORM;
 		case DEPTH:
 			return DXGI_FORMAT_R24G8_TYPELESS;
 		case DEPTH_STENCIL:

@@ -151,6 +151,7 @@ namespace OrbitEngine { namespace Graphics {
 		case RGB:
 		case RGB8:
 			return 24;
+		case BGRA:
 		case RGBA:
 		case RGBA8:
 			return 32;
