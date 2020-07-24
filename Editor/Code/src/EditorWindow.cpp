@@ -47,6 +47,7 @@ namespace OrbitEngine { namespace Editor {
 		windowInfo.SetAsWindowless(nullptr);
 #if OE_WINDOWS && OE_D3D
 		// TODO: implement, seems to be broken in CEF 84
+		// https://bitbucket.org/chromiumembedded/cef/issues/2575
 
 		// only supported on Windows with D3D11
 		// windowInfo.shared_texture_enabled = 1;
