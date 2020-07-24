@@ -4,7 +4,7 @@
 #include <thread>
 
 #include "Cef.hpp"
-#include "CefBrowserClient.hpp"
+#include "CefView.hpp"
 
 #include <OE/Application/Window.hpp>
 #include <OE/Application/Context.hpp>
@@ -30,18 +30,14 @@ namespace OrbitEngine { namespace Editor {
 		bool active() const;
 		void present();
 
-		Vec2i getSize() const;
-		void blitBrowser(const void* data, int width, int height);
-
 	private:
-		CefRefPtr<CefBrowserClient> m_Client;
-		CefRefPtr<CefBrowser> m_Browser;
+		CefRefPtr<CefView> m_CefView;
 
 		Vec2i m_LastSize;
 		Window* m_Window;
 		Context* m_Context;
-		Texture* m_BlitBrowserTexture;
 
+		Texture* m_BlitBrowserTexture;
 		SpriteBatcher* m_SpriteBatcher;
 
 		void init();

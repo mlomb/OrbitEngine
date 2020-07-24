@@ -1,5 +1,7 @@
 #include "EditorWindow.hpp"
 
+#include <iostream>
+
 #include <OE/Misc/Log.hpp>
 #include <OE/Graphics/API/FrameBuffer.hpp>
 
@@ -9,13 +11,17 @@
 
 namespace OrbitEngine { namespace Editor {
 	EditorWindow::EditorWindow()
-		: m_Window(nullptr), m_Context(nullptr), m_BlitBrowserTexture(nullptr), m_LastSize(0, 0)
+		: m_Window(nullptr),
+		m_Context(nullptr),
+		m_BlitBrowserTexture(nullptr),
+		m_SpriteBatcher(nullptr),
+		m_LastSize(0, 0)
 	{
 	}
 
 	EditorWindow::~EditorWindow()
 	{
-		OE_ASSERT_MSG(!active(), "The editor window is not ready to be destroyed.");
+		destroy();
 	}
 
 	void EditorWindow::create() {
@@ -37,18 +43,25 @@ namespace OrbitEngine { namespace Editor {
 		m_Context = new Context(RenderAPI::OPENGL, m_Window);
 		FrameBuffer::GetCurrent()->setClearColor(Vec4f(0.08f, 0.08f, 0.08f, 1.0f));
 
-		CefWindowInfo windowInfo;
-		CefBrowserSettings settings;
-		windowInfo.SetAsWindowless(m_Window->getWindowNativeHandle());
+		CefWindowInfo windowInfo = {};
+		windowInfo.SetAsWindowless(nullptr);
+#if OE_WINDOWS && OE_D3D
+		// TODO: implement, seems to be broken in CEF 84
+
+		// only supported on Windows with D3D11
+		// windowInfo.shared_texture_enabled = 1;
+		// windowInfo.windowless_rendering_enabled = 1;
+#endif
+
+		CefBrowserSettings settings = {};
 		settings.windowless_frame_rate = 60;
 
-		m_Client = new CefBrowserClient(this);
-		m_Browser = CefBrowserHost::CreateBrowserSync(windowInfo, m_Client, "", settings, nullptr, nullptr);
+		m_CefView = CefRefPtr<CefView>(new CefView());
+
+		CefBrowserHost::CreateBrowser(windowInfo, m_CefView, "http://127.0.0.1:8080", settings, nullptr, nullptr);
 
 		init();
 
-		// ready
-		m_Browser->GetMainFrame()->LoadURL("https://www.testufo.com");
 		m_Window->setVisibility(true);
 	}
 
@@ -58,26 +71,22 @@ namespace OrbitEngine { namespace Editor {
 			return;
 
 		if (m_Window->destroyRequested()) {
-			// request close
-			if (m_Browser->GetHost()->TryCloseBrowser()) {
-				destroy();
-			}
-			else {
-				// waiting to close...
-			}
+			destroy();
 		}
 		else {
 			m_Window->processEvents();
 
-			m_Context->resizeContext(m_Window->getSize());
+			Vec2i window_size = m_Window->getSize();
+			if (window_size != m_LastSize) {
+				m_LastSize = window_size;
+				m_Context->resizeContext(m_Window->getSize());
+				m_CefView->resize(window_size.x, window_size.y);
+			}
+
 			m_Context->makeCurrent();
 			m_Context->prepare();
 
-			Vec2i window_size = m_Window->getSize();
-			if (window_size != m_LastSize) {
-				m_Browser->GetHost()->WasResized();
-				m_LastSize = window_size;
-			}
+			m_CefView->getViewBuffer().upload(m_BlitBrowserTexture);
 
 			render();
 		}
@@ -85,7 +94,7 @@ namespace OrbitEngine { namespace Editor {
 
 	bool EditorWindow::active() const
 	{
-		return m_Window || m_Browser;
+		return m_Window || m_CefView;
 	}
 
 	void EditorWindow::present()
@@ -94,47 +103,12 @@ namespace OrbitEngine { namespace Editor {
 			m_Context->present();
 	}
 
-	Vec2i EditorWindow::getSize() const
-	{
-		return m_Window ? m_Window->getSize() : Vec2i(100, 100);
-	}
-
-	void EditorWindow::blitBrowser(const void* data, int width, int height)
-	{
-		// printf("%i > frame %p %p\n", GetCurrentThreadId(), this, data);
-
-		if (!m_Context || !active())
-			return;
-
-		m_Context->makeCurrent();
-
-		// recreate blit texture
-		if (m_BlitBrowserTexture) {
-			if (m_BlitBrowserTexture->getProperties().width != width ||
-				m_BlitBrowserTexture->getProperties().height != height) {
-				delete m_BlitBrowserTexture;
-				m_BlitBrowserTexture = nullptr;
-			}
-		}
-
-		// recreate
-		if (!m_BlitBrowserTexture) {
-			TextureProperties props;
-			props.sampleProperties.filter = NEAREST;
-			props.formatProperties.format = BGRA;
-			props.width = width;
-			props.height = height;
-			props.textureBufferMode = DYNAMIC;
-			m_BlitBrowserTexture = Texture::Create(props, nullptr);
-		}
-
-		m_BlitBrowserTexture->setData(const_cast<void*>(data)); // should be const void*
-	}
-
 	void EditorWindow::destroy()
 	{
-		m_Client = nullptr;
-		m_Browser = nullptr;
+		if (m_CefView) {
+			m_CefView->close();
+			m_CefView = nullptr;
+		}
 		deinit();
 		delete m_Context;
 		delete m_Window;
@@ -169,6 +143,10 @@ namespace OrbitEngine { namespace Editor {
 		m_SpriteBatcher->bindColor(Color4f(1.0, 1.0, 1.0, 1.0));
 		m_SpriteBatcher->bindTexture(m_BlitBrowserTexture);
 		m_SpriteBatcher->rect(Vec2f(0, size.y), Vec2f(size.x, -size.y));
+
+		m_SpriteBatcher->bindColor(Color4f(1.0, 0.0, 1.0, 1.0));
+		m_SpriteBatcher->bindTexture(NULL);
+		m_SpriteBatcher->rect(Vec2f(200, 200), Vec2f(100, 100));
 
 		m_SpriteBatcher->end();
 	}

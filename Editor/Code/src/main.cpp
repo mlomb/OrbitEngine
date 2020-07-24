@@ -20,7 +20,7 @@ int main(int argc, char* argv[]) {
 	
 	CefSettings settings;
 	settings.windowless_rendering_enabled = true;
-	settings.multi_threaded_message_loop = false;
+	settings.multi_threaded_message_loop = true;
 #if OE_DEBUG
 	settings.remote_debugging_port = 9222;
 #endif
@@ -28,7 +28,7 @@ int main(int argc, char* argv[]) {
 	if (!CefInitialize(args, settings, nullptr, NULL)) {
 		OE_LOG_FATAL_SHOWBOX_AND_EXIT("Failed to initialize CEF")
 	}
-
+	
 	using namespace OrbitEngine;
 	using namespace OrbitEngine::Editor;
 	using namespace OrbitEngine::Application;
@@ -43,8 +43,6 @@ int main(int argc, char* argv[]) {
 		w->create();
 
 	while (windows.size() > 0) {
-		CefDoMessageLoopWork();
-
 		ticker.tick();
 
 		for (auto it = windows.begin(); it != windows.end();) {
