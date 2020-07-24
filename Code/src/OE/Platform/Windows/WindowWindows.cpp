@@ -472,6 +472,17 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 			p_Focused = focus;
 			return FALSE;
 		}
+		case WM_ERASEBKGND:
+		{
+			return TRUE;
+		}
+		case WM_PAINT:
+		{
+			PAINTSTRUCT ps;
+			BeginPaint(hWnd, &ps);
+			EndPaint(hWnd, &ps);
+			return FALSE;
+		}
 		}
 
 		return DefWindowProc(hWnd, uMsg, wParam, lParam);
