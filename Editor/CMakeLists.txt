@@ -1,6 +1,6 @@
 
 set(CEF_USE_SANDBOX OFF CACHE BOOL "Force turning off of sandbox")
-set(CEF_VERSION 84.2.1+g3f2c372+chromium-84.0.4147.89) # latest as of 19/07/2020
+set(CEF_VERSION 84.3.3+gffc2f0e+chromium-84.0.4147.89) # latest as of 24/07/2020
 set(CEF_CMAKE_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR})
 
 include(../Dependencies/cef-cmake/cmake/cef_cmake.cmake)

@@ -1,5 +1,6 @@
 #include <stdio.h>
 
+#include "Cef.hpp"
 #include "EditorWindow.hpp"
 
 #include <OE/Misc/Log.hpp>
@@ -18,6 +19,8 @@ int main(int argc, char* argv[]) {
 	if (exit_code >= 0)
 		return exit_code;
 	
+	OE_LOG_DEBUG("CEF " << CEF_VERSION);
+
 	CefSettings settings;
 	settings.windowless_rendering_enabled = true;
 	settings.multi_threaded_message_loop = true;
@@ -25,6 +28,16 @@ int main(int argc, char* argv[]) {
 	settings.remote_debugging_port = 9222;
 #endif
 	
+	/*class App : public CefApp {
+	public:
+		void OnBeforeCommandLineProcessing(const CefString& process_type, CefRefPtr<CefCommandLine> command_line) override {
+			command_line->AppendSwitchWithValue("use-angle", "d3d11");
+		}
+
+	private:
+		IMPLEMENT_REFCOUNTING(App);
+	};*/
+
 	if (!CefInitialize(args, settings, nullptr, NULL)) {
 		OE_LOG_FATAL_SHOWBOX_AND_EXIT("Failed to initialize CEF")
 	}
