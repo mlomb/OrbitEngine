@@ -1,14 +1,10 @@
 {
-	"productName": "OrbitEngine Editor",
-	"name": "orbitengine-editor",
+	"productName": "OrbitEngine Editor UI",
+	"name": "orbitengine-editor-ui",
 	"version": "0.0.1",
 	"scripts": {
 		"dev": "cross-env NODE_ENV=development TARGET=web webpack-dev-server",
-		"pack": "cross-env NODE_ENV=production TARGET=web webpack",
-		"electron:dev": "concurrently --kill-others --names \"webpack, electron\" \"cross-env NODE_ENV=development TARGET=electron webpack-dev-server\" \"electron ./src/electron/main.js\"",
-		"electron:pack": "cross-env NODE_ENV=production TARGET=electron webpack && electron-packager ./dist --overwrite --asar.unpack=*.{node,exe,dll} --icon=./assets/icons/logo.ico",
-		"native:cmake": "cd native/build && cmake ..",
-		"native:build:win": "cd native/build && msbuild EditorService.sln"
+		"pack": "cross-env NODE_ENV=production TARGET=web webpack"
 	},
 	"author": "mlomb",
 	"license": "MIT",
@@ -29,10 +25,6 @@
 		"cross-env": "^6.0.3",
 		"css-loader": "^2.1.1",
 		"cssnano": "^4.1.10",
-		"devtron": "^1.4.0",
-		"electron": "^8.0.1",
-		"electron-devtools-installer": "^2.2.4",
-		"electron-packager": "^14.2.0",
 		"file-loader": "^5.0.2",
 		"git-rev-sync": "^2.0.0",
 		"html-webpack-plugin": "^3.2.0",

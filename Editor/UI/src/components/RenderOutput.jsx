@@ -1,8 +1,6 @@
 import React from 'react';
 import * as twgl from 'twgl.js';
 
-import EngineService from '@service/EngineService';
-
 import '@styles/RenderOutput.less';
 
 const vs = `
@@ -70,7 +68,7 @@ export default class RenderOutput extends React.Component {
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
 
         // subscribe to frame updates
-        EngineService.on('frame', this.onFrame_func);
+        // EngineService.on('frame', this.onFrame_func);
 
         this.resizeObserver = new ResizeObserver(this.resized.bind(this));
         this.resizeObserver.observe(canvas.parentElement);

@@ -7,7 +7,7 @@ import 'rc-dock/style/index.less';
 import '@styles/dock.less';
 import '@styles/Editor.less';
 
-import { isDevMode, isElectron } from './ApplicationContext';
+import { isDevMode } from './ApplicationContext';
 
 import Menu from '@components/Menu.jsx';
 import StatusBar from '@components/StatusBar.jsx';
@@ -17,7 +17,6 @@ import Button from '@components/ui/Button.jsx';
 import HeaderSearchBar from '@components/HeaderSearchBar.jsx';
 import HierarchyTree from '@components/HierarchyTree.jsx';
 import List from '@components/List.jsx';
-import EngineService from '@service/EngineService';
 
 var total_generated = 0;
 
@@ -152,12 +151,12 @@ let groups = {
 export default class Editor extends React.Component {
 
     componentDidMount() {
-        EngineService.boot();
+      
     }
 
     render() {
         return (
-            <div className={`page-container ${isElectron ? 'electron' : 'web'} ${isDevMode ? 'dev' : 'prod'}`}>
+            <div className={`page-container ${isDevMode ? 'dev' : 'prod'}`}>
                 <Menu/>
                 <div className="main">
                     <DndProvider backend={Backend}>

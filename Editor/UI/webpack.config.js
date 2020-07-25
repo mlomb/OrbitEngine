@@ -9,7 +9,6 @@ const CopyPlugin = require('copy-webpack-plugin');
 
 const dist = path.resolve(process.cwd(), 'dist');
 const devMode = process.env.NODE_ENV !== 'production';
-const target = process.env.TARGET;
 
 console.log("devMode:", devMode);
 
@@ -21,16 +20,15 @@ const postcssPlugins = [
 ]);
 
 module.exports = (config) => ({
-    target: target === 'web' ? 'web' : 'electron-renderer',
-    node: target === 'web' ? {
+    target: 'web',
+    node: {
         fs: 'empty',
         net: 'empty',
         tls: 'empty',
         __dirname: true,
         child_process: 'empty',
-        electron: 'empty',
         Buffer: false
-    } : undefined,
+    },
     mode: devMode ? 'development' : 'production',
     devtool: devMode ? 'inline-source-map' : false,
     entry: {
@@ -38,7 +36,7 @@ module.exports = (config) => ({
     },
     output: {
         path: dist,
-        publicPath: target === 'web' ? '/' : '',
+        publicPath: '/',
         filename: "static/[name]." + (devMode ? '[hash:5].js' : '[hash:16].js'),
     },
     resolve: {
@@ -134,16 +132,14 @@ module.exports = (config) => ({
                 useShortDoctype: true
             }
         }),
-        new CopyPlugin([{ from: 'public', to: dist }].concat(target === 'web' ? [] : [
-            /* For Electron */
-            { from: 'src/electron', to: dist },
-            { from: 'package.json', to: dist }
-        ])),
+        new CopyPlugin([{
+			from: 'public',
+			to: dist
+		}]),
         new webpack.DefinePlugin({
             "__ENV__.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
             "__ENV__.BUILD_HASH": JSON.stringify(git.short() + (git.isDirty() ? '-dirty' : '')),
-            "__ENV__.BUILD_TIME": JSON.stringify(new Date()),
-            "__ENV__.TARGET": JSON.stringify(target)
+            "__ENV__.BUILD_TIME": JSON.stringify(new Date())
         })
     ],
     devServer: {
