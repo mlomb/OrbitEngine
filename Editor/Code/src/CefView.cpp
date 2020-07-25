@@ -45,17 +45,24 @@ namespace OrbitEngine { namespace Editor {
 
 	void CefView::OnPaint(CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList& dirtyRects, const void* buffer, int width, int height)
 	{
-		/*
-		std::cout << "THREAD " << std::this_thread::get_id() << " -- ";
-		std::cout << "FRAME " << width << "x" << height << " T: " << type << " R: ";
-		for (CefRect r : dirtyRects) {
-			std::cout << "(" << r.x << "," << r.y << "  " << r.width << "," << r.height << ") ";
-		}
-		std::cout << std::endl;
-		if (dirtyRects[0].width != width || dirtyRects[0].height != height) {
-			std::cout << " ======================================= " << std::endl;
-		}
-		*/
+		// TODO: FIXME
+		//		 HACK: Cef seems to send frames with the correct size but incorrect "zoom"
+		//             after fast resizing. Seems to be a problem of Cef 72+
+		//             The hack reads 4 pixels and check if those are transparent,
+		//             if any of them are, discard the frame.
+		//
+		//       Hopefully this will be gone when they fix OnAcceleratedPaint,
+		//       which is broken in Cef 84
+		#define TEST_PX(x, y) \
+		if (((uint32_t*)buffer)[std::max(0, y-1) * width + std::max(0, x-1)] == 0) \
+			return; \
+
+		TEST_PX(width / 2, 0);
+		TEST_PX(width / 2, height);
+		TEST_PX(0,     height / 2);
+		TEST_PX(width, height / 2);
+
+		#undef TEST_PX
 
 		switch (type) {
 		case PaintElementType::PET_VIEW:
