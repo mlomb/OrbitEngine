@@ -339,6 +339,8 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 	{
 		InputManager* input_manager = InputManager::Get();
 
+		const UINT_PTR SIZING_REPAINT_EVENTID = 1;
+
 		switch (uMsg)
 		{
 		case WM_CLOSE:
@@ -457,10 +459,25 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 			p_Size = Math::Vec2i(LOWORD(lParam), HIWORD(lParam));
 			return FALSE;
 		}
-		case WM_SIZING:
+		case WM_ENTERSIZEMOVE:
 		{
-			if(m_ResizingCallback)
-				m_ResizingCallback();
+			SetTimer(hWnd, SIZING_REPAINT_EVENTID, 1000 / 30, NULL);
+			return FALSE;
+
+		}
+		case WM_EXITSIZEMOVE:
+		{
+			KillTimer(hWnd, SIZING_REPAINT_EVENTID);
+			return false;
+		}
+		case WM_TIMER:
+		{
+			switch (wParam) {
+			case SIZING_REPAINT_EVENTID:
+				if (m_ResizingCallback)
+					m_ResizingCallback();
+				break;
+			}
 			return FALSE;
 		}
 		case WM_SETFOCUS:
