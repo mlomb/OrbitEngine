@@ -29,6 +29,9 @@ namespace OrbitEngine { namespace Application { namespace priv {
 		makeCurrent();
 		OpenGLEXTENSIONS_Load();
 
+		// load WGL extensions
+		wglSwapIntervalEXT = (PFNWGLSWAPINTERVALEXTPROC)wglGetProcAddress("wglSwapIntervalEXT");
+
 		contextInitialized();
 	}
 
@@ -91,5 +94,11 @@ namespace OrbitEngine { namespace Application { namespace priv {
 		}
 
 		OE_LOG_FATAL("Couldn't swap the buffers.")
+	}
+
+	void WGLContext::setSwapInterval(int sync)
+	{
+		if (wglSwapIntervalEXT)
+			wglSwapIntervalEXT(sync);
 	}
 } } }

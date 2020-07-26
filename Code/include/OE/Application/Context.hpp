@@ -56,6 +56,7 @@ namespace OrbitEngine {
 			void makeCurrent();
 
 			void resizeContext(Math::Vec2i size);
+			void setSwapInterval(int sync);
 
 			Window* getWindow();
 			Math::Vec2i getSize();

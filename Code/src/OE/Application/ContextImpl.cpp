@@ -56,6 +56,11 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 		p_Size = size;
 	}
 
+	void ContextImpl::setSwapInterval(int sync)
+	{
+		//
+	}
+
 	WindowImpl* ContextImpl::getWindowImpl()
 	{
 		return p_Window;

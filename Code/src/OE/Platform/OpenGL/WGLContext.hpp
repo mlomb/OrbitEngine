@@ -5,6 +5,8 @@
 #include "OE/Platform/OpenGL/OpenGL.hpp"
 #include "OE/Application/WindowImpl.hpp"
 
+typedef BOOL(WINAPI* PFNWGLSWAPINTERVALEXTPROC)(int);
+
 namespace OrbitEngine { namespace Application { namespace priv {
 	class WindowWindows;
 
@@ -16,10 +18,14 @@ namespace OrbitEngine { namespace Application { namespace priv {
 		bool setUpPixelFormat();
 		void makeCurrent(bool active = true) override;
 		void present() override;
+		void setSwapInterval(int sync) override;
 	private:
 		HGLRC m_RenderContext;
 		HDC m_DeviceContext;
 		HWND m_HWND;
+
+		// WGL extensions
+		PFNWGLSWAPINTERVALEXTPROC wglSwapIntervalEXT;
 	};
 } } }
 

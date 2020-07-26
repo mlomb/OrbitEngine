@@ -22,6 +22,7 @@ namespace OrbitEngine {
 		virtual void present() = 0;
 		virtual void makeCurrent(bool active = true);
 		virtual void resizeContext(Math::Vec2i size);
+		virtual void setSwapInterval(int sync);
 
 		virtual bool isReady() { return true; };
 		virtual const std::string getName() = 0;

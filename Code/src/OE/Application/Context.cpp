@@ -123,6 +123,11 @@ namespace OrbitEngine {	namespace Application {
 		p_Pimpl->resizeContext(size);
 	}
 
+	void Context::setSwapInterval(int sync)
+	{
+		p_Pimpl->setSwapInterval(sync);
+	}
+
 	bool Context::isReady()
 	{
 		return p_Pimpl->isReady();
