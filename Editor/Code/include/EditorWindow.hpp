@@ -20,24 +20,24 @@ namespace OrbitEngine { namespace Editor {
 	/**
 		@brief The base editor window with a CEF browser and a rendering context
 	*/
-	class EditorWindow {
+	class EditorWindow : public CefView {
 	public:
 		EditorWindow();
 		~EditorWindow();
 
-		void create();
-		void work();
+		void create(Context* main_context, const std::string& initial_url);
+
 		bool active() const;
+		void work();
 		void present();
 
-	private:
-		CefRefPtr<CefView> m_CefView;
+		void onMessage(const std::string& data) override;
 
+	private:
 		Vec2i m_LastSize;
 		Window* m_Window;
 		Context* m_Context;
 
-		Texture* m_BlitBrowserTexture;
 		SpriteBatcher* m_SpriteBatcher;
 
 		void init();

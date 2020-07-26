@@ -10,7 +10,7 @@ namespace OrbitEngine { namespace Editor {
 	CefView::CefView()
 		: m_View(0, 0, 0, 0)
 	{
-		resize(1, 1);
+		resizeView(1, 1);
 	}
 
 	CefView::~CefView()
@@ -18,19 +18,24 @@ namespace OrbitEngine { namespace Editor {
 		OE_ASSERT_MSG(!m_Browser, "The CefView must be closed before being destroyed");
 	}
 
-	void CefView::close()
+	bool CefView::isViewOpen() const
 	{
-		m_Browser->GetHost()->CloseBrowser(true);
-		m_Browser = nullptr;
+		return m_Browser;
 	}
 
-	void CefView::resize(int w, int h)
+	void CefView::resizeView(int w, int h)
 	{
 		w = std::max(1, w);
 		h = std::max(1, h);
 		m_View = CefRect(0, 0, w, h);
 		if (m_Browser)
 			m_Browser->GetHost()->WasResized();
+	}
+
+	void CefView::closeView()
+	{
+		m_Browser->GetHost()->CloseBrowser(true);
+		m_Browser = nullptr;
 	}
 
 	void CefView::OnAfterCreated(CefRefPtr<CefBrowser> browser)
@@ -46,11 +51,10 @@ namespace OrbitEngine { namespace Editor {
 	void CefView::OnPaint(CefRefPtr<CefBrowser> browser, PaintElementType type, const RectList& dirtyRects, const void* buffer, int width, int height)
 	{
 		// TODO: FIXME
-		//		 HACK: Cef seems to send frames with the correct size but incorrect "zoom"
+		//       HACK: Cef seems to send frames with the correct size but incorrect "zoom"
 		//             after fast resizing. Seems to be a problem of Cef 72+
 		//             The hack reads 4 pixels and check if those are transparent,
 		//             if any of them are, discard the frame.
-		//
 		//       Hopefully this will be gone when they fix OnAcceleratedPaint,
 		//       which is broken in Cef 84
 		#define TEST_PX(x, y) \
@@ -74,6 +78,24 @@ namespace OrbitEngine { namespace Editor {
 		}
 	}
 
+	void CefView::sendMessage(const std::string& data)
+	{
+		if (!m_Browser)
+			return;
+		CefRefPtr<CefProcessMessage> msg = CefProcessMessage::Create("relay");
+		msg->GetArgumentList()->SetString(0, data);
+		m_Browser->GetMainFrame()->SendProcessMessage(PID_RENDERER, msg);
+	}
+
+	bool CefView::OnProcessMessageReceived(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefProcessId source_process, CefRefPtr<CefProcessMessage> message)
+	{
+		if (message->GetName() == "relay") {
+			onMessage(message->GetArgumentList()->GetString(0));
+			return true;
+		}
+		return false;
+	}
+
 	CefElementBuffer& CefView::getViewBuffer()
 	{
 		return m_ViewBuffer;
@@ -86,17 +108,17 @@ namespace OrbitEngine { namespace Editor {
 
 	CefRefPtr<CefRenderHandler> CefView::GetRenderHandler()
 	{
-		return  this;
+		return this;
 	}
 
 	CefRefPtr<CefLifeSpanHandler> CefView::GetLifeSpanHandler()
 	{
-		return  this;
+		return this;
 	}
 
 	CefRefPtr<CefLoadHandler> CefView::GetLoadHandler()
 	{
-		return  this;
+		return this;
 	}
 
 } }

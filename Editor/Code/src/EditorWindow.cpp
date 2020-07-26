@@ -13,7 +13,6 @@ namespace OrbitEngine { namespace Editor {
 	EditorWindow::EditorWindow()
 		: m_Window(nullptr),
 		m_Context(nullptr),
-		m_BlitBrowserTexture(nullptr),
 		m_SpriteBatcher(nullptr),
 		m_LastSize(0, 0)
 	{
@@ -24,92 +23,89 @@ namespace OrbitEngine { namespace Editor {
 		destroy();
 	}
 
-	void EditorWindow::create() {
+	void EditorWindow::create(Context* main_context, const std::string& initial_url) {
 		m_Window = new Window();
 		m_Window->setTitle("OrbitEngine Editor");
+		m_Window->setVisibility(true);
 
-#if OE_WINDOWS
+		#if OE_WINDOWS
 		priv::WindowWindows* winWindow = static_cast<priv::WindowWindows*>(m_Window->getPimpl());
 
-		// HACK:
-		// WndProc blocks execution while resizing, so we have to rely
-		// on the WM_SIZING message to draw
+		// HACK: WndProc blocks execution while resizing, so we have to rely
+		//       on the WM_SIZING message to draw
 		winWindow->setResizingCallback([&]() {
 			work();
 			present();
 		});
-#endif
+		#endif
 
-		m_Context = new Context(RenderAPI::OPENGL, m_Window);
-		FrameBuffer::GetCurrent()->setClearColor(Vec4f(0.08f, 0.08f, 0.08f, 1.0f));
+		main_context->makeCurrent();
+		m_Context = new Context(RenderAPI::OPENGL, m_Window, main_context);
+		m_Context->setSwapInterval(1); // disable sync
+
+		init();
 
 		CefWindowInfo windowInfo = {};
-		windowInfo.SetAsWindowless(nullptr);
+		windowInfo.SetAsWindowless(m_Window->getWindowNativeHandle());
 #if OE_WINDOWS && OE_D3D
 		// TODO: implement, seems to be broken in CEF 84
 		// https://bitbucket.org/chromiumembedded/cef/issues/2575
+		// https://bitbucket.org/chromiumembedded/cef/pull-requests/285/reimplement-shared-texture-support-for-viz
 
 		// only supported on Windows with D3D11
 		// windowInfo.shared_texture_enabled = 1;
-		// windowInfo.windowless_rendering_enabled = 1;
 #endif
 
 		CefBrowserSettings settings = {};
 		settings.windowless_frame_rate = 60;
 
-		m_CefView = CefRefPtr<CefView>(new CefView());
-
-		CefBrowserHost::CreateBrowser(windowInfo, m_CefView, "http://127.0.0.1:8080", settings, nullptr, nullptr);
-
-		init();
-
-		m_Window->setVisibility(true);
+		CefBrowserHost::CreateBrowser(windowInfo, this, initial_url, settings, nullptr, nullptr);
 	}
 
 	void EditorWindow::work()
 	{
-		if (!active())
+		if (!m_Context)
 			return;
 
 		if (m_Window->destroyRequested()) {
 			destroy();
 		}
 		else {
+			m_Context->makeCurrent();
 			m_Window->processEvents();
 
 			Vec2i window_size = m_Window->getSize();
 			if (window_size != m_LastSize) {
 				m_LastSize = window_size;
 				m_Context->resizeContext(m_Window->getSize());
-				m_CefView->resize(window_size.x, window_size.y);
+				CefView::resizeView(window_size.x, window_size.y);
 			}
 
-			m_Context->makeCurrent();
 			m_Context->prepare();
-
-			m_CefView->getViewBuffer().upload(m_BlitBrowserTexture);
 
 			render();
 		}
 	}
 
-	bool EditorWindow::active() const
-	{
-		return m_Window || m_CefView;
-	}
-
 	void EditorWindow::present()
 	{
-		if(m_Context)
+		if (m_Context)
 			m_Context->present();
+	}
+
+	bool EditorWindow::active() const
+	{
+		return m_Window || isViewOpen();
+	}
+
+	void EditorWindow::onMessage(const std::string& data)
+	{
+		OE_LOG_DEBUG("Received: " << data);
+		sendMessage(data);
 	}
 
 	void EditorWindow::destroy()
 	{
-		if (m_CefView) {
-			m_CefView->close();
-			m_CefView = nullptr;
-		}
 		deinit();
 		delete m_Context;
 		delete m_Window;
@@ -133,7 +129,8 @@ namespace OrbitEngine { namespace Editor {
 		
 		m_SpriteBatcher->begin();
 
-		auto size = m_BlitBrowserTexture ? Vec2f(m_BlitBrowserTexture->getProperties().width, m_BlitBrowserTexture->getProperties().height) : Vec2f(100, 100);
+		Texture* blit_tex = getViewBuffer().getTexture();
+		auto size = blit_tex ? Vec2f(blit_tex->getProperties().width, blit_tex->getProperties().height) : Vec2f(100, 100);
 
 		/*
 		m_SpriteBatcher->bindColor(Color4f(1.0, 0.0, 1.0, 0.5));
@@ -142,7 +139,7 @@ namespace OrbitEngine { namespace Editor {
 		*/
 
 		m_SpriteBatcher->bindColor(Color4f(1.0, 1.0, 1.0, 1.0));
-		m_SpriteBatcher->bindTexture(m_BlitBrowserTexture);
+		m_SpriteBatcher->bindTexture(blit_tex);
 		m_SpriteBatcher->rect(Vec2f(0, size.y), Vec2f(size.x, -size.y));
 
 		m_SpriteBatcher->bindColor(Color4f(1.0, 0.0, 1.0, 1.0));
@@ -154,10 +151,6 @@ namespace OrbitEngine { namespace Editor {
 
 	void EditorWindow::deinit()
 	{
-		if (m_BlitBrowserTexture) {
-			delete m_BlitBrowserTexture;
-			m_BlitBrowserTexture = nullptr;
-		}
 		delete m_SpriteBatcher;
 		m_SpriteBatcher = nullptr;
 	}

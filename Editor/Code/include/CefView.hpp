@@ -15,8 +15,13 @@ namespace OrbitEngine { namespace Editor {
 		CefView();
 		~CefView();
 
-		void close();
-		void resize(int w, int h);
+		bool isViewOpen() const;
+		void resizeView(int w, int h);
+		void closeView();
+
+		void sendMessage(const std::string& data);
+		virtual void onMessage(const std::string& data) {};
+
 		CefElementBuffer& getViewBuffer();
 		CefElementBuffer& getPopupBuffer();
 
@@ -28,6 +33,12 @@ namespace OrbitEngine { namespace Editor {
 					 const void* buffer,
 					 int width,
 					 int height) override;
+
+		/// Receives the messages sent by CefController
+		bool OnProcessMessageReceived(CefRefPtr<CefBrowser> browser,
+									  CefRefPtr<CefFrame> frame,
+									  CefProcessId source_process,
+									  CefRefPtr<CefProcessMessage> message) override;
 
 		CefRefPtr<CefRenderHandler> GetRenderHandler() override;
 		CefRefPtr<CefLifeSpanHandler> GetLifeSpanHandler() override;
