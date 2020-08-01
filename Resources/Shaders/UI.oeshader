@@ -1,0 +1,36 @@
+#shadertype VERTEX
+cbuffer PVMatrices : register(b0)
+{
+    matrix pr_matrix;
+};
+
+struct Input {
+	float2 position : POSITION;
+	float4 color : COLOR;
+};
+
+struct Output {
+	float4 position : SV_POSITION;
+	float4 color : COLOR;
+};
+
+Output main(Input input) {
+	Output output;
+
+    output.position = mul(pr_matrix, float4(input.position.x, input.position.y, 0, 1));
+	output.color = input.color;
+	
+	return output;
+}
+
+#shadertype FRAGMENT
+
+struct Input {
+	float4 position : SV_POSITION;
+	float4 color : COLOR;
+};
+
+float4 main(Input input) : SV_TARGET {
+	float4 color = input.color;
+	return color;
+}

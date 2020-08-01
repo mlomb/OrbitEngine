@@ -17,7 +17,7 @@ namespace OrbitEngine { namespace Graphics {
 	};
 
 	struct TextStyle {
-		FontSize size = 20.0f;
+		float size = 20.0f;
 		unsigned int color = 0xFFFFFFFF;
 		unsigned int borderColor = 0x0;
 		float border = 0.0f;

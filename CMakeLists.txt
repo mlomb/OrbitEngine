@@ -64,6 +64,13 @@ option(ASSIMP_BUILD_OBJ_IMPORTER "" ON)
 option(ASSIMP_BUILD_FBX_IMPORTER "" ON)
 add_subdirectory(Dependencies/Assimp)
 
+# yoga
+file(GLOB_RECURSE yogacore_SRC Dependencies/yoga/yoga/*.cpp)
+add_library(yogacore STATIC ${yogacore_SRC})
+target_include_directories(yogacore PUBLIC Dependencies/yoga)
+set_target_properties(yogacore PROPERTIES CXX_STANDARD 11)
+
+
 # Reset some flags that some libraries modify
 set(CMAKE_DEBUG_POSTFIX "" CACHE STRING "" FORCE)
 
@@ -198,6 +205,7 @@ list(APPEND OE_LIBRARIES
 	assimp
 	lib_msdfgen
 	imgui
+	yogacore
 	#${MONO_LIBRARIES}
 )
 list(APPEND OE_LIBRARIES_INC

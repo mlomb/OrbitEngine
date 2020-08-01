@@ -19,6 +19,7 @@ namespace OrbitEngine { namespace Graphics {
 		static Shader* IntegrateBRDF() { return LoadInternalShader("IntegrateBRDF"); };
 		static Shader* Skybox() { return LoadInternalShader("Skybox"); };
 		static Shader* PrefilterEnvMap() { return LoadInternalShader("PrefilterEnvMap"); };
+		static Shader* UI() { return LoadInternalShader("UI"); };
 	private:
 		static Shader* LoadInternalShader(const std::string& name);
 
