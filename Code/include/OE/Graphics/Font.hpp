@@ -58,6 +58,12 @@ namespace OrbitEngine { namespace Graphics {
 		int V_advance, V_bearingX, V_bearingY;
 	};
 
+	struct TextSettings {
+		FontSize size;
+		bool wordWrap = false;
+		float wordWrapWidth = 0.0;
+	};
+
 	/// Represents a single typeface
 	class Font {
 	public:
@@ -95,6 +101,9 @@ namespace OrbitEngine { namespace Graphics {
 
 		/// Kerning distance between left and right glyphs at a specific size in unfitted pixels
 		int getHorizontalKerning(FontSize size, GlyphCodepoint left, GlyphCodepoint right);
+
+		float computeTextWidth(const std::string& text, const TextSettings& textSettings);
+		float computeTextHeight(const std::string& text, const TextSettings& textSettings);
 
 		/// Returns whether the provided codepoint has emoji presentation according to the Unicode spec
 		static bool HasEmojiPresentation(GlyphCodepoint codepoint);

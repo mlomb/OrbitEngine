@@ -3,6 +3,7 @@
 // FreeType
 #include <ft2build.h>
 #include FT_FREETYPE_H
+#include FT_ADVANCES_H
 
 #include "OE/System/File.hpp"
 
@@ -190,6 +191,48 @@ namespace OrbitEngine { namespace Graphics {
 		FT_Vector kerning;
 		FT_Get_Kerning(m_Face, FT_Get_Char_Index(m_Face, left), FT_Get_Char_Index(m_Face, right), FT_KERNING_UNFITTED, &kerning);
 		return kerning.x >> 6;
+	}
+
+	float Font::computeTextWidth(const std::string& text, const TextSettings& textSettings)
+	{
+		setSize(textSettings.size);
+
+		FT_Error error;
+		float measuredWidth = 0;
+
+		float pen_x = 0;
+		for (char c : text) {
+			FT_UInt char_index = FT_Get_Char_Index(m_Face, c);
+
+			if ((error = FT_Load_Glyph(m_Face, char_index, 0))!= FT_Err_Ok) {
+				OE_LOG_DEBUG("Glyph not found: " << c);
+				continue; // skip char
+			}
+
+			float advance = m_Face->glyph->metrics.horiAdvance >> 6;
+			measuredWidth += advance;
+
+			if (textSettings.wordWrap && measuredWidth >= textSettings.wordWrapWidth)
+				return textSettings.wordWrapWidth;
+		}
+
+		return measuredWidth;
+	}
+
+	float Font::computeTextHeight(const std::string& text, const TextSettings& textSettings)
+	{
+
+		if (textSettings.wordWrap) {
+			setSize(textSettings.size);
+
+			// TODO
+			// OE_ASSERT_MSG(false, "Not implemented");
+			// return std::numeric_limits<float>::infinity();
+			return textSettings.size;
+		}
+		else {
+			return textSettings.size;
+		}
 	}
 
 	bool Font::HasEmojiPresentation(GlyphCodepoint c) {

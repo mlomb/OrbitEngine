@@ -11,6 +11,8 @@ namespace OrbitEngine { namespace UI {
 		Graphics::VertexLayout* layout = new Graphics::VertexLayout();
 		layout->push<Math::Vec2f>("POSITION");
 		layout->push<Math::Color4f>("COLOR");
+		layout->push<Math::Vec2f>("TEXCOORD"); // uvs
+		layout->push<float>("TEXID"); // flags
 
 		m_Mesh = Graphics::Mesh::Create(layout, true);
 		m_Mesh->setTopology(Graphics::Topology::TRIANGLES);
@@ -18,8 +20,8 @@ namespace OrbitEngine { namespace UI {
 		m_Shader = Graphics::ShaderLoader::UI();
 		m_Shader->matchLayout(m_Mesh);
 
-		m_Mesh->getVBO()->resize(300000 * sizeof(Vertex));
-		m_Mesh->getIBO()->resize(300000 * sizeof(uint16_t));
+		m_Mesh->getVBO()->resize(4 * 10000 * sizeof(Vertex));
+		m_Mesh->getIBO()->resize(6 * 10000 * sizeof(uint16_t));
 		
 		m_ConstantBuffer = Graphics::UniformsPack<ConstantBuffer>::Create();
 	}
@@ -33,10 +35,10 @@ namespace OrbitEngine { namespace UI {
 
 	void Painter::drawRectangle(const Math::Vec2f& position, const Math::Vec2f& size, const Math::Color4f& color)
 	{
-		*m_pVertex = { position, color }; m_pVertex++;
-		*m_pVertex = { position + Math::Vec2f(0, size.y), color }; m_pVertex++;
-		*m_pVertex = { position + Math::Vec2f(size.x, size.y), color }; m_pVertex++;
-		*m_pVertex = { position + Math::Vec2f(size.x, 0), color }; m_pVertex++;
+		*m_pVertex = { position, color, Math::Vec2f(0, 0), 0 }; m_pVertex++;
+		*m_pVertex = { position + Math::Vec2f(0, size.y), color, Math::Vec2f(0, 0), 0 }; m_pVertex++;
+		*m_pVertex = { position + Math::Vec2f(size.x, size.y), color, Math::Vec2f(0, 0), 0 }; m_pVertex++;
+		*m_pVertex = { position + Math::Vec2f(size.x, 0), color, Math::Vec2f(0, 0), 0 }; m_pVertex++;
 
 		*m_pIndex = m_VertexCount + 2; m_pIndex++;
 		*m_pIndex = m_VertexCount + 1; m_pIndex++;
@@ -47,6 +49,11 @@ namespace OrbitEngine { namespace UI {
 
 		m_IndexCount += 6;
 		m_VertexCount += 4;
+	}
+
+	void Painter::drawText(const std::string& text, const Math::Vec2f& position, Graphics::Font* font, const Graphics::TextSettings& textSettings)
+	{
+		// 
 	}
 
 	void Painter::setProjection(const Math::Mat4& proj)
@@ -61,6 +68,12 @@ namespace OrbitEngine { namespace UI {
 
 		m_VertexCount = 0;
 		m_IndexCount = 0;
+	}
+
+	void Painter::flush()
+	{
+		end();
+		begin();
 	}
 
 	void Painter::end()

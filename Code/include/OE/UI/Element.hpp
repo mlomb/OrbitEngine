@@ -33,7 +33,7 @@ namespace OrbitEngine { namespace UI {
 		void markAsDirty();
 		void layout(const Math::Vec2f& availableSpace);
 
-		virtual Math::Vec2f measureContent(const Math::Vec2f& minSize, const Math::Vec2f& maxSize);
+		virtual Math::Vec2f measureContent(float width, YGMeasureMode widthMode, float height, YGMeasureMode heightMode);
 		virtual void generateContent(Painter* painter);
 
 	public: // TODO: set as private

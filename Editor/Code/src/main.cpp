@@ -6,7 +6,7 @@
 
 #include <OE/UI/Composer.hpp>
 #include <OE/UI/Element.hpp>
-#include <OE/UI/Label.hpp>
+#include <OE/UI/Text.hpp>
 
 #include <OE/Platform/OpenGL/OpenGL.hpp>
 #include <OE/Graphics/2D/SpriteBatcher.hpp>
@@ -36,9 +36,9 @@ void generateRandomUI(OrbitEngine::UI::Element* parent, int depth = 0) {
 
 	switch (depth)
 	{
-	case 0: num_childs = 35; max_sz = 200; break;
-	case 1: num_childs = 20; max_sz = 70; break;
-	case 2: num_childs = 5; max_sz = 25; break;
+	case 0: num_childs = 10/*35*/; max_sz = 200; break;
+	case 1: num_childs = 3/*20*/; max_sz = 70; break;
+	case 2: num_childs = 1/*5*/; max_sz = 25; break;
 	}
 
 	for (int i = 0; i < num_childs; i++) {
@@ -70,6 +70,8 @@ int main() {
 	
 	Context* ctx = new Context(RenderAPI::OPENGL, window);
 
+	Graphics::Font* font = new Graphics::Font("Resources/Fonts/Inter-Regular.ttf");
+
 	Ticker t;
 
 	UI::Element* root = new UI::Element();
@@ -87,24 +89,25 @@ int main() {
 	YGNodeStyleSetAlignSelf(divA->m_Node, YGAlignCenter);
 	YGNodeStyleSetMargin(divA->m_Node, YGEdgeEnd, 20);
 
-	UI::Element* textA = new UI::Label();
+	UI::Text* textA = new UI::Text();
+	textA->setFont(font);
+	textA->setText("Hello World");
 	textA->setStyle({ Math::Color::Green });
-	YGNodeStyleSetHeight(textA->m_Node, 25);
+	//YGNodeStyleSetHeight(textA->m_Node, 25);
 	YGNodeStyleSetPadding(textA->m_Node, YGEdgeAll, 5);
 	YGNodeStyleSetAlignSelf(textA->m_Node, YGAlignCenter);
 	//YGNodeStyleSetFlexGrow(textA->m_Node, 1);
 
+	generateRandomUI(root);
+
 	root->addElement(divA, 0);
 	root->addElement(textA, 1);
-
-	generateRandomUI(root);
 
 	OE_LOG_DEBUG("UI ELEMENTS GENERATED: " << generated);
 
 	Graphics::SpriteBatcher* renderer = new Graphics::SpriteBatcher();
 	Graphics::TextRenderer2D* tr2d = new Graphics::TextRenderer2D();
 
-	Graphics::Font* font = new Graphics::Font("Resources/Fonts/Inter-Regular.ttf");
 	Graphics::FontCollection* collection = new Graphics::FontCollection();
 	std::vector<Graphics::GlyphCodepoint> editor_glyphs;
 	for (Graphics::GlyphCodepoint gcp : font->getAvailableGlyphs())
@@ -136,6 +139,8 @@ int main() {
 		/*renderer->begin();
 		renderer->end();*/
 		Graphics::FrameBuffer::Prepare();
+
+		textA->setSize(12 + abs(sin(time)) * 70);
 
 		ui_composer->render(root, proj, window->getSize());
 		

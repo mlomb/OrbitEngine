@@ -47,58 +47,11 @@ namespace OrbitEngine { namespace UI {
 		painter->drawRectangle(m_BoundingBox.xy, m_BoundingBox.zw, m_Style.background);
 	}
 
-	/*void Element::render(Graphics::SpriteBatcher* renderer, Math::Vec2f offset)
-	{
-
-		renderer->bindTexture(NULL);
-		renderer->bindColor(m_Style.background);
-		renderer->rect(final_position, size);
-
-		for (Element* e : m_Childrens)
-			e->render(renderer, final_position);
-	}*/
-
 	YGSize Element::YogaMeasureCallback(YGNode* yogaNode, float width, YGMeasureMode widthMode, float height, YGMeasureMode heightMode)
 	{
-		const float INF = std::numeric_limits<float>::infinity();
-
-		auto minimumSize = Math::Vec2f(0, 0);
-		auto maximumSize = Math::Vec2f(INF, INF);
-
-		width = std::isnan(width) ? INF : width;
-		height = std::isnan(height) ? INF : height;
-
-		switch (widthMode) {
-		case YGMeasureModeUndefined:
-			break;
-		case YGMeasureModeExactly:
-			minimumSize.x = width;
-			maximumSize.x = width;
-			break;
-		case YGMeasureModeAtMost:
-			maximumSize.x = width;
-			break;
-		}
-
-		switch (heightMode) {
-		case YGMeasureModeUndefined:
-			break;
-		case YGMeasureModeExactly:
-			minimumSize.y = height;
-			maximumSize.y = height;
-			break;
-		case YGMeasureModeAtMost:
-			maximumSize.y = height;
-			break;
-		}
-
 		Element* element_ptr = static_cast<Element*>(yogaNode->getContext());
-		auto size = element_ptr->measureContent(minimumSize, maximumSize);
-
-		return {
-			std::isinf(size.x) ? YGUndefined : size.x,
-			std::isinf(size.y) ? YGUndefined : size.y,
-		};
+		auto size = element_ptr->measureContent(width, widthMode, height, heightMode);
+		return { size.x, size.y };
 	}
 
 	void Element::setAsTextType()
@@ -127,24 +80,25 @@ namespace OrbitEngine { namespace UI {
 		m_BoundingBox.xy += m_LayoutRect.xy;
 		m_BoundingBox.zw = m_LayoutRect.zw;
 
-		if (YGNodeGetHasNewLayout(m_Node)) {
+		// TODO: for now, update the whole tree anyway
+		//if (YGNodeGetHasNewLayout(m_Node)) {
 			for (Element* e : m_Childrens)
 				e->layoutSubtree();
 
-			YGNodeSetHasNewLayout(m_Node, false);
-		}
+		//	YGNodeSetHasNewLayout(m_Node, false);
+		//}
 	}
 
 	void Element::markAsDirty()
 	{
-		if (YGNodeHasMeasureFunc(m_Node)) {
+		if (!YGNodeHasMeasureFunc(m_Node)) {
 			OE_ASSERT_MSG(false, "Only leaf elements with custom measure functions should mark themselves as dirty");
 			return;
 		}
 		YGNodeMarkDirty(m_Node);
 	}
 
-	Math::Vec2f Element::measureContent(const Math::Vec2f& minSize, const Math::Vec2f& maxSize)
+	Math::Vec2f Element::measureContent(float width, YGMeasureMode widthMode, float height, YGMeasureMode heightMode)
 	{
 		OE_ASSERT_MSG(false, "measureContent is not overrided");
 		return { };

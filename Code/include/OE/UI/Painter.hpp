@@ -7,12 +7,15 @@
 #include "OE/Graphics/API/Mesh.hpp"
 #include "OE/Graphics/API/Shader.hpp"
 #include "OE/Graphics/API/UniformsPack.hpp"
+#include "OE/Graphics/Font.hpp"
 
 namespace OrbitEngine { namespace UI {
 
 	struct Vertex {
 		Math::Vec2f pos;
 		Math::Color4f col;
+		Math::Vec2f uv;
+		float flags;
 	};
 
 	struct ConstantBuffer {
@@ -26,6 +29,7 @@ namespace OrbitEngine { namespace UI {
 		~Painter();
 
 		void drawRectangle(const Math::Vec2f& position, const Math::Vec2f& size, const Math::Color4f& color);
+		void drawText(const std::string& text, const Math::Vec2f& position, Graphics::Font* font, const Graphics::TextSettings& textSettings);
 
 	private:
 		Graphics::Shader* m_Shader;
@@ -43,6 +47,7 @@ namespace OrbitEngine { namespace UI {
 
 		void setProjection(const Math::Mat4& proj);
 		void begin();
+		void flush();
 		void end();
 	};
 
