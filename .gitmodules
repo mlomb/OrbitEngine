@@ -26,6 +26,3 @@
 [submodule "Dependencies/cef-cmake"]
 	path = Dependencies/cef-cmake
 	url = https://github.com/mlomb/cef-cmake.git
-[submodule "Dependencies/yoga"]
-	path = Dependencies/yoga
-	url = https://github.com/facebook/yoga.git
