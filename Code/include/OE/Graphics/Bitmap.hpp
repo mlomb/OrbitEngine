@@ -130,7 +130,7 @@ namespace OrbitEngine { namespace Graphics {
 	/**
 		@brief Convert between bitmaps
 
-		Example: convert a 8bit grayscale image into RGB
+		Example: convert a 8bit grayscale image to RGB
 
 		@code
 		Bitmap<unsigned char, 1> bitmap_grayscale(128, 128);
