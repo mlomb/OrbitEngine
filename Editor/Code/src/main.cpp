@@ -15,9 +15,11 @@
 #include <OE/Graphics/2D/TextRenderer2D.hpp>
 #include <OE/Graphics/API/FrameBuffer.hpp>
 #include <OE/Graphics/TextureBlitter.hpp>
+#include <OE/Graphics/DynamicAtlasAllocator.hpp>
 
 #if OE_WINDOWS
 #include <OE/Platform/Windows/WindowWindows.hpp>
+#include "main.h"
 #endif
 
 static int generated = 0;
@@ -125,28 +127,58 @@ int main() {
 
 	UI::Composer* ui_composer = new UI::Composer();
 
-	Graphics::FrameBuffer* tmp_fb = Graphics::FrameBuffer::Create(512, 512);
+	Graphics::FrameBuffer* tmp_fb = Graphics::FrameBuffer::Create(4096, 4096);
 	Graphics::TextureFormatProperties props;
 	props.format = Graphics::RGBA;
 	props.dataType = Graphics::UNSIGNED_BYTE;
-	tmp_fb->setClearColor(Math::Vec4f(1.0, 0.0, 1.0, 1.0));
+	//tmp_fb->setClearColor(Math::Vec4f(1.0, 0.0, 1.0, 1.0));
 	tmp_fb->attachColorTextures(1, props);
 	tmp_fb->finalize();
 	tmp_fb->clear();
 
-	Graphics::TextureBlitter* blitter = new Graphics::TextureBlitter();
-
 	Graphics::Texture* sample_tex = Graphics::Texture::Load("sample.png");
 
-	Graphics::BlitInfo bi;
-	bi.src = sample_tex;
-	bi.dstPos = Math::Vec2i(200, 200);
-	blitter->queueBlit(bi);
-	bi.dstPos = Math::Vec2i(300, 200);
-	blitter->queueBlit(bi);
-	bi.dstPos = Math::Vec2i(400, 200);
-	blitter->queueBlit(bi);
+	Graphics::TextureBlitter* blitter = new Graphics::TextureBlitter();
+	Graphics::DynamicAtlasAllocator* atlas_alloc = new Graphics::DynamicAtlasAllocator();
+	
+	/*
+	for (int i = 0; i < 70; i++) {
+		unsigned int lx, ly;
+		if (atlas_alloc->tryAllocate(32.0f * getRandomFloat(), getRandomFloat()*32.0f, lx, ly)) {
+			Graphics::BlitInfo bi;
+			bi.src = sample_tex;
+			bi.dstPos = Math::Vec2i(lx, ly);
+			blitter->queueBlit(bi);
+		}
+	}
+	*/
+	std::vector<Graphics::Texture*> gen_texs;
+	for (int i = 12; i < 80; i++) {
+		for (int c = 32; c <= 127; c++) {
+			Graphics::BitmapRGBA bitmap;
+			Graphics::GlyphMetrics metrics;
+			if (font->getGlyph(c, i, Graphics::GlyphRenderMode::GRAY, bitmap, metrics)) {
+				Graphics::Texture* tex = bitmap.toTexture();
+
+				unsigned int lx, ly;
+				if (atlas_alloc->tryAllocate(tex->getProperties().width, tex->getProperties().height, lx, ly)) {
+					Graphics::BlitInfo bi;
+					bi.src = tex;
+					bi.dstPos = Math::Vec2i(lx, ly);
+					blitter->queueBlit(bi);
+				}
+
+				gen_texs.push_back(tex);
+			}
+		}
+	}
+	
 	blitter->commit(tmp_fb);
+
+	for (Graphics::Texture* tex : gen_texs)
+		delete tex;
+	gen_texs.clear();
+
 
 	auto frame = [&]() {
 		window->processEvents();
@@ -176,8 +208,9 @@ int main() {
 		renderer->bindTexture(sample_tex);
 		renderer->rect(Math::Vec2f(100, 100), Math::Vec2f(32, 32));
 
-		renderer->bindTexture(tmp_fb->getColorTextures()[0]);
-		renderer->rect(Math::Vec2f(200, 100), Math::Vec2f(512, 512));
+		auto atlas = tmp_fb->getColorTextures()[0];
+		renderer->bindTexture(atlas);
+		renderer->rect(Math::Vec2f(10,10), 1.0f * Math::Vec2f(atlas->getProperties().width, atlas->getProperties().height));
 
 		renderer->end();
 		
