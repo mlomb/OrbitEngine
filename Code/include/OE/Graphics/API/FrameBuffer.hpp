@@ -17,6 +17,8 @@ namespace OrbitEngine {
 	enum class BlitOperation {
 		DEPTH
 	};
+
+	// TODO: rename to RenderTexture
 	class FrameBuffer {
 	public:
 		virtual ~FrameBuffer();

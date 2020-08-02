@@ -14,6 +14,7 @@
 #include <OE/Graphics/FontCollection.hpp>
 #include <OE/Graphics/2D/TextRenderer2D.hpp>
 #include <OE/Graphics/API/FrameBuffer.hpp>
+#include <OE/Graphics/TextureBlitter.hpp>
 
 #if OE_WINDOWS
 #include <OE/Platform/Windows/WindowWindows.hpp>
@@ -124,6 +125,29 @@ int main() {
 
 	UI::Composer* ui_composer = new UI::Composer();
 
+	Graphics::FrameBuffer* tmp_fb = Graphics::FrameBuffer::Create(512, 512);
+	Graphics::TextureFormatProperties props;
+	props.format = Graphics::RGBA;
+	props.dataType = Graphics::UNSIGNED_BYTE;
+	tmp_fb->setClearColor(Math::Vec4f(1.0, 0.0, 1.0, 1.0));
+	tmp_fb->attachColorTextures(1, props);
+	tmp_fb->finalize();
+	tmp_fb->clear();
+
+	Graphics::TextureBlitter* blitter = new Graphics::TextureBlitter();
+
+	Graphics::Texture* sample_tex = Graphics::Texture::Load("sample.png");
+
+	Graphics::BlitInfo bi;
+	bi.src = sample_tex;
+	bi.dstPos = Math::Vec2i(200, 200);
+	blitter->queueBlit(bi);
+	bi.dstPos = Math::Vec2i(300, 200);
+	blitter->queueBlit(bi);
+	bi.dstPos = Math::Vec2i(400, 200);
+	blitter->queueBlit(bi);
+	blitter->commit(tmp_fb);
+
 	auto frame = [&]() {
 		window->processEvents();
 		t.tick();
@@ -144,14 +168,19 @@ int main() {
 
 		ui_composer->render(root, proj, window->getSize());
 		
-		/*
+		
 		renderer->begin();
 		renderer->setPVMatrices(proj);
 
-		//root->render(renderer);
+		renderer->bindColor(Math::Color4f(1, 1, 1, 1));
+		renderer->bindTexture(sample_tex);
+		renderer->rect(Math::Vec2f(100, 100), Math::Vec2f(32, 32));
+
+		renderer->bindTexture(tmp_fb->getColorTextures()[0]);
+		renderer->rect(Math::Vec2f(200, 100), Math::Vec2f(512, 512));
 
 		renderer->end();
-		*/
+		
 		/*
 		tr2d->begin();
 		tr2d->setPVMatrices(proj);
