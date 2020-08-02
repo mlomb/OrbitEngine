@@ -75,5 +75,7 @@ namespace OrbitEngine { namespace Graphics {
 		}
 
 		m_SpriteBatcher->end();
+
+		m_SpriteBatcher->bindTexture(nullptr);
 	}
 } }

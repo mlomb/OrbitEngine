@@ -16,10 +16,10 @@
 #include <OE/Graphics/API/FrameBuffer.hpp>
 #include <OE/Graphics/TextureBlitter.hpp>
 #include <OE/Graphics/DynamicAtlasAllocator.hpp>
+#include <OE/Graphics/DynamicAtlas.hpp>
 
 #if OE_WINDOWS
 #include <OE/Platform/Windows/WindowWindows.hpp>
-#include "main.h"
 #endif
 
 static int generated = 0;
@@ -152,6 +152,7 @@ int main() {
 		}
 	}
 	*/
+	/*
 	std::vector<Graphics::Texture*> gen_texs;
 	for (int i = 12; i < 80; i++) {
 		for (int c = 32; c <= 127; c++) {
@@ -178,7 +179,10 @@ int main() {
 	for (Graphics::Texture* tex : gen_texs)
 		delete tex;
 	gen_texs.clear();
+	*/
 
+	Graphics::DynamicAtlas* da = new Graphics::DynamicAtlas();
+	
 
 	auto frame = [&]() {
 		window->processEvents();
@@ -191,6 +195,22 @@ int main() {
 
 		// render
 		auto proj = Math::Mat4::Orthographic(0, window->getSize().w, window->getSize().h, 0, 0, 1);
+
+		int i = 12 + (80 - 12) * getRandomFloat();
+		int c = 32 + (127 - 32) * getRandomFloat();
+		int idx = i * 1000 + c;
+
+		Graphics::BitmapRGBA bitmap;
+		Graphics::GlyphMetrics metrics;
+		if (font->getGlyph(c, i, Graphics::GlyphRenderMode::GRAY, bitmap, metrics)) {
+			Graphics::Texture* tex = bitmap.toTexture();
+			Math::Recti r;
+			if (da->add(idx, r, tex)) {
+
+			}
+			da->commit();
+			delete tex;
+		}
 
 		/*renderer->begin();
 		renderer->end();*/
@@ -208,7 +228,7 @@ int main() {
 		renderer->bindTexture(sample_tex);
 		renderer->rect(Math::Vec2f(100, 100), Math::Vec2f(32, 32));
 
-		auto atlas = tmp_fb->getColorTextures()[0];
+		auto atlas = /*tmp_fb->getColorTextures()[0]*/da->getTexture();
 		renderer->bindTexture(atlas);
 		renderer->rect(Math::Vec2f(10,10), 1.0f * Math::Vec2f(atlas->getProperties().width, atlas->getProperties().height));
 

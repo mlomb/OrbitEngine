@@ -21,6 +21,7 @@ namespace OrbitEngine { namespace Graphics {
         ~DynamicAtlasAllocator();
 
         bool tryAllocate(unsigned int width, unsigned int height, unsigned int& locationX, unsigned int& locationY);
+        unsigned int getSize() const;
 
 	private:
         struct Row {
@@ -40,7 +41,6 @@ namespace OrbitEngine { namespace Graphics {
         bool tryPartitionArea(Area* area, int rowIndex, int rowHeight, int minWidth);
 
         std::vector<Row*> m_OpenRows;
-
         Area* m_FirstUnpartitionedArea;
 	};
 

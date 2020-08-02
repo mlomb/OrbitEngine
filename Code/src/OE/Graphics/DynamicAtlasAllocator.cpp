@@ -179,4 +179,9 @@ namespace OrbitEngine { namespace Graphics {
 			current = newAreaNode;
 		}
 	}
+
+	unsigned int DynamicAtlasAllocator::getSize() const
+	{
+		return m_PhysicalSize;
+	}
 } }
