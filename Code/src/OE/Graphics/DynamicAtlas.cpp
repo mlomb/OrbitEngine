@@ -90,4 +90,9 @@ namespace OrbitEngine { namespace Graphics {
 	{
 		return m_AtlasRT ? m_AtlasRT->getColorTextures()[0] : nullptr;
 	}
+
+	unsigned int DynamicAtlas::getSize() const
+	{
+		return m_Allocator->getSize();
+	}
 } }

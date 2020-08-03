@@ -21,6 +21,7 @@ namespace OrbitEngine { namespace Graphics {
 
 		bool tryGet(Index index, Math::Recti& rect) const;
 		Texture* getTexture() const;
+		unsigned int getSize() const;
 
 		bool add(Index index, Math::Recti& rect, Texture* texture);
 

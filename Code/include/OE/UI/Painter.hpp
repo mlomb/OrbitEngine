@@ -8,6 +8,7 @@
 #include "OE/Graphics/API/Shader.hpp"
 #include "OE/Graphics/API/UniformsPack.hpp"
 #include "OE/Graphics/Font.hpp"
+#include "OE/Graphics/DynamicAtlas.hpp"
 
 namespace OrbitEngine { namespace UI {
 
@@ -41,6 +42,13 @@ namespace OrbitEngine { namespace UI {
 		unsigned int m_IndexCount;
 		unsigned int m_VertexCount;
 		ConstantBuffer m_ConstantBufferData;
+
+		Graphics::DynamicAtlas* m_Atlas;
+		std::vector<Graphics::Texture*> m_DestroyAfterCommitingAtlas;
+
+		typedef uint32_t GlyphIndex;
+		std::unordered_map<GlyphIndex, Graphics::GlyphMetrics> m_GlyphMetricsCache;
+		//std::unordered_map<std::pair<GlyphIndex, GlyphIndex>, int> m_KerningCache;
 
 	private:
 		friend class Composer;

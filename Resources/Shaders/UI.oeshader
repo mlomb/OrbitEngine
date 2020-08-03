@@ -38,7 +38,17 @@ struct Input {
 	float flags : TEXID;
 };
 
+Texture2D atlas;
+SamplerState atlas_sampler;
+
 float4 main(Input input) : SV_TARGET {
 	float4 color = input.color;
+	
+	if(input.flags > 1.5) {
+		color = atlas.Sample(atlas_sampler, input.uv);
+	} else if(input.flags > 0.5) {
+		color = float4(input.color.rgb, atlas.Sample(atlas_sampler, input.uv).r * input.color.a);
+	}
+	
 	return color;
 }

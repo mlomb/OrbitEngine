@@ -79,7 +79,7 @@ int main() {
 
 	UI::Element* root = new UI::Element();
 	UI::Style root_style;
-	root_style.background = Math::Color::Black;
+	root_style.background = Math::Color::Transparent;
 	root->setStyle(root_style);
 	YGNodeStyleSetFlexDirection(root->m_Node, YGFlexDirectionRow);
 	YGNodeStyleSetPadding(root->m_Node, YGEdgeAll, 20);
@@ -95,7 +95,7 @@ int main() {
 	UI::Text* textA = new UI::Text();
 	textA->setFont(font);
 	textA->setText("Hello World");
-	textA->setStyle({ Math::Color::Green });
+	textA->setStyle({ Math::Color4f(0.3,0.3,0.3,1.0) });
 	//YGNodeStyleSetHeight(textA->m_Node, 25);
 	YGNodeStyleSetPadding(textA->m_Node, YGEdgeAll, 5);
 	YGNodeStyleSetAlignSelf(textA->m_Node, YGAlignCenter);
@@ -196,6 +196,7 @@ int main() {
 		// render
 		auto proj = Math::Mat4::Orthographic(0, window->getSize().w, window->getSize().h, 0, 0, 1);
 
+		/*
 		int i = 12 + (80 - 12) * getRandomFloat();
 		int c = 32 + (127 - 32) * getRandomFloat();
 		int idx = i * 1000 + c;
@@ -211,7 +212,7 @@ int main() {
 			da->commit();
 			delete tex;
 		}
-
+		*/
 		/*renderer->begin();
 		renderer->end();*/
 		Graphics::FrameBuffer::Prepare();
@@ -229,8 +230,8 @@ int main() {
 		renderer->rect(Math::Vec2f(100, 100), Math::Vec2f(32, 32));
 
 		auto atlas = /*tmp_fb->getColorTextures()[0]*/da->getTexture();
-		renderer->bindTexture(atlas);
-		renderer->rect(Math::Vec2f(10,10), 1.0f * Math::Vec2f(atlas->getProperties().width, atlas->getProperties().height));
+		//renderer->bindTexture(atlas);
+		//renderer->rect(Math::Vec2f(10,10), 1.0f * Math::Vec2f(atlas->getProperties().width, atlas->getProperties().height));
 
 		renderer->end();
 		

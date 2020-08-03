@@ -51,7 +51,7 @@ namespace OrbitEngine { namespace Graphics {
 		Math::Vec2i size = FrameBuffer::GetCurrentSize();
 
 		if (!m_SpriteBatcher) {
-			m_SpriteBatcher = new SpriteBatcher();
+			m_SpriteBatcher = new SpriteBatcher(MAX_TEXTURES_PER_BLIT);
 		}
 
 		m_SpriteBatcher->begin();
