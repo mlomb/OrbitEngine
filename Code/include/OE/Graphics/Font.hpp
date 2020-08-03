@@ -3,8 +3,10 @@
 
 #include <string>
 #include <vector>
+#include <unordered_map>
 
-#include "Bitmap.hpp"
+#include "OE/Graphics/Bitmap.hpp"
+#include "OE/Math/Rect.hpp"
 
 /* Forward defs */
 struct FT_LibraryRec_;
@@ -17,6 +19,8 @@ namespace OrbitEngine { namespace Graphics {
 	typedef unsigned int GlyphCodepoint;
 	/// Font sizes specified in pixels
 	typedef unsigned int FontSize;
+
+	class Font;
 
 	/**
 		Example: Grinning Face emoji (U+1F600) and **&** glyphs at 128px
@@ -56,12 +60,26 @@ namespace OrbitEngine { namespace Graphics {
 		int width, height;
 		int H_advance, H_bearingX, H_bearingY;
 		int V_advance, V_bearingX, V_bearingY;
+		bool valid;
 	};
 
 	struct TextSettings {
 		FontSize size;
 		bool wordWrap = false;
 		float wordWrapWidth = 0.0;
+	};
+
+	struct TextLayout {
+		struct GlyphInstance {
+			GlyphCodepoint codepoint;
+			Math::Recti rect;
+			int index; // original index
+		};
+
+		Font* font;
+		TextSettings settings;
+		std::vector<GlyphInstance> glyphs;
+		Math::Vec2i boundingSize;
 	};
 
 	/// Represents a single typeface
@@ -99,11 +117,12 @@ namespace OrbitEngine { namespace Graphics {
 		*/
 		bool getGlyph(GlyphCodepoint codepoint, FontSize size, GlyphRenderMode mode, BitmapRGBA& bitmap, GlyphMetrics& metrics);
 
+		bool getGlyphMetrics(GlyphCodepoint codepoint, const TextSettings& settings, GlyphMetrics& metrics);
+
+		TextLayout generateTextLayout(const std::string& text, const TextSettings& textSettings);
+
 		/// Kerning distance between left and right glyphs at a specific size in unfitted pixels
 		int getHorizontalKerning(FontSize size, GlyphCodepoint left, GlyphCodepoint right);
-
-		float computeTextWidth(const std::string& text, const TextSettings& textSettings);
-		float computeTextHeight(const std::string& text, const TextSettings& textSettings);
 
 		/// Returns whether the provided codepoint has emoji presentation according to the Unicode spec
 		static bool HasEmojiPresentation(GlyphCodepoint codepoint);
@@ -118,6 +137,9 @@ namespace OrbitEngine { namespace Graphics {
 		bool setSize(FontSize size);
 		/// cache the selected size to prevent calling freetype multiple times
 		FontSize m_CurrentSize;
+
+		typedef uint32_t GlyphHash; // codepoint + size
+		std::unordered_map<GlyphHash, GlyphMetrics> m_MetricsCache;
 	};
 } }
 

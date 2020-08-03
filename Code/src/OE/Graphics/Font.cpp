@@ -44,15 +44,15 @@ namespace OrbitEngine { namespace Graphics {
 		if (!m_Face)
 			return false;
 
+		if (size == m_CurrentSize)
+			return true;
+
 		FT_Error error;
 
 		if (FT_HAS_FIXED_SIZES(m_Face)) {
 			// fixed size font, ignore given size
 			size = m_Face->available_sizes[0].height;
 		}
-
-		if (size == m_CurrentSize)
-			return true;
 
 		if (FT_HAS_FIXED_SIZES(m_Face)) {
 			if ((error = FT_Select_Size(m_Face, 0)) != FT_Err_Ok) {
@@ -115,6 +115,7 @@ namespace OrbitEngine { namespace Graphics {
 		metrics.V_advance  = (m_Face->glyph->metrics.vertAdvance  >> 6);
 		metrics.V_bearingX = (m_Face->glyph->metrics.vertBearingX >> 6);
 		metrics.V_bearingY = (m_Face->glyph->metrics.vertBearingY >> 6);
+		metrics.valid = true;
 		
 		// exception
 		if (codepoint == ' ') {
@@ -182,57 +183,133 @@ namespace OrbitEngine { namespace Graphics {
 		return false;
 	}
 
+	bool Font::getGlyphMetrics(GlyphCodepoint codepoint, const TextSettings& settings, GlyphMetrics& metrics)
+	{
+		if (!setSize(settings.size))
+			return false;
+
+		GlyphHash idx = codepoint * 10000 + settings.size;
+		auto metrics_it = m_MetricsCache.find(idx);
+		if (metrics_it != m_MetricsCache.end()) {
+			metrics = (*metrics_it).second;
+			return metrics.valid;
+		}
+
+		FT_Error error;
+		if ((error = FT_Load_Glyph(m_Face, FT_Get_Char_Index(m_Face, codepoint), FT_LOAD_DEFAULT)) != FT_Err_Ok) {
+			OE_LOG_WARNING("Could not load glyph " << codepoint << "! " << FT_Error_String(error));
+
+			// insert invalid metrics so we don't call FT_Load_Glyph again
+			metrics.valid = false;
+			m_MetricsCache.insert(std::make_pair(idx, metrics));
+
+			return false;
+		}
+
+		metrics = {};
+		metrics.width = (m_Face->glyph->metrics.width >> 6); // (>> 6) = (/ 64)
+		metrics.height = (m_Face->glyph->metrics.height >> 6);
+		metrics.H_advance = (m_Face->glyph->metrics.horiAdvance >> 6);
+		metrics.H_bearingX = (m_Face->glyph->metrics.horiBearingX >> 6);
+		metrics.H_bearingY = (m_Face->glyph->metrics.horiBearingY >> 6);
+		metrics.V_advance = (m_Face->glyph->metrics.vertAdvance >> 6);
+		metrics.V_bearingX = (m_Face->glyph->metrics.vertBearingX >> 6);
+		metrics.V_bearingY = (m_Face->glyph->metrics.vertBearingY >> 6);
+		metrics.valid = true;
+
+		m_MetricsCache.insert(std::make_pair(idx, metrics));
+
+		return true;
+	}
+
+	TextLayout Font::generateTextLayout(const std::string& text, const TextSettings& textSettings)
+	{
+		TextLayout layout;
+		layout.font = this;
+		layout.settings = textSettings;
+		layout.glyphs.reserve(text.size());
+		layout.boundingSize = Math::Vec2i(0, 0);
+
+		Math::Vec2i pen(0, textSettings.size);
+		GlyphMetrics metrics;
+
+		int last_whitespace_i = 0;
+		bool last_whitespace_was_wrap = false;
+
+		for (int i = 0; i < text.size(); i++) {
+			Graphics::GlyphCodepoint code = text[i];
+
+			if (!getGlyphMetrics(code, textSettings, metrics))
+				continue;
+
+			float advance = metrics.H_advance;
+			bool should_wrap = false;
+
+			if (textSettings.wordWrap) {
+				// track white spaces
+				if (code == ' ' || code == '\t') {
+					last_whitespace_i = i;
+					last_whitespace_was_wrap = false;
+				}
+				else {
+					if (pen.x + advance > textSettings.wordWrapWidth) { // should wrap?
+						if (!last_whitespace_was_wrap) { // avoid infinite loop
+							i = last_whitespace_i;
+							last_whitespace_was_wrap = true;
+							should_wrap = true;
+							
+							// remove all glyphs after the last space
+							while (layout.glyphs.size() > 0 && layout.glyphs.back().index >= last_whitespace_i)
+								layout.glyphs.pop_back();
+						}
+					}
+				}
+			}
+
+			if (code == '\n' || code == '\r' || should_wrap) {
+				pen.x = 0;
+				pen.y += textSettings.size;
+				continue;
+			}
+
+			if (metrics.width > 0 && metrics.height > 0) {
+				TextLayout::GlyphInstance instance;
+
+				instance.codepoint = code;
+				instance.index = i;
+				instance.rect.position.x = pen.x + metrics.H_bearingX;
+				instance.rect.position.y = pen.y - metrics.H_bearingY;
+				instance.rect.size.x = metrics.width;
+				instance.rect.size.y = metrics.height;
+
+				layout.boundingSize.x = std::max(layout.boundingSize.x, instance.rect.position.x + instance.rect.size.x);
+				layout.boundingSize.y = std::max(layout.boundingSize.y, instance.rect.position.y + instance.rect.size.y);
+
+				layout.glyphs.emplace_back(instance);
+			}
+
+			pen.x += advance;
+
+			// apply kerning
+			if (i + 1 < text.size()) {
+				// TODO: cache
+				int kerning = getHorizontalKerning(textSettings.size, code, text[i + 1]);
+				pen.x += (float)kerning;
+			}
+		}
+
+		return layout;
+	}
+
 	int Font::getHorizontalKerning(FontSize size, GlyphCodepoint left, GlyphCodepoint right)
 	{
-		if (!setSize(size))
-			return 0;
 		if (!FT_HAS_KERNING(m_Face))
+			return 0;
+		if (!setSize(size))
 			return 0;
 		FT_Vector kerning;
 		FT_Get_Kerning(m_Face, FT_Get_Char_Index(m_Face, left), FT_Get_Char_Index(m_Face, right), FT_KERNING_UNFITTED, &kerning);
 		return kerning.x >> 6;
-	}
-
-	float Font::computeTextWidth(const std::string& text, const TextSettings& textSettings)
-	{
-		setSize(textSettings.size);
-
-		FT_Error error;
-		float measuredWidth = 0;
-
-		float pen_x = 0;
-		for (char c : text) {
-			FT_UInt char_index = FT_Get_Char_Index(m_Face, c);
-
-			if ((error = FT_Load_Glyph(m_Face, char_index, 0))!= FT_Err_Ok) {
-				OE_LOG_DEBUG("Glyph not found: " << c);
-				continue; // skip char
-			}
-
-			float advance = m_Face->glyph->metrics.horiAdvance >> 6;
-			measuredWidth += advance;
-
-			if (textSettings.wordWrap && measuredWidth >= textSettings.wordWrapWidth)
-				return textSettings.wordWrapWidth;
-		}
-
-		return measuredWidth;
-	}
-
-	float Font::computeTextHeight(const std::string& text, const TextSettings& textSettings)
-	{
-
-		if (textSettings.wordWrap) {
-			setSize(textSettings.size);
-
-			// TODO
-			// OE_ASSERT_MSG(false, "Not implemented");
-			// return std::numeric_limits<float>::infinity();
-			return textSettings.size;
-		}
-		else {
-			return textSettings.size;
-		}
 	}
 
 	bool Font::HasEmojiPresentation(GlyphCodepoint c) {

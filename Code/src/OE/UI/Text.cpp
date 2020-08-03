@@ -46,7 +46,9 @@ namespace OrbitEngine { namespace UI {
 		textSettings.wordWrap = true;
 		textSettings.wordWrapWidth = m_BoundingBox.z;
 
-		painter->drawText(m_Text, m_BoundingBox.xy, m_Font, textSettings);
+		Graphics::TextLayout layout = m_Font->generateTextLayout(m_Text, textSettings);
+
+		painter->drawText(layout, m_BoundingBox.xy);
 	}
 
 	Math::Vec2f Text::measureContent(float width, YGMeasureMode widthMode, float height, YGMeasureMode heightMode)
@@ -69,7 +71,8 @@ namespace OrbitEngine { namespace UI {
 			textSettings.size = m_Size;
 			textSettings.wordWrap = false;
 
-			measuredWidth = std::ceil(m_Font->computeTextWidth(m_Text, textSettings));
+			Graphics::TextLayout layout = m_Font->generateTextLayout(m_Text, textSettings);
+			measuredWidth = std::ceil(layout.boundingSize.x);
 
 			if (widthMode == YGMeasureModeAtMost)
 				measuredWidth = std::min(measuredWidth, width);
@@ -84,7 +87,8 @@ namespace OrbitEngine { namespace UI {
 			textSettings.wordWrap = true;
 			textSettings.wordWrapWidth = measuredWidth;
 
-			measuredHeight = std::ceil(m_Font->computeTextHeight(m_Text, textSettings));
+			Graphics::TextLayout layout = m_Font->generateTextLayout(m_Text, textSettings);
+			measuredHeight = std::ceil(layout.boundingSize.y);
 
 			if (heightMode == YGMeasureModeAtMost)
 				measuredHeight = std::min(measuredHeight, height);

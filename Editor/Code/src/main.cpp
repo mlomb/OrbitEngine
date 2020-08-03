@@ -97,7 +97,6 @@ int main() {
 	textA->setText("Hello World");
 	textA->setStyle({ Math::Color4f(0.3,0.3,0.3,1.0) });
 	//YGNodeStyleSetHeight(textA->m_Node, 25);
-	YGNodeStyleSetPadding(textA->m_Node, YGEdgeAll, 5);
 	YGNodeStyleSetAlignSelf(textA->m_Node, YGAlignCenter);
 	//YGNodeStyleSetFlexGrow(textA->m_Node, 1);
 
@@ -105,6 +104,19 @@ int main() {
 
 	root->addElement(divA, 0);
 	root->addElement(textA, 1);
+
+
+	UI::Text* textLong = new UI::Text();
+	textLong->setFont(font);
+	textLong->setText(R"(Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec nec dui elementum, ultricies leo in, porttitor elit. Aenean in orci sit amet diam suscipit eleifend. Nam cursus leo ac tincidunt vehicula. Ut id lobortis risus, nec pulvinar risus. Nulla finibus enim et risus vulputate hendrerit. Quisque ultrices urna at euismod dapibus. Nulla dapibus justo eget viverra varius. Aliquam enim tortor, pellentesque id imperdiet non, vehicula sed risus. Donec dignissim ultrices mauris, et consectetur tellus scelerisque id. Aenean iaculis neque eget ipsum posuere rutrum. Pellentesque mattis suscipit arcu in dapibus. Cras ac scelerisque lacus. Sed sed turpis a erat mollis vestibulum.
+Vivamus erat nisl, fermentum ac sagittis quis, rutrum nec quam. Vivamus aliquet, orci in congue dignissim, nisi lectus posuere quam, id molestie quam augue sed justo. Mauris vehicula finibus sagittis. Mauris posuere mattis mi, et faucibus ipsum hendrerit in. Nulla non diam ultricies, aliquet est quis, bibendum urna. Nunc odio est, volutpat ut fermentum semper, lacinia in diam. Maecenas semper tellus diam, sed accumsan dolor efficitur id. Nulla interdum sapien dapibus, maximus purus sit amet, blandit velit. Sed suscipit libero eu sodales lobortis.
+Sed fringilla lacus sed eros molestie tristique. Nullam vitae tortor pharetra, blandit nisi venenatis, porta nibh. Ut quis nisi pharetra, ullamcorper lorem ac, scelerisque tellus. Sed facilisis egestas neque quis pellentesque. Ut quam massa, pretium vitae felis in, consectetur volutpat metus. Proin fermentum urna eget tempus volutpat. Proin quis nibh ut justo rutrum vehicula. Nunc a purus at leo efficitur feugiat. Donec id felis pretium, aliquet eros ac, tincidunt augue. Proin dolor sem, dapibus nec aliquam a, blandit a justo. Fusce condimentum magna lorem, non pellentesque turpis congue at. Etiam tristique dolor vel molestie cursus. Cras ipsum arcu, bibendum ac malesuada sit amet, fringilla et dolor. Duis faucibus efficitur dictum. Quisque dolor est libero.)");
+	textLong->setStyle({ Math::Color4f(0.3,0.3,0.3,1.0) });
+	//YGNodeStyleSetHeight(textA->m_Node, 25);
+	YGNodeStyleSetAlignSelf(textLong->m_Node, YGAlignCenter);
+	YGNodeStyleSetMaxWidth(textLong->m_Node, 500);
+	textLong->setSize(20);
+	root->addElement(textLong, 2);
 
 	OE_LOG_DEBUG("UI ELEMENTS GENERATED: " << generated);
 
@@ -217,23 +229,29 @@ int main() {
 		renderer->end();*/
 		Graphics::FrameBuffer::Prepare();
 
-		textA->setSize(12 + abs(sin(time)) * 70);
+		YGNodeStyleSetMaxWidth(textLong->m_Node, 500 + abs(sin(time)) * 500);
+		//textA->setSize(12 + abs(sin(time)) * 70);
+		textA->setSize(16);
+		textLong->setSize(12 + abs(sin(3 * time)) * 12);
 
 		ui_composer->render(root, proj, window->getSize());
 		
 		
+		/*
 		renderer->begin();
 		renderer->setPVMatrices(proj);
+
 
 		renderer->bindColor(Math::Color4f(1, 1, 1, 1));
 		renderer->bindTexture(sample_tex);
 		renderer->rect(Math::Vec2f(100, 100), Math::Vec2f(32, 32));
 
-		auto atlas = /*tmp_fb->getColorTextures()[0]*/da->getTexture();
+		auto atlas = /*tmp_fb->getColorTextures()[0]* /da->getTexture();
 		//renderer->bindTexture(atlas);
 		//renderer->rect(Math::Vec2f(10,10), 1.0f * Math::Vec2f(atlas->getProperties().width, atlas->getProperties().height));
 
 		renderer->end();
+		*/
 		
 		/*
 		tr2d->begin();

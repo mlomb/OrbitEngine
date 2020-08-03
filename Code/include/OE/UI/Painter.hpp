@@ -30,7 +30,7 @@ namespace OrbitEngine { namespace UI {
 		~Painter();
 
 		void drawRectangle(const Math::Vec2f& position, const Math::Vec2f& size, const Math::Color4f& color);
-		void drawText(const std::string& text, const Math::Vec2f& position, Graphics::Font* font, const Graphics::TextSettings& textSettings);
+		void drawText(const Graphics::TextLayout& textLayout, const Math::Vec2f& position);
 
 	private:
 		Graphics::Shader* m_Shader;
@@ -45,10 +45,6 @@ namespace OrbitEngine { namespace UI {
 
 		Graphics::DynamicAtlas* m_Atlas;
 		std::vector<Graphics::Texture*> m_DestroyAfterCommitingAtlas;
-
-		typedef uint32_t GlyphIndex;
-		std::unordered_map<GlyphIndex, Graphics::GlyphMetrics> m_GlyphMetricsCache;
-		//std::unordered_map<std::pair<GlyphIndex, GlyphIndex>, int> m_KerningCache;
 
 	private:
 		friend class Composer;
