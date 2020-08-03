@@ -232,7 +232,7 @@ Sed fringilla lacus sed eros molestie tristique. Nullam vitae tortor pharetra, b
 		YGNodeStyleSetMaxWidth(textLong->m_Node, 500 + abs(sin(time)) * 500);
 		//textA->setSize(12 + abs(sin(time)) * 70);
 		textA->setSize(16);
-		textLong->setSize(12 + abs(sin(3 * time)) * 12);
+		//textLong->setSize(12 + abs(sin(3 * time)) * 12);
 
 		ui_composer->render(root, proj, window->getSize());
 		

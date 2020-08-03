@@ -222,13 +222,15 @@ namespace OrbitEngine { namespace Graphics {
 		return true;
 	}
 
-	TextLayout Font::generateTextLayout(const std::string& text, const TextSettings& textSettings)
+	TextLayout Font::generateTextLayout(const std::string& text, const TextSettings& textSettings, bool skip_glyphs)
 	{
 		TextLayout layout;
 		layout.font = this;
 		layout.settings = textSettings;
-		layout.glyphs.reserve(text.size());
 		layout.boundingSize = Math::Vec2i(0, 0);
+		layout.no_glyphs = skip_glyphs;
+		if(!skip_glyphs)
+			layout.glyphs.reserve(text.size());
 
 		Math::Vec2i pen(0, textSettings.size);
 		GlyphMetrics metrics;
@@ -236,7 +238,7 @@ namespace OrbitEngine { namespace Graphics {
 		int last_whitespace_i = 0;
 		bool last_whitespace_was_wrap = false;
 
-		for (int i = 0; i < text.size(); i++) {
+		for (int i = 0; i < (int)text.size(); i++) {
 			Graphics::GlyphCodepoint code = text[i];
 
 			if (!getGlyphMetrics(code, textSettings, metrics))
@@ -272,7 +274,7 @@ namespace OrbitEngine { namespace Graphics {
 				continue;
 			}
 
-			if (metrics.width > 0 && metrics.height > 0) {
+			if (!skip_glyphs && metrics.width > 0 && metrics.height > 0) {
 				TextLayout::GlyphInstance instance;
 
 				instance.codepoint = code;

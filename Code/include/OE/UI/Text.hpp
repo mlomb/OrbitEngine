@@ -26,6 +26,12 @@ namespace OrbitEngine { namespace UI {
 
 		void generateContent(Painter* painter) override;
 		Math::Vec2f measureContent(float width, YGMeasureMode widthMode, float height, YGMeasureMode heightMode) override;
+
+		// TextLayout cache
+		// make sure you don't hold the reference after calling flushTextLayoutCache
+		const Graphics::TextLayout& getTextLayout(const Graphics::TextSettings& settings, bool skip_glyphs);
+		void flushTextLayoutCache();
+		std::vector<Graphics::TextLayout> m_TextLayoutCache;
 	};
 } }
 

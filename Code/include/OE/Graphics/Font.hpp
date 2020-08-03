@@ -66,7 +66,7 @@ namespace OrbitEngine { namespace Graphics {
 	struct TextSettings {
 		FontSize size;
 		bool wordWrap = false;
-		float wordWrapWidth = 0.0;
+		int wordWrapWidth = 0;
 	};
 
 	struct TextLayout {
@@ -77,6 +77,7 @@ namespace OrbitEngine { namespace Graphics {
 		};
 
 		Font* font;
+		bool no_glyphs;
 		TextSettings settings;
 		std::vector<GlyphInstance> glyphs;
 		Math::Vec2i boundingSize;
@@ -119,7 +120,7 @@ namespace OrbitEngine { namespace Graphics {
 
 		bool getGlyphMetrics(GlyphCodepoint codepoint, const TextSettings& settings, GlyphMetrics& metrics);
 
-		TextLayout generateTextLayout(const std::string& text, const TextSettings& textSettings);
+		TextLayout generateTextLayout(const std::string& text, const TextSettings& textSettings, bool skip_glyphs = false);
 
 		/// Kerning distance between left and right glyphs at a specific size in unfitted pixels
 		int getHorizontalKerning(FontSize size, GlyphCodepoint left, GlyphCodepoint right);

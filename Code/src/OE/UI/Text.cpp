@@ -19,18 +19,21 @@ namespace OrbitEngine { namespace UI {
 	void Text::setFont(Graphics::Font* font)
 	{
 		m_Font = font;
+		flushTextLayoutCache();
 	}
 
 	void Text::setSize(Graphics::FontSize size)
 	{
 		m_Size = size;
 		markAsDirty();
+		flushTextLayoutCache();
 	}
 
 	void Text::setText(const std::string& text)
 	{
 		m_Text = text;
 		markAsDirty();
+		flushTextLayoutCache();
 	}
 
 	void Text::generateContent(Painter* painter)
@@ -46,9 +49,7 @@ namespace OrbitEngine { namespace UI {
 		textSettings.wordWrap = true;
 		textSettings.wordWrapWidth = m_BoundingBox.z;
 
-		Graphics::TextLayout layout = m_Font->generateTextLayout(m_Text, textSettings);
-
-		painter->drawText(layout, m_BoundingBox.xy);
+		painter->drawText(getTextLayout(textSettings, false), m_BoundingBox.xy);
 	}
 
 	Math::Vec2f Text::measureContent(float width, YGMeasureMode widthMode, float height, YGMeasureMode heightMode)
@@ -71,8 +72,7 @@ namespace OrbitEngine { namespace UI {
 			textSettings.size = m_Size;
 			textSettings.wordWrap = false;
 
-			Graphics::TextLayout layout = m_Font->generateTextLayout(m_Text, textSettings);
-			measuredWidth = std::ceil(layout.boundingSize.x);
+			measuredWidth = std::ceil(getTextLayout(textSettings, true).boundingSize.x);
 
 			if (widthMode == YGMeasureModeAtMost)
 				measuredWidth = std::min(measuredWidth, width);
@@ -87,13 +87,32 @@ namespace OrbitEngine { namespace UI {
 			textSettings.wordWrap = true;
 			textSettings.wordWrapWidth = measuredWidth;
 
-			Graphics::TextLayout layout = m_Font->generateTextLayout(m_Text, textSettings);
-			measuredHeight = std::ceil(layout.boundingSize.y);
+			measuredHeight = std::ceil(getTextLayout(textSettings, true).boundingSize.y);
 
 			if (heightMode == YGMeasureModeAtMost)
 				measuredHeight = std::min(measuredHeight, height);
 		}
 
 		return Math::Vec2f(measuredWidth, measuredHeight);
+	}
+
+	const Graphics::TextLayout& Text::getTextLayout(const Graphics::TextSettings& settings, bool skip_glyphs)
+	{
+		OE_ASSERT(m_Font);
+
+		for (const Graphics::TextLayout& tl : m_TextLayoutCache) {
+			if (!skip_glyphs && tl.no_glyphs)
+				continue; // we need glyph data
+			if (settings.wordWrap == tl.settings.wordWrap &&
+				(!settings.wordWrap || settings.wordWrapWidth == tl.settings.wordWrapWidth))
+				return tl;
+		}
+		m_TextLayoutCache.emplace_back(m_Font->generateTextLayout(m_Text, settings));
+		return m_TextLayoutCache.back();
+	}
+
+	void Text::flushTextLayoutCache()
+	{
+		m_TextLayoutCache.clear();
 	}
 } }
