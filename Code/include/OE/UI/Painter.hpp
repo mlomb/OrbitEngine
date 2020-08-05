@@ -19,6 +19,13 @@ namespace OrbitEngine { namespace UI {
 		float flags;
 	};
 
+	enum class Corner {
+		TOP_RIGHT = 0,
+		TOP_LEFT = 1,
+		BOTTOM_LEFT = 2,
+		BOTTOM_RIGHT = 3
+	};
+
 	struct RoundedRectParams {
 		Math::Vec2f cornerRadii[4];
 	};
@@ -29,10 +36,11 @@ namespace OrbitEngine { namespace UI {
 		Painter();
 		~Painter();
 
+
 		void drawRectangle(const Math::Rectf& rect, const Math::Color4f& color);
-		void drawRoundedFan(const Math::Vec2f& position, const Math::Vec2f& radii, const Math::Color4f& color);
-		void drawRoundedCorner(const Math::Rectf& rect, const Math::Vec2f& radii, const Math::Color4f& color);
-		void drawRoundedRectangle(const Math::Vec2f& position, const Math::Vec2f& size, const Math::Color4f& color, const RoundedRectParams& params);
+		void drawRoundedCorner(const Math::Vec2f& center, const Math::Vec2f& radii, const Corner corner, const Math::Color4f& color);
+		void drawRoundedRectangle(const Math::Rectf& rect, const Math::Color4f& color, const RoundedRectParams& params);
+
 		void drawText(const Graphics::TextLayout& textLayout, const Math::Vec2f& position);
 
 	private:
