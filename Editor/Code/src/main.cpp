@@ -98,6 +98,7 @@ int main() {
 	textA->setStyle({ Math::Color4f(0.3,0.3,0.3,1.0) });
 	//YGNodeStyleSetHeight(textA->m_Node, 25);
 	YGNodeStyleSetAlignSelf(textA->m_Node, YGAlignCenter);
+	YGNodeStyleSetMargin(textA->m_Node, YGEdgeRight, 10);
 	//YGNodeStyleSetFlexGrow(textA->m_Node, 1);
 
 	generateRandomUI(root);

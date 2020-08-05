@@ -19,8 +19,8 @@ namespace OrbitEngine { namespace UI {
 		float flags;
 	};
 
-	struct ConstantBuffer {
-		Math::Mat4 pr_matrix;
+	struct RoundedRectParams {
+		Math::Vec2f cornerRadii[4];
 	};
 
 	// TODO: move from immediate to retained eventually
@@ -29,10 +29,17 @@ namespace OrbitEngine { namespace UI {
 		Painter();
 		~Painter();
 
-		void drawRectangle(const Math::Vec2f& position, const Math::Vec2f& size, const Math::Color4f& color);
+		void drawRectangle(const Math::Rectf& rect, const Math::Color4f& color);
+		void drawRoundedFan(const Math::Vec2f& position, const Math::Vec2f& radii, const Math::Color4f& color);
+		void drawRoundedCorner(const Math::Rectf& rect, const Math::Vec2f& radii, const Math::Color4f& color);
+		void drawRoundedRectangle(const Math::Vec2f& position, const Math::Vec2f& size, const Math::Color4f& color, const RoundedRectParams& params);
 		void drawText(const Graphics::TextLayout& textLayout, const Math::Vec2f& position);
 
 	private:
+		struct ConstantBuffer {
+			Math::Mat4 pr_matrix;
+		};
+
 		Graphics::Shader* m_Shader;
 		Graphics::Mesh* m_Mesh;
 		Graphics::UniformsPack<ConstantBuffer>* m_ConstantBuffer;

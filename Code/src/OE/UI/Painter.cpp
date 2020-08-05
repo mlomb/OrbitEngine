@@ -9,6 +9,8 @@
 #endif
 
 namespace OrbitEngine { namespace UI {
+	const float UI_EPS = 0.0001f;
+
 	Painter::Painter()
 		: m_pVertex(NULL), m_pIndex(NULL), m_VertexCount(0), m_IndexCount(0)
 	{
@@ -52,22 +54,109 @@ namespace OrbitEngine { namespace UI {
 		delete m_Atlas;
 	}
 
-	void Painter::drawRectangle(const Math::Vec2f& position, const Math::Vec2f& size, const Math::Color4f& color)
+	void Painter::drawRectangle(const Math::Rectf& rect, const Math::Color4f& color)
 	{
-		*m_pVertex = { position, color, Math::Vec2f(0, 0), 0 }; m_pVertex++;
-		*m_pVertex = { position + Math::Vec2f(0, size.y), color, Math::Vec2f(0, 0), 0 }; m_pVertex++;
-		*m_pVertex = { position + Math::Vec2f(size.x, size.y), color, Math::Vec2f(0, 0), 0 }; m_pVertex++;
-		*m_pVertex = { position + Math::Vec2f(size.x, 0), color, Math::Vec2f(0, 0), 0 }; m_pVertex++;
+		if (rect.width < UI_EPS || rect.height < UI_EPS)
+			return; // skip invalid rects
+		if (color.a < UI_EPS)
+			return; // skip transparent
 
-		*m_pIndex = m_VertexCount + 2; m_pIndex++;
+		// 0     1
+		// *-----*
+		// | A  /|
+		// |  /  |
+		// |/  B |
+		// *-----*
+		// 2     3
+
+		*m_pVertex = { rect.position,                               color, Math::Vec2f(0, 0), 0 }; m_pVertex++;
+		*m_pVertex = { rect.position + Math::Vec2f(rect.width, 0),  color, Math::Vec2f(0, 0), 0 }; m_pVertex++;
+		*m_pVertex = { rect.position + Math::Vec2f(0, rect.height), color, Math::Vec2f(0, 0), 0 }; m_pVertex++;
+		*m_pVertex = { rect.position + rect.size,                   color, Math::Vec2f(0, 0), 0 }; m_pVertex++;
+
+		*m_pIndex = m_VertexCount + 0; m_pIndex++;
 		*m_pIndex = m_VertexCount + 1; m_pIndex++;
-		*m_pIndex = m_VertexCount + 0; m_pIndex++;
-		*m_pIndex = m_VertexCount + 0; m_pIndex++;
+		*m_pIndex = m_VertexCount + 2; m_pIndex++;
 		*m_pIndex = m_VertexCount + 3; m_pIndex++;
 		*m_pIndex = m_VertexCount + 2; m_pIndex++;
+		*m_pIndex = m_VertexCount + 1; m_pIndex++;
 
 		m_IndexCount += 6;
 		m_VertexCount += 4;
+	}
+
+	void Painter::drawRoundedFan(const Math::Vec2f& position, const Math::Vec2f& radii, const Math::Color4f& color)
+	{
+		const int subdivisions = 6;
+		const float step = 0.5f * PI / (float)subdivisions; // quarter
+
+		//          A
+		//        * |
+		//     *    |
+		//   *      | radii.y
+		//  *       |
+		// |--------X
+		//   radii.x
+
+		int cornerIndex = m_VertexCount;
+		Math::Vec2f center = position + radii; // X
+
+		*m_pVertex = { center, color, Math::Vec2f(0, 0), 0 }; m_pVertex++; // X
+		*m_pVertex = { center - Math::Vec2f(0, radii.y), color, Math::Vec2f(0, 0), 0 }; m_pVertex++; // A
+		m_VertexCount += 2;
+
+		for (int i = 0; i < subdivisions; i++) {
+			float angle = 0.5f * PI + (i + 1) * step;
+			Math::Vec2f offset = radii * Math::Vec2f(cos(angle), -sin(angle));
+
+			*m_pVertex = { center + offset, color, Math::Vec2f(0, 0), 0 }; m_pVertex++;
+			m_VertexCount++;
+
+			*m_pIndex = cornerIndex; m_pIndex++;
+			*m_pIndex = m_VertexCount - 1; m_pIndex++;
+			*m_pIndex = m_VertexCount - 2; m_pIndex++;
+			m_IndexCount += 3;
+		}
+	}
+
+	void Painter::drawRoundedCorner(const Math::Rectf& rect, const Math::Vec2f& radii, const Math::Color4f& color)
+	{
+		if (radii.x < UI_EPS && radii.y < UI_EPS) {
+			// No radius, just fill with a normal rectangle
+			// -------
+			// |     |
+			// |     |
+			// -------
+			drawRectangle(rect, color);
+			return;
+		}
+
+		// Draw the corner with radius and fill the remaining space with normal rectangles
+		//    __------
+		//   *  |    |
+		//  *\  |    |
+		// * A\ |    |
+		// |___\|  B |
+		// |    |    |
+		// | C  |    |
+		// |    |    |
+		// -----------
+
+		// A
+		drawRoundedFan(rect.position, radii, color);
+
+		if (rect.width > radii.x) {
+			// B
+			drawRectangle(Math::Rectf(rect.x + radii.x, rect.y, rect.width - radii.x, rect.height), color);
+		}
+		if (rect.height > radii.y) {
+			// C
+			drawRectangle(Math::Rectf(rect.x, rect.y + radii.y, rect.width, rect.height - radii.y), color);
+		}
+	}
+
+	void Painter::drawRoundedRectangle(const Math::Vec2f& position, const Math::Vec2f& size, const Math::Color4f& color, const RoundedRectParams& params)
+	{
 	}
 
 	void Painter::drawText(const Graphics::TextLayout& textLayout, const Math::Vec2f& position)
@@ -135,7 +224,6 @@ namespace OrbitEngine { namespace UI {
 			m_IndexCount += 6;
 			m_VertexCount += 4;
 		}
-
 	}
 
 	void Painter::setProjection(const Math::Mat4& proj)
@@ -183,6 +271,18 @@ namespace OrbitEngine { namespace UI {
 		m_IndexCount += 6;
 		m_VertexCount += 4;
 		*/
+		//drawRoundedRectTest(Math::Vec2f(200, 200), Math::Vec2f(50, 200), 0, 0, Math::Color::Red, Math::Color::Green);
+		//drawBorderedFan(Math::Vec2f(200, 200), Math::Vec2f(5,5), 1, 1, Math::Color::Red);
+		/*
+		RoundedRectParams params;
+		params.cornerRadii[0] = Math::Vec2f(15, 15);
+		params.cornerRadii[1] = Math::Vec2f(15, 15);
+		params.cornerRadii[2] = Math::Vec2f(15, 15);
+		params.cornerRadii[3] = Math::Vec2f(15, 15);
+		drawRoundedRectangle(Math::Vec2f(200, 200), Math::Vec2f(50, 50), Math::Color::Red, params);
+		*/
+		drawRoundedCorner(Math::Rectf(200, 200, 500, 500), Math::Vec2f(0, 0), Math::Color::Magenta);
+		drawRoundedCorner(Math::Rectf(200, 200, 500, 500), Math::Vec2f(200, 200), Math::Color::Red);
 
 		m_Mesh->getVBO()->unmapPointer();
 		m_Mesh->getIBO()->unmapPointer();

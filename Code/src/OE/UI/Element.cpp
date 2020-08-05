@@ -44,7 +44,7 @@ namespace OrbitEngine { namespace UI {
 
 	void Element::generateContent(Painter* painter)
 	{
-		painter->drawRectangle(m_BoundingBox.xy, m_BoundingBox.zw, m_Style.background);
+		painter->drawRectangle(Math::Rectf(m_BoundingBox.xy, m_BoundingBox.zw), m_Style.background);
 	}
 
 	YGSize Element::YogaMeasureCallback(YGNode* yogaNode, float width, YGMeasureMode widthMode, float height, YGMeasureMode heightMode)
