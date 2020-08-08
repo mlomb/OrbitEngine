@@ -47,9 +47,9 @@ namespace OrbitEngine { namespace UI {
 		Graphics::TextSettings textSettings;
 		textSettings.size = m_Size;
 		textSettings.wordWrap = true;
-		textSettings.wordWrapWidth = m_BoundingBox.z;
+		textSettings.wordWrapWidth = m_BoundingBox.width;
 
-		painter->drawText(getTextLayout(textSettings, false), m_BoundingBox.xy);
+		painter->drawText(getTextLayout(textSettings, false), m_BoundingBox.position);
 	}
 
 	Math::Vec2f Text::measureContent(float width, YGMeasureMode widthMode, float height, YGMeasureMode heightMode)

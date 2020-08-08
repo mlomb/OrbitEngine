@@ -22,12 +22,6 @@ namespace OrbitEngine { namespace UI {
 		YGNodeFreeRecursive(m_Node);
 	}
 
-	void Element::setStyle(Style style)
-	{
-		m_Style = style;
-		m_Node->setStyle(style.yoga_style);
-	}
-
 	void Element::setOwner(Element* parent)
 	{
 		m_Parent = parent;
@@ -44,7 +38,8 @@ namespace OrbitEngine { namespace UI {
 
 	void Element::generateContent(Painter* painter)
 	{
-		painter->drawRectangle(Math::Rectf(m_BoundingBox.xy, m_BoundingBox.zw), m_Style.background);
+		painter->drawRectangle(m_BoundingBox, m_ResolvedStyle.background);
+		// TODO: draw border
 	}
 
 	YGSize Element::YogaMeasureCallback(YGNode* yogaNode, float width, YGMeasureMode widthMode, float height, YGMeasureMode heightMode)
@@ -72,13 +67,13 @@ namespace OrbitEngine { namespace UI {
 
 	void Element::layoutSubtree()
 	{
-		m_LayoutRect = Math::Vec4f(
+		m_LayoutRect = Math::Rectf(
 			YGNodeLayoutGetLeft(m_Node), YGNodeLayoutGetTop(m_Node),
 			YGNodeLayoutGetWidth(m_Node), YGNodeLayoutGetHeight(m_Node)
 		);
-		m_BoundingBox.xy = m_Parent ? m_Parent->m_BoundingBox.xy : Math::Vec2f(0, 0);
-		m_BoundingBox.xy += m_LayoutRect.xy;
-		m_BoundingBox.zw = m_LayoutRect.zw;
+		m_BoundingBox.position = m_Parent ? m_Parent->m_BoundingBox.position : Math::Vec2f(0, 0);
+		m_BoundingBox.position += m_LayoutRect.position;
+		m_BoundingBox.size = m_LayoutRect.size;
 
 		// TODO: for now, update the whole tree anyway
 		//if (YGNodeGetHasNewLayout(m_Node)) {

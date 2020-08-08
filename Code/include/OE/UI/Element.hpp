@@ -7,6 +7,7 @@
 // https://yogalayout.com
 #include <yoga/Yoga.h>
 
+#include "OE/Math/Rect.hpp"
 #include "Style.hpp"
 
 namespace OrbitEngine { namespace UI {
@@ -18,7 +19,6 @@ namespace OrbitEngine { namespace UI {
 		Element();
 		virtual ~Element();
 
-		void setStyle(Style style);
 		void setOwner(Element* parent);
 		void addElement(Element* child, uint32_t index);
 
@@ -39,9 +39,9 @@ namespace OrbitEngine { namespace UI {
 	public: // TODO: set as private
 		YGNodeRef m_Node;
 
-		Math::Vec4f m_LayoutRect;
-		Math::Vec4f m_BoundingBox;
-		Style m_Style;
+		Math::Rectf m_LayoutRect;
+		Math::Rectf m_BoundingBox;
+		ResolvedStyle m_ResolvedStyle;
 
 		// called when the layout has changed
 		void layoutSubtree();
