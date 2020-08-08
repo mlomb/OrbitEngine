@@ -15,25 +15,47 @@ namespace OrbitEngine { namespace UI {
 		int pos, l; // pos: current position, l: source.size()
 		StyleSheet* sheet;
 
-		void error(const std::string& err) {
-			result.errors.emplace_back(err);
-		}
-
-		void warn(const std::string& warn) {
-			result.errors.emplace_back(warn);
-		}
-
 		void parse() {
-			parseSelector();
-			if (pos < l) {
-				error("Rule expected but found '" + std::string(1, source[pos]) + "'");
+			while (pos < l) {
+				if (!parseBlock() && pos < l) {
+					error("Block expected but found '" + std::string(1, source[pos]) + "'");
+					recover();
+				}
 			}
+		}
+
+		// parses a single block of css
+		// selector, selector { prop: value; }
+		// returns true if a block was found
+		bool parseBlock() {
+			while (pos < l) {
+				skipWhitespace();
+				//parseSelector();
+				pos = source.find_first_of("{", pos); // skip selector
+				if (pos == std::string::npos)
+					return 0;
+
+				char chr = source[pos];
+				if(chr == '{') {
+					pos = source.find_first_of("}", pos);
+					if (pos == std::string::npos)
+						return 0;
+					return 1;
+				}
+				else {
+					error("What");
+					return false;
+				}
+			}
+
+			return true;
 		}
 
 		// parse multiple selectors
 		// div, p, span, ...
 		void parseSelector() {
-			parseSingleSelector();
+			if (!parseSingleSelector())
+				return;
 
 			char chr = source[pos];
 			while (chr == ',') {
@@ -41,7 +63,9 @@ namespace OrbitEngine { namespace UI {
 				skipWhitespace();
 				if (!parseSingleSelector()) {
 					error("Expected selector");
+					return;
 				}
+				chr = source[pos];
 			}
 		}
 
@@ -57,15 +81,19 @@ namespace OrbitEngine { namespace UI {
 			while (1) {
 				skipWhitespace();
 
-				char chr = source[pos];
-				if (pos >= l || chr == ',' || chr == ')')
+				if (pos >= l)
 					break;
+
+				char chr = source[pos];
+				if (chr == ',' || chr == '{')
+					break;
+
 				if (isNestingOperator(chr)) {
 					std::cout << "(nesting op)" << chr << std::endl;
 					pos++;
 					skipWhitespace();
 					if (!parseSelectorPart()) {
-						error("Rule expected after '" + string(1, chr) + "'");
+						error("Rule expected after '" + std::string(1, chr) + "'");
 						break;
 					}
 				}
@@ -109,7 +137,15 @@ namespace OrbitEngine { namespace UI {
 					// TODO: pseudo selector
 					std::string pseudo = getIdent();
 					std::cout << "(pseudo)" << pseudo << std::endl;
+					smth = true;
 
+				}
+				else if (chr == '#') {
+					pos++;
+					// TODO: id selector
+					std::string id = getIdent();
+					std::cout << "(id)" << id << std::endl;
+					smth = true;
 				}
 				else {
 					return smth;
@@ -120,8 +156,8 @@ namespace OrbitEngine { namespace UI {
 		std::string getIdent() {
 			std::string result;
 
-			char chr = source[pos];
 			while (pos < l) {
+				char chr = source[pos];
 				if (isIdent(chr)) {
 					result.push_back(chr);
 				}
@@ -147,14 +183,33 @@ namespace OrbitEngine { namespace UI {
 					return result;
 				}
 				pos++;
-				chr = source[pos];
 			}
 
 			return result;
 		}
 
+		// tries to move to the next block
+		void recover() {
+			pos = source.find("}", pos);
+			if (pos == std::string::npos)
+				pos = l;
+			else
+				pos++;
+		}
+
 		void skipWhitespace() {
 			pos = source.find_first_not_of(WHITESPACE, pos);
+			if (pos == std::string::npos) {
+				pos = l; // EOF
+				return;
+			}
+			if (pos + 1 < l && source[pos] == '/' && source[pos + 1] == '*') {
+				// comment
+				pos = source.find("*/", pos);
+				if (pos == std::string::npos) {
+					error("Expected closing comment but got EOF");
+				}
+			}
 		}
 
 		bool isHex(char c) {
@@ -189,6 +244,14 @@ namespace OrbitEngine { namespace UI {
 
 		bool isNestingOperator(char c) {
 			return c == '>' || c == '+' || c == '~';
+		}
+
+		void error(const std::string& err) {
+			result.errors.emplace_back(err);
+		}
+
+		void warn(const std::string& warn) {
+			result.warnings.emplace_back(warn);
 		}
 	};
 
