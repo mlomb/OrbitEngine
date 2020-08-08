@@ -10,17 +10,12 @@ namespace OrbitEngine { namespace UI {
 		ID,
 		TAG,
 		CLASS,
-		WILDCARD
-	};
-
-	enum class StyleSelectorPseudo {
-		HOVER = 1,
-		ACTIVE = 2,
-		FOCUS = 4
+		WILDCARD,
+		PSEUDO
 	};
 
 	enum class StyleSelectorRelationship {
-		NONE, // same target (for example tag.class)
+		NONE, // same target (for example tag.class:pseudo)
 		DESCENDANT, // default
 		CHILD, // >
 		ADJACENT_SIBLING, // +
@@ -28,9 +23,8 @@ namespace OrbitEngine { namespace UI {
 	};
 
 	struct StyleSelectorPart {
-		std::string value;
+		std::string ident;
 		StyleSelectorType type;
-		StyleSelectorPseudo pseudos;
 		StyleSelectorRelationship prev_relationship;
 	};
 

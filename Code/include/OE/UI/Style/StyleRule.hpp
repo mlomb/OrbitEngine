@@ -6,17 +6,15 @@
 
 namespace OrbitEngine { namespace UI {
 
-	enum class StylePropertyType {
+	enum class StylePropertyID {
+		WIDTH,
+		HEIGHT,
+
 		MIN_WIDTH,
 		MIN_HEIGHT,
 
 		// always keep it last
 		LAST_PROPERTY_INVALID
-	};
-
-	enum class StyleValueType {
-		FLOAT,
-		COLOR
 	};
 
 	struct StyleValue {
@@ -27,14 +25,15 @@ namespace OrbitEngine { namespace UI {
 	};
 
 	struct StyleProperty {
-		StylePropertyType property_type;
-		StyleValueType value_type;
+		StylePropertyID id;
 		StyleValue value;
 	};
 
 	struct StyleRule {
 		std::vector<StyleProperty> properties;
 	};
+
+	StyleProperty ResolveProperty(const std::string& name, const std::string& value);
 
 } }
 
