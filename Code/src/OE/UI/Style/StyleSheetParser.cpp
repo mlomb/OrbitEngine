@@ -1,62 +1,128 @@
 #include "OE/UI/Style/StyleSheetParser.hpp"
 
 #include "OE/UI/Style/StyleSheet.hpp"
-#include "OE/UI/Style/NamedColors.hpp"
 
-#include <iostream>
+#include "OE/Misc/Log.hpp"
 
 namespace OrbitEngine { namespace UI {
 
-	const std::string WHITESPACE = " \n\r\t";
+	/// Eventually we want to move away from std::string.
+	/// We'll have slices of the original buffer
+	/// moving around instead of copying all the time (substrs)
 
-	// holds context
-	struct StyleSheetParser {
-		const std::string& source;
-		StyleSheetParseResult& result; // errors, warnings
-		int pos, l; // pos: current position, l: source.size()
-		StyleSheet* sheet;
+	// strip comments and consecutive spaces
+	std::string sanitizeSource(const std::string& input, StyleParseResult& parseResult) {
+		std::string result;
 
-		void parse() {
-			while (more()) {
-				if (!parseBlock()) {
-					errorButFound("Block expected");
-					recover(); // try to skip to the next block
+		bool before_whitespace = false;
+		bool inside_comment = false;
+		for (int i = 0; i < input.size(); i++) {
+			char chr = input[i];
+			// check if next is closing comment
+			if (chr == '*' && i + 1 < input.size() && input[i + 1] == '/') {
+				i += 2;
+				inside_comment = false;
+			}
+			else if (inside_comment) {
+				// ignore character
+			}
+			else if (std::isspace(chr)) {
+				if (!before_whitespace) {
+					result.push_back(' ');
+					before_whitespace = true;
 				}
-				skipWhitespace(); // to reach EOF
+			}
+			// check if next is opening comment
+			else if (chr == '/' && i + 1 < input.size() && input[i + 1] == '*') {
+				i += 2;
+				inside_comment = true;
+			}
+			else {
+				result.push_back(chr);
+				before_whitespace = false;
 			}
 		}
 
-		// parses a single block of CSS
-		// selector, selector { prop-name: value; }
-		// returns true if a block was found
-		bool parseBlock() {
-			std::vector<StyleSelector> selectors;
+		if (inside_comment) {
+			parseResult.errors.emplace_back("Expected comment ending but found EOF");
+		}
 
-			bool expect_selector = true;
-			while (expect_selector) {
-				StyleSelector selector;
-				if (parseSingleSelector(selector)) {
-					selectors.push_back(selector);
-				} else {
-					if (expect_selector)
-						errorButFound("Selector expected");
-					return false; // didn't manage to parse a single selector
+		return result;
+	}
+
+	bool parseRule(const std::string& source, StyleRule& rule, StyleParseResult& parseResult) {
+		rule.properties.clear();
+
+		size_t pos = 0;
+		do {
+			ConsumeCSSWhiteSpace(source, pos);
+			if (pos >= source.size())
+				break; // done
+			if (IsCSSIdentStart(source[pos])) {
+				// name
+				std::string name = ParseCSSIdentifier(source, pos);
+				ConsumeCSSWhiteSpace(source, pos);
+				if (source[pos] == ':') {
+					pos++; // skip :
 				}
-					
-				skipWhitespace();
-				if (source[pos] == ',') {
-					expect_selector = true;
-					pos++; // skip ,
+				else {
+					parseResult.errors.emplace_back("Expected ':'");
+					return false;
 				}
-				else
-					expect_selector = false;
+
+				// value
+				ConsumeCSSWhiteSpace(source, pos);
+				auto value_end = source.find_first_of(";}", pos);
+				if (value_end == std::string::npos)
+					value_end = source.size() - 1; // to the end
+
+				std::string value = source.substr(pos, value_end - pos);
+				pos = value_end + 1;
+
+				// OE_LOG_DEBUG("  (property)" << name << ":" << value);
+
+				// parse property
+				ParseStyleProperty(name, value, rule, parseResult);
+			}
+			else if (source[pos] == '}') {
+				pos++; // skip }
+				break; // stop
+			}
+			else {
+				parseResult.errors.emplace_back("Expected identifier but found '" + std::string(1, source[pos]) + "'");
+			}
+		} while (pos < source.size());
+		
+		return true;
+	}
+
+	StyleSheet* ParseStyleSheet(const std::string& raw_source, StyleParseResult& parseResult)
+	{
+		parseResult.errors.clear();
+		parseResult.warnings.clear();
+
+		StyleSheet* sheet = new StyleSheet();
+
+		std::string source = sanitizeSource(raw_source, parseResult);
+
+		size_t pos = 0;
+		while (pos < source.size()) {
+			size_t block_start = source.find("{", pos);
+			if (block_start == std::string::npos)
+				break; // no more blocks
+			size_t block_end = source.find("}", block_start);
+			if (block_end == std::string::npos) {
+				parseResult.errors.emplace_back("Expected block ending but found EOF");
+				break;
 			}
 
-			if(source[pos] == '{') {
-				pos++; // skip {
+			std::string selectors_str = source.substr(pos, block_start - pos);
+			std::string properties_str = source.substr(block_start + 1, block_end - block_start - 1);
 
+			std::vector<StyleSelector> selectors;
+			if (ParseStyleSelectors(selectors_str, selectors, parseResult)) {
 				StyleRule rule = { };
-				if (parseRule(rule)) {
+				if (parseRule(properties_str, rule, parseResult)) {
 					if (rule.properties.size() > 0) { // only add if not empty
 						int rule_ref = sheet->addRule(rule);
 
@@ -68,225 +134,10 @@ namespace OrbitEngine { namespace UI {
 						}
 					}
 				}
-				else {
-					// failed parsing rule
-					return false;
-				}
-			}
-			else {
-				errorButFound("Expected start of block");
-				return false;
 			}
 
-			return true;
+			pos = block_end + 1;
 		}
-
-		// parse a single selector
-		// tag .class > a:pseudo
-		bool parseSingleSelector(StyleSelector& selector) {
-			StyleSelectorRelationship next_rel = StyleSelectorRelationship::NONE;
-
-			while (more()) {
-				skipWhitespace();
-
-				char chr = source[pos];
-				bool marker = isSelectorMarker(chr);
-
-				if (chr == ',' || chr == '{') {
-					// TODO: make sure there is a proper selector after a nesting operator
-					return true;
-				}
-				else if (isIdentStart(chr) || marker) {
-					if (marker)
-						pos++; // skip marker
-
-					StyleSelectorPart part = { };
-					part.prev_relationship = next_rel;
-					part.ident = getIdent();
-
-					switch (chr) {
-					case '*': part.type = StyleSelectorType::WILDCARD; break;
-					case '#': part.type = StyleSelectorType::ID; break;
-					case '.': part.type = StyleSelectorType::CLASS; break;
-					case ':': part.type = StyleSelectorType::PSEUDO; break;
-					default:  part.type = StyleSelectorType::TAG; break;
-					}
-
-					std::cout << "(selector type " << std::to_string((int)part.type) << ")" << part.ident << std::endl;
-
-					selector.parts.emplace_back(part);
-
-					if (source[pos] == ' ' || source[pos] == '/') // check for whitespace (also comment)
-						next_rel = StyleSelectorRelationship::DESCENDANT;
-					else
-						next_rel = StyleSelectorRelationship::NONE;
-				}
-				else if (isNestingOperator(chr)) {
-					pos++; // skip operator
-
-					switch (chr) {
-					case '>': next_rel = StyleSelectorRelationship::CHILD; break;
-					case '+': next_rel = StyleSelectorRelationship::ADJACENT_SIBLING; break;
-					case '~': next_rel = StyleSelectorRelationship::GENERAL_SIBLING; break;
-					}
-
-					std::cout << "(nesting op)" << chr << std::endl;
-				}
-				else {
-					errorButFound("Expected '{'");
-					return false;
-				}
-			}
-
-			return false; // EOF
-		}
-
-		std::string getIdent() {
-			std::string result;
-
-			while (more() && isIdent(source[pos])) {
-				result.push_back(source[pos]);
-				pos++;
-			}
-
-			return result;
-		}
-
-		bool parseRule(StyleRule& rule) {
-			rule.properties.clear();
-
-			do {
-				skipWhitespace();
-				if (isIdentStart(source[pos])) {
-					// name
-					std::string name = getIdent();
-					skipWhitespace();
-					if (source[pos] == ':') {
-						pos++; // skip :
-					}
-					else {
-						errorButFound("Expected ':'");
-						return false;
-					}
-
-					// value
-					skipWhitespace();
-					auto value_end = source.find_first_of(";}", pos);
-					if (value_end == std::string::npos) {
-						errorButFound("Expected property value");
-						return false;
-					}
-					std::string value = source.substr(pos, value_end - pos);
-					pos = value_end + 1;
-
-					std::cout << "  (property)" << name << ":" << value << std::endl;
-
-					// parse property
-					if (!ParseStyleProperty(name, value, rule)) {
-						warn("Property '" + name + "' is not supported or the value is malformed.");
-					}
-				}
-				else
-					break; // no more properties
-			} while (more());
-
-			if (more() && source[pos] == '}') {
-				pos++; // skip }
-			}
-
-			return true;
-		}
-
-		bool more() {
-			return pos != std::string::npos && pos >= 0 && pos < l;
-		}
-
-		// tries to skip to the next block
-		void recover() {
-			if (pos < 0 || pos == std::string::npos)
-				return; // can't recover
-			pos = source.find("}", pos);
-			if (pos == std::string::npos)
-				pos = l; // EOF
-			else
-				pos++;
-		}
-
-		void skipWhitespace() {
-			pos = source.find_first_not_of(WHITESPACE, pos);
-			if (pos == std::string::npos) {
-				pos = l; // EOF
-				return;
-			}
-			if (pos + 1 < l && source[pos] == '/' && source[pos + 1] == '*') {
-				// comment
-				pos = source.find("*/", pos);
-				if (pos == std::string::npos)
-					error("Expected closing comment but got EOF");
-				else {
-					pos += 2;
-					skipWhitespace(); // skip whitespace after comment
-				}
-			}
-		}
-
-		bool isHex(char c) {
-			return
-				(c >= 'a' && c <= 'f') ||
-				(c >= 'A' && c <= 'F') ||
-				(c >= '0' && c <= '9');
-		}
-
-		bool isIdentStart(char c) {
-			return
-				(c >= 'a' && c <= 'z') ||
-				(c >= 'A' && c <= 'Z') ||
-				(c == '-') || (c == '_');
-		}
-
-		bool isIdent(char c) {
-			return isIdentStart(c) || (c >= '0' && c <= '9');
-		}
-
-		bool isNestingOperator(char c) {
-			return c == '>' || c == '+' || c == '~';
-		}
-
-		bool isSelectorMarker(char c) {
-			return c == '*' || c == '#' || c == '.' || c == ':';
-		}
-
-		void toLower(std::string& input) {
-			for (char& c : input)
-				c = tolower(c);
-		}
-
-		void error(const std::string& err) {
-			result.errors.emplace_back(err);
-		}
-
-		void errorButFound(const std::string& expected) {
-			if (more())
-				error(expected + " but found '" + std::string(1, source[pos]) + "'");
-			else
-				error(expected + " but found EOF");
-		}
-
-		void warn(const std::string& warn) {
-			result.warnings.emplace_back(warn);
-		}
-	};
-
-	StyleSheet* ParseStyleSheet(const std::string& source, StyleSheetParseResult& result)
-	{
-		result.errors.clear();
-		result.warnings.clear();
-
-		StyleSheet* sheet = new StyleSheet();
-
-		StyleSheetParser parser = { source, result, 0, source.size(), sheet };
-
-		parser.parse();
 
 		return sheet;
 	}

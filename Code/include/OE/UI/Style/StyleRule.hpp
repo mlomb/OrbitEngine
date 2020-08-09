@@ -1,8 +1,10 @@
 #ifndef UI_STYLE_RULE_HPP
 #define UI_STYLE_RULE_HPP
 
-#include <string>
 #include <vector>
+#include <string>
+
+#include "OE/UI/Style/StyleParse.hpp"
 
 #undef OVERFLOW
 
@@ -103,7 +105,7 @@ namespace OrbitEngine { namespace UI {
 		std::vector<StyleProperty> properties;
 	};
 
-	bool ParseStyleProperty(const std::string& name, const std::string& value, StyleRule& rule);
+	bool ParseStyleProperty(const std::string& name, const std::string& value, StyleRule& rule, StyleParseResult& parseResult);
 } }
 
 #endif

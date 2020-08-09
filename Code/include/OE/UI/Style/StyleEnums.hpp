@@ -1,14 +1,22 @@
-#ifndef UI_STYLE_HPP
-#define UI_STYLE_HPP
+#ifndef UI_STYLE_ENUMS_HPP
+#define UI_STYLE_ENUMS_HPP
 
 #include <yoga/YGEnums.h>
 
-#include <OE/Math/Color.hpp>
+#include "OE/Math/Color.hpp"
 
+// weird macros
 #undef RELATIVE
 #undef ABSOLUTE
 
 namespace OrbitEngine { namespace UI {
+
+	typedef uint32_t StyleHash;
+
+	constexpr const StyleHash HashStr(const char* str, const int i = 0) {
+		// TODO: maybe find a better hash
+		return str[i] ? (HashStr(str, i + 1) * 33) ^ str[i] : 5381;
+	}
 
 	enum class Position {
 		RELATIVE = YGPositionType::YGPositionTypeRelative,
@@ -64,7 +72,6 @@ namespace OrbitEngine { namespace UI {
 	};
 
 	struct ResolvedStyle {
-
 		Math::Color4f background = Math::Color4f(0, 0, 0 ,0); // transparent
 	};
 

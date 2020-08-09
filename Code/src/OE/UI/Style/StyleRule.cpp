@@ -5,11 +5,6 @@
 
 namespace OrbitEngine { namespace UI {
 
-	constexpr unsigned int str2int(const char* str, int h = 0)
-	{
-		return !str[h] ? 5381 : (str2int(str, h + 1) * 33) ^ str[h];
-	}
-
 	// removes all spaces and set to lowercase
 	std::string sanitize(const std::string& input) {
 		std::string result;
@@ -43,7 +38,7 @@ namespace OrbitEngine { namespace UI {
 		return (16 * hexToDec(l) + hexToDec(r)) / 255.0f;
 	}
 
-	bool parseLength(const std::string& input, StyleValue& output) {
+	bool parseLength(const std::string& input, StyleValue& output, StyleParseResult& parseResult) {
 		int pos = 0;
 		bool negative = false;
 		bool mantissa = false;
@@ -58,11 +53,14 @@ namespace OrbitEngine { namespace UI {
 				if (pos == 0) {
 					negative = true;
 				}
-				else
+				else {
+					parseResult.warnings.emplace_back("Unexpected '-'");
 					return false; // unexpected -
+				}
 			}
 			else if (chr == '.') {
 				if (mantissa) {
+					parseResult.warnings.emplace_back("Unexpected '.'");
 					return false; // unexpected .
 				}
 				mantissa = true;
@@ -90,6 +88,7 @@ namespace OrbitEngine { namespace UI {
 					break; // stop reading
 				}
 
+				parseResult.warnings.emplace_back("Unexpected character '" + std::string(1, chr) + "' parsing length");
 				return false; // unexpected character
 			}
 			pos++;
@@ -100,7 +99,7 @@ namespace OrbitEngine { namespace UI {
 		return true;
 	}
 
-	bool parseColor(const std::string& input, StyleValue& output) {
+	bool parseColor(const std::string& input, StyleValue& output, StyleParseResult& parseResult) {
 		if (input.size() < 2)
 			return false;
 
@@ -117,6 +116,7 @@ namespace OrbitEngine { namespace UI {
 					return true;
 				}
 				else {
+					parseResult.warnings.emplace_back("Invalid #RGB hex value");
 					return false; // invalid hex
 				}
 			}
@@ -135,10 +135,12 @@ namespace OrbitEngine { namespace UI {
 					return true;
 				}
 				else {
+					parseResult.warnings.emplace_back("Invalid #RRGGBB hex value");
 					return false; // invalid hex
 				}
 			}
 			else {
+				parseResult.warnings.emplace_back("Invalid size for hex number (" + std::to_string(input.size()) + ")");
 				return false; // invalid size for hex number
 			}
 		}
@@ -169,6 +171,7 @@ namespace OrbitEngine { namespace UI {
 				}
 				else if (chr == '.') {
 					if (component_mantissa) {
+						parseResult.warnings.emplace_back("Unexpected '.'");
 						return false; // unexpected .
 					}
 					component_mantissa = true;
@@ -184,8 +187,10 @@ namespace OrbitEngine { namespace UI {
 						component_index++;
 
 						// next component
-						if (component_index >= num_components)
+						if (component_index >= num_components) {
+							parseResult.warnings.emplace_back("Too many components for rgb/a");
 							return false; // too many components
+						}
 
 						// reset
 						CURR_COMP = 0;
@@ -194,14 +199,17 @@ namespace OrbitEngine { namespace UI {
 					}
 					else if (chr == ')') {
 						// check if matched all components
-						if (component_index + 1 < num_components)
+						if (component_index + 1 < num_components) {
+							parseResult.warnings.emplace_back("Too few components for rgb/a");
 							return false; // too few components
+						}
 
 						if (!has_alpha)
 							output.color.a = 1.0f;
 						return true;
 					}
 					else {
+						parseResult.warnings.emplace_back("Unexpected character '" + std::string(1, chr) + "' parsing rgb/a() color");
 						return false; // unexpected character
 					}
 				}
@@ -222,10 +230,12 @@ namespace OrbitEngine { namespace UI {
 			}
 		}
 
+		parseResult.warnings.emplace_back("Expected color definition");
+
 		return false;
 	}
 
-	bool ParseStyleProperty(const std::string& name, const std::string& raw_value, StyleRule& rule)
+	bool ParseStyleProperty(const std::string& name, const std::string& raw_value, StyleRule& rule, StyleParseResult& parseResult)
 	{
 		using ID = StylePropertyID;
 
@@ -233,11 +243,11 @@ namespace OrbitEngine { namespace UI {
 
 		std::string value = sanitize(raw_value);
 
-		switch (str2int(sanitize(name).c_str())) {
+		switch (HashStr(sanitize(name).c_str())) {
 			
 		#define PARSE_PROP(func, prop_name, prop_id) \
-		case str2int(prop_name): \
-			if (func(value, prop.value)) { \
+		case HashStr(prop_name): \
+			if (func(value, prop.value, parseResult)) { \
 				prop.id = prop_id; \
 				rule.properties.emplace_back(prop); \
 				return true; \
@@ -248,12 +258,12 @@ namespace OrbitEngine { namespace UI {
 		#define COLOR_PROPERTY(prop_name, prop_id) PARSE_PROP(parseColor, prop_name, prop_id);
 
 		#define PARSE_ENUM_START(prop_name, prop_id) \
-		case str2int(prop_name): \
+		case HashStr(prop_name): \
 			prop.id = prop_id; \
-			switch (str2int(value.c_str())) {
+			switch (HashStr(value.c_str())) {
 		
 		#define PARSE_ENUM_ENTRY(a, b) \
-			case str2int(a): prop.value.enum_index = (int)b; break; \
+			case HashStr(a): prop.value.enum_index = (int)b; break; \
 
 		#define PARSE_ENUM_END() \
 			default: \
@@ -361,8 +371,8 @@ namespace OrbitEngine { namespace UI {
 
 		// shorthands
 		#define FOUR_LENGTH_SHORTHAND(prop_name, a, b, c, d) \
-		case str2int(prop_name): \
-			if (parseLength(value, prop.value)) { \
+		case HashStr(prop_name): \
+			if (parseLength(value, prop.value, parseResult)) { \
 				prop.id = a; \
 				rule.properties.emplace_back(prop); \
 				prop.id = b; \
@@ -407,6 +417,7 @@ namespace OrbitEngine { namespace UI {
 		// TODO: flex shorthand
 
 		default:
+			parseResult.warnings.emplace_back("Property '" + name + "' is not supported");
 			break;
 		}
 

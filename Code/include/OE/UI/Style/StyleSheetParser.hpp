@@ -4,17 +4,15 @@
 #include <string>
 #include <vector>
 
+#include "OE/UI/Style/StyleParse.hpp"
+
 namespace OrbitEngine { namespace UI {
 
 	class StyleSheet;
 
-	struct StyleSheetParseResult {
-		std::vector<std::string> errors;
-		std::vector<std::string> warnings;
-	};
-
 	/// Parse CSS source into a StyleSheet object
-	StyleSheet* ParseStyleSheet(const std::string& source, StyleSheetParseResult& result);
+	/// The parser doesn't support any kind of escaping
+	StyleSheet* ParseStyleSheet(const std::string& source, StyleParseResult& parseResult);
 
 } }
 
