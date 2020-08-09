@@ -8,7 +8,7 @@
 #include <yoga/Yoga.h>
 
 #include "OE/Math/Rect.hpp"
-#include "Style.hpp"
+#include "OE/UI/Style/StyleEnums.hpp"
 
 namespace OrbitEngine { namespace UI {
 	class Painter;

@@ -1,6 +1,7 @@
 #include "OE/UI/Style/StyleRule.hpp"
 
 #include "OE/UI/Style/NamedColors.hpp"
+#include "OE/UI/Style/StyleEnums.hpp"
 
 namespace OrbitEngine { namespace UI {
 
@@ -224,25 +225,42 @@ namespace OrbitEngine { namespace UI {
 		return false;
 	}
 
-	bool ParseStyleProperty(const std::string& name, const std::string& value, StyleRule& rule)
+	bool ParseStyleProperty(const std::string& name, const std::string& raw_value, StyleRule& rule)
 	{
 		using ID = StylePropertyID;
 
 		StyleProperty prop;
 
+		std::string value = sanitize(raw_value);
+
 		switch (str2int(sanitize(name).c_str())) {
 			
 		#define PARSE_PROP(func, prop_name, prop_id) \
 		case str2int(prop_name): \
-			if (func(sanitize(value), prop.value)) { \
+			if (func(value, prop.value)) { \
 				prop.id = prop_id; \
 				rule.properties.emplace_back(prop); \
 				return true; \
 			} \
 			break;
-
+			
 		#define LENGTH_PROPERTY(prop_name, prop_id) PARSE_PROP(parseLength, prop_name, prop_id);
 		#define COLOR_PROPERTY(prop_name, prop_id) PARSE_PROP(parseColor, prop_name, prop_id);
+
+		#define PARSE_ENUM_START(prop_name, prop_id) \
+		case str2int(prop_name): \
+			prop.id = prop_id; \
+			switch (str2int(value.c_str())) {
+		
+		#define PARSE_ENUM_ENTRY(a, b) \
+			case str2int(a): prop.value.enum_index = (int)b; break; \
+
+		#define PARSE_ENUM_END() \
+			default: \
+				return false; /* no match */ \
+			} \
+			rule.properties.emplace_back(prop); \
+			return true;
 
 		LENGTH_PROPERTY("width",      ID::WIDTH);
 		LENGTH_PROPERTY("height",     ID::HEIGHT);
@@ -271,6 +289,10 @@ namespace OrbitEngine { namespace UI {
 		LENGTH_PROPERTY("border-right-width",  ID::BORDER_RIGHT_WIDTH);
 		LENGTH_PROPERTY("border-bottom-width", ID::BORDER_BOTTOM_WIDTH);
 
+		LENGTH_PROPERTY("flex-grow",   ID::FLEX_GROW);
+		LENGTH_PROPERTY("flex-shrink", ID::FLEX_SHRINK);
+		LENGTH_PROPERTY("flex-basis",  ID::FLEX_BASIS);
+
 		LENGTH_PROPERTY("left",   ID::LEFT);
 		LENGTH_PROPERTY("top",    ID::TOP);
 		LENGTH_PROPERTY("right",  ID::RIGHT);
@@ -281,6 +303,29 @@ namespace OrbitEngine { namespace UI {
 
 		LENGTH_PROPERTY("font-size", ID::FONT_SIZE);
 
+		PARSE_ENUM_START("flex-direction", ID::FLEX_DIRECTION);
+			PARSE_ENUM_ENTRY("row", FlexDirection::ROW);
+			PARSE_ENUM_ENTRY("column", FlexDirection::COLUMN);
+			PARSE_ENUM_ENTRY("row-reverse", FlexDirection::ROW_REVERSE);
+			PARSE_ENUM_ENTRY("column-reverse", FlexDirection::COLUMN_REVERSE);
+		PARSE_ENUM_END();
+
+		/*
+		case str2int("flex-direction"):
+		{
+			switch (str2int(value.c_str())) {
+			case str2int("row"): prop.value.enum_index = (int)FlexDirection::ROW; break; \
+			case str2int("row"): prop.value.enum_index = (int)FlexDirection::ROW; break;
+			case str2int("row"): prop.value.enum_index = (int)FlexDirection::ROW; break;
+			case str2int("row"): prop.value.enum_index = (int)FlexDirection::ROW; break;
+			default:
+				return false; // no match
+			}
+
+			rule.properties.emplace_back(prop);
+			break;
+		}
+		*/
 		default:
 			break;
 		}

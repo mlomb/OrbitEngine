@@ -81,8 +81,6 @@ namespace OrbitEngine { namespace UI {
 	struct StyleValue {
 		union {
 			StyleLength length;
-			float decimal;
-			int whole;
 			struct {
 				union {
 					struct {
@@ -91,6 +89,7 @@ namespace OrbitEngine { namespace UI {
 					float components[4];
 				};
 			} color;
+			int enum_index;
 		};
 	};
 
