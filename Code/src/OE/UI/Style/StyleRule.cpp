@@ -141,8 +141,71 @@ namespace OrbitEngine { namespace UI {
 				return false; // invalid size for hex number
 			}
 		}
-		else if (input.find("rgb") == 0) { // rgb/a color
-			// TODO
+		else if (input.find("rgb") == 0 && input.size() > 5) { // rgb/a color
+			bool has_alpha = input[3] == 'a';
+			int num_components = has_alpha ? 4 : 3;
+			int pos = has_alpha ? 5 : 4;
+
+			#define CURR_COMP output.color.components[component_index]
+
+			int component_index = 0;
+			bool component_mantissa = false;
+			int component_mantissa_place = 1;
+			CURR_COMP = 0;
+
+			while (pos < input.size()) {
+				char chr = input[pos];
+				if (isNumeric(chr)) {
+					int num = chr - '0';
+					if (!component_mantissa) {
+						// whole part
+						CURR_COMP = CURR_COMP * 10 + num;
+					}
+					else {
+						// decimal part
+						CURR_COMP = CURR_COMP + (float)num / powf(10, component_mantissa_place++);
+					}
+				}
+				else if (chr == '.') {
+					if (component_mantissa) {
+						return false; // unexpected .
+					}
+					component_mantissa = true;
+				}
+				else if (chr == '%') {
+					// ignore
+				}
+				else {
+					// number finalized
+					CURR_COMP = CURR_COMP / (component_index == 3 ? 1.0f : 255.0f); // don't divide alpha
+
+					if (chr == ',') {
+						component_index++;
+
+						// next component
+						if (component_index >= num_components)
+							return false; // too many components
+
+						// reset
+						CURR_COMP = 0;
+						component_mantissa = false;
+						component_mantissa_place = 1;
+					}
+					else if (chr == ')') {
+						// check if matched all components
+						if (component_index + 1 < num_components)
+							return false; // too few components
+
+						if (!has_alpha)
+							output.color.a = 1.0f;
+						return true;
+					}
+					else {
+						return false; // unexpected character
+					}
+				}
+				pos++;
+			}
 		}
 		else {
 			// try to match predefined colors

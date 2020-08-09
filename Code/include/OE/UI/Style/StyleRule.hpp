@@ -84,7 +84,12 @@ namespace OrbitEngine { namespace UI {
 			float decimal;
 			int whole;
 			struct {
-				float r, g, b, a;
+				union {
+					struct {
+						float r, g, b, a;
+					};
+					float components[4];
+				};
 			} color;
 		};
 	};
