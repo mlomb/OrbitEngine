@@ -1,6 +1,7 @@
 #include "OE/UI/Style/StyleSheetParser.hpp"
 
 #include "OE/UI/Style/StyleSheet.hpp"
+#include "OE/UI/Style/NamedColors.hpp"
 
 #include <iostream>
 
@@ -181,13 +182,7 @@ namespace OrbitEngine { namespace UI {
 					std::cout << "  (property)" << name << ":" << value << std::endl;
 
 					// parse property
-					toLower(name);
-					StyleProperty prop = ResolveProperty(name, value);
-					if (prop.id != StylePropertyID::LAST_PROPERTY_INVALID) {
-						// valid prop
-						rule.properties.emplace_back(prop);
-					}
-					else {
+					if (!ParseStyleProperty(name, value, rule)) {
 						warn("Property '" + name + "' is not supported or the value is malformed.");
 					}
 				}
