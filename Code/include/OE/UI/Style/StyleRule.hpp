@@ -43,8 +43,8 @@ namespace OrbitEngine { namespace UI {
 		FLEX_WRAP,
 
 		ALIGN_SELF,
+		ALIGN_ITEMS,
 		ALIGN_CONTENT,
-		ALGIN_ITEMS,
 		JUSTIFY_CONTENT,
 
 		POSITION,
@@ -60,6 +60,7 @@ namespace OrbitEngine { namespace UI {
 		DISPLAY,
 
 		FONT_SIZE,
+		WHITE_SPACE,
 
 		CURSOR,
 

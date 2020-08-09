@@ -292,7 +292,50 @@ namespace OrbitEngine { namespace UI {
 		LENGTH_PROPERTY("flex-grow",   ID::FLEX_GROW);
 		LENGTH_PROPERTY("flex-shrink", ID::FLEX_SHRINK);
 		LENGTH_PROPERTY("flex-basis",  ID::FLEX_BASIS);
+		PARSE_ENUM_START("flex-direction", ID::FLEX_DIRECTION);
+			PARSE_ENUM_ENTRY("row",            FlexDirection::ROW);
+			PARSE_ENUM_ENTRY("column",         FlexDirection::COLUMN);
+			PARSE_ENUM_ENTRY("row-reverse",    FlexDirection::ROW_REVERSE);
+			PARSE_ENUM_ENTRY("column-reverse", FlexDirection::COLUMN_REVERSE);
+		PARSE_ENUM_END();
+		PARSE_ENUM_START("flex-wrap", ID::FLEX_WRAP);
+			PARSE_ENUM_ENTRY("nowrap",       FlexWrap::NOWRAP);
+			PARSE_ENUM_ENTRY("wrap",         FlexWrap::WRAP);
+			PARSE_ENUM_ENTRY("wrap-reverse", FlexWrap::WRAP_REVERSE);
+		PARSE_ENUM_END();
 
+		#define ALIGN_ENUM_ENTRIES() \
+			PARSE_ENUM_ENTRY("auto",          Align::AUTO); \
+			PARSE_ENUM_ENTRY("flex-start",    Align::FLEX_START); \
+			PARSE_ENUM_ENTRY("center",        Align::CENTER); \
+			PARSE_ENUM_ENTRY("flex-end",      Align::FLEX_END); \
+			PARSE_ENUM_ENTRY("stretch",       Align::STRETCH); \
+			PARSE_ENUM_ENTRY("baseline",      Align::BASELINE); \
+			PARSE_ENUM_ENTRY("space-between", Align::SPACE_BETWEEN); \
+			PARSE_ENUM_ENTRY("space-around",  Align::SPACE_AROUND);
+		
+		PARSE_ENUM_START("align-self", ID::ALIGN_SELF);
+			ALIGN_ENUM_ENTRIES();
+		PARSE_ENUM_END();
+		PARSE_ENUM_START("align-items", ID::ALIGN_ITEMS);
+			ALIGN_ENUM_ENTRIES();
+		PARSE_ENUM_END();
+		PARSE_ENUM_START("align-content", ID::ALIGN_CONTENT);
+			ALIGN_ENUM_ENTRIES();
+		PARSE_ENUM_END();
+		PARSE_ENUM_START("justify-content", ID::JUSTIFY_CONTENT);
+			PARSE_ENUM_ENTRY("flex-start", Justify::FLEX_START);
+			PARSE_ENUM_ENTRY("center", Justify::CENTER);
+			PARSE_ENUM_ENTRY("flex-end", Justify::FLEX_END);
+			PARSE_ENUM_ENTRY("space-between", Justify::SPACE_BETWEEN);
+			PARSE_ENUM_ENTRY("space-around", Justify::SPACE_AROUND);
+			PARSE_ENUM_ENTRY("space-evenly", Justify::SPACE_EVENLY);
+		PARSE_ENUM_END();
+		
+		PARSE_ENUM_START("position", ID::POSITION);
+			PARSE_ENUM_ENTRY("relative", Position::RELATIVE);
+			PARSE_ENUM_ENTRY("absolute", Position::ABSOLUTE);
+		PARSE_ENUM_END();
 		LENGTH_PROPERTY("left",   ID::LEFT);
 		LENGTH_PROPERTY("top",    ID::TOP);
 		LENGTH_PROPERTY("right",  ID::RIGHT);
@@ -300,32 +343,39 @@ namespace OrbitEngine { namespace UI {
 
 		COLOR_PROPERTY("color", ID::COLOR);
 		COLOR_PROPERTY("background-color", ID::BACKGROUND_COLOR);
-
-		LENGTH_PROPERTY("font-size", ID::FONT_SIZE);
-
-		PARSE_ENUM_START("flex-direction", ID::FLEX_DIRECTION);
-			PARSE_ENUM_ENTRY("row", FlexDirection::ROW);
-			PARSE_ENUM_ENTRY("column", FlexDirection::COLUMN);
-			PARSE_ENUM_ENTRY("row-reverse", FlexDirection::ROW_REVERSE);
-			PARSE_ENUM_ENTRY("column-reverse", FlexDirection::COLUMN_REVERSE);
+		
+		PARSE_ENUM_START("overflow", ID::OVERFLOW);
+			PARSE_ENUM_ENTRY("visible", Overflow::VISIBLE);
+			PARSE_ENUM_ENTRY("hidden",  Overflow::HIDDEN);
+		PARSE_ENUM_END();
+		PARSE_ENUM_START("display", ID::DISPLAY);
+			PARSE_ENUM_ENTRY("flex", Display::FLEX);
+			PARSE_ENUM_ENTRY("none", Display::NONE);
 		PARSE_ENUM_END();
 
-		/*
-		case str2int("flex-direction"):
-		{
-			switch (str2int(value.c_str())) {
-			case str2int("row"): prop.value.enum_index = (int)FlexDirection::ROW; break; \
-			case str2int("row"): prop.value.enum_index = (int)FlexDirection::ROW; break;
-			case str2int("row"): prop.value.enum_index = (int)FlexDirection::ROW; break;
-			case str2int("row"): prop.value.enum_index = (int)FlexDirection::ROW; break;
-			default:
-				return false; // no match
-			}
+		LENGTH_PROPERTY("font-size", ID::FONT_SIZE);
+		PARSE_ENUM_START("white-space", ID::WHITE_SPACE);
+			PARSE_ENUM_ENTRY("normal", WhiteSpace::NORMAL);
+			PARSE_ENUM_ENTRY("nowrap", WhiteSpace::NOWRAP);
+		PARSE_ENUM_END();
 
-			rule.properties.emplace_back(prop);
+		// shorthands
+		case str2int("border-radius"):
+			if (parseLength(value, prop.value)) { // we only support one length
+				prop.id = ID::BORDER_TOP_LEFT_RADIUS;
+				rule.properties.emplace_back(prop);
+				prop.id = ID::BORDER_TOP_RIGHT_RADIUS;
+				rule.properties.emplace_back(prop);
+				prop.id = ID::BORDER_BOTTOM_LEFT_RADIUS;
+				rule.properties.emplace_back(prop);
+				prop.id = ID::BORDER_BOTTOM_RIGHT_RADIUS;
+				rule.properties.emplace_back(prop);
+				return true;
+			}
 			break;
-		}
-		*/
+
+		// TODO: flex shorthand
+
 		default:
 			break;
 		}

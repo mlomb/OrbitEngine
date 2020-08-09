@@ -22,7 +22,7 @@ namespace OrbitEngine { namespace UI {
 		ROW_REVERSE = YGFlexDirection::YGFlexDirectionRowReverse
 	};
 
-	enum class Wrap {
+	enum class FlexWrap {
 		NOWRAP = YGWrap::YGWrapNoWrap,
 		WRAP = YGWrap::YGWrapWrap,
 		WRAP_REVERSE = YGWrap::YGWrapWrapReverse,
@@ -56,6 +56,11 @@ namespace OrbitEngine { namespace UI {
 	enum class Display {
 		FLEX = 0,
 		NONE = 1,
+	};
+
+	enum class Overflow {
+		VISIBLE = 0,
+		HIDDEN = 1,
 	};
 
 	struct ResolvedStyle {
