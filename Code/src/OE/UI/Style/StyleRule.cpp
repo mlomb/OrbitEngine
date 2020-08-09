@@ -360,19 +360,49 @@ namespace OrbitEngine { namespace UI {
 		PARSE_ENUM_END();
 
 		// shorthands
-		case str2int("border-radius"):
-			if (parseLength(value, prop.value)) { // we only support one length
-				prop.id = ID::BORDER_TOP_LEFT_RADIUS;
-				rule.properties.emplace_back(prop);
-				prop.id = ID::BORDER_TOP_RIGHT_RADIUS;
-				rule.properties.emplace_back(prop);
-				prop.id = ID::BORDER_BOTTOM_LEFT_RADIUS;
-				rule.properties.emplace_back(prop);
-				prop.id = ID::BORDER_BOTTOM_RIGHT_RADIUS;
-				rule.properties.emplace_back(prop);
-				return true;
-			}
+		#define FOUR_LENGTH_SHORTHAND(prop_name, a, b, c, d) \
+		case str2int(prop_name): \
+			if (parseLength(value, prop.value)) { \
+				prop.id = a; \
+				rule.properties.emplace_back(prop); \
+				prop.id = b; \
+				rule.properties.emplace_back(prop); \
+				prop.id = c; \
+				rule.properties.emplace_back(prop); \
+				prop.id = d; \
+				rule.properties.emplace_back(prop); \
+				return true; \
+			} \
 			break;
+		
+		FOUR_LENGTH_SHORTHAND(
+			"border-radius",
+			ID::BORDER_TOP_LEFT_RADIUS,
+			ID::BORDER_TOP_RIGHT_RADIUS,
+			ID::BORDER_BOTTOM_LEFT_RADIUS,
+			ID::BORDER_BOTTOM_RIGHT_RADIUS,
+		)
+		FOUR_LENGTH_SHORTHAND(
+			"border-width",
+			ID::BORDER_LEFT_WIDTH,
+			ID::BORDER_TOP_WIDTH,
+			ID::BORDER_RIGHT_WIDTH,
+			ID::BORDER_BOTTOM_WIDTH,
+		)
+		FOUR_LENGTH_SHORTHAND(
+			"margin",
+			ID::MARGIN_LEFT,
+			ID::MARGIN_TOP,
+			ID::MARGIN_RIGHT,
+			ID::MARGIN_BOTTOM,
+		)
+		FOUR_LENGTH_SHORTHAND(
+			"padding",
+			ID::PADDING_LEFT,
+			ID::PADDING_TOP,
+			ID::PADDING_RIGHT,
+			ID::PADDING_BOTTOM,
+		)
 
 		// TODO: flex shorthand
 
