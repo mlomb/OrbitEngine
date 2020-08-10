@@ -8,7 +8,7 @@ namespace OrbitEngine { namespace UI {
 	{
 		selector = { };
 		selector.specificity = 0;
-		selector.matching_rule_index = -1;
+		selector.rule = nullptr;
 
 		size_t pos = 0;
 		StyleSelectorRelationship next_rel = StyleSelectorRelationship::NONE;
@@ -25,19 +25,62 @@ namespace OrbitEngine { namespace UI {
 				if (marker)
 					pos++; // skip marker
 
-				StyleSelectorPart part = { };
-				part.prev_relationship = next_rel;
-				part.ident = ParseCSSIdentifier(input, pos);
+				StyleIdentifierType type;
+				bool is_wildcard = false;
 
 				switch (chr) {
-				case '*': part.type = StyleSelectorType::WILDCARD; break;
-				case '#': part.type = StyleSelectorType::ID; break;
-				case '.': part.type = StyleSelectorType::CLASS; break;
-				case ':': part.type = StyleSelectorType::PSEUDO; break;
-				default:  part.type = StyleSelectorType::TAG; break;
+				case '#': type = StyleIdentifierType::ID; break;
+				default:  type = StyleIdentifierType::TAG; break;
+				case '.': type = StyleIdentifierType::CLASS; break;
+				case '*': type = StyleIdentifierType::TAG; is_wildcard = true; break;
+				case ':':
+					std::string pseudo = ParseCSSIdentifier(input, pos);
+
+					StylePseudoStates state;
+					switch (HashStr(pseudo.c_str())) {
+					case HashStr("hover"):    state = StylePseudoStates::HOVER; break;
+					case HashStr("disabled"): state = StylePseudoStates::DISABLED; break;
+					case HashStr("checked"):  state = StylePseudoStates::CHECKED; break;
+					case HashStr("active"):   state = StylePseudoStates::ACTIVE; break;
+					case HashStr("focus"):    state = StylePseudoStates::FOCUS; break;
+					default:
+						parseResult.warnings.emplace_back("Unsupported pseudo state '" + pseudo + "'");
+						return false;
+					}
+
+					// elem:pseudo
+					if (next_rel == StyleSelectorRelationship::NONE && selector.parts.size() > 0) {
+						selector.parts.back().pseudo_states |= state;
+					}
+					// :pseudo
+					// elem > :pseudo
+					else {
+						// create wildcard tag
+						StyleSelectorPart part = { };
+						part.identifier.type = StyleIdentifierType::TAG;
+						part.identifier.text = "*";
+						part.identifier.computeHash();
+						part.prev_relationship = StyleSelectorRelationship::NONE;
+						part.pseudo_states = state;
+						selector.parts.emplace_back(part);
+					}
+
+					if (input[pos] == ' ') // check for space
+						next_rel = StyleSelectorRelationship::DESCENDANT;
+					else
+						next_rel = StyleSelectorRelationship::NONE;
+
+					continue; // skip the rest
 				}
 
-				OE_LOG_DEBUG("(selector type " << std::to_string((int)part.type) << ")" << part.ident);
+				StyleSelectorPart part = { };
+				part.identifier.type = type;
+				part.identifier.text = is_wildcard ? "*" : ParseCSSIdentifier(input, pos);
+				part.identifier.computeHash();
+				part.prev_relationship = next_rel;
+				part.pseudo_states = StylePseudoStates::NONE;
+
+				OE_LOG_DEBUG("(selector type " << std::to_string((int)part.identifier.type) << ")" << part.identifier.text);
 
 				selector.parts.emplace_back(part);
 
@@ -96,26 +139,36 @@ namespace OrbitEngine { namespace UI {
 		return any;
 	}
 
+	void UI::StyleIdentifier::computeHash()
+	{
+		text_hash = HashStr(text.c_str());
+	}
+
 	// See https://www.w3.org/TR/selectors-3/#specificity
 	void StyleSelector::computeSpecificity() {
 		int a = 0, b = 0, c = 0;
 
 		for (const StyleSelectorPart& part : parts) {
-			switch (part.type)
+			switch (part.identifier.type)
 			{
-			case StyleSelectorType::ID:
+			case StyleIdentifierType::ID:
 				a++;
 				break;
-			case StyleSelectorType::CLASS:
-			case StyleSelectorType::PSEUDO:
+			case StyleIdentifierType::CLASS:
 				b++;
 				break;
-			case StyleSelectorType::TAG:
-				c++;
+			case StyleIdentifierType::TAG:
+				if (part.identifier.text.size() == 1 && part.identifier.text[0] == '*') {
+					// ignore wildcard
+				} else
+					c++;
 				break;
-			case StyleSelectorType::WILDCARD:
-				// no contribution
-				break;
+			}
+
+			uint32_t pseudos = (uint32_t)part.pseudo_states;
+			while (pseudos) {
+				b += pseudos & 1; // count the number of bits set
+				pseudos >>= 1;
 			}
 		}
 

@@ -128,9 +128,8 @@ namespace OrbitEngine { namespace UI {
 
 						// connect selectors
 						for (StyleSelector& selector : selectors) {
-							selector.matching_rule_index = rule_ref;
 							selector.computeSpecificity();
-							sheet->addSelector(selector);
+							sheet->addSelector(selector, rule_ref);
 						}
 					}
 				}
