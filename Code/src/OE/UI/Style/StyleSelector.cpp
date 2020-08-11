@@ -8,6 +8,7 @@ namespace OrbitEngine { namespace UI {
 	{
 		selector = { };
 		selector.specificity = 0;
+		selector.order = 0;
 		selector.rule = nullptr;
 
 		size_t pos = 0;

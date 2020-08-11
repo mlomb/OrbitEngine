@@ -53,6 +53,7 @@ namespace OrbitEngine { namespace UI {
 		std::vector<StyleSelectorPart> parts;
 		StyleRule* rule = nullptr; // filled by StyleSheet
 		int specificity;
+		int order; // order in StyleSheet (filled by StyleSheet)
 
 		void computeSpecificity();
 	};

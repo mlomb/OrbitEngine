@@ -31,6 +31,7 @@ namespace OrbitEngine { namespace UI {
 		StyleSelector* new_selector = new StyleSelector();
 		*new_selector = selector; // copy
 		new_selector->rule = m_Rules[rule_ref];
+		new_selector->order = m_Rules.size();
 		m_Selectors.emplace_back(new_selector);
 
 		const StyleIdentifier& lastIdentifier = new_selector->parts.back().identifier;

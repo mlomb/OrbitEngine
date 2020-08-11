@@ -94,6 +94,11 @@ namespace OrbitEngine { namespace UI {
 		m_Classes.emplace_back(si);
 	}
 
+	void Element::addStyleSheet(StyleSheet* stylesheet)
+	{
+		m_StyleSheets.emplace_back(stylesheet);
+	}
+
 	Element* Element::getParent() const
 	{
 		return m_Parent;
@@ -102,6 +107,11 @@ namespace OrbitEngine { namespace UI {
 	const std::vector<Element*>& Element::getChildrens() const
 	{
 		return m_Childrens;
+	}
+
+	const std::vector<StyleSheet*>& Element::getStyleSheets() const
+	{
+		return m_StyleSheets;
 	}
 
 	Math::Rectf Element::getBoundingBox() const

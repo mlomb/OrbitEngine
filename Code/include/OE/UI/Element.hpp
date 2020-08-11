@@ -13,6 +13,7 @@ class YGNode;
 namespace OrbitEngine { namespace UI {
 
 	class Painter;
+	class StyleSheet;
 
 	enum class MeasureMode {
 		UNDEFINED,
@@ -30,14 +31,16 @@ namespace OrbitEngine { namespace UI {
 		void removeElement(Element* child);
 		void setID(const std::string& id);
 		void addClass(const std::string& klass);
+		void addStyleSheet(StyleSheet* stylesheet);
 
 		Element* getParent() const;
 		const std::vector<Element*>& getChildrens() const;
+		const std::vector<StyleSheet*>& getStyleSheets() const;
 		Math::Rectf getBoundingBox() const;
 
 		virtual void paintContent(Painter* painter);
 		virtual Math::Vec2f measureContent(float width, MeasureMode widthMode, float height, MeasureMode heightMode);
-
+		
 	protected:
 		void setTag(const std::string& tag);
 
@@ -57,6 +60,7 @@ namespace OrbitEngine { namespace UI {
 		StyleIdentifier m_ID, m_Tag;
 		std::vector<StyleIdentifier> m_Classes;
 		StylePseudoStates m_PseudoStates;
+		std::vector<StyleSheet*> m_StyleSheets;
 
 		YGNode* m_YogaNode;
 		Math::Rectf m_LayoutRect;
