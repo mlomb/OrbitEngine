@@ -1,14 +1,19 @@
 #include "OE/UI/Element.hpp"
 
 #include "OE/Misc/Log.hpp"
+
+#include "OE/UI/Style/StyleComputed.hpp"
+
 #include "OE/UI/Render/Painter.hpp"
+
 #include "OE/UI/Layout/Yoga.hpp"
 
 namespace OrbitEngine { namespace UI {
 	Element::Element() :
 		m_Surface(nullptr),
 		m_Parent(nullptr),
-		m_Depth(0)
+		m_Depth(0),
+		m_ComputedStyle(nullptr)
 	{
 		setID("");
 		setTag("Element");
@@ -59,8 +64,12 @@ namespace OrbitEngine { namespace UI {
 
 	void Element::paintContent(Painter* painter)
 	{
-		Math::Color4f col = Math::Color4f(test / 255.0f, test / 255.0f, test / 255.0f, 1.0f);
-		painter->drawRectangle(m_BoundingBox, col);
+		if (!m_ComputedStyle)
+			return;
+
+		auto bg_values = m_ComputedStyle->background_color.value.color;
+		Math::Color4f bg_color = Math::Color4f(bg_values.r, bg_values.g, bg_values.b, bg_values.a);
+		painter->drawRectangle(m_BoundingBox, bg_color);
 	}
 
 	Math::Vec2f Element::measureContent(float width, MeasureMode widthMode, float height, MeasureMode heightMode)

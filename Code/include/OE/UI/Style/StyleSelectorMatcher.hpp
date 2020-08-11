@@ -22,7 +22,7 @@ namespace OrbitEngine { namespace UI {
 
 		static bool MatchesSelector(Element* element, StyleSelector* selector);
 
-		/// May insert duplicates
+		/// May insert (very few) duplicates
 		static void FindMatches(Element* element, std::vector<StyleSheet*>& sheets, std::vector<SelectorMatch>& matches);
 
 	private:

@@ -14,6 +14,7 @@ namespace OrbitEngine { namespace UI {
 
 	class Painter;
 	class StyleSheet;
+	class StyleComputed;
 
 	enum class MeasureMode {
 		UNDEFINED,
@@ -61,6 +62,7 @@ namespace OrbitEngine { namespace UI {
 		std::vector<StyleIdentifier> m_Classes;
 		StylePseudoStates m_PseudoStates;
 		std::vector<StyleSheet*> m_StyleSheets;
+		StyleComputed* m_ComputedStyle;
 
 		YGNode* m_YogaNode;
 		Math::Rectf m_LayoutRect;
