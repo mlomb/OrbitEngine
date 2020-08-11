@@ -20,6 +20,9 @@ namespace OrbitEngine { namespace Math {
 		Rect(const T& _x, const T& _y, const T& _width, const T& _height);
 		Rect(const Vec2<T> _position, const Vec2<T> _size);
 		Rect();
+
+		bool operator==(const Rect<T> b) const;
+		bool operator!=(const Rect<T> b) const;
 	};
 
 	/// integer rect
