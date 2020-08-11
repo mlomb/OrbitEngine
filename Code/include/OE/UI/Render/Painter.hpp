@@ -1,5 +1,5 @@
-#ifndef UI_PAINTER_HPP
-#define UI_PAINTER_HPP
+#ifndef UI_RENDER_PAINTER_HPP
+#define UI_RENDER_PAINTER_HPP
 
 #include "OE/Math/Color.hpp"
 #include "OE/Math/Mat4.hpp"
@@ -62,7 +62,8 @@ namespace OrbitEngine { namespace UI {
 		std::vector<Graphics::Texture*> m_DestroyAfterCommitingAtlas;
 
 	private:
-		friend class Composer;
+		friend class Composer; // TODO: remove
+		friend class PaintTreeUpdater;
 
 		void setProjection(const Math::Mat4& proj);
 		void begin();

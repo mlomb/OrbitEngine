@@ -3,50 +3,67 @@
 
 #include <vector>
 
-// The yoga layout engine
-// https://yogalayout.com
-#include <yoga/Yoga.h>
+#include "OE/UI/Style/StyleSelector.hpp"
 
 #include "OE/Math/Rect.hpp"
-#include "OE/UI/Style/StyleEnums.hpp"
+
+// forward def to avoid include
+class YGNode;
 
 namespace OrbitEngine { namespace UI {
+
 	class Painter;
 
-	/// The base of all UI elements
+	enum class MeasureMode {
+		UNDEFINED,
+		EXACTLY,
+		AT_MOST
+	};
+
+	/// The base of all UI controls
 	class Element {
 	public:
 		Element();
-		virtual ~Element();
+		virtual ~Element(); int test;
 
-		void setOwner(Element* parent);
 		void addElement(Element* child, uint32_t index);
+		void removeElement(Element* child);
+		void setID(const std::string& id);
+		void addClass(const std::string& klass);
+
+		Element* getParent() const;
+		const std::vector<Element*>& getChildrens() const;
+		Math::Rectf getBoundingBox() const;
+
+		virtual void paintContent(Painter* painter);
+		virtual Math::Vec2f measureContent(float width, MeasureMode widthMode, float height, MeasureMode heightMode);
 
 	protected:
-		friend class Composer;
+		void setTag(const std::string& tag);
+
+		void enableMeasurement();
+		void setAsTextType();
+
+	private:
+		friend class StyleTreeUpdater;
+		friend class LayoutTreeUpdater;
+		friend class PaintTreeUpdater;
 
 		Element* m_Parent;
 		std::vector<Element*> m_Childrens;
-		
-		void setAsTextType();
-		void enableMeasurement();
-		void markAsDirty();
-		void layout(const Math::Vec2f& availableSpace);
+		int m_Depth;
 
-		virtual Math::Vec2f measureContent(float width, YGMeasureMode widthMode, float height, YGMeasureMode heightMode);
-		virtual void generateContent(Painter* painter);
+		friend class StyleSelectorMatcher;
+		StyleIdentifier m_ID, m_Tag;
+		std::vector<StyleIdentifier> m_Classes;
+		StylePseudoStates m_PseudoStates;
 
-	public: // TODO: set as private
-		YGNodeRef m_Node;
-
+		YGNode* m_YogaNode;
 		Math::Rectf m_LayoutRect;
 		Math::Rectf m_BoundingBox;
-		ResolvedStyle m_ResolvedStyle;
 
-		// called when the layout has changed
-		void layoutSubtree();
-
-		static YGSize YogaMeasureCallback(YGNode* yogaNode, float width, YGMeasureMode widthMode, float height, YGMeasureMode heightMode);
+		friend class Surface;
+		Surface* m_Surface;
 	};
 } }
 

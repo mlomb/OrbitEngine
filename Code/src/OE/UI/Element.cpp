@@ -1,101 +1,139 @@
 #include "OE/UI/Element.hpp"
 
-#include <yoga/YGNode.h>
-
 #include "OE/Misc/Log.hpp"
-#include "OE/UI/Painter.hpp"
+#include "OE/UI/Render/Painter.hpp"
+#include "OE/UI/Layout/Yoga.hpp"
 
 namespace OrbitEngine { namespace UI {
-	Element::Element()
-		: m_Parent(nullptr)
+	Element::Element() :
+		m_Surface(nullptr),
+		m_Parent(nullptr),
+		m_Depth(0)
 	{
-		m_Node = YGNodeNew();
-		YGNodeSetContext(m_Node, this);
+		setID("");
+		setTag("Element");
+
+		test = rand()% 255;
+
+		m_YogaNode = YGNodeNew();
+		YGNodeSetContext(m_YogaNode, this);
 	}
 
 	Element::~Element()
 	{
-		// TODO: not like this
+		OE_ASSERT_MSG(m_Parent == nullptr, "Element is still attached to the tree");
 
-		for (Element* elem : m_Childrens)
-			delete elem;
-		YGNodeFreeRecursive(m_Node);
-	}
-
-	void Element::setOwner(Element* parent)
-	{
-		m_Parent = parent;
+		YGNodeFreeRecursive(m_YogaNode);
 	}
 
 	void Element::addElement(Element* child, uint32_t index)
 	{
 		// this function sets the correct owner in yoga land
-		YGNodeInsertChild(m_Node, child->m_Node, index);
+		YGNodeInsertChild(m_YogaNode, child->m_YogaNode, index);
 
-		child->setOwner(this);
+		if (child->m_Parent != nullptr) {
+			if (child->m_Parent == this) {
+				// TODO: handle reposition
+				return;
+			}
+			else {
+				child->m_Parent->removeElement(child);
+			}
+		}
+
+		child->m_Parent = this;
+		child->m_Depth = m_Depth + 1;
 		m_Childrens.insert(m_Childrens.begin() + index, child);
 	}
 
-	void Element::generateContent(Painter* painter)
+	void Element::removeElement(Element* child)
 	{
-		painter->drawRectangle(m_BoundingBox, m_ResolvedStyle.background);
-		// TODO: draw border
+		OE_ASSERT(child->m_Parent == this); // TODO: maybe do a runtime check?
+
+		child->m_Parent = nullptr;
+		child->m_Depth = m_Depth + 1;
+		m_Childrens.erase(std::find(m_Childrens.begin(), m_Childrens.end(), child));
+
+		// TODO: mark dirty root (and depth) on childrens of child
 	}
 
-	YGSize Element::YogaMeasureCallback(YGNode* yogaNode, float width, YGMeasureMode widthMode, float height, YGMeasureMode heightMode)
+	void Element::paintContent(Painter* painter)
+	{
+		Math::Color4f col = Math::Color4f(test / 255.0f, test / 255.0f, test / 255.0f, 1.0f);
+		painter->drawRectangle(m_BoundingBox, col);
+	}
+
+	Math::Vec2f Element::measureContent(float width, MeasureMode widthMode, float height, MeasureMode heightMode)
+	{
+		OE_ASSERT_MSG(false, "measureContent is not overrided");
+		return { 0, 0 };
+	}
+
+	void Element::setID(const std::string& id)
+	{
+		m_ID = { StyleIdentifierType::ID, id };
+		m_ID.computeHash();
+	}
+
+	void Element::setTag(const std::string& tag)
+	{
+		m_Tag = { StyleIdentifierType::TAG, tag };
+		m_Tag.computeHash();
+	}
+
+	void Element::addClass(const std::string& klass)
+	{
+		StyleIdentifier si = { StyleIdentifierType::CLASS, klass };
+		si.computeHash();
+
+		for (auto it = m_Classes.begin(); it != m_Classes.end(); it++) {
+			if ((*it).text_hash == si.text_hash)
+				return; // already present
+		}
+
+		m_Classes.emplace_back(si);
+	}
+
+	Element* Element::getParent() const
+	{
+		return m_Parent;
+	}
+
+	const std::vector<Element*>& Element::getChildrens() const
+	{
+		return m_Childrens;
+	}
+
+	Math::Rectf Element::getBoundingBox() const
+	{
+		return m_BoundingBox;
+	}
+
+	MeasureMode YogaMeasureModeToMeasureMode(YGMeasureMode mode) {
+		switch (mode)
+		{
+		default:
+		case YGMeasureModeUndefined: return MeasureMode::UNDEFINED;
+		case YGMeasureModeExactly: return MeasureMode::EXACTLY;
+		case YGMeasureModeAtMost: return MeasureMode::AT_MOST;
+		}
+	}
+
+	YGSize YogaMeasureCallback(YGNode* yogaNode, float width, YGMeasureMode widthMode, float height, YGMeasureMode heightMode)
 	{
 		Element* element_ptr = static_cast<Element*>(yogaNode->getContext());
-		auto size = element_ptr->measureContent(width, widthMode, height, heightMode);
+		auto size = element_ptr->measureContent(width, YogaMeasureModeToMeasureMode(widthMode), height, YogaMeasureModeToMeasureMode(heightMode));
 		return { size.x, size.y };
-	}
-
-	void Element::setAsTextType()
-	{
-		YGNodeSetNodeType(m_Node, YGNodeType::YGNodeTypeText);
 	}
 
 	void Element::enableMeasurement()
 	{
-		YGNodeSetMeasureFunc(m_Node, Element::YogaMeasureCallback);
+		YGNodeSetMeasureFunc(m_YogaNode, YogaMeasureCallback);
 	}
 
-	void Element::layout(const Math::Vec2f& availableSpace)
+	void Element::setAsTextType()
 	{
-		YGNodeCalculateLayout(m_Node, availableSpace.w, availableSpace.h, YGDirectionLTR);
-		layoutSubtree();
+		YGNodeSetNodeType(m_YogaNode, YGNodeType::YGNodeTypeText);
 	}
 
-	void Element::layoutSubtree()
-	{
-		m_LayoutRect = Math::Rectf(
-			YGNodeLayoutGetLeft(m_Node), YGNodeLayoutGetTop(m_Node),
-			YGNodeLayoutGetWidth(m_Node), YGNodeLayoutGetHeight(m_Node)
-		);
-		m_BoundingBox.position = m_Parent ? m_Parent->m_BoundingBox.position : Math::Vec2f(0, 0);
-		m_BoundingBox.position += m_LayoutRect.position;
-		m_BoundingBox.size = m_LayoutRect.size;
-
-		// TODO: for now, update the whole tree anyway
-		//if (YGNodeGetHasNewLayout(m_Node)) {
-			for (Element* e : m_Childrens)
-				e->layoutSubtree();
-
-		//	YGNodeSetHasNewLayout(m_Node, false);
-		//}
-	}
-
-	void Element::markAsDirty()
-	{
-		if (!YGNodeHasMeasureFunc(m_Node)) {
-			OE_ASSERT_MSG(false, "Only leaf elements with custom measure functions should mark themselves as dirty");
-			return;
-		}
-		YGNodeMarkDirty(m_Node);
-	}
-
-	Math::Vec2f Element::measureContent(float width, YGMeasureMode widthMode, float height, YGMeasureMode heightMode)
-	{
-		OE_ASSERT_MSG(false, "measureContent is not overrided");
-		return { };
-	}
 } }

@@ -1,5 +1,5 @@
-#ifndef UI_LABEL_HPP
-#define UI_LABEL_HPP
+#ifndef UI_COMPONENT_TEXT_HPP
+#define UI_COMPONENT_TEXT_HPP
 
 #include <string>
 
@@ -24,8 +24,8 @@ namespace OrbitEngine { namespace UI {
 		Graphics::FontSize m_Size;
 		std::string m_Text;
 
-		void generateContent(Painter* painter) override;
-		Math::Vec2f measureContent(float width, YGMeasureMode widthMode, float height, YGMeasureMode heightMode) override;
+		void paintContent(Painter* painter) override;
+		Math::Vec2f measureContent(float width, MeasureMode widthMode, float height, MeasureMode heightMode) override;
 
 		// TextLayout cache
 		// make sure you don't hold the reference after calling flushTextLayoutCache

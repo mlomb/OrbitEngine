@@ -20,6 +20,10 @@ namespace OrbitEngine { namespace UI {
 	private:
 		std::vector<StyleSelector*> m_Selectors;
 		std::vector<StyleRule*> m_Rules;
+
+		typedef std::unordered_map<StyleHash, std::vector<StyleSelector*>> IdentifierLookupTable;
+
+		IdentifierLookupTable m_OrderedIDs, m_OrderedTags, m_OrderedClasses;
 	};
 
 } }

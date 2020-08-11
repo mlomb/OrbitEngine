@@ -1,8 +1,8 @@
-#include "OE/UI/Text.hpp"
+#include "OE/UI/Components/Text.hpp"
 
 #include "OE/Misc/Log.hpp"
 
-#include "OE/UI/Painter.hpp"
+#include "OE/UI/Render/Painter.hpp"
 
 namespace OrbitEngine { namespace UI {
 	Text::Text()
@@ -10,6 +10,7 @@ namespace OrbitEngine { namespace UI {
 	{
 		enableMeasurement();
 		setAsTextType();
+		setTag("Text");
 	}
 
 	Text::~Text()
@@ -25,46 +26,46 @@ namespace OrbitEngine { namespace UI {
 	void Text::setSize(Graphics::FontSize size)
 	{
 		m_Size = size;
-		markAsDirty();
 		flushTextLayoutCache();
 	}
 
 	void Text::setText(const std::string& text)
 	{
 		m_Text = text;
-		markAsDirty();
 		flushTextLayoutCache();
 	}
 
-	void Text::generateContent(Painter* painter)
+	void Text::paintContent(Painter* painter)
 	{
 		// draw background
-		Element::generateContent(painter);
+		Element::paintContent(painter);
 
 		if (m_Font == nullptr || m_Text.size() == 0)
 			return;
 
+		auto bbox = getBoundingBox();
+
 		Graphics::TextSettings textSettings;
 		textSettings.size = m_Size;
 		textSettings.wordWrap = true;
-		textSettings.wordWrapWidth = m_BoundingBox.width;
+		textSettings.wordWrapWidth = bbox.width;
 
-		painter->drawText(getTextLayout(textSettings, false), m_BoundingBox.position);
+		painter->drawText(getTextLayout(textSettings, false), bbox.position);
 	}
 
-	Math::Vec2f Text::measureContent(float width, YGMeasureMode widthMode, float height, YGMeasureMode heightMode)
+	Math::Vec2f Text::measureContent(float width, MeasureMode widthMode, float height, MeasureMode heightMode)
 	{
 		// See https://github.com/facebook/yoga/pull/576/files
 
-		float measuredWidth = YGUndefined;
-		float measuredHeight = YGUndefined;
+		float measuredWidth = NAN; // NAN from corecrt_math.h
+		float measuredHeight = NAN;
 
 		if (m_Font == nullptr || m_Text.size() == 0)
 			return Math::Vec2f(measuredWidth, measuredHeight);
 
 		// OE_LOG_DEBUG(width << " (" << widthMode << ") -- " << height << " (" << heightMode << ")");
 
-		if (widthMode == YGMeasureModeExactly) {
+		if (widthMode == MeasureMode::EXACTLY) {
 			measuredWidth = width;
 		}
 		else {
@@ -74,11 +75,11 @@ namespace OrbitEngine { namespace UI {
 
 			measuredWidth = std::ceil(getTextLayout(textSettings, true).boundingSize.x);
 
-			if (widthMode == YGMeasureModeAtMost)
+			if (widthMode == MeasureMode::AT_MOST)
 				measuredWidth = std::min(measuredWidth, width);
 		}
 
-		if (heightMode == YGMeasureModeExactly) {
+		if (heightMode == MeasureMode::EXACTLY) {
 			measuredHeight = height;
 		}
 		else {
@@ -89,7 +90,7 @@ namespace OrbitEngine { namespace UI {
 
 			measuredHeight = std::ceil(getTextLayout(textSettings, true).boundingSize.y);
 
-			if (heightMode == YGMeasureModeAtMost)
+			if (heightMode == MeasureMode::AT_MOST)
 				measuredHeight = std::min(measuredHeight, height);
 		}
 

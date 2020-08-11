@@ -80,7 +80,7 @@ namespace OrbitEngine { namespace UI {
 				part.prev_relationship = next_rel;
 				part.pseudo_states = StylePseudoStates::NONE;
 
-				OE_LOG_DEBUG("(selector type " << std::to_string((int)part.identifier.type) << ")" << part.identifier.text);
+				// OE_LOG_DEBUG("(selector type " << std::to_string((int)part.identifier.type) << ")" << part.identifier.text);
 
 				selector.parts.emplace_back(part);
 
@@ -98,7 +98,7 @@ namespace OrbitEngine { namespace UI {
 				case '~': next_rel = StyleSelectorRelationship::GENERAL_SIBLING; break;
 				}
 
-				OE_LOG_DEBUG("(nesting op)" << chr);
+				// OE_LOG_DEBUG("(nesting op)" << chr);
 			}
 			else {
 				parseResult.errors.emplace_back("Unexpected character '" + std::string(1, chr) + "'");
