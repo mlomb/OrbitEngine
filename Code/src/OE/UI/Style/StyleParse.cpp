@@ -279,7 +279,7 @@ namespace OrbitEngine { namespace UI {
 		output.unit = StyleLengthUnit::PIXELS;
 
 		int pos = 0;
-		if (parseNumber(input, pos, output.value, parseResult)) {
+		if (parseNumber(input, pos, output.number, parseResult)) {
 			// number parsed
 			if (pos < input.size()) {
 				// more to read, must be a unit
@@ -386,7 +386,7 @@ namespace OrbitEngine { namespace UI {
 					}
 				}
 				else {
-					parseResult.warnings.emplace_back("Couldn't parase component number " + std::to_string(i) + " of rgb/a color");
+					parseResult.warnings.emplace_back("Couldn't parse component number " + std::to_string(i) + " of rgb/a color");
 					return false;
 				}
 			}
@@ -561,6 +561,7 @@ namespace OrbitEngine { namespace UI {
 		PARSE_ENUM_START("overflow", ID::OVERFLOW);
 			PARSE_ENUM_ENTRY(overflow, "visible", Overflow::VISIBLE);
 			PARSE_ENUM_ENTRY(overflow, "hidden",  Overflow::HIDDEN);
+			PARSE_ENUM_ENTRY(overflow, "scroll",  Overflow::SCROLL);
 		PARSE_ENUM_END();
 		PARSE_ENUM_START("display", ID::DISPLAY);
 			PARSE_ENUM_ENTRY(display, "flex", Display::FLEX);

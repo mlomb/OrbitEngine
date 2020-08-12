@@ -111,7 +111,14 @@ namespace OrbitEngine { namespace UI {
 
 	void Element::setStyleProperty(const StyleProperty& property)
 	{
-		// TODO: dedupe
+		for (StyleProperty& p : m_InlineRules.properties) {
+			if (p.id == property.id) {
+				// replace
+				p = property;
+				return;
+			}
+		}
+		// not found, insert
 		m_InlineRules.properties.emplace_back(property);
 	}
 

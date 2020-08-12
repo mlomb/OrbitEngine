@@ -120,19 +120,20 @@ namespace OrbitEngine { namespace UI {
 		SPACE_EVENLY = YGJustify::YGJustifySpaceEvenly
 	};
 
-	enum class WhiteSpace {
-		NORMAL = 0,
-		NOWRAP,
-	};
-
 	enum class Display {
-		FLEX = 0,
-		NONE
+		FLEX = YGDisplay::YGDisplayFlex,
+		NONE = YGDisplay::YGDisplayNone
 	};
 
 	enum class Overflow {
-		VISIBLE = 0,
-		HIDDEN
+		VISIBLE = YGOverflow::YGOverflowVisible,
+		HIDDEN = YGOverflow::YGOverflowHidden,
+		SCROLL = YGOverflow::YGOverflowScroll
+	};
+
+	enum class WhiteSpace {
+		NORMAL = 0,
+		NOWRAP,
 	};
 
 	enum class StyleLengthUnit {
@@ -143,7 +144,7 @@ namespace OrbitEngine { namespace UI {
 	typedef float StyleNumber;
 
 	struct StyleLength {
-		StyleNumber value;
+		StyleNumber number;
 		StyleLengthUnit unit;
 	};
 

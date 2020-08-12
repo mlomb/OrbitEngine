@@ -30,8 +30,8 @@ namespace OrbitEngine { namespace UI {
 		m_Shader = Graphics::ShaderLoader::UI();
 		m_Shader->matchLayout(m_Mesh);
 
-		m_Mesh->getVBO()->resize(4 * 10000 * sizeof(Vertex));
-		m_Mesh->getIBO()->resize(6 * 10000 * sizeof(uint16_t));
+		m_Mesh->getVBO()->resize(4 * 5000 * sizeof(Vertex));
+		m_Mesh->getIBO()->resize(6 * 5000 * sizeof(uint16_t));
 		
 		m_ConstantBuffer = Graphics::UniformsPack<ConstantBuffer>::Create();
 

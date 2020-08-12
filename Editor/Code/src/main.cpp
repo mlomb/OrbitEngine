@@ -4,9 +4,9 @@
 #include <OE/Application/Context.hpp>
 #include <OE/Misc/Ticker.hpp>
 
-#include <OE/UI/Composer.hpp>
+//#include <OE/UI/Composer.hpp>
 #include <OE/UI/Element.hpp>
-#include <OE/UI/Text.hpp>
+//#include <OE/UI/Text.hpp>
 
 #include <OE/Platform/OpenGL/OpenGL.hpp>
 #include <OE/Graphics/2D/SpriteBatcher.hpp>
@@ -17,6 +17,13 @@
 #include <OE/Graphics/TextureBlitter.hpp>
 #include <OE/Graphics/DynamicAtlasAllocator.hpp>
 #include <OE/Graphics/DynamicAtlas.hpp>
+#include <OE/Graphics/2D/ImGuiRenderer.hpp>
+#include <OE/UI/Style/StyleParse.hpp>
+//#include <OE/UI/Style/StyledElement.hpp>
+#include <OE/UI/Style/StyleSheet.hpp>
+#include <OE/UI/Style/StyleComputed.hpp>
+#include <OE/UI/Surface.hpp>
+#include <OE/UI/Components/Text.hpp>
 
 #if OE_WINDOWS
 #include <OE/Platform/Windows/WindowWindows.hpp>
@@ -41,19 +48,34 @@ void generateRandomUI(OrbitEngine::UI::Element* parent, int depth = 0) {
 	{
 	case 0: num_childs = 10/*35*/; max_sz = 200; break;
 	case 1: num_childs = 3/*20*/; max_sz = 70; break;
-	case 2: num_childs = 1/*5*/; max_sz = 25; break;
+	case 2: num_childs = 5; max_sz = 25; break;
 	}
 
 	for (int i = 0; i < num_childs; i++) {
 		Element* child = new Element(); generated++;
-		child->setStyle({ Math::Color4f(
-			getRandomFloat(),
-			getRandomFloat(),
-			getRandomFloat(),
-			0.5f + getRandomFloat() * 0.5f
-		) });
-		YGNodeStyleSetPadding(child->m_Node, YGEdgeAll, getRandomFloat() * max_sz);
-		YGNodeStyleSetAlignSelf(child->m_Node, YGAlignCenter);
+        child->addClass("d" + std::to_string(depth));
+
+        //child->setStyleProperty({ StylePropertyID::PADDING_LEFT, { getRandomFloat() * max_sz, StyleLengthUnit::PIXELS } });
+        //child->setStyleProperty({ StylePropertyID::PADDING_TOP, { getRandomFloat() * max_sz, StyleLengthUnit::PIXELS } });
+        //child->setStyleProperty({ StylePropertyID::PADDING_RIGHT, { getRandomFloat() * max_sz, StyleLengthUnit::PIXELS } });
+        //child->setStyleProperty({ StylePropertyID::PADDING_BOTTOM, { getRandomFloat() * max_sz, StyleLengthUnit::PIXELS } });
+        //
+        //child->setStyleProperty({ StylePropertyID::MARGIN_LEFT, { 20, StyleLengthUnit::PIXELS } });
+        //child->setStyleProperty({ StylePropertyID::MARGIN_TOP, { 20, StyleLengthUnit::PIXELS } });
+        //child->setStyleProperty({ StylePropertyID::MARGIN_RIGHT, { 20, StyleLengthUnit::PIXELS } });
+        //child->setStyleProperty({ StylePropertyID::MARGIN_BOTTOM, { 20, StyleLengthUnit::PIXELS } });
+        
+        StyleProperty bg_prop;
+        bg_prop.id = StylePropertyID::BACKGROUND_COLOR;
+        bg_prop.value.color = {
+            getRandomFloat(),
+            getRandomFloat(),
+            getRandomFloat(),
+            0.5f + getRandomFloat() * 0.5f
+        };
+        child->setStyleProperty(bg_prop);
+		//YGNodeStyleSetPadding(child->m_Node, YGEdgeAll, getRandomFloat() * max_sz);
+		//YGNodeStyleSetAlignSelf(child->m_Node, YGAlignCenter);
 		//YGNodeStyleSetMargin(child->m_Node, YGEdgeEnd, 20);
 
 		generateRandomUI(child, depth + 1);
@@ -62,10 +84,39 @@ void generateRandomUI(OrbitEngine::UI::Element* parent, int depth = 0) {
 	}
 }
 
+std::string test_css();
+
 int main() {
 	using namespace OrbitEngine;
 	using namespace OrbitEngine::Application;
 	using namespace OrbitEngine::Misc;
+
+    OE_LOG_DEBUG("sizeof(UI::Element): " << sizeof(UI::Element));
+    OE_LOG_DEBUG("sizeof(UI::StyleComputed): " << sizeof(UI::StyleComputed));
+
+	// CSS testing
+	std::string css_source = test_css();
+    UI::StyleParseResult pr;
+    UI::StyleSheet* ss = UI::ParseStyleSheet(css_source, pr);
+
+    for(auto s : pr.warnings)
+        OE_LOG_WARNING(s);
+    for (auto s : pr.errors)
+		OE_LOG_ERROR(s);
+    //return 0;
+
+    UI::Element* se = new UI::Element();
+    se->setID("test");
+
+    UI::Element* se2 = new UI::Element();
+    se2->addClass("test");
+
+    se->addElement(se2, 0);
+
+    UI::StyleSelector sel;
+    UI::ParseSingleStyleSelector("StyledElement", sel, pr);
+
+    //bool m = se2->matchesSelector(&sel);
 
 	Window* window = new Window();
 	window->setTitle("UI Testing");
@@ -77,47 +128,55 @@ int main() {
 
 	Ticker t;
 
-	UI::Element* root = new UI::Element();
-	UI::Style root_style;
-	root_style.background = Math::Color::Transparent;
-	root->setStyle(root_style);
+    UI::Surface* surface = new UI::Surface();
+	UI::Element* root = surface->getRoot();
+    root->setID("root");
+
+    root->addStyleSheet(ss);
+
+	//UI::Style root_style;
+	//root_style.background = Math::Color::Transparent;
+	//root->setStyle(root_style);
+    /*
 	YGNodeStyleSetFlexDirection(root->m_Node, YGFlexDirectionRow);
 	YGNodeStyleSetPadding(root->m_Node, YGEdgeAll, 20);
 	YGNodeStyleSetMargin(root->m_Node, YGEdgeAll, 20);
 
 	UI::Element* divA = new UI::Element();
-	divA->setStyle({ Math::Color::Red });
+	//divA->setStyle({ Math::Color::Red });
 	YGNodeStyleSetWidth(divA->m_Node, 80);
 	YGNodeStyleSetHeight(divA->m_Node, 80);
 	YGNodeStyleSetAlignSelf(divA->m_Node, YGAlignCenter);
 	YGNodeStyleSetMargin(divA->m_Node, YGEdgeEnd, 20);
+    */
 
 	UI::Text* textA = new UI::Text();
 	textA->setFont(font);
 	textA->setText("Hello World");
-	textA->setStyle({ Math::Color4f(0.3,0.3,0.3,1.0) });
+	//textA->setStyle({ Math::Color4f(0.3,0.3,0.3,1.0) });
 	//YGNodeStyleSetHeight(textA->m_Node, 25);
-	YGNodeStyleSetAlignSelf(textA->m_Node, YGAlignCenter);
-	YGNodeStyleSetMargin(textA->m_Node, YGEdgeRight, 10);
+	//YGNodeStyleSetAlignSelf(textA->m_Node, YGAlignCenter);
+	//YGNodeStyleSetMargin(textA->m_Node, YGEdgeRight, 10);
 	//YGNodeStyleSetFlexGrow(textA->m_Node, 1);
 
 	generateRandomUI(root);
 
-	root->addElement(divA, 0);
+	//root->addElement(divA, 0);
 	root->addElement(textA, 1);
-
 
 	UI::Text* textLong = new UI::Text();
 	textLong->setFont(font);
 	textLong->setText(R"(Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec nec dui elementum, ultricies leo in, porttitor elit. Aenean in orci sit amet diam suscipit eleifend. Nam cursus leo ac tincidunt vehicula. Ut id lobortis risus, nec pulvinar risus. Nulla finibus enim et risus vulputate hendrerit. Quisque ultrices urna at euismod dapibus. Nulla dapibus justo eget viverra varius. Aliquam enim tortor, pellentesque id imperdiet non, vehicula sed risus. Donec dignissim ultrices mauris, et consectetur tellus scelerisque id. Aenean iaculis neque eget ipsum posuere rutrum. Pellentesque mattis suscipit arcu in dapibus. Cras ac scelerisque lacus. Sed sed turpis a erat mollis vestibulum.
 Vivamus erat nisl, fermentum ac sagittis quis, rutrum nec quam. Vivamus aliquet, orci in congue dignissim, nisi lectus posuere quam, id molestie quam augue sed justo. Mauris vehicula finibus sagittis. Mauris posuere mattis mi, et faucibus ipsum hendrerit in. Nulla non diam ultricies, aliquet est quis, bibendum urna. Nunc odio est, volutpat ut fermentum semper, lacinia in diam. Maecenas semper tellus diam, sed accumsan dolor efficitur id. Nulla interdum sapien dapibus, maximus purus sit amet, blandit velit. Sed suscipit libero eu sodales lobortis.
 Sed fringilla lacus sed eros molestie tristique. Nullam vitae tortor pharetra, blandit nisi venenatis, porta nibh. Ut quis nisi pharetra, ullamcorper lorem ac, scelerisque tellus. Sed facilisis egestas neque quis pellentesque. Ut quam massa, pretium vitae felis in, consectetur volutpat metus. Proin fermentum urna eget tempus volutpat. Proin quis nibh ut justo rutrum vehicula. Nunc a purus at leo efficitur feugiat. Donec id felis pretium, aliquet eros ac, tincidunt augue. Proin dolor sem, dapibus nec aliquam a, blandit a justo. Fusce condimentum magna lorem, non pellentesque turpis congue at. Etiam tristique dolor vel molestie cursus. Cras ipsum arcu, bibendum ac malesuada sit amet, fringilla et dolor. Duis faucibus efficitur dictum. Quisque dolor est libero.)");
-	textLong->setStyle({ Math::Color4f(0.3,0.3,0.3,1.0) });
+	//textLong->setStyle({ Math::Color4f(0.3,0.3,0.3,1.0) });
 	//YGNodeStyleSetHeight(textA->m_Node, 25);
-	YGNodeStyleSetAlignSelf(textLong->m_Node, YGAlignCenter);
-	YGNodeStyleSetMaxWidth(textLong->m_Node, 500);
-	textLong->setSize(20);
+	//YGNodeStyleSetAlignSelf(textLong->m_Node, YGAlignCenter);
+	//YGNodeStyleSetMaxWidth(textLong->m_Node, 500);
 	root->addElement(textLong, 2);
+    
+
+    generateRandomUI(root);
 
 	OE_LOG_DEBUG("UI ELEMENTS GENERATED: " << generated);
 
@@ -138,7 +197,7 @@ Sed fringilla lacus sed eros molestie tristique. Nullam vitae tortor pharetra, b
 
 	float time = 0.0f;
 
-	UI::Composer* ui_composer = new UI::Composer();
+	//UI::Composer* ui_composer = new UI::Composer();
 
 	Graphics::FrameBuffer* tmp_fb = Graphics::FrameBuffer::Create(4096, 4096);
 	Graphics::TextureFormatProperties props;
@@ -195,6 +254,7 @@ Sed fringilla lacus sed eros molestie tristique. Nullam vitae tortor pharetra, b
 	*/
 
 	Graphics::DynamicAtlas* da = new Graphics::DynamicAtlas();
+	Graphics::ImGuiRenderer* igr = new Graphics::ImGuiRenderer();
 	
 
 	auto frame = [&]() {
@@ -230,13 +290,19 @@ Sed fringilla lacus sed eros molestie tristique. Nullam vitae tortor pharetra, b
 		renderer->end();*/
 		Graphics::FrameBuffer::Prepare();
 
-		YGNodeStyleSetMaxWidth(textLong->m_Node, 500 + abs(sin(time)) * 500);
+		//YGNodeStyleSetMaxWidth(textLong->m_Node, 500 + abs(sin(time)) * 500);
 		//textA->setSize(12 + abs(sin(time)) * 70);
-		textA->setSize(16);
+		//textA->setSize(16);
 		//textLong->setSize(12 + abs(sin(3 * time)) * 12);
 
-		ui_composer->render(root, proj, window->getSize());
+		igr->begin();
+
+		//ui_composer->render(root, proj, window->getSize());
+        surface->setSize(window->getSize());
+        surface->updateTree();
+
 		
+		igr->end();
 		
 		/*
 		renderer->begin();
@@ -287,4 +353,45 @@ Sed fringilla lacus sed eros molestie tristique. Nullam vitae tortor pharetra, b
 		frame();
 
 	return 0;
+}
+
+std::string test_css() {
+	return R"(
+* {
+    background-color: red;
+}
+
+#root {
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.d0, .d1, .d2, .d3 {
+    align-self: center;
+    flex-direction: row;
+    padding: 8px;
+}
+
+.d0, .d2, {
+    flex-direction: row;
+}
+.d1, .d3, {
+    flex-direction: column;
+}
+
+
+* {
+    background-color: rgba(255,0,255,0.3);
+    font-size: 5px;
+}
+
+Text {
+    font-size: 20px;
+    max-width: 500px;
+    
+    background-color: gray;
+}
+
+
+)";
 }

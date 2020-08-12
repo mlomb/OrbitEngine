@@ -95,50 +95,64 @@ namespace OrbitEngine { namespace UI {
 
 		// all values *should* be populated by now
 
-		//YGNodeStyleSetFlex(yogaNode, YGUndefined);
-		//
-		//YGNodeStyleSetFlexGrow(yogaNode, computedStyle->flex_grow.value.length.value);
-		//YGNodeStyleSetFlexShrink(yogaNode, computedStyle->flex_shrink.value.length.value);
-		//YGNodeStyleSetFlexBasis(yogaNode, computedStyle->flex_basis.value.length.value);
-		//
-		//YGNodeStyleSetPositionType(yogaNode, (YGPositionType)computedStyle->position.value.enum_index);
-		//YGNodeStyleSetPosition(yogaNode, YGEdge::YGEdgeLeft, computedStyle->left.value.length.value);
-		//YGNodeStyleSetPosition(yogaNode, YGEdge::YGEdgeTop, computedStyle->top.value.length.value);
-		//YGNodeStyleSetPosition(yogaNode, YGEdge::YGEdgeRight, computedStyle->right.value.length.value);
-		//YGNodeStyleSetPosition(yogaNode, YGEdge::YGEdgeBottom, computedStyle->bottom.value.length.value);
-
-		YGNodeStyleSetPositionType(yogaNode, YGPositionType::YGPositionTypeRelative);
-
-		if (!element->m_Parent) {
-			YGNodeStyleSetFlexDirection(yogaNode, YGFlexDirectionRow);
-			//YGNodeStyleSetFlexGrow(yogaNode, 0);
-			//YGNodeStyleSetFlexShrink(yogaNode, 1);
-			//YGNodeStyleSetFlexBasisAuto(yogaNode);
-			//YGNodeStyleSetFlexWrap(yogaNode, YGWrap::YGWrapWrap);
-			//YGNodeStyleSetAlignItems(yogaNode, YGAlign::YGAlignCenter);
-		}
-		else {
-			YGNodeStyleSetAlignSelf(yogaNode, YGAlignCenter);
-			if (!YGNodeHasMeasureFunc(yogaNode)) {
-				YGNodeStyleSetPadding(yogaNode, YGEdge::YGEdgeLeft, 5);
-				YGNodeStyleSetPadding(yogaNode, YGEdge::YGEdgeTop, 5);
-				YGNodeStyleSetPadding(yogaNode, YGEdge::YGEdgeRight, 5);
-				YGNodeStyleSetPadding(yogaNode, YGEdge::YGEdgeBottom, 5);
+		#define CAT(a, b) a##b
+		#define SET_LENGTH(_base_fn, _value, ...) \
+			if(_value.set_auto) { \
+				_base_fn(yogaNode, __VA_ARGS__, YGUndefined); \
+			} else if(_value.length.unit == StyleLengthUnit::PERCENT) { \
+				CAT(_base_fn, Percent)(yogaNode, __VA_ARGS__, _value.length.number); \
+			} else { /* PIXELS */ \
+				_base_fn(yogaNode, __VA_ARGS__, _value.length.number); \
 			}
-			else {
-				YGNodeStyleSetMaxWidth(yogaNode, 500);
-			}
-		}
+		#define SET_AUTO_LENGTH(_base_fn, _value, ...) \
+			if(_value.set_auto) { \
+				CAT(_base_fn, Auto)(yogaNode, __VA_ARGS__); \
+			} else SET_LENGTH(_base_fn, _value, __VA_ARGS__);
 
-		//YGNodeStyleSetMargin(yogaNode, YGEdge::YGEdgeLeft, computedStyle->margin_left.value.length.value);
-		//YGNodeStyleSetMargin(yogaNode, YGEdge::YGEdgeTop, computedStyle->margin_top.value.length.value);
-		//YGNodeStyleSetMargin(yogaNode, YGEdge::YGEdgeRight, computedStyle->margin_right.value.length.value);
-		//YGNodeStyleSetMargin(yogaNode, YGEdge::YGEdgeBottom, computedStyle->margin_bottom.value.length.value);
-		//
-		//YGNodeStyleSetPadding(yogaNode, YGEdge::YGEdgeLeft, computedStyle->padding_left.value.length.value);
-		//YGNodeStyleSetPadding(yogaNode, YGEdge::YGEdgeTop, computedStyle->padding_top.value.length.value);
-		//YGNodeStyleSetPadding(yogaNode, YGEdge::YGEdgeRight, computedStyle->padding_right.value.length.value);
-		//YGNodeStyleSetPadding(yogaNode, YGEdge::YGEdgeBottom, computedStyle->padding_bottom.value.length.value);
+		YGNodeStyleSetFlex(yogaNode, YGUndefined);
+
+		SET_AUTO_LENGTH(YGNodeStyleSetWidth, computedStyle->width.value);
+		SET_AUTO_LENGTH(YGNodeStyleSetHeight, computedStyle->height.value);
+		SET_LENGTH(YGNodeStyleSetMinWidth, computedStyle->minWidth.value);
+		SET_LENGTH(YGNodeStyleSetMinHeight, computedStyle->minHeight.value);
+		SET_LENGTH(YGNodeStyleSetMaxWidth, computedStyle->maxWidth.value);
+		SET_LENGTH(YGNodeStyleSetMaxHeight, computedStyle->maxHeight.value);
+
+		SET_AUTO_LENGTH(YGNodeStyleSetMargin, computedStyle->marginLeft.value, YGEdge::YGEdgeLeft);
+		SET_AUTO_LENGTH(YGNodeStyleSetMargin, computedStyle->marginTop.value, YGEdge::YGEdgeTop);
+		SET_AUTO_LENGTH(YGNodeStyleSetMargin, computedStyle->marginRight.value, YGEdge::YGEdgeRight);
+		SET_AUTO_LENGTH(YGNodeStyleSetMargin, computedStyle->marginBottom.value, YGEdge::YGEdgeBottom);
+		
+		SET_LENGTH(YGNodeStyleSetPadding, computedStyle->paddingLeft.value, YGEdge::YGEdgeLeft);
+		SET_LENGTH(YGNodeStyleSetPadding, computedStyle->paddingTop.value, YGEdge::YGEdgeTop);
+		SET_LENGTH(YGNodeStyleSetPadding, computedStyle->paddingRight.value, YGEdge::YGEdgeRight);
+		SET_LENGTH(YGNodeStyleSetPadding, computedStyle->paddingBottom.value, YGEdge::YGEdgeBottom);
+		
+		// TODO: % unit?
+		YGNodeStyleSetBorder(yogaNode, YGEdge::YGEdgeLeft, computedStyle->borderLeftWidth.value.length.number);
+		YGNodeStyleSetBorder(yogaNode, YGEdge::YGEdgeTop, computedStyle->borderTopWidth.value.length.number);
+		YGNodeStyleSetBorder(yogaNode, YGEdge::YGEdgeRight, computedStyle->borderRightWidth.value.length.number);
+		YGNodeStyleSetBorder(yogaNode, YGEdge::YGEdgeBottom, computedStyle->borderBottomWidth.value.length.number);
+		
+		YGNodeStyleSetFlexGrow(yogaNode, computedStyle->flexGrow.value.number);
+		YGNodeStyleSetFlexShrink(yogaNode, computedStyle->flexShrink.value.number);
+		SET_AUTO_LENGTH(YGNodeStyleSetFlexBasis, computedStyle->flexBasis.value);
+		
+		YGNodeStyleSetFlexDirection(yogaNode, (YGFlexDirection)computedStyle->flexDirection.value.direction);
+		YGNodeStyleSetFlexWrap(yogaNode, (YGWrap)computedStyle->flexWrap.value.wrap);
+		YGNodeStyleSetAlignSelf(yogaNode, (YGAlign)computedStyle->alignSelf.value.align);
+		YGNodeStyleSetAlignContent(yogaNode, (YGAlign)computedStyle->alignContent.value.align);
+		YGNodeStyleSetAlignItems(yogaNode, (YGAlign)computedStyle->alignItems.value.align);
+		YGNodeStyleSetJustifyContent(yogaNode, (YGJustify)computedStyle->justifyContent.value.justify);
+		
+		YGNodeStyleSetPositionType(yogaNode, (YGPositionType)computedStyle->position.value.position);
+		SET_LENGTH(YGNodeStyleSetPosition, computedStyle->left.value, YGEdge::YGEdgeLeft);
+		SET_LENGTH(YGNodeStyleSetPosition, computedStyle->top.value, YGEdge::YGEdgeTop);
+		SET_LENGTH(YGNodeStyleSetPosition, computedStyle->right.value, YGEdge::YGEdgeRight);
+		SET_LENGTH(YGNodeStyleSetPosition, computedStyle->bottom.value, YGEdge::YGEdgeBottom);
+		
+		YGNodeStyleSetOverflow(yogaNode, (YGOverflow)computedStyle->overflow.value.overflow);
+		YGNodeStyleSetDisplay(yogaNode, (YGDisplay)computedStyle->display.value.display);
 	}
 
 } }
