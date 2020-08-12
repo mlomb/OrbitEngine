@@ -24,9 +24,9 @@ namespace OrbitEngine { namespace UI {
 		std::vector<StyleSheet*> m_SheetsStack;
 		std::vector<SelectorMatch> m_MatchedSelectors;
 
-
 		void applyStyles(Element* element);
 		void processMatchedSelectors(Element* element);
+		void syncWithLayout(Element* element);
 	};
 
 } }

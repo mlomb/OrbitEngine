@@ -4,44 +4,33 @@
 #include <vector>
 #include <string>
 
+#include "OE/UI/Style/StyleEnums.hpp"
+
 namespace OrbitEngine { namespace UI {
 
-	// Parse definitions and utilities
+	class StyleSheet;
 
 	struct StyleParseResult {
 		std::vector<std::string> errors;
 		std::vector<std::string> warnings;
 	};
 
-	/// Check if the character is a valid start for a CSS identifier
-	inline bool IsCSSIdentStart(char c) {
-		return
-			(c >= 'a' && c <= 'z') ||
-			(c >= 'A' && c <= 'Z') ||
-			(c == '-') || (c == '_');
-	}
+	bool ParseStyleProperty(const std::string& name, const std::string& value, StyleRule& rule, StyleParseResult& parseResult);
 
-	/// Check if the character is valid for a CSS identifier
-	inline bool IsCSSIdent(char c) {
-		return IsCSSIdentStart(c) || (c >= '0' && c <= '9');
-	}
+	/// Parse a single selector
+	/// The input string must have no comments
+	/// Returns true if the selector was sucessfully parsed
+	bool ParseSingleStyleSelector(const std::string& input_selector, StyleSelector& selector, StyleParseResult& parseResult);
 
-	/// Check if the character is a CSS nesting operator
-	inline bool IsCSSNestingOperator(char c) {
-		return c == '>' || c == '+' || c == '~';
-	}
+	/// Parse multiple selectors (delimited by ',')
+	/// Note that this function will not clear the selectors vector
+	/// The input string must have no comments
+	/// Returns true if at least one selector was parsed
+	bool ParseStyleSelectors(const std::string& input_selectors, std::vector<StyleSelector>& selectors, StyleParseResult& parseResult);
 
-	/// Check if the character is a CSS selector marker
-	inline bool IsCSSSelectorMarker(char c) {
-		return c == '*' || c == '#' || c == '.' || c == ':';
-	}
-
-	/// Advances pos until there is no more whitespace
-	void ConsumeCSSWhiteSpace(const std::string& input, size_t& pos);
-
-	/// Parse a single CSS identifier from pos (also advances pos)
-	std::string ParseCSSIdentifier(const std::string& input, size_t& pos);
-
+	/// Parse CSS source into a StyleSheet object
+	/// The parser doesn't support any kind of escaping
+	StyleSheet* ParseStyleSheet(const std::string& source, StyleParseResult& parseResult);
 } }
 
 #endif

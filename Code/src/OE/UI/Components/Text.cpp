@@ -3,10 +3,11 @@
 #include "OE/Misc/Log.hpp"
 
 #include "OE/UI/Render/Painter.hpp"
+#include "OE/UI/Style/StyleComputed.hpp"
 
 namespace OrbitEngine { namespace UI {
 	Text::Text()
-		: Element(), m_Font(nullptr), m_Size(16)
+		: Element(), m_Font(nullptr)
 	{
 		enableMeasurement();
 		setAsTextType();
@@ -20,12 +21,6 @@ namespace OrbitEngine { namespace UI {
 	void Text::setFont(Graphics::Font* font)
 	{
 		m_Font = font;
-		flushTextLayoutCache();
-	}
-
-	void Text::setSize(Graphics::FontSize size)
-	{
-		m_Size = size;
 		flushTextLayoutCache();
 	}
 
@@ -46,7 +41,7 @@ namespace OrbitEngine { namespace UI {
 		auto bbox = getBoundingBox();
 
 		Graphics::TextSettings textSettings;
-		textSettings.size = m_Size;
+		textSettings.size = m_ComputedStyle->fontSize.value.length.value; // TODO: units
 		textSettings.wordWrap = true;
 		textSettings.wordWrapWidth = bbox.width;
 
@@ -70,7 +65,7 @@ namespace OrbitEngine { namespace UI {
 		}
 		else {
 			Graphics::TextSettings textSettings;
-			textSettings.size = m_Size;
+			textSettings.size = m_ComputedStyle->fontSize.value.length.value; // TODO: units
 			textSettings.wordWrap = false;
 
 			measuredWidth = std::ceil(getTextLayout(textSettings, true).boundingSize.x);
@@ -84,7 +79,7 @@ namespace OrbitEngine { namespace UI {
 		}
 		else {
 			Graphics::TextSettings textSettings;
-			textSettings.size = m_Size;
+			textSettings.size = m_ComputedStyle->fontSize.value.length.value; // TODO: units
 			textSettings.wordWrap = true;
 			textSettings.wordWrapWidth = measuredWidth;
 

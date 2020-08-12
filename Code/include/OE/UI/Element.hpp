@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "OE/UI/Style/StyleSelector.hpp"
+#include "OE/UI/Style/StyleEnums.hpp"
 
 #include "OE/Math/Rect.hpp"
 
@@ -33,6 +33,7 @@ namespace OrbitEngine { namespace UI {
 		void setID(const std::string& id);
 		void addClass(const std::string& klass);
 		void addStyleSheet(StyleSheet* stylesheet);
+		void setStyleProperty(const StyleProperty& property);
 
 		Element* getParent() const;
 		const std::vector<Element*>& getChildrens() const;
@@ -43,6 +44,8 @@ namespace OrbitEngine { namespace UI {
 		virtual Math::Vec2f measureContent(float width, MeasureMode widthMode, float height, MeasureMode heightMode);
 		
 	protected:
+		StyleComputed* m_ComputedStyle;
+
 		void setTag(const std::string& tag);
 
 		void enableMeasurement();
@@ -62,7 +65,7 @@ namespace OrbitEngine { namespace UI {
 		std::vector<StyleIdentifier> m_Classes;
 		StylePseudoStates m_PseudoStates;
 		std::vector<StyleSheet*> m_StyleSheets;
-		StyleComputed* m_ComputedStyle;
+		StyleRule m_InlineRules;
 
 		YGNode* m_YogaNode;
 		Math::Rectf m_LayoutRect;

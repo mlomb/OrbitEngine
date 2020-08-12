@@ -4,8 +4,7 @@
 #include <unordered_map>
 #include <vector>
 
-#include "StyleRule.hpp"
-#include "StyleSelector.hpp"
+#include "OE/UI/Style/StyleEnums.hpp"
 
 namespace OrbitEngine { namespace UI {
 

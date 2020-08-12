@@ -1,7 +1,7 @@
 #ifndef UI_STYLE_COMPUTED_HPP
 #define UI_STYLE_COMPUTED_HPP
 
-#include "OE/UI/Style/StyleRule.hpp"
+#include "OE/UI/Style/StyleEnums.hpp"
 
 namespace OrbitEngine { namespace UI {
 
@@ -14,41 +14,41 @@ namespace OrbitEngine { namespace UI {
 	struct StyleComputed {
 		StyleValueComputed width;
 		StyleValueComputed height;
-		StyleValueComputed min_width;
-		StyleValueComputed min_height;
-		StyleValueComputed max_width;
-		StyleValueComputed max_height;
+		StyleValueComputed minWidth;
+		StyleValueComputed minHeight;
+		StyleValueComputed maxWidth;
+		StyleValueComputed maxHeight;
 
-		StyleValueComputed margin_left;
-		StyleValueComputed margin_top;
-		StyleValueComputed margin_right;
-		StyleValueComputed margin_bottom;
+		StyleValueComputed marginLeft;
+		StyleValueComputed marginTop;
+		StyleValueComputed marginRight;
+		StyleValueComputed marginBottom;
 
-		StyleValueComputed padding_left;
-		StyleValueComputed padding_top;
-		StyleValueComputed padding_right;
-		StyleValueComputed padding_bottom;
+		StyleValueComputed paddingLeft;
+		StyleValueComputed paddingTop;
+		StyleValueComputed paddingRight;
+		StyleValueComputed paddingBottom;
 
-		StyleValueComputed border_color;
-		StyleValueComputed border_top_left_radius;
-		StyleValueComputed border_top_right_radius;
-		StyleValueComputed border_bottom_left_radius;
-		StyleValueComputed border_bottom_right_radius;
-		StyleValueComputed border_left_width;
-		StyleValueComputed border_top_width;
-		StyleValueComputed border_right_width;
-		StyleValueComputed border_bottom_width;
+		StyleValueComputed borderColor;
+		StyleValueComputed borderTopLeftRadius;
+		StyleValueComputed borderTopRightRadius;
+		StyleValueComputed borderBottomLeftRadius;
+		StyleValueComputed borderBottomRightRadius;
+		StyleValueComputed borderLeftWidth;
+		StyleValueComputed borderTopWidth;
+		StyleValueComputed borderRightWidth;
+		StyleValueComputed borderBottomWidth;
 
-		StyleValueComputed flex_grow;
-		StyleValueComputed flex_shrink;
-		StyleValueComputed flex_basis;
-		StyleValueComputed flex_direction;
-		StyleValueComputed flex_wrap;
+		StyleValueComputed flexGrow;
+		StyleValueComputed flexShrink;
+		StyleValueComputed flexBasis;
+		StyleValueComputed flexDirection;
+		StyleValueComputed flexWrap;
 
-		StyleValueComputed align_self;
-		StyleValueComputed align_items;
-		StyleValueComputed align_content;
-		StyleValueComputed justify_content;
+		StyleValueComputed alignSelf;
+		StyleValueComputed alignItems;
+		StyleValueComputed alignContent;
+		StyleValueComputed justifyContent;
 
 		StyleValueComputed position;
 		StyleValueComputed left;
@@ -57,29 +57,59 @@ namespace OrbitEngine { namespace UI {
 		StyleValueComputed bottom;
 
 		StyleValueComputed color;
-		StyleValueComputed background_color;
+		StyleValueComputed backgroundColor;
 
 		StyleValueComputed overflow;
 		StyleValueComputed display;
 
-		StyleValueComputed font_size;
-		StyleValueComputed white_space;
+		StyleValueComputed fontSize;
+		StyleValueComputed whiteSpace;
 
 		StyleValueComputed cursor;
 
 		void applyProperty(const StyleProperty& property);
-		void applyRule(const StyleRule* rule);
+		void applyRule(const StyleRule& rule);
 		void inherit(const StyleComputed& source);
-
 	};
 
 	constexpr StyleComputed GetDefaultStyleValues()
 	{
 		StyleComputed defaults = { };
+		
+		#define SET_LENGTH(prop_name, _value, _unit) \
+		defaults.prop_name.populated = true; \
+		defaults.prop_name.inherited = true; \
+		defaults.prop_name.value.length.value = _value; \
+		defaults.prop_name.value.length.unit = _unit;
+
+		#define SET_COLOR(prop_name, _r, _g, _b, _a) \
+		defaults.prop_name.populated = true; \
+		defaults.prop_name.inherited = true; \
+		defaults.prop_name.value.color.r = _r; \
+		defaults.prop_name.value.color.g = _g; \
+		defaults.prop_name.value.color.b = _b; \
+		defaults.prop_name.value.color.a = _a;
+
+		#define SET_ENUM(prop_name, _enum_key, _enum_value) \
+		defaults.prop_name.populated = true; \
+		defaults.prop_name.inherited = true; \
+		defaults.prop_name.value._enum_key = _enum_value;
+
+		SET_COLOR(color, 1, 1, 1, 1); // white
+		SET_COLOR(backgroundColor, 0, 0, 0, 0); // transparent
+		
+		SET_ENUM(overflow, overflow, Overflow::VISIBLE);
+		SET_ENUM(display, display, Display::FLEX);
+		
+		SET_LENGTH(fontSize, 14, StyleLengthUnit::PIXELS);
+		SET_ENUM(whiteSpace, whiteSpace, WhiteSpace::NORMAL);
+
+		#undef SET_LENGTH
+		#undef SET_COLOR
 
 		return defaults;
 	}
-
+	
 } }
 
 #endif

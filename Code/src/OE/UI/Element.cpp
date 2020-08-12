@@ -67,9 +67,10 @@ namespace OrbitEngine { namespace UI {
 		if (!m_ComputedStyle)
 			return;
 
-		auto bg_values = m_ComputedStyle->background_color.value.color;
-		Math::Color4f bg_color = Math::Color4f(bg_values.r, bg_values.g, bg_values.b, bg_values.a);
-		painter->drawRectangle(m_BoundingBox, bg_color);
+		auto color = m_ComputedStyle->backgroundColor.value.color;
+		if (color.a > 0.01) {
+			painter->drawRectangle(m_BoundingBox, color);
+		}
 	}
 
 	Math::Vec2f Element::measureContent(float width, MeasureMode widthMode, float height, MeasureMode heightMode)
@@ -106,6 +107,12 @@ namespace OrbitEngine { namespace UI {
 	void Element::addStyleSheet(StyleSheet* stylesheet)
 	{
 		m_StyleSheets.emplace_back(stylesheet);
+	}
+
+	void Element::setStyleProperty(const StyleProperty& property)
+	{
+		// TODO: dedupe
+		m_InlineRules.properties.emplace_back(property);
 	}
 
 	Element* Element::getParent() const

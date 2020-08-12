@@ -1,7 +1,7 @@
 #include "OE/UI/Style/StyleSelectorMatcher.hpp"
 
 #include "OE/UI/Element.hpp"
-#include "OE/UI/Style/StyleSelector.hpp"
+#include "OE/UI/Style/StyleEnums.hpp"
 #include "OE/UI/Style/StyleSheet.hpp"
 
 namespace OrbitEngine { namespace UI {

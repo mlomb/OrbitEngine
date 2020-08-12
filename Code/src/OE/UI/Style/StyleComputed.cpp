@@ -16,41 +16,41 @@ namespace OrbitEngine { namespace UI {
 
 		SAVE_PROP(ID::WIDTH,      width);
 		SAVE_PROP(ID::HEIGHT,     height);
-		SAVE_PROP(ID::MIN_WIDTH,  min_width);
-		SAVE_PROP(ID::MIN_HEIGHT, min_height);
-		SAVE_PROP(ID::MAX_WIDTH,  max_width);
-		SAVE_PROP(ID::MAX_HEIGHT, max_height);
+		SAVE_PROP(ID::MIN_WIDTH,  minWidth);
+		SAVE_PROP(ID::MIN_HEIGHT, minHeight);
+		SAVE_PROP(ID::MAX_WIDTH,  maxWidth);
+		SAVE_PROP(ID::MAX_HEIGHT, maxHeight);
 		
-		SAVE_PROP(ID::MARGIN_LEFT,   margin_left);
-		SAVE_PROP(ID::MARGIN_TOP,    margin_top);
-		SAVE_PROP(ID::MARGIN_RIGHT,  margin_right);
-		SAVE_PROP(ID::MARGIN_BOTTOM, margin_bottom);
+		SAVE_PROP(ID::MARGIN_LEFT,   marginLeft);
+		SAVE_PROP(ID::MARGIN_TOP,    marginTop);
+		SAVE_PROP(ID::MARGIN_RIGHT,  marginRight);
+		SAVE_PROP(ID::MARGIN_BOTTOM, marginBottom);
 
-		SAVE_PROP(ID::PADDING_LEFT,   padding_left);
-		SAVE_PROP(ID::PADDING_TOP,    padding_top);
-		SAVE_PROP(ID::PADDING_RIGHT,  padding_right);
-		SAVE_PROP(ID::PADDING_BOTTOM, padding_bottom);
+		SAVE_PROP(ID::PADDING_LEFT,   paddingLeft);
+		SAVE_PROP(ID::PADDING_TOP,    paddingTop);
+		SAVE_PROP(ID::PADDING_RIGHT,  paddingRight);
+		SAVE_PROP(ID::PADDING_BOTTOM, paddingBottom);
 
-		SAVE_PROP(ID::BORDER_COLOR, border_color);
-		SAVE_PROP(ID::BORDER_TOP_LEFT_RADIUS,     border_top_left_radius);
-		SAVE_PROP(ID::BORDER_TOP_RIGHT_RADIUS,    border_top_right_radius);
-		SAVE_PROP(ID::BORDER_BOTTOM_LEFT_RADIUS,  border_bottom_left_radius);
-		SAVE_PROP(ID::BORDER_BOTTOM_RIGHT_RADIUS, border_bottom_right_radius);
-		SAVE_PROP(ID::BORDER_LEFT_WIDTH,   border_left_width);
-		SAVE_PROP(ID::BORDER_TOP_WIDTH,    border_top_width);
-		SAVE_PROP(ID::BORDER_RIGHT_WIDTH,  border_right_width);
-		SAVE_PROP(ID::BORDER_BOTTOM_WIDTH, border_bottom_width);
+		SAVE_PROP(ID::BORDER_COLOR, borderColor);
+		SAVE_PROP(ID::BORDER_TOP_LEFT_RADIUS,     borderTopLeftRadius);
+		SAVE_PROP(ID::BORDER_TOP_RIGHT_RADIUS,    borderTopRightRadius);
+		SAVE_PROP(ID::BORDER_BOTTOM_LEFT_RADIUS,  borderBottomLeftRadius);
+		SAVE_PROP(ID::BORDER_BOTTOM_RIGHT_RADIUS, borderBottomRightRadius);
+		SAVE_PROP(ID::BORDER_LEFT_WIDTH,   borderLeftWidth);
+		SAVE_PROP(ID::BORDER_TOP_WIDTH,    borderTopWidth);
+		SAVE_PROP(ID::BORDER_RIGHT_WIDTH,  borderRightWidth);
+		SAVE_PROP(ID::BORDER_BOTTOM_WIDTH, borderBottomWidth);
 
-		SAVE_PROP(ID::FLEX_GROW,      flex_grow);
-		SAVE_PROP(ID::FLEX_SHRINK,    flex_shrink);
-		SAVE_PROP(ID::FLEX_BASIS,     flex_basis);
-		SAVE_PROP(ID::FLEX_DIRECTION, flex_direction);
-		SAVE_PROP(ID::FLEX_WRAP,      flex_wrap);
+		SAVE_PROP(ID::FLEX_GROW,      flexGrow);
+		SAVE_PROP(ID::FLEX_SHRINK,    flexShrink);
+		SAVE_PROP(ID::FLEX_BASIS,     flexBasis);
+		SAVE_PROP(ID::FLEX_DIRECTION, flexDirection);
+		SAVE_PROP(ID::FLEX_WRAP,      flexWrap);
 
-		SAVE_PROP(ID::ALIGN_SELF,      align_self);
-		SAVE_PROP(ID::ALIGN_ITEMS,     align_items);
-		SAVE_PROP(ID::ALIGN_CONTENT,   align_content);
-		SAVE_PROP(ID::JUSTIFY_CONTENT, justify_content);
+		SAVE_PROP(ID::ALIGN_SELF,      alignSelf);
+		SAVE_PROP(ID::ALIGN_ITEMS,     alignItems);
+		SAVE_PROP(ID::ALIGN_CONTENT,   alignContent);
+		SAVE_PROP(ID::JUSTIFY_CONTENT, justifyContent);
 
 		SAVE_PROP(ID::POSITION, position);
 		SAVE_PROP(ID::LEFT,   left);
@@ -59,19 +59,19 @@ namespace OrbitEngine { namespace UI {
 		SAVE_PROP(ID::BOTTOM, bottom);
 
 		SAVE_PROP(ID::COLOR, color);
-		SAVE_PROP(ID::BACKGROUND_COLOR, background_color);
+		SAVE_PROP(ID::BACKGROUND_COLOR, backgroundColor);
 
 		SAVE_PROP(ID::OVERFLOW, overflow);
 		SAVE_PROP(ID::DISPLAY, display);
 
-		SAVE_PROP(ID::FONT_SIZE, font_size);
-		SAVE_PROP(ID::WHITE_SPACE, white_space);
+		SAVE_PROP(ID::FONT_SIZE, fontSize);
+		SAVE_PROP(ID::WHITE_SPACE, whiteSpace);
 		}
 	}
 
-	void StyleComputed::applyRule(const StyleRule* rule)
+	void StyleComputed::applyRule(const StyleRule& rule)
 	{
-		for (const StyleProperty& prop : rule->properties)
+		for (const StyleProperty& prop : rule.properties)
 			applyProperty(prop);
 	}
 
@@ -87,8 +87,8 @@ namespace OrbitEngine { namespace UI {
 		// only some properties are inherited
 
 		INHERIT(color);
-		INHERIT(font_size);
-		INHERIT(white_space);
+		INHERIT(fontSize);
+		INHERIT(whiteSpace);
 	}
 
 } }

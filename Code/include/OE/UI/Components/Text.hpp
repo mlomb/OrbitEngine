@@ -15,13 +15,11 @@ namespace OrbitEngine { namespace UI {
 
 		// this should be move to styles
 		void setFont(Graphics::Font* font);
-		void setSize(Graphics::FontSize size);
 
 		void setText(const std::string& text);
 
 	private:
 		Graphics::Font* m_Font;
-		Graphics::FontSize m_Size;
 		std::string m_Text;
 
 		void paintContent(Painter* painter) override;
