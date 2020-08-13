@@ -43,6 +43,7 @@ namespace OrbitEngine { namespace UI {
 		const std::vector<StyleSheet*>& getStyleSheets() const;
 		Math::Rectf getBoundingBox() const;
 		bool isVisible() const;
+		int getDepth() const;
 
 		virtual void paintContent(Painter* painter);
 		virtual Math::Vec2f measureContent(float width, MeasureMode widthMode, float height, MeasureMode heightMode);

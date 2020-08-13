@@ -21,7 +21,11 @@ namespace OrbitEngine { namespace UI {
 	private:
 		std::queue<EventBase*> m_EventQueue;
 
+		Element* m_LastElementUnderMouse;
+
+		void queueEvent(EventBase* evt);
 		void processEventQueue();
+		void updateElementUnderMouse(const Math::Vec2f& mousePosition);
 	};
 
 } }

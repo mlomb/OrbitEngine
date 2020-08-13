@@ -82,13 +82,11 @@ namespace OrbitEngine { namespace UI {
 	void Element::executeDefault(EventBase* evt)
 	{
 		switch (evt->type) {
-		case EventTypeID::MOUSE_MOVE:
-			MouseMoveEvent* mouseEvt = static_cast<MouseMoveEvent*>(evt);
-			bool hover = getBoundingBox().contains(mouseEvt->mousePosition);
-			if (hover)
-				setPseudoStates(StylePseudoStates::HOVER);
-			else
-				removePseudoStates(StylePseudoStates::HOVER);
+		case EventTypeID::MOUSE_ENTER:
+			setPseudoStates(StylePseudoStates::HOVER);
+			break;
+		case EventTypeID::MOUSE_LEAVE:
+			removePseudoStates(StylePseudoStates::HOVER);
 			break;
 		}
 	}
@@ -169,6 +167,18 @@ namespace OrbitEngine { namespace UI {
 	bool Element::isVisible() const
 	{
 		return m_ComputedStyle && m_ComputedStyle->display.value.display == Display::FLEX;
+	}
+
+	int Element::getDepth() const
+	{
+		// TODO: cache or something
+		int depth = 0;
+		const Element* e = this;
+		while (e) {
+			depth++;
+			e = e->getParent();
+		}
+		return depth;
 	}
 
 	MeasureMode YogaMeasureModeToMeasureMode(YGMeasureMode mode) {

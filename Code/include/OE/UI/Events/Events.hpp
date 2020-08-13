@@ -1,9 +1,13 @@
 #ifndef UI_EVENTS_HPP
 #define UI_EVENTS_HPP
 
+#include <vector>
+
 #include "OE/Math/Vec2.hpp"
 
 namespace OrbitEngine { namespace UI {
+
+	class Element;
 
 	enum class EventTypeID {
 		MOUSE_MOVE,
@@ -21,11 +25,24 @@ namespace OrbitEngine { namespace UI {
 		EventBase(EventTypeID _type) : type(_type), target(nullptr) { };
 	};
 
-	class MouseMoveEvent : public EventBase {
+	class MouseEvent : public EventBase {
 	public:
 		Math::Vec2f mousePosition;
 
-		MouseMoveEvent() : EventBase(EventTypeID::MOUSE_MOVE) { };
+		MouseEvent(EventTypeID type) : EventBase(type) { };
+	};
+
+	class MouseMoveEvent : public MouseEvent {
+	public:
+		MouseMoveEvent() : MouseEvent(EventTypeID::MOUSE_MOVE) { };
+	};
+	class MouseEnterEvent : public MouseEvent {
+	public:
+		MouseEnterEvent() : MouseEvent(EventTypeID::MOUSE_ENTER) { };
+	};
+	class MouseLeaveEvent : public MouseEvent {
+	public:
+		MouseLeaveEvent() : MouseEvent(EventTypeID::MOUSE_LEAVE) { };
 	};
 
 } }
