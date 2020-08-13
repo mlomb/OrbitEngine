@@ -4,14 +4,14 @@
 #include "OE/UI/Style/StyleTreeUpdater.hpp"
 #include "OE/UI/Layout/LayoutTreeUpdater.hpp"
 #include "OE/UI/Render/TreePainter.hpp"
-#include "OE/UI/Events/EventTreeDispatcher.hpp"
+#include "OE/UI/Events/EventsController.hpp"
 
 namespace OrbitEngine { namespace UI {
 	
 	Surface::Surface()
 		: m_Size(100, 100)
 	{
-		m_EventDispatcher = new EventTreeDispatcher(this);
+		m_EventsController = new EventsController(this);
 		m_StyleUpdater = new StyleTreeUpdater(this);
 		m_LayoutUpdater = new LayoutTreeUpdater(this);
 		m_TreePainter = new TreePainter(this);
@@ -21,7 +21,7 @@ namespace OrbitEngine { namespace UI {
 
 	Surface::~Surface()
 	{
-		delete m_EventDispatcher;
+		delete m_EventsController;
 		delete m_StyleUpdater;
 		delete m_LayoutUpdater;
 		delete m_TreePainter;
@@ -30,7 +30,7 @@ namespace OrbitEngine { namespace UI {
 
 	void Surface::updateTree()
 	{
-		m_EventDispatcher->process();
+		m_EventsController->process();
 		m_StyleUpdater->process();
 		m_LayoutUpdater->process();
 		m_TreePainter->process();
@@ -74,8 +74,8 @@ namespace OrbitEngine { namespace UI {
 		return m_Size;
 	}
 
-	EventTreeDispatcher* Surface::getEventDispatcher() const
+	EventsController* Surface::getEventsController() const
 	{
-		return m_EventDispatcher;
+		return m_EventsController;
 	}
 } }

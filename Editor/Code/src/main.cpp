@@ -25,7 +25,7 @@
 #include <OE/UI/Surface.hpp>
 #include <OE/UI/Components/Text.hpp>
 #include <OE/UI/Events/Events.hpp>
-#include <OE/UI/Events/EventTreeDispatcher.hpp>
+#include <OE/UI/Events/EventsController.hpp>
 
 #if OE_WINDOWS
 #include <OE/Platform/Windows/WindowWindows.hpp>
@@ -260,7 +260,7 @@ Sed fringilla lacus sed eros molestie tristique. Nullam vitae tortor pharetra, b
 
 	auto im = InputManager::Get();
 	im->onMouseMoveEvent.AddListener([&](const MouseMoveInputEvent& mme) {
-		surface->getEventDispatcher()->sendMouseMove(mme.position);
+		surface->getEventsController()->sendMouseMove(mme.position);
 	});
 
 	auto frame = [&]() {

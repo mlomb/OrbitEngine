@@ -11,7 +11,7 @@ namespace OrbitEngine { namespace UI {
 	class StyleTreeUpdater;
 	class LayoutTreeUpdater;
 	class TreePainter;
-	class EventTreeDispatcher;
+	class EventsController;
 
 	class Surface {
 	public:
@@ -22,7 +22,7 @@ namespace OrbitEngine { namespace UI {
 
 		void setSize(const Math::Vec2i& size);
 		Element* findElementsAt(Element* root, const Math::Vec2f& point, std::vector<Element*>* found = nullptr);
-		EventTreeDispatcher* getEventDispatcher() const;
+		EventsController* getEventsController() const;
 
 		Element* getRoot() const;
 		Math::Vec2i getSize() const;
@@ -33,7 +33,7 @@ namespace OrbitEngine { namespace UI {
 		StyleTreeUpdater* m_StyleUpdater;
 		LayoutTreeUpdater* m_LayoutUpdater;
 		TreePainter* m_TreePainter;
-		EventTreeDispatcher* m_EventDispatcher;
+		EventsController* m_EventsController;
 
 		Math::Vec2i m_Size;
 	};

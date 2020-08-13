@@ -1,5 +1,5 @@
-#ifndef UI_EVENT_TREE_DISPATCHER_HPP
-#define UI_EVENT_TREE_DISPATCHER_HPP
+#ifndef UI_EVENTS_CONTROLLER_HPP
+#define UI_EVENTS_CONTROLLER_HPP
 
 #include <queue>
 
@@ -9,10 +9,10 @@
 
 namespace OrbitEngine { namespace UI {
 
-	class EventTreeDispatcher : public TreeProcessor {
+	class EventsController : public TreeProcessor {
 	public:
-		EventTreeDispatcher(Surface* surface);
-		virtual ~EventTreeDispatcher();
+		EventsController(Surface* surface);
+		virtual ~EventsController();
 
 		void process() override;
 

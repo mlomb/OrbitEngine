@@ -1,25 +1,25 @@
-#include "OE/UI/Events/EventTreeDispatcher.hpp"
+#include "OE/UI/Events/EventsController.hpp"
 
 #include "OE/UI/Element.hpp"
 #include "OE/UI/Surface.hpp"
 
 namespace OrbitEngine { namespace UI {
 
-	EventTreeDispatcher::EventTreeDispatcher(Surface* surface)
+	EventsController::EventsController(Surface* surface)
 		: TreeProcessor(surface)
 	{
 	}
 
-	EventTreeDispatcher::~EventTreeDispatcher()
+	EventsController::~EventsController()
 	{
 	}
 
-	void EventTreeDispatcher::process()
+	void EventsController::process()
 	{
 		processEventQueue();
 	}
 
-	void EventTreeDispatcher::sendMouseMove(const Math::Vec2f& position)
+	void EventsController::sendMouseMove(const Math::Vec2f& position)
 	{
 		MouseMoveEvent* e = new MouseMoveEvent();
 		e->mousePosition = position;
@@ -27,7 +27,7 @@ namespace OrbitEngine { namespace UI {
 		m_EventQueue.push(e);
 	}
 
-	void EventTreeDispatcher::processEventQueue()
+	void EventsController::processEventQueue()
 	{
 		while (!m_EventQueue.empty()) {
 			EventBase* evt = m_EventQueue.front();
