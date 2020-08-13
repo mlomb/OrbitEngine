@@ -91,11 +91,11 @@ namespace OrbitEngine { namespace UI {
 
 		// now last and curr have the same depth
 		while (last != curr) {
-			if(last) leave.emplace_back(last);
-			if (curr) enter.emplace_back(curr);
+			leave.emplace_back(last);
+			enter.emplace_back(curr);
 
-			last = last ? last->getParent() : nullptr;
-			curr = curr ? curr->getParent() : nullptr;
+			last = last->getParent();
+			curr = curr->getParent();
 		}
 
 		// queue events
