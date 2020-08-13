@@ -17,6 +17,11 @@ namespace OrbitEngine { namespace Math {
 	{
 		return x != b.x || y != b.y || width != b.width || height != b.height;
 	}
+
+	template<typename T> inline bool Rect<T>::contains(const Math::Vec2<T>& point) const
+	{
+		return point.x >= x && point.y >= y && point.x <= x + width && point.y <= y + height;
+	}
 } }
 
 #endif

@@ -1,6 +1,8 @@
 #ifndef UI_SURFACE_HPP
 #define UI_SURFACE_HPP
 
+#include <vector>
+
 #include "OE/Math/Vec2.hpp"
 
 namespace OrbitEngine { namespace UI {
@@ -8,7 +10,8 @@ namespace OrbitEngine { namespace UI {
 	class Element;
 	class StyleTreeUpdater;
 	class LayoutTreeUpdater;
-	class PaintTreeUpdater;
+	class TreePainter;
+	class EventTreeDispatcher;
 
 	class Surface {
 	public:
@@ -18,6 +21,8 @@ namespace OrbitEngine { namespace UI {
 		void updateTree();
 
 		void setSize(const Math::Vec2i& size);
+		Element* findElementsAt(Element* root, const Math::Vec2f& point, std::vector<Element*>* found = nullptr);
+		EventTreeDispatcher* getEventDispatcher() const;
 
 		Element* getRoot() const;
 		Math::Vec2i getSize() const;
@@ -27,7 +32,8 @@ namespace OrbitEngine { namespace UI {
 
 		StyleTreeUpdater* m_StyleUpdater;
 		LayoutTreeUpdater* m_LayoutUpdater;
-		PaintTreeUpdater* m_PaintUpdater;
+		TreePainter* m_TreePainter;
+		EventTreeDispatcher* m_EventDispatcher;
 
 		Math::Vec2i m_Size;
 	};

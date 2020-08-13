@@ -41,7 +41,7 @@ namespace OrbitEngine { namespace UI {
 		void drawRoundedCorner(const Math::Vec2f& center, const Math::Vec2f& radii, const Corner corner, const Math::Color4f& color);
 		void drawRoundedRectangle(const Math::Rectf& rect, const Math::Color4f& color, const RoundedRectParams& params);
 
-		void drawText(const Graphics::TextLayout& textLayout, const Math::Vec2f& position);
+		void drawText(const Graphics::TextLayout& textLayout, const Math::Vec2f& position, const Math::Color4f& color);
 
 	private:
 		struct ConstantBuffer {
@@ -62,8 +62,7 @@ namespace OrbitEngine { namespace UI {
 		std::vector<Graphics::Texture*> m_DestroyAfterCommitingAtlas;
 
 	private:
-		friend class Composer; // TODO: remove
-		friend class PaintTreeUpdater;
+		friend class TreePainter;
 
 		void setProjection(const Math::Mat4& proj);
 		void begin();

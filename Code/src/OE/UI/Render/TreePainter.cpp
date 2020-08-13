@@ -1,4 +1,4 @@
-#include "OE/UI/Render/PaintTreeUpdater.hpp"
+#include "OE/UI/Render/TreePainter.hpp"
 
 #include "OE/UI/Render/Painter.hpp"
 #include "OE/UI/Surface.hpp"
@@ -7,18 +7,18 @@
 
 namespace OrbitEngine { namespace UI {
 
-	PaintTreeUpdater::PaintTreeUpdater(Surface* surface)
-		: TreeUpdater(surface)
+	TreePainter::TreePainter(Surface* surface)
+		: TreeProcessor(surface)
 	{
 		m_Painter = new Painter();
 	}
 
-	PaintTreeUpdater::~PaintTreeUpdater()
+	TreePainter::~TreePainter()
 	{
 		delete m_Painter;
 	}
 
-	void PaintTreeUpdater::update()
+	void TreePainter::process()
 	{
 		auto size = m_Surface->getSize();
 		auto transform = Math::Mat4::Orthographic(0, size.x, size.y, 0, 0, 1);
@@ -29,12 +29,8 @@ namespace OrbitEngine { namespace UI {
 		m_Painter->end();
 	}
 
-	void PaintTreeUpdater::onVersionChange(Element* element, VersionChangeType changes)
-	{
-	}
-
 	// this will be removed
-	void PaintTreeUpdater::rec(Element* el)
+	void TreePainter::rec(Element* el)
 	{
 		el->paintContent(m_Painter);
 

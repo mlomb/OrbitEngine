@@ -257,7 +257,7 @@ namespace OrbitEngine { namespace UI {
 		}
 	}
 
-	void Painter::drawText(const Graphics::TextLayout& textLayout, const Math::Vec2f& position)
+	void Painter::drawText(const Graphics::TextLayout& textLayout, const Math::Vec2f& position, const Math::Color4f& color)
 	{
 		using namespace OrbitEngine::Graphics;
 
@@ -297,7 +297,6 @@ namespace OrbitEngine { namespace UI {
 
 			const Math::Vec2f pos = base_pos + Math::Vec2f(gi.rect.x, gi.rect.y);
 			const Math::Vec2f size = Math::Vec2f(gi.rect.width, gi.rect.height);
-			const Math::Color4f color = Math::Color::White;
 
 			float u0 = texelSize * rect.x;
 			float v0 = texelSize * rect.y;

@@ -235,7 +235,10 @@ namespace OrbitEngine { namespace UI {
 	};
 
 	// operators for StylePseudoStates
-	inline StylePseudoStates& operator|= (StylePseudoStates& a, StylePseudoStates b) { return (StylePseudoStates&)((int&)a |= (int)b); }
+	inline StylePseudoStates operator~(const StylePseudoStates& a) { return (StylePseudoStates)~(int)a; }
+	inline StylePseudoStates operator&(const StylePseudoStates& a, const StylePseudoStates& b) { return (StylePseudoStates)((int)a & (int)b); }
+	inline StylePseudoStates& operator|=(StylePseudoStates& a, const StylePseudoStates b) { return (StylePseudoStates&)((int&)a |= (int)b); }
+	inline StylePseudoStates& operator&=(StylePseudoStates& a, const StylePseudoStates b) { return (StylePseudoStates&)((int&)a &= (int)b); }
 } }
 
 #endif

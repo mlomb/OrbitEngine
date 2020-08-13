@@ -24,6 +24,8 @@
 #include <OE/UI/Style/StyleComputed.hpp>
 #include <OE/UI/Surface.hpp>
 #include <OE/UI/Components/Text.hpp>
+#include <OE/UI/Events/Events.hpp>
+#include <OE/UI/Events/EventTreeDispatcher.hpp>
 
 #if OE_WINDOWS
 #include <OE/Platform/Windows/WindowWindows.hpp>
@@ -65,7 +67,7 @@ void generateRandomUI(OrbitEngine::UI::Element* parent, int depth = 0) {
         //child->setStyleProperty({ StylePropertyID::MARGIN_RIGHT, { 20, StyleLengthUnit::PIXELS } });
         //child->setStyleProperty({ StylePropertyID::MARGIN_BOTTOM, { 20, StyleLengthUnit::PIXELS } });
         
-        StyleProperty bg_prop;
+        /*StyleProperty bg_prop;
         bg_prop.id = StylePropertyID::BACKGROUND_COLOR;
         bg_prop.value.color = {
             getRandomFloat(),
@@ -73,7 +75,7 @@ void generateRandomUI(OrbitEngine::UI::Element* parent, int depth = 0) {
             getRandomFloat(),
             0.5f + getRandomFloat() * 0.5f
         };
-        child->setStyleProperty(bg_prop);
+        child->setStyleProperty(bg_prop);*/
 		//YGNodeStyleSetPadding(child->m_Node, YGEdgeAll, getRandomFloat() * max_sz);
 		//YGNodeStyleSetAlignSelf(child->m_Node, YGAlignCenter);
 		//YGNodeStyleSetMargin(child->m_Node, YGEdgeEnd, 20);
@@ -255,7 +257,11 @@ Sed fringilla lacus sed eros molestie tristique. Nullam vitae tortor pharetra, b
 
 	Graphics::DynamicAtlas* da = new Graphics::DynamicAtlas();
 	Graphics::ImGuiRenderer* igr = new Graphics::ImGuiRenderer();
-	
+
+	auto im = InputManager::Get();
+	im->onMouseMoveEvent.AddListener([&](const MouseMoveInputEvent& mme) {
+		surface->getEventDispatcher()->sendMouseMove(mme.position);
+	});
 
 	auto frame = [&]() {
 		window->processEvents();
@@ -298,6 +304,7 @@ Sed fringilla lacus sed eros molestie tristique. Nullam vitae tortor pharetra, b
 		igr->begin();
 
 		//ui_composer->render(root, proj, window->getSize());
+	
         surface->setSize(window->getSize());
         surface->updateTree();
 
@@ -392,6 +399,18 @@ Text {
     background-color: gray;
 }
 
+
+.d0 { background-color: rgba(255,0,255,0.3); }
+.d1 { background-color: rgba(255,0,255,0.5); }
+.d2 { background-color: rgba(255,0,255,0.7); }
+
+*:hover {
+	background-color: orange;
+}
+
+#root {
+    background-color: transparent;
+}
 
 )";
 }

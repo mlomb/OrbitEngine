@@ -3,17 +3,17 @@
 #include "OE/Misc/Log.hpp"
 
 #include "OE/UI/Style/StyleComputed.hpp"
-
 #include "OE/UI/Render/Painter.hpp"
-
 #include "OE/UI/Layout/Yoga.hpp"
+#include "OE/UI/Events/Events.hpp"
 
 namespace OrbitEngine { namespace UI {
 	Element::Element() :
 		m_Surface(nullptr),
 		m_Parent(nullptr),
 		m_Depth(0),
-		m_ComputedStyle(nullptr)
+		m_ComputedStyle(nullptr),
+		m_PseudoStates(StylePseudoStates::NONE)
 	{
 		setID("");
 		setTag("Element");
@@ -79,6 +79,20 @@ namespace OrbitEngine { namespace UI {
 		return { 0, 0 };
 	}
 
+	void Element::executeDefault(EventBase* evt)
+	{
+		switch (evt->type) {
+		case EventTypeID::MOUSE_MOVE:
+			MouseMoveEvent* mouseEvt = static_cast<MouseMoveEvent*>(evt);
+			bool hover = getBoundingBox().contains(mouseEvt->mousePosition);
+			if (hover)
+				setPseudoStates(StylePseudoStates::HOVER);
+			else
+				removePseudoStates(StylePseudoStates::HOVER);
+			break;
+		}
+	}
+
 	void Element::setID(const std::string& id)
 	{
 		m_ID = { StyleIdentifierType::ID, id };
@@ -122,6 +136,16 @@ namespace OrbitEngine { namespace UI {
 		m_InlineRules.properties.emplace_back(property);
 	}
 
+	void Element::setPseudoStates(const StylePseudoStates states)
+	{
+		m_PseudoStates |= states;
+	}
+
+	void Element::removePseudoStates(const StylePseudoStates states)
+	{
+		m_PseudoStates &= ~states;
+	}
+
 	Element* Element::getParent() const
 	{
 		return m_Parent;
@@ -140,6 +164,11 @@ namespace OrbitEngine { namespace UI {
 	Math::Rectf Element::getBoundingBox() const
 	{
 		return m_BoundingBox;
+	}
+
+	bool Element::isVisible() const
+	{
+		return m_ComputedStyle && m_ComputedStyle->display.value.display == Display::FLEX;
 	}
 
 	MeasureMode YogaMeasureModeToMeasureMode(YGMeasureMode mode) {

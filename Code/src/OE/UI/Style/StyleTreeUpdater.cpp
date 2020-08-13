@@ -13,7 +13,7 @@
 namespace OrbitEngine { namespace UI {
 
 	StyleTreeUpdater::StyleTreeUpdater(Surface* surface)
-		: TreeUpdater(surface)
+		: TreeProcessor(surface)
 	{
 	}
 
@@ -21,14 +21,10 @@ namespace OrbitEngine { namespace UI {
 	{
 	}
 
-	void StyleTreeUpdater::update()
+	void StyleTreeUpdater::process()
 	{
 		OE_ASSERT(m_SheetsStack.size() == 0);
 		applyStyles(m_Surface->getRoot());
-	}
-
-	void StyleTreeUpdater::onVersionChange(Element* element, VersionChangeType changes)
-	{
 	}
 
 	void StyleTreeUpdater::applyStyles(Element* element)

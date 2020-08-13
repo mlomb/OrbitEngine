@@ -8,7 +8,7 @@
 namespace OrbitEngine { namespace UI {
 
 	LayoutTreeUpdater::LayoutTreeUpdater(Surface* surface)
-		: TreeUpdater(surface)
+		: TreeProcessor(surface)
 	{
 	}
 
@@ -16,7 +16,7 @@ namespace OrbitEngine { namespace UI {
 	{
 	}
 
-	void LayoutTreeUpdater::update()
+	void LayoutTreeUpdater::process()
 	{
 		auto size = m_Surface->getSize();
 		Element* root = m_Surface->getRoot();
@@ -31,13 +31,13 @@ namespace OrbitEngine { namespace UI {
 		}
 	}
 
-	void LayoutTreeUpdater::onVersionChange(Element* element, VersionChangeType changes)
+	/*void LayoutTreeUpdater::onVersionChange(Element* element, VersionChangeType changes)
 	{
 		// check type
 
 		if (element->m_YogaNode && YGNodeHasMeasureFunc(element->m_YogaNode))
 			YGNodeMarkDirty(element->m_YogaNode);
-	}
+	}*/
 
 	void LayoutTreeUpdater::updateLayout(Element* element)
 	{

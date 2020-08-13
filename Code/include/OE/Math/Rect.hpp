@@ -23,6 +23,8 @@ namespace OrbitEngine { namespace Math {
 
 		bool operator==(const Rect<T> b) const;
 		bool operator!=(const Rect<T> b) const;
+		
+		bool contains(const Math::Vec2<T>& point) const;
 	};
 
 	/// integer rect
