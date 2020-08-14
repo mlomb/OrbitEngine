@@ -161,6 +161,7 @@ namespace OrbitEngine { namespace UI {
 	typedef float StyleNumber;
 
 	struct StyleLength {
+		bool set_auto = false;
 		StyleNumber number;
 		StyleLengthUnit unit;
 	};
@@ -177,7 +178,6 @@ namespace OrbitEngine { namespace UI {
 	};
 
 	struct StyleValue {
-		bool set_auto = false;
 		union {
 			char* string;
 			StyleNumber number;

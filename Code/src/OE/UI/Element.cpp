@@ -67,16 +67,16 @@ namespace OrbitEngine { namespace UI {
 		if (!m_ComputedStyle)
 			return;
 
-		auto color = m_ComputedStyle->backgroundColor.value.color;
+		auto color = m_ComputedStyle->backgroundColor.value;
 		if (color.a > 0.01) {
 			//painter->drawRectangle(m_BoundingBox, color);
 
 			// TODO: % unit
 			RoundedRectParams roundedParams;
-			roundedParams.cornerRadii[0].x = roundedParams.cornerRadii[0].y = m_ComputedStyle->borderTopLeftRadius.value.length.number;
-			roundedParams.cornerRadii[1].x = roundedParams.cornerRadii[1].y = m_ComputedStyle->borderTopRightRadius.value.length.number;
-			roundedParams.cornerRadii[2].x = roundedParams.cornerRadii[2].y = m_ComputedStyle->borderBottomLeftRadius.value.length.number;
-			roundedParams.cornerRadii[3].x = roundedParams.cornerRadii[3].y = m_ComputedStyle->borderBottomRightRadius.value.length.number;
+			roundedParams.cornerRadii[0].x = roundedParams.cornerRadii[0].y = m_ComputedStyle->borderTopLeftRadius.value.number;
+			roundedParams.cornerRadii[1].x = roundedParams.cornerRadii[1].y = m_ComputedStyle->borderTopRightRadius.value.number;
+			roundedParams.cornerRadii[2].x = roundedParams.cornerRadii[2].y = m_ComputedStyle->borderBottomLeftRadius.value.number;
+			roundedParams.cornerRadii[3].x = roundedParams.cornerRadii[3].y = m_ComputedStyle->borderBottomRightRadius.value.number;
 			painter->drawRoundedRectangle(m_BoundingBox, color, roundedParams);
 		}
 	}
@@ -174,7 +174,7 @@ namespace OrbitEngine { namespace UI {
 
 	bool Element::isVisible() const
 	{
-		return m_ComputedStyle && m_ComputedStyle->display.value.display == Display::FLEX;
+		return m_ComputedStyle && m_ComputedStyle->display.value == Display::FLEX;
 	}
 
 	int Element::getDepth() const

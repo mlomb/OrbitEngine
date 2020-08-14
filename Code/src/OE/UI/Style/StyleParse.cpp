@@ -275,8 +275,7 @@ namespace OrbitEngine { namespace UI {
 	}
 
 	bool parseLength(const std::string& input, StyleLength& output, StyleParseResult& parseResult) {
-		// by default pixels
-		output.unit = StyleLengthUnit::PIXELS;
+
 
 		int pos = 0;
 		if (parseNumber(input, pos, output.number, parseResult)) {
@@ -296,8 +295,20 @@ namespace OrbitEngine { namespace UI {
 					return false; // unexpected character
 				}
 			}
+			else {
+				// by default pixels
+				output.unit = StyleLengthUnit::PIXELS;
+			}
 
+			output.set_auto = false;
 			return true;
+		}
+		else if (input.size() >= 4) {
+			// check if auto
+			if (input[0] == 'a' && input[1] == 'u' && input[2] == 't' && input[3] == 'o') {
+				output.set_auto = true;
+				return true;
+			}
 		}
 
 		return false;
@@ -417,7 +428,6 @@ namespace OrbitEngine { namespace UI {
 		using ID = StylePropertyID;
 
 		StyleProperty prop = { };
-		prop.value.set_auto = false;
 
 		std::string value = sanitize(raw_value);
 
@@ -435,17 +445,6 @@ namespace OrbitEngine { namespace UI {
 
 		#define LENGTH_PROPERTY(prop_name, prop_id) PARSE_PROP(parseLength, prop_name, prop_id, length);
 		#define COLOR_PROPERTY(prop_name, prop_id) PARSE_PROP(parseColor, prop_name, prop_id, color);
-			
-		#define LENGTH_OR_AUTO_PROPERTY(prop_name, prop_id) \
-			if(HashStr(value.c_str()) == HashStr("auto")) { \
-				prop.id = prop_id; \
-				prop.value.set_auto = true; \
-				rule.properties.emplace_back(prop); \
-				return true; \
-			} \
-			else { \
-				LENGTH_PROPERTY(prop_name, prop_id); \
-			}
 
 		#define NUMBER_PROPERTY(prop_name, prop_id) \
 		case HashStr(prop_name): \
@@ -475,17 +474,17 @@ namespace OrbitEngine { namespace UI {
 		/// -----------------------
 		/// -----------------------
 
-		LENGTH_OR_AUTO_PROPERTY("width",      ID::WIDTH);
-		LENGTH_OR_AUTO_PROPERTY("height",     ID::HEIGHT);
-		LENGTH_OR_AUTO_PROPERTY("min-width",  ID::MIN_WIDTH);
-		LENGTH_OR_AUTO_PROPERTY("min-height", ID::MIN_HEIGHT);
-		LENGTH_OR_AUTO_PROPERTY("max-width",  ID::MAX_WIDTH);
-		LENGTH_OR_AUTO_PROPERTY("max-height", ID::MAX_HEIGHT);
+		LENGTH_PROPERTY("width",      ID::WIDTH);
+		LENGTH_PROPERTY("height",     ID::HEIGHT);
+		LENGTH_PROPERTY("min-width",  ID::MIN_WIDTH);
+		LENGTH_PROPERTY("min-height", ID::MIN_HEIGHT);
+		LENGTH_PROPERTY("max-width",  ID::MAX_WIDTH);
+		LENGTH_PROPERTY("max-height", ID::MAX_HEIGHT);
 
-		LENGTH_OR_AUTO_PROPERTY("margin-left",   ID::MARGIN_LEFT);
-		LENGTH_OR_AUTO_PROPERTY("margin-top",    ID::MARGIN_TOP);
-		LENGTH_OR_AUTO_PROPERTY("margin-right",  ID::MARGIN_RIGHT);
-		LENGTH_OR_AUTO_PROPERTY("margin-bottom", ID::MARGIN_BOTTOM);
+		LENGTH_PROPERTY("margin-left",   ID::MARGIN_LEFT);
+		LENGTH_PROPERTY("margin-top",    ID::MARGIN_TOP);
+		LENGTH_PROPERTY("margin-right",  ID::MARGIN_RIGHT);
+		LENGTH_PROPERTY("margin-bottom", ID::MARGIN_BOTTOM);
 
 		LENGTH_PROPERTY("padding-left",   ID::PADDING_LEFT);
 		LENGTH_PROPERTY("padding-top",    ID::PADDING_TOP);
@@ -504,7 +503,7 @@ namespace OrbitEngine { namespace UI {
 
 		NUMBER_PROPERTY("flex-grow",   ID::FLEX_GROW);
 		NUMBER_PROPERTY("flex-shrink", ID::FLEX_SHRINK);
-		LENGTH_OR_AUTO_PROPERTY("flex-basis",  ID::FLEX_BASIS);
+		LENGTH_PROPERTY("flex-basis",  ID::FLEX_BASIS);
 		
 		PARSE_ENUM_START("flex-direction", ID::FLEX_DIRECTION);
 			PARSE_ENUM_ENTRY(direction, "row",            FlexDirection::ROW);
@@ -538,12 +537,12 @@ namespace OrbitEngine { namespace UI {
 			ALIGN_ENUM_ENTRIES();
 		PARSE_ENUM_END();
 		PARSE_ENUM_START("justify-content", ID::JUSTIFY_CONTENT);
-			PARSE_ENUM_ENTRY(justify, "flex-start", Justify::FLEX_START);
-			PARSE_ENUM_ENTRY(justify, "center", Justify::CENTER);
-			PARSE_ENUM_ENTRY(justify, "flex-end", Justify::FLEX_END);
+			PARSE_ENUM_ENTRY(justify, "flex-start",    Justify::FLEX_START);
+			PARSE_ENUM_ENTRY(justify, "center",        Justify::CENTER);
+			PARSE_ENUM_ENTRY(justify, "flex-end",      Justify::FLEX_END);
 			PARSE_ENUM_ENTRY(justify, "space-between", Justify::SPACE_BETWEEN);
-			PARSE_ENUM_ENTRY(justify, "space-around", Justify::SPACE_AROUND);
-			PARSE_ENUM_ENTRY(justify, "space-evenly", Justify::SPACE_EVENLY);
+			PARSE_ENUM_ENTRY(justify, "space-around",  Justify::SPACE_AROUND);
+			PARSE_ENUM_ENTRY(justify, "space-evenly",  Justify::SPACE_EVENLY);
 		PARSE_ENUM_END();
 
 		PARSE_ENUM_START("position", ID::POSITION);
@@ -575,20 +574,20 @@ namespace OrbitEngine { namespace UI {
 		PARSE_ENUM_END();
 		
 		PARSE_ENUM_START("cursor", ID::CURSOR);
-			PARSE_ENUM_ENTRY(cursor, "auto", StyleCursor::AUTO);
-			PARSE_ENUM_ENTRY(cursor, "default", StyleCursor::DEFAULT);
-			PARSE_ENUM_ENTRY(cursor, "none", StyleCursor::NONE);
-			PARSE_ENUM_ENTRY(cursor, "help", StyleCursor::HELP);
-			PARSE_ENUM_ENTRY(cursor, "pointer", StyleCursor::POINTER);
-			PARSE_ENUM_ENTRY(cursor, "progress", StyleCursor::PROGRESS);
-			PARSE_ENUM_ENTRY(cursor, "wait", StyleCursor::WAIT);
-			PARSE_ENUM_ENTRY(cursor, "crosshair", StyleCursor::CROSSHAIR);
-			PARSE_ENUM_ENTRY(cursor, "text", StyleCursor::TEXT);
-			PARSE_ENUM_ENTRY(cursor, "move", StyleCursor::MOVE);
+			PARSE_ENUM_ENTRY(cursor, "auto",        StyleCursor::AUTO);
+			PARSE_ENUM_ENTRY(cursor, "default",     StyleCursor::DEFAULT);
+			PARSE_ENUM_ENTRY(cursor, "none",        StyleCursor::NONE);
+			PARSE_ENUM_ENTRY(cursor, "help",        StyleCursor::HELP);
+			PARSE_ENUM_ENTRY(cursor, "pointer",     StyleCursor::POINTER);
+			PARSE_ENUM_ENTRY(cursor, "progress",    StyleCursor::PROGRESS);
+			PARSE_ENUM_ENTRY(cursor, "wait",        StyleCursor::WAIT);
+			PARSE_ENUM_ENTRY(cursor, "crosshair",   StyleCursor::CROSSHAIR);
+			PARSE_ENUM_ENTRY(cursor, "text",        StyleCursor::TEXT);
+			PARSE_ENUM_ENTRY(cursor, "move",        StyleCursor::MOVE);
 			PARSE_ENUM_ENTRY(cursor, "not-allowed", StyleCursor::NOT_ALLOWED);
-			PARSE_ENUM_ENTRY(cursor, "all-scroll", StyleCursor::ALL_SCROLL);
-			PARSE_ENUM_ENTRY(cursor, "col-resize", StyleCursor::COL_RESIZE);
-			PARSE_ENUM_ENTRY(cursor, "row-resize", StyleCursor::ROW_RESIZE);
+			PARSE_ENUM_ENTRY(cursor, "all-scroll",  StyleCursor::ALL_SCROLL);
+			PARSE_ENUM_ENTRY(cursor, "col-resize",  StyleCursor::COL_RESIZE);
+			PARSE_ENUM_ENTRY(cursor, "row-resize",  StyleCursor::ROW_RESIZE);
 		PARSE_ENUM_END();
 
 		// shorthands

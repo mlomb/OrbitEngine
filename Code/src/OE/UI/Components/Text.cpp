@@ -41,11 +41,11 @@ namespace OrbitEngine { namespace UI {
 		auto bbox = getBoundingBox();
 
 		Graphics::TextSettings textSettings;
-		textSettings.size = m_ComputedStyle->fontSize.value.length.number; // TODO: units
+		textSettings.size = m_ComputedStyle->fontSize.value.number; // TODO: units
 		textSettings.wordWrap = true;
 		textSettings.wordWrapWidth = bbox.width;
 
-		painter->drawText(getTextLayout(textSettings, false), bbox.position, m_ComputedStyle->color.value.color);
+		painter->drawText(getTextLayout(textSettings, false), bbox.position, m_ComputedStyle->color.value);
 	}
 
 	Math::Vec2f Text::measureContent(float width, MeasureMode widthMode, float height, MeasureMode heightMode)
@@ -65,7 +65,7 @@ namespace OrbitEngine { namespace UI {
 		}
 		else {
 			Graphics::TextSettings textSettings;
-			textSettings.size = m_ComputedStyle->fontSize.value.length.number; // TODO: units
+			textSettings.size = m_ComputedStyle->fontSize.value.number; // TODO: units
 			textSettings.wordWrap = false;
 
 			measuredWidth = std::ceil(getTextLayout(textSettings, true).boundingSize.x);
@@ -79,7 +79,7 @@ namespace OrbitEngine { namespace UI {
 		}
 		else {
 			Graphics::TextSettings textSettings;
-			textSettings.size = m_ComputedStyle->fontSize.value.length.number; // TODO: units
+			textSettings.size = m_ComputedStyle->fontSize.value.number; // TODO: units
 			textSettings.wordWrap = true;
 			textSettings.wordWrapWidth = measuredWidth;
 

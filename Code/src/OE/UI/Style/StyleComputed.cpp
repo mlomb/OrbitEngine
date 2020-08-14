@@ -11,7 +11,7 @@ namespace OrbitEngine { namespace UI {
 		case id: \
 			name.populated = true; \
 			name.inherited = false; \
-			name.value = property.value; \
+			memcpy(&name.value, (void*)&property.value, sizeof(name.value)); \
 			break;
 
 		SAVE_PROP(ID::WIDTH,      width);

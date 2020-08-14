@@ -5,67 +5,68 @@
 
 namespace OrbitEngine { namespace UI {
 
+	template<typename T>
 	struct StyleValueComputed {
 		bool populated = false; // value is ready
 		bool inherited = false; // value is being inherited
-		StyleValue value;
+		T value;
 	};
 
 	struct StyleComputed {
-		StyleValueComputed width;
-		StyleValueComputed height;
-		StyleValueComputed minWidth;
-		StyleValueComputed minHeight;
-		StyleValueComputed maxWidth;
-		StyleValueComputed maxHeight;
+		StyleValueComputed<StyleLength> width;
+		StyleValueComputed<StyleLength> height;
+		StyleValueComputed<StyleLength> minWidth;
+		StyleValueComputed<StyleLength> minHeight;
+		StyleValueComputed<StyleLength> maxWidth;
+		StyleValueComputed<StyleLength> maxHeight;
 
-		StyleValueComputed marginLeft;
-		StyleValueComputed marginTop;
-		StyleValueComputed marginRight;
-		StyleValueComputed marginBottom;
+		StyleValueComputed<StyleLength> marginLeft;
+		StyleValueComputed<StyleLength> marginTop;
+		StyleValueComputed<StyleLength> marginRight;
+		StyleValueComputed<StyleLength> marginBottom;
 
-		StyleValueComputed paddingLeft;
-		StyleValueComputed paddingTop;
-		StyleValueComputed paddingRight;
-		StyleValueComputed paddingBottom;
+		StyleValueComputed<StyleLength> paddingLeft;
+		StyleValueComputed<StyleLength> paddingTop;
+		StyleValueComputed<StyleLength> paddingRight;
+		StyleValueComputed<StyleLength> paddingBottom;
 
-		StyleValueComputed borderColor;
-		StyleValueComputed borderTopLeftRadius;
-		StyleValueComputed borderTopRightRadius;
-		StyleValueComputed borderBottomLeftRadius;
-		StyleValueComputed borderBottomRightRadius;
-		StyleValueComputed borderLeftWidth;
-		StyleValueComputed borderTopWidth;
-		StyleValueComputed borderRightWidth;
-		StyleValueComputed borderBottomWidth;
+		StyleValueComputed<StyleColor> borderColor;
+		StyleValueComputed<StyleLength> borderTopLeftRadius;
+		StyleValueComputed<StyleLength> borderTopRightRadius;
+		StyleValueComputed<StyleLength> borderBottomLeftRadius;
+		StyleValueComputed<StyleLength> borderBottomRightRadius;
+		StyleValueComputed<StyleLength> borderLeftWidth;
+		StyleValueComputed<StyleLength> borderTopWidth;
+		StyleValueComputed<StyleLength> borderRightWidth;
+		StyleValueComputed<StyleLength> borderBottomWidth;
 
-		StyleValueComputed flexGrow;
-		StyleValueComputed flexShrink;
-		StyleValueComputed flexBasis;
-		StyleValueComputed flexDirection;
-		StyleValueComputed flexWrap;
+		StyleValueComputed<StyleNumber> flexGrow;
+		StyleValueComputed<StyleNumber> flexShrink;
+		StyleValueComputed<StyleLength> flexBasis;
+		StyleValueComputed<FlexDirection> flexDirection;
+		StyleValueComputed<FlexWrap> flexWrap;
 
-		StyleValueComputed alignSelf;
-		StyleValueComputed alignItems;
-		StyleValueComputed alignContent;
-		StyleValueComputed justifyContent;
+		StyleValueComputed<Align> alignSelf;
+		StyleValueComputed<Align> alignItems;
+		StyleValueComputed<Align> alignContent;
+		StyleValueComputed<Justify> justifyContent;
 
-		StyleValueComputed position;
-		StyleValueComputed left;
-		StyleValueComputed top;
-		StyleValueComputed right;
-		StyleValueComputed bottom;
+		StyleValueComputed<Position> position;
+		StyleValueComputed<StyleLength> left;
+		StyleValueComputed<StyleLength> top;
+		StyleValueComputed<StyleLength> right;
+		StyleValueComputed<StyleLength> bottom;
 
-		StyleValueComputed color;
-		StyleValueComputed backgroundColor;
+		StyleValueComputed<StyleColor> color;
+		StyleValueComputed<StyleColor> backgroundColor;
 
-		StyleValueComputed overflow;
-		StyleValueComputed display;
+		StyleValueComputed<Overflow> overflow;
+		StyleValueComputed<Display> display;
 
-		StyleValueComputed fontSize;
-		StyleValueComputed whiteSpace;
+		StyleValueComputed<StyleLength> fontSize;
+		StyleValueComputed<WhiteSpace> whiteSpace;
 
-		StyleValueComputed cursor;
+		StyleValueComputed<StyleCursor> cursor;
 
 		void applyProperty(const StyleProperty& property);
 		void applyRule(const StyleRule& rule);
@@ -79,26 +80,26 @@ namespace OrbitEngine { namespace UI {
 		#define SET_NUMBER(prop_name, _value) \
 		defaults.prop_name.populated = true; \
 		defaults.prop_name.inherited = true; \
-		defaults.prop_name.value.number = _value;
+		defaults.prop_name.value = _value;
 
 		#define SET_LENGTH(prop_name, _value, _unit) \
 		defaults.prop_name.populated = true; \
 		defaults.prop_name.inherited = true; \
-		defaults.prop_name.value.length.number = _value; \
-		defaults.prop_name.value.length.unit = _unit;
+		defaults.prop_name.value.number = _value; \
+		defaults.prop_name.value.unit = _unit;
 
 		#define SET_COLOR(prop_name, _r, _g, _b, _a) \
 		defaults.prop_name.populated = true; \
 		defaults.prop_name.inherited = true; \
-		defaults.prop_name.value.color.r = _r; \
-		defaults.prop_name.value.color.g = _g; \
-		defaults.prop_name.value.color.b = _b; \
-		defaults.prop_name.value.color.a = _a;
+		defaults.prop_name.value.r = _r; \
+		defaults.prop_name.value.g = _g; \
+		defaults.prop_name.value.b = _b; \
+		defaults.prop_name.value.a = _a;
 
-		#define SET_ENUM(prop_name, _enum_key, _enum_value) \
+		#define SET_ENUM(prop_name, _enum_value) \
 		defaults.prop_name.populated = true; \
 		defaults.prop_name.inherited = true; \
-		defaults.prop_name.value._enum_key = _enum_value;
+		defaults.prop_name.value = _enum_value;
 
 		#define SET_AUTO(prop_name) \
 		defaults.prop_name.populated = true; \
@@ -136,14 +137,14 @@ namespace OrbitEngine { namespace UI {
 		SET_NUMBER(flexShrink, 1);
 		SET_AUTO(flexBasis);
 
-		SET_ENUM(flexDirection, direction, FlexDirection::ROW);
-		SET_ENUM(flexWrap, wrap, FlexWrap::NOWRAP);
-		SET_ENUM(alignSelf, align, Align::AUTO);
-		SET_ENUM(alignItems, align, Align::STRETCH);
-		SET_ENUM(alignContent, align, Align::FLEX_START);
-		SET_ENUM(justifyContent, justify, Justify::FLEX_START);
+		SET_ENUM(flexDirection, FlexDirection::ROW);
+		SET_ENUM(flexWrap, FlexWrap::NOWRAP);
+		SET_ENUM(alignSelf, Align::AUTO);
+		SET_ENUM(alignItems, Align::STRETCH);
+		SET_ENUM(alignContent, Align::FLEX_START);
+		SET_ENUM(justifyContent, Justify::FLEX_START);
 
-		SET_ENUM(position, position, (Position)0); // Position::RELATIVE
+		SET_ENUM(position, (Position)0); // Position::RELATIVE
 		SET_LENGTH(left, 0, StyleLengthUnit::PIXELS);
 		SET_LENGTH(top, 0, StyleLengthUnit::PIXELS);
 		SET_LENGTH(right, 0, StyleLengthUnit::PIXELS);
@@ -152,13 +153,13 @@ namespace OrbitEngine { namespace UI {
 		SET_COLOR(color, 1, 1, 1, 1); // white
 		SET_COLOR(backgroundColor, 0, 0, 0, 0); // transparent
 		
-		SET_ENUM(overflow, overflow, Overflow::VISIBLE);
-		SET_ENUM(display, display, Display::FLEX);
+		SET_ENUM(overflow, Overflow::VISIBLE);
+		SET_ENUM(display, Display::FLEX);
 		
 		SET_LENGTH(fontSize, 14, StyleLengthUnit::PIXELS);
-		SET_ENUM(whiteSpace, whiteSpace, WhiteSpace::NORMAL);
+		SET_ENUM(whiteSpace, WhiteSpace::NORMAL);
 
-		SET_ENUM(cursor, cursor, StyleCursor::AUTO);
+		SET_ENUM(cursor, StyleCursor::AUTO);
 
 		#undef SET_NUMBER
 		#undef SET_LENGTH
