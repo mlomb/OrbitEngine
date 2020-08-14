@@ -99,14 +99,14 @@ namespace OrbitEngine { namespace UI {
 		}
 
 		// queue events
-		for (Element* elem : enter) {
-			MouseEnterEvent* e = new MouseEnterEvent();
+		for (Element* elem : leave) {
+			MouseLeaveEvent* e = new MouseLeaveEvent();
 			e->mousePosition = mousePosition;
 			e->target = elem;
 			queueEvent(e);
 		}
-		for (Element* elem : leave) {
-			MouseLeaveEvent* e = new MouseLeaveEvent();
+		for (Element* elem : enter) {
+			MouseEnterEvent* e = new MouseEnterEvent();
 			e->mousePosition = mousePosition;
 			e->target = elem;
 			queueEvent(e);
