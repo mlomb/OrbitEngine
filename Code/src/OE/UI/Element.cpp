@@ -69,7 +69,15 @@ namespace OrbitEngine { namespace UI {
 
 		auto color = m_ComputedStyle->backgroundColor.value.color;
 		if (color.a > 0.01) {
-			painter->drawRectangle(m_BoundingBox, color);
+			//painter->drawRectangle(m_BoundingBox, color);
+
+			// TODO: % unit
+			RoundedRectParams roundedParams;
+			roundedParams.cornerRadii[0].x = roundedParams.cornerRadii[0].y = m_ComputedStyle->borderTopLeftRadius.value.length.number;
+			roundedParams.cornerRadii[1].x = roundedParams.cornerRadii[1].y = m_ComputedStyle->borderTopRightRadius.value.length.number;
+			roundedParams.cornerRadii[2].x = roundedParams.cornerRadii[2].y = m_ComputedStyle->borderBottomLeftRadius.value.length.number;
+			roundedParams.cornerRadii[3].x = roundedParams.cornerRadii[3].y = m_ComputedStyle->borderBottomRightRadius.value.length.number;
+			painter->drawRoundedRectangle(m_BoundingBox, color, roundedParams);
 		}
 	}
 

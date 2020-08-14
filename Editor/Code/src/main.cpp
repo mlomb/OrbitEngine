@@ -19,17 +19,21 @@
 #include <OE/Graphics/DynamicAtlas.hpp>
 #include <OE/Graphics/2D/ImGuiRenderer.hpp>
 #include <OE/UI/Style/StyleParse.hpp>
-//#include <OE/UI/Style/StyledElement.hpp>
 #include <OE/UI/Style/StyleSheet.hpp>
 #include <OE/UI/Style/StyleComputed.hpp>
 #include <OE/UI/Surface.hpp>
 #include <OE/UI/Components/Text.hpp>
+#include <OE/UI/Components/Button.hpp>
 #include <OE/UI/Events/Events.hpp>
 #include <OE/UI/Events/EventsController.hpp>
 
 #if OE_WINDOWS
 #include <OE/Platform/Windows/WindowWindows.hpp>
 #endif
+
+using namespace OrbitEngine;
+using namespace OrbitEngine::Application;
+using namespace OrbitEngine::Misc;
 
 static int generated = 0;
 
@@ -86,13 +90,27 @@ void generateRandomUI(OrbitEngine::UI::Element* parent, int depth = 0) {
 	}
 }
 
+void GenerateDemoPanel(UI::Element* root, Graphics::Font* tmp_font) {
+	UI::Element* container = new UI::Element();
+	container->setID("demo");
+
+	UI::Button* btn = new UI::Button();
+	btn->setFont(tmp_font);
+	btn->setText("Button #1");
+	container->addElement(btn, 0);
+	UI::Button* btn2 = new UI::Button();
+	btn2->setFont(tmp_font);
+	btn2->setText("Button #2");
+	container->addElement(btn2, 0);
+
+	root->addElement(container, 0);
+}
+
+
+
 std::string test_css();
 
 int main() {
-	using namespace OrbitEngine;
-	using namespace OrbitEngine::Application;
-	using namespace OrbitEngine::Misc;
-
     OE_LOG_DEBUG("sizeof(UI::Element): " << sizeof(UI::Element));
     OE_LOG_DEBUG("sizeof(UI::StyleComputed): " << sizeof(UI::StyleComputed));
 
@@ -161,10 +179,10 @@ int main() {
 	//YGNodeStyleSetMargin(textA->m_Node, YGEdgeRight, 10);
 	//YGNodeStyleSetFlexGrow(textA->m_Node, 1);
 
-	generateRandomUI(root);
+	//generateRandomUI(root);
 
 	//root->addElement(divA, 0);
-	root->addElement(textA, 1);
+	root->addElement(textA, 0);
 
 	UI::Text* textLong = new UI::Text();
 	textLong->setFont(font);
@@ -175,9 +193,15 @@ Sed fringilla lacus sed eros molestie tristique. Nullam vitae tortor pharetra, b
 	//YGNodeStyleSetHeight(textA->m_Node, 25);
 	//YGNodeStyleSetAlignSelf(textLong->m_Node, YGAlignCenter);
 	//YGNodeStyleSetMaxWidth(textLong->m_Node, 500);
-	root->addElement(textLong, 2);
+	root->addElement(textLong, 0);
     
+	// Button
+	UI::Button* btn = new UI::Button();
+	btn->setFont(font);
+	btn->setText("Button #1");
+	root->addElement(btn, 1);
 
+	GenerateDemoPanel(root, font);
     generateRandomUI(root);
 
 	OE_LOG_DEBUG("UI ELEMENTS GENERATED: " << generated);
@@ -262,6 +286,7 @@ Sed fringilla lacus sed eros molestie tristique. Nullam vitae tortor pharetra, b
 	im->onMouseMoveEvent.AddListener([&](const MouseMoveInputEvent& mme) {
 		surface->getEventsController()->sendMouseMove(mme.position);
 	});
+	window->setCursor(Application::Cursor::CROSS);
 
 	auto frame = [&]() {
 		window->processEvents();
@@ -364,6 +389,7 @@ Sed fringilla lacus sed eros molestie tristique. Nullam vitae tortor pharetra, b
 
 std::string test_css() {
 	return R"(
+
 * {
     background-color: red;
 }
@@ -405,10 +431,46 @@ Text {
 .d2 { background-color: rgba(255,0,255,0.7); }
 
 *:hover {
-	background-color: orange;
+	background-color: rgba(255, 165, 0, 0.3);
 }
 
 #root {
+    background-color: transparent;
+}
+
+/* REAL STYLES */
+
+* {
+    font-size: 13px;
+}
+
+Button {
+    color: #D9D9D9;
+    background-color: #656565;
+    padding-left: 3px;
+    padding-top: 0;
+    padding-right: 3px;
+    padding-bottom: 1px;
+	border-color: #242424;
+	border-width: 1px;
+    border-radius: 3px;
+}
+
+Button:hover {
+    background-color: #828282;
+}
+
+/* DEMO */
+
+#demo {
+	margin: 5px;
+	flex-direction: column;
+	align-items: center;
+    justify-content: space-evenly;
+    background-color: transparent;
+}
+
+#demo:hover {
     background-color: transparent;
 }
 

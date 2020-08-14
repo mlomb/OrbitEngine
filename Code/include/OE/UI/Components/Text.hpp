@@ -13,7 +13,7 @@ namespace OrbitEngine { namespace UI {
 		Text();
 		virtual ~Text();
 
-		// this should be move to styles
+		// this should be moved to styles
 		void setFont(Graphics::Font* font);
 
 		void setText(const std::string& text);
