@@ -573,6 +573,23 @@ namespace OrbitEngine { namespace UI {
 			PARSE_ENUM_ENTRY(whiteSpace, "normal", WhiteSpace::NORMAL);
 			PARSE_ENUM_ENTRY(whiteSpace, "nowrap", WhiteSpace::NOWRAP);
 		PARSE_ENUM_END();
+		
+		PARSE_ENUM_START("cursor", ID::CURSOR);
+			PARSE_ENUM_ENTRY(cursor, "auto", StyleCursor::AUTO);
+			PARSE_ENUM_ENTRY(cursor, "default", StyleCursor::DEFAULT);
+			PARSE_ENUM_ENTRY(cursor, "none", StyleCursor::NONE);
+			PARSE_ENUM_ENTRY(cursor, "help", StyleCursor::HELP);
+			PARSE_ENUM_ENTRY(cursor, "pointer", StyleCursor::POINTER);
+			PARSE_ENUM_ENTRY(cursor, "progress", StyleCursor::PROGRESS);
+			PARSE_ENUM_ENTRY(cursor, "wait", StyleCursor::WAIT);
+			PARSE_ENUM_ENTRY(cursor, "crosshair", StyleCursor::CROSSHAIR);
+			PARSE_ENUM_ENTRY(cursor, "text", StyleCursor::TEXT);
+			PARSE_ENUM_ENTRY(cursor, "move", StyleCursor::MOVE);
+			PARSE_ENUM_ENTRY(cursor, "not-allowed", StyleCursor::NOT_ALLOWED);
+			PARSE_ENUM_ENTRY(cursor, "all-scroll", StyleCursor::ALL_SCROLL);
+			PARSE_ENUM_ENTRY(cursor, "col-resize", StyleCursor::COL_RESIZE);
+			PARSE_ENUM_ENTRY(cursor, "row-resize", StyleCursor::ROW_RESIZE);
+		PARSE_ENUM_END();
 
 		// shorthands
 		#define FOUR_LENGTH_SHORTHAND(prop_name, a, b, c, d) \

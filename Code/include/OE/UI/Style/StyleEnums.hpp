@@ -136,6 +136,23 @@ namespace OrbitEngine { namespace UI {
 		NOWRAP,
 	};
 
+	enum class StyleCursor {
+		AUTO,
+		DEFAULT,
+		NONE,
+		HELP,
+		POINTER,
+		PROGRESS,
+		WAIT,
+		CROSSHAIR,
+		TEXT,
+		MOVE,
+		NOT_ALLOWED,
+		ALL_SCROLL,
+		COL_RESIZE,
+		ROW_RESIZE
+	};
+
 	enum class StyleLengthUnit {
 		PIXELS,
 		PERCENT
@@ -175,6 +192,7 @@ namespace OrbitEngine { namespace UI {
 			WhiteSpace whiteSpace;
 			Display display;
 			Overflow overflow;
+			StyleCursor cursor;
 		};
 	};
 

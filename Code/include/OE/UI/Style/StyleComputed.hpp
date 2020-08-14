@@ -158,6 +158,8 @@ namespace OrbitEngine { namespace UI {
 		SET_LENGTH(fontSize, 14, StyleLengthUnit::PIXELS);
 		SET_ENUM(whiteSpace, whiteSpace, WhiteSpace::NORMAL);
 
+		SET_ENUM(cursor, cursor, StyleCursor::AUTO);
+
 		#undef SET_NUMBER
 		#undef SET_LENGTH
 		#undef SET_COLOR

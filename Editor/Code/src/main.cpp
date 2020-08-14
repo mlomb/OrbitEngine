@@ -286,7 +286,6 @@ Sed fringilla lacus sed eros molestie tristique. Nullam vitae tortor pharetra, b
 	im->onMouseMoveEvent.AddListener([&](const MouseMoveInputEvent& mme) {
 		surface->getEventsController()->sendMouseMove(mme.position);
 	});
-	window->setCursor(Application::Cursor::CROSS);
 
 	auto frame = [&]() {
 		window->processEvents();
@@ -454,6 +453,7 @@ Button {
 	border-color: #242424;
 	border-width: 1px;
     border-radius: 3px;
+	cursor: pointer;
 }
 
 Button:hover {

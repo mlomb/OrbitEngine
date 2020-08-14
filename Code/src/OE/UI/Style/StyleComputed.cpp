@@ -66,6 +66,8 @@ namespace OrbitEngine { namespace UI {
 
 		SAVE_PROP(ID::FONT_SIZE, fontSize);
 		SAVE_PROP(ID::WHITE_SPACE, whiteSpace);
+
+		SAVE_PROP(ID::CURSOR, cursor);
 		}
 	}
 
@@ -89,6 +91,7 @@ namespace OrbitEngine { namespace UI {
 		INHERIT(color);
 		INHERIT(fontSize);
 		INHERIT(whiteSpace);
+		INHERIT(cursor);
 	}
 
 } }
