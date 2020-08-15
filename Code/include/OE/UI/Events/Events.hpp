@@ -12,37 +12,32 @@ namespace OrbitEngine { namespace UI {
 	enum class EventTypeID {
 		MOUSE_MOVE,
 		MOUSE_ENTER,
-		MOUSE_LEAVE
+		MOUSE_LEAVE,
+		MOUSE_DOWN,
+		MOUSE_UP,
+
+		CAPTURE_IN,
+		CAPTURE_OUT,
+
+		INVALID
 	};
 
 	class EventBase {
 	public:
-		const EventTypeID type;
-		Element* target;
+		EventTypeID type = EventTypeID::INVALID;
+		Element* target = nullptr;
+
+		// Propagation path
+		// See https://w3c.github.io/uievents/#event-flow
 		std::vector<Element*> path;
-
-	protected:
-		EventBase(EventTypeID _type) : type(_type), target(nullptr) { };
 	};
 
-	class MouseEvent : public EventBase {
-	public:
+	struct MouseEvent : public EventBase {
 		Math::Vec2f mousePosition;
-
-		MouseEvent(EventTypeID type) : EventBase(type) { };
 	};
 
-	class MouseMoveEvent : public MouseEvent {
-	public:
-		MouseMoveEvent() : MouseEvent(EventTypeID::MOUSE_MOVE) { };
-	};
-	class MouseEnterEvent : public MouseEvent {
-	public:
-		MouseEnterEvent() : MouseEvent(EventTypeID::MOUSE_ENTER) { };
-	};
-	class MouseLeaveEvent : public MouseEvent {
-	public:
-		MouseLeaveEvent() : MouseEvent(EventTypeID::MOUSE_LEAVE) { };
+	struct MouseButtonEvent : public MouseEvent {
+		int button;
 	};
 
 } }

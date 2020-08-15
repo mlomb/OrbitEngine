@@ -283,6 +283,9 @@ Sed fringilla lacus sed eros molestie tristique. Nullam vitae tortor pharetra, b
 	auto im = InputManager::Get();
 	im->onMouseMoveEvent.AddListener([&](const MouseMoveInputEvent& mme) {
 		surface->getEventsController()->sendMouseMove(mme.position);
+		});
+	im->onButtonEvent.AddListener([&](const ButtonInputEvent& bie) {
+		surface->getEventsController()->sendMouseButton(bie.button, bie.down, bie.position);
 	});
 
 	auto frame = [&]() {
@@ -468,6 +471,10 @@ Button {
 
 Button:hover {
     background-color: #828282;
+}
+
+Button:active {
+    background-color: orange;
 }
 
 /* DEMO */

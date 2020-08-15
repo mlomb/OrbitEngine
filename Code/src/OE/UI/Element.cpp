@@ -2,6 +2,7 @@
 
 #include "OE/Misc/Log.hpp"
 
+#include "OE/UI/Surface.hpp"
 #include "OE/UI/Style/StyleComputed.hpp"
 #include "OE/UI/Render/Painter.hpp"
 #include "OE/UI/Layout/Yoga.hpp"
@@ -17,8 +18,6 @@ namespace OrbitEngine { namespace UI {
 	{
 		setID("");
 		setTag("Element");
-
-		test = rand()% 255;
 
 		m_YogaNode = YGNodeNew();
 		YGNodeSetContext(m_YogaNode, this);
@@ -46,9 +45,9 @@ namespace OrbitEngine { namespace UI {
 			}
 		}
 
-		child->m_Parent = this;
-		child->m_Depth = m_Depth + 1;
 		m_Childrens.insert(m_Childrens.begin() + index, child);
+		child->m_Parent = this;
+		child->updateHierarchy();
 	}
 
 	void Element::removeElement(Element* child)
@@ -56,10 +55,17 @@ namespace OrbitEngine { namespace UI {
 		OE_ASSERT(child->m_Parent == this); // TODO: maybe do a runtime check?
 
 		child->m_Parent = nullptr;
-		child->m_Depth = m_Depth + 1;
 		m_Childrens.erase(std::find(m_Childrens.begin(), m_Childrens.end(), child));
+		child->updateHierarchy();
+	}
 
-		// TODO: mark dirty root (and depth) on childrens of child
+	void Element::updateHierarchy()
+	{
+		OE_ASSERT(m_Parent);
+		m_Depth = m_Parent->m_Depth + 1;
+		m_Surface = m_Parent->m_Surface;
+		for (Element* e : m_Childrens)
+			e->updateHierarchy();
 	}
 
 	void Element::paintContent(Painter* painter)
@@ -95,6 +101,12 @@ namespace OrbitEngine { namespace UI {
 			break;
 		case EventTypeID::MOUSE_LEAVE:
 			removePseudoStates(StylePseudoStates::HOVER);
+			break;
+		case EventTypeID::CAPTURE_IN:
+			setPseudoStates(StylePseudoStates::ACTIVE);
+			break;
+		case EventTypeID::CAPTURE_OUT:
+			removePseudoStates(StylePseudoStates::ACTIVE);
 			break;
 		}
 	}
@@ -179,14 +191,7 @@ namespace OrbitEngine { namespace UI {
 
 	int Element::getDepth() const
 	{
-		// TODO: cache or something
-		int depth = 0;
-		const Element* e = this;
-		while (e) {
-			depth++;
-			e = e->getParent();
-		}
-		return depth;
+		return m_Depth;
 	}
 
 	MeasureMode YogaMeasureModeToMeasureMode(YGMeasureMode mode) {
@@ -214,6 +219,16 @@ namespace OrbitEngine { namespace UI {
 	void Element::setAsTextType()
 	{
 		YGNodeSetNodeType(m_YogaNode, YGNodeType::YGNodeTypeText);
+	}
+
+	Surface* Element::getSurface() const
+	{
+		return m_Surface;
+	}
+
+	EventsController* Element::getEventsController() const
+	{
+		return m_Surface ? m_Surface->getEventsController() : nullptr;
 	}
 
 } }

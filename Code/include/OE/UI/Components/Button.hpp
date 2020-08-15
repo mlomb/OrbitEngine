@@ -10,6 +10,8 @@ namespace OrbitEngine { namespace UI {
 		Button();
 		virtual ~Button();
 
+		void executeDefault(EventBase* evt) override;
+
 	};
 } }
 

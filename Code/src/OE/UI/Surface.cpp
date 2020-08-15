@@ -17,6 +17,7 @@ namespace OrbitEngine { namespace UI {
 		m_LayoutUpdater = new LayoutTreeUpdater(this);
 		m_TreePainter = new TreePainter(this);
 		m_Root = new Element();
+		m_Root->m_Depth = 1;
 		m_Root->m_Surface = this;
 	}
 

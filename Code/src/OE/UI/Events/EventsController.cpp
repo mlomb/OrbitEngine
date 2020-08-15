@@ -7,7 +7,8 @@ namespace OrbitEngine { namespace UI {
 
 	EventsController::EventsController(Surface* surface)
 		: TreeProcessor(surface),
-		m_LastElementUnderMouse(nullptr)
+		m_LastElementUnderMouse(nullptr),
+		m_CapturedElement(nullptr)
 	{
 	}
 
@@ -20,16 +21,80 @@ namespace OrbitEngine { namespace UI {
 		processEventQueue();
 	}
 
+	void EventsController::captureElement(Element* element)
+	{
+		if (m_CapturedElement == element)
+			return;
+
+		if (m_CapturedElement) {
+			EventBase* e = new EventBase();
+			e->type = EventTypeID::CAPTURE_OUT;
+			e->target = m_CapturedElement;
+			queueEvent(e);
+		}
+
+		if (element) {
+			EventBase* e = new EventBase();
+			e->type = EventTypeID::CAPTURE_IN;
+			e->target = element;
+			queueEvent(e);
+		}
+
+		m_CapturedElement = element;
+	}
+
+	void EventsController::releaseCapture()
+	{
+		captureElement(nullptr);
+	}
+
 	void EventsController::sendMouseMove(const Math::Vec2f& position)
 	{
-		MouseMoveEvent* e = new MouseMoveEvent();
+		MouseEvent* e = new MouseEvent();
+		e->type = EventTypeID::MOUSE_MOVE;
 		e->mousePosition = position;
-		e->target = m_Surface->findElementsAt(m_Surface->getRoot(), position, &e->path);
+		queueEvent(e);
+	}
+
+	void EventsController::sendMouseButton(int button, bool down, const Math::Vec2f& position)
+	{
+		MouseButtonEvent* e = new MouseButtonEvent();
+		e->type = down ? EventTypeID::MOUSE_DOWN : EventTypeID::MOUSE_UP;
+		e->mousePosition = position;
+		e->button = button;
 		queueEvent(e);
 	}
 
 	void EventsController::queueEvent(EventBase* evt)
 	{
+		MouseEvent* mevt = static_cast<MouseEvent*>(evt);
+
+		if (!evt->target && m_CapturedElement) {
+			evt->target = m_CapturedElement;
+		}
+
+		switch (evt->type) {
+		case EventTypeID::MOUSE_MOVE:
+		case EventTypeID::MOUSE_ENTER:
+		case EventTypeID::MOUSE_LEAVE:
+		case EventTypeID::MOUSE_UP:
+		case EventTypeID::MOUSE_DOWN:
+			if (!evt->target) {
+				// compute target and path using the mouse position
+				evt->target = m_Surface->findElementsAt(m_Surface->getRoot(), mevt->mousePosition, &evt->path);
+			}
+			// FALL
+		default:
+			if (evt->target && evt->path.size() == 0) {
+				// compute path going up in the tree
+				Element* el = evt->target;
+				while (el) {
+					evt->path.emplace_back(el);
+					el = el->getParent();
+				}
+				std::reverse(evt->path.begin(), evt->path.end());
+			}
+		}
 		m_EventQueue.push(evt);
 	}
 
@@ -100,13 +165,15 @@ namespace OrbitEngine { namespace UI {
 
 		// queue events
 		for (Element* elem : leave) {
-			MouseLeaveEvent* e = new MouseLeaveEvent();
+			MouseEvent* e = new MouseEvent();
+			e->type = EventTypeID::MOUSE_LEAVE;
 			e->mousePosition = mousePosition;
 			e->target = elem;
 			queueEvent(e);
 		}
 		for (Element* elem : enter) {
-			MouseEnterEvent* e = new MouseEnterEvent();
+			MouseEvent* e = new MouseEvent();
+			e->type = EventTypeID::MOUSE_ENTER;
 			e->mousePosition = mousePosition;
 			e->target = elem;
 			queueEvent(e);

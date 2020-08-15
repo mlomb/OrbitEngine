@@ -16,6 +16,8 @@ namespace OrbitEngine { namespace UI {
 	class StyleSheet;
 	class StyleComputed;
 	class EventBase;
+	class Surface;
+	class EventsController;
 
 	enum class MeasureMode {
 		UNDEFINED,
@@ -27,7 +29,7 @@ namespace OrbitEngine { namespace UI {
 	class Element {
 	public:
 		Element();
-		virtual ~Element(); int test;
+		virtual ~Element();
 
 		void addElement(Element* child, uint32_t index);
 		void removeElement(Element* child);
@@ -44,6 +46,8 @@ namespace OrbitEngine { namespace UI {
 		Math::Rectf getBoundingBox() const;
 		bool isVisible() const;
 		int getDepth() const;
+		Surface* getSurface() const;
+		EventsController* getEventsController() const;
 
 		virtual void paintContent(Painter* painter);
 		virtual Math::Vec2f measureContent(float width, MeasureMode widthMode, float height, MeasureMode heightMode);
@@ -62,6 +66,8 @@ namespace OrbitEngine { namespace UI {
 		friend class StyleTreeUpdater;
 		friend class LayoutTreeUpdater;
 		friend class PaintTreeUpdater;
+
+		void updateHierarchy();
 
 		Element* m_Parent;
 		std::vector<Element*> m_Childrens;

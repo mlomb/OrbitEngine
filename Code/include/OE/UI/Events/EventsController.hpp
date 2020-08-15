@@ -15,14 +15,18 @@ namespace OrbitEngine { namespace UI {
 		virtual ~EventsController();
 
 		void process() override;
+		void captureElement(Element* element);
+		void releaseCapture();
 		Element* getElementOverMouse() const;
 
 		void sendMouseMove(const Math::Vec2f& position);
+		void sendMouseButton(int button, bool down, const Math::Vec2f& position);
 
 	private:
 		std::queue<EventBase*> m_EventQueue;
 
 		Element* m_LastElementUnderMouse;
+		Element* m_CapturedElement;
 
 		void queueEvent(EventBase* evt);
 		void processEventQueue();
