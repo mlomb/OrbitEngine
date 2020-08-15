@@ -15,6 +15,7 @@ namespace OrbitEngine { namespace UI {
 		virtual ~EventsController();
 
 		void process() override;
+		Element* getElementOverMouse() const;
 
 		void sendMouseMove(const Math::Vec2f& position);
 

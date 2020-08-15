@@ -106,8 +106,6 @@ void GenerateDemoPanel(UI::Element* root, Graphics::Font* tmp_font) {
 	root->addElement(container, 0);
 }
 
-
-
 std::string test_css();
 
 int main() {
@@ -124,7 +122,7 @@ int main() {
     for (auto s : pr.errors)
 		OE_LOG_ERROR(s);
     //return 0;
-
+	 
     UI::Element* se = new UI::Element();
     se->setID("test");
 
@@ -332,6 +330,18 @@ Sed fringilla lacus sed eros molestie tristique. Nullam vitae tortor pharetra, b
         surface->setSize(window->getSize());
         surface->updateTree();
 
+		Cursor appCursor = Cursor::HIDDEN;
+		switch (surface->getCurrentCusor()) {
+		default:
+		case UI::StyleCursor::AUTO:
+		case UI::StyleCursor::DEFAULT:
+			appCursor = Cursor::DEFAULT;
+			break;
+		case UI::StyleCursor::POINTER:
+			appCursor = Cursor::HAND;
+			break;
+		}
+		window->setCursor(appCursor);
 		
 		igr->end();
 		

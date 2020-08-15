@@ -115,4 +115,9 @@ namespace OrbitEngine { namespace UI {
 		m_LastElementUnderMouse = elementUnderMouse;
 	}
 
+	Element* EventsController::getElementOverMouse() const
+	{
+		return m_LastElementUnderMouse;
+	}
+
 } }

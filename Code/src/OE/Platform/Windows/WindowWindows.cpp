@@ -307,30 +307,30 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 	{
 		switch (cursor) {
 		default:
-		case DEFAULT:
-		case ARROW:
+		case Cursor::DEFAULT:
+		case Cursor::ARROW:
 			return IDC_ARROW;
-		case CROSS:
+		case Cursor::CROSS:
 			return IDC_CROSS;
-		case HOURGLASS:
+		case Cursor::HOURGLASS:
 			return IDC_WAIT;
-		case HAND:
+		case Cursor::HAND:
 			return IDC_HAND;
-		case IBEAM:
+		case Cursor::IBEAM:
 			return IDC_IBEAM;
-		case NO:
+		case Cursor::NO:
 			return IDC_NO;
-		case SIZEALL:
+		case Cursor::SIZEALL:
 			return IDC_SIZEALL;
-		case SIZENS:
+		case Cursor::SIZENS:
 			return IDC_SIZENS;
-		case SIZEWE:
+		case Cursor::SIZEWE:
 			return IDC_SIZEWE;
-		case SIZENWSE:
+		case Cursor::SIZENWSE:
 			return IDC_SIZENWSE;
-		case SIZENESW:
+		case Cursor::SIZENESW:
 			return IDC_SIZENESW;
-		case UPARROW:
+		case Cursor::UPARROW:
 			return IDC_UPARROW;
 		};
 	}
@@ -374,7 +374,7 @@ namespace OrbitEngine {	namespace Application { namespace priv {
 		case WM_SETCURSOR:
 		{
 			if (LOWORD(lParam) == HTCLIENT) {
-				SetCursor(m_CursorTarget == HIDDEN ? NULL : LoadCursor(NULL, CursorToResource(m_CursorTarget)));
+				SetCursor(m_CursorTarget == Cursor::HIDDEN ? NULL : LoadCursor(NULL, CursorToResource(m_CursorTarget)));
 				return TRUE;
 			}
 			else

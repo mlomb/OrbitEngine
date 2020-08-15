@@ -58,6 +58,7 @@ namespace OrbitEngine { namespace UI {
 		void setAsTextType();
 
 	private:
+		friend class Surface;
 		friend class StyleTreeUpdater;
 		friend class LayoutTreeUpdater;
 		friend class PaintTreeUpdater;
@@ -77,7 +78,6 @@ namespace OrbitEngine { namespace UI {
 		Math::Rectf m_LayoutRect;
 		Math::Rectf m_BoundingBox;
 
-		friend class Surface;
 		Surface* m_Surface;
 	};
 } }

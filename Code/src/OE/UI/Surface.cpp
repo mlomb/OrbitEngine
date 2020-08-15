@@ -2,6 +2,7 @@
 
 #include "OE/UI/Element.hpp"
 #include "OE/UI/Style/StyleTreeUpdater.hpp"
+#include "OE/UI/Style/StyleComputed.hpp"
 #include "OE/UI/Layout/LayoutTreeUpdater.hpp"
 #include "OE/UI/Render/TreePainter.hpp"
 #include "OE/UI/Events/EventsController.hpp"
@@ -77,5 +78,11 @@ namespace OrbitEngine { namespace UI {
 	EventsController* Surface::getEventsController() const
 	{
 		return m_EventsController;
+	}
+
+	StyleCursor Surface::getCurrentCusor() const
+	{
+		Element* underCursor = m_EventsController->getElementOverMouse();
+		return underCursor ? underCursor->m_ComputedStyle->cursor.value : StyleCursor::AUTO;
 	}
 } }

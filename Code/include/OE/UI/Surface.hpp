@@ -5,6 +5,8 @@
 
 #include "OE/Math/Vec2.hpp"
 
+#include "OE/UI/Style/StyleEnums.hpp"
+
 namespace OrbitEngine { namespace UI {
 
 	class Element;
@@ -23,6 +25,7 @@ namespace OrbitEngine { namespace UI {
 		void setSize(const Math::Vec2i& size);
 		Element* findElementsAt(Element* root, const Math::Vec2f& point, std::vector<Element*>* found = nullptr);
 		EventsController* getEventsController() const;
+		StyleCursor getCurrentCusor() const;
 
 		Element* getRoot() const;
 		Math::Vec2i getSize() const;

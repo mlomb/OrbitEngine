@@ -14,7 +14,7 @@ namespace OrbitEngine {	namespace Application {
 	}
 	class InputManager;
 
-	enum DisplayMode {
+	enum class DisplayMode {
 		WINDOWED = 0,
 		WINDOWED_TOOL,
 		BORDERLESS,
@@ -24,7 +24,7 @@ namespace OrbitEngine {	namespace Application {
 		DUMMY
 	};
 
-	enum Cursor {
+	enum class Cursor {
 		DEFAULT,
 		HIDDEN,
 		ARROW,
