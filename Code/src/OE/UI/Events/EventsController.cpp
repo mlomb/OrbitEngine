@@ -63,7 +63,7 @@ namespace OrbitEngine { namespace UI {
 		e->mousePosition = position;
 		e->button = button;
 		queueEvent(e);
-	}
+	}	
 
 	void EventsController::queueEvent(EventBase* evt)
 	{
@@ -74,9 +74,11 @@ namespace OrbitEngine { namespace UI {
 		}
 
 		switch (evt->type) {
-		case EventTypeID::MOUSE_MOVE:
 		case EventTypeID::MOUSE_ENTER:
 		case EventTypeID::MOUSE_LEAVE:
+			// no path
+			break;
+		case EventTypeID::MOUSE_MOVE:
 		case EventTypeID::MOUSE_UP:
 		case EventTypeID::MOUSE_DOWN:
 			if (!evt->target) {

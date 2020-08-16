@@ -24,6 +24,7 @@
 #include <OE/UI/Surface.hpp>
 #include <OE/UI/Components/Text.hpp>
 #include <OE/UI/Components/Button.hpp>
+#include <OE/UI/Components/Slider.hpp>
 #include <OE/UI/Events/Events.hpp>
 #include <OE/UI/Events/EventsController.hpp>
 
@@ -97,11 +98,14 @@ void GenerateDemoPanel(UI::Element* root, Graphics::Font* tmp_font) {
 	UI::Button* btn = new UI::Button();
 	btn->setFont(tmp_font);
 	btn->setText("Button #1");
-	container->addElement(btn, 0);
+	container->addElement(btn);
 	UI::Button* btn2 = new UI::Button();
 	btn2->setFont(tmp_font);
 	btn2->setText("Button #2");
-	container->addElement(btn2, 0);
+	container->addElement(btn2);
+
+	UI::Slider* slider = new UI::Slider();
+	container->addElement(slider);
 
 	root->addElement(container, 0);
 }
@@ -176,11 +180,12 @@ int main() {
 	//YGNodeStyleSetAlignSelf(textA->m_Node, YGAlignCenter);
 	//YGNodeStyleSetMargin(textA->m_Node, YGEdgeRight, 10);
 	//YGNodeStyleSetFlexGrow(textA->m_Node, 1);
+	root->addElement(textA, 0);
+
 
 	//generateRandomUI(root);
 
-	//root->addElement(divA, 0);
-	root->addElement(textA, 0);
+	//root->addElement(divA, 0)
 
 	UI::Text* textLong = new UI::Text();
 	textLong->setFont(font);
@@ -475,6 +480,25 @@ Button:hover {
 
 Button:active {
     background-color: orange;
+}
+
+Slider {
+	background: red;
+}
+
+Slider .tracker {
+	width: 200px;
+	height: 20px;
+}
+
+Slider .thumb {
+	position: absolute;
+	background: orange;
+	width: 20px;
+	height: 20px;
+}
+Slider .thumb:hover {
+	background: black;
 }
 
 /* DEMO */

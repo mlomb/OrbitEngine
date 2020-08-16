@@ -31,7 +31,7 @@ namespace OrbitEngine { namespace UI {
 		Element();
 		virtual ~Element();
 
-		void addElement(Element* child, uint32_t index);
+		void addElement(Element* child, int index = -1);
 		void removeElement(Element* child);
 		void setID(const std::string& id);
 		void addClass(const std::string& klass);

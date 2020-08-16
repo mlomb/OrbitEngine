@@ -30,8 +30,11 @@ namespace OrbitEngine { namespace UI {
 		YGNodeFreeRecursive(m_YogaNode);
 	}
 
-	void Element::addElement(Element* child, uint32_t index)
+	void Element::addElement(Element* child, int index)
 	{
+		if (index < 0)
+			index = m_Childrens.size();
+
 		// this function sets the correct owner in yoga land
 		YGNodeInsertChild(m_YogaNode, child->m_YogaNode, index);
 
@@ -84,9 +87,6 @@ namespace OrbitEngine { namespace UI {
 			roundedParams.cornerRadii[2].x = roundedParams.cornerRadii[2].y = m_ComputedStyle->borderBottomLeftRadius.value.number;
 			roundedParams.cornerRadii[3].x = roundedParams.cornerRadii[3].y = m_ComputedStyle->borderBottomRightRadius.value.number;
 			painter->drawRoundedRectangle(m_BoundingRect, color, roundedParams);
-
-
-			painter->drawRectangle(getContentRect(), Math::Color::Red);
 		}
 	}
 

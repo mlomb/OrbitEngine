@@ -58,9 +58,12 @@ namespace OrbitEngine { namespace UI {
 		if (bbox.contains(point)) {
 			if (found)
 				found->push_back(root);
+			
+			const auto& childs = root->getChildrens();
 
-			for (Element* child : root->getChildrens()) {
-				Element* result = findElementsAt(child, point, found);
+			// iterate in reverse order (z-index)
+			for (auto it = childs.rbegin(); it != childs.rend(); it++) {
+				Element* result = findElementsAt(*it, point, found);
 				if (result)
 					return result;
 			}
