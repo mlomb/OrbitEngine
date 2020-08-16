@@ -43,7 +43,8 @@ namespace OrbitEngine { namespace UI {
 		Element* getParent() const;
 		const std::vector<Element*>& getChildrens() const;
 		const std::vector<StyleSheet*>& getStyleSheets() const;
-		Math::Rectf getBoundingBox() const;
+		Math::Rectf getBoundingRect() const;
+		Math::Rectf getContentRect() const;
 		bool isVisible() const;
 		int getDepth() const;
 		Surface* getSurface() const;
@@ -82,7 +83,7 @@ namespace OrbitEngine { namespace UI {
 
 		YGNode* m_YogaNode;
 		Math::Rectf m_LayoutRect;
-		Math::Rectf m_BoundingBox;
+		Math::Rectf m_BoundingRect;
 
 		Surface* m_Surface;
 	};

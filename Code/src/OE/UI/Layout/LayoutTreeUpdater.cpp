@@ -59,9 +59,9 @@ namespace OrbitEngine { namespace UI {
 
 			// TODO: trigger size change
 		}
-		element->m_BoundingBox.position = element->m_Parent ? element->m_Parent->m_BoundingBox.position : Math::Vec2f(0, 0);
-		element->m_BoundingBox.position += layoutRect.position;
-		element->m_BoundingBox.size = layoutRect.size;
+		element->m_BoundingRect.position = element->m_Parent ? element->m_Parent->m_BoundingRect.position : Math::Vec2f(0, 0);
+		element->m_BoundingRect.position += layoutRect.position;
+		element->m_BoundingRect.size = layoutRect.size;
 
 		bool hasNewLayout = YGNodeGetHasNewLayout(yogaNode);
 		if (hasNewLayout || 1) {

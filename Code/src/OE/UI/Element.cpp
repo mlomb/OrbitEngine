@@ -83,7 +83,10 @@ namespace OrbitEngine { namespace UI {
 			roundedParams.cornerRadii[1].x = roundedParams.cornerRadii[1].y = m_ComputedStyle->borderTopRightRadius.value.number;
 			roundedParams.cornerRadii[2].x = roundedParams.cornerRadii[2].y = m_ComputedStyle->borderBottomLeftRadius.value.number;
 			roundedParams.cornerRadii[3].x = roundedParams.cornerRadii[3].y = m_ComputedStyle->borderBottomRightRadius.value.number;
-			painter->drawRoundedRectangle(m_BoundingBox, color, roundedParams);
+			painter->drawRoundedRectangle(m_BoundingRect, color, roundedParams);
+
+
+			painter->drawRectangle(getContentRect(), Math::Color::Red);
 		}
 	}
 
@@ -179,9 +182,26 @@ namespace OrbitEngine { namespace UI {
 		return m_StyleSheets;
 	}
 
-	Math::Rectf Element::getBoundingBox() const
+	Math::Rectf Element::getBoundingRect() const
 	{
-		return m_BoundingBox;
+		return m_BoundingRect;
+	}
+
+	Math::Rectf Element::getContentRect() const
+	{
+		if (!m_ComputedStyle)
+			return m_BoundingRect;
+
+		float l = m_ComputedStyle->paddingLeft.value.number;
+		float t = m_ComputedStyle->paddingTop.value.number;
+		float r = m_ComputedStyle->paddingRight.value.number;
+		float b = m_ComputedStyle->paddingBottom.value.number;
+		return Math::Rectf(
+			m_BoundingRect.x + l,
+			m_BoundingRect.y + t,
+			m_BoundingRect.width - l - r,
+			m_BoundingRect.height - t - b
+		);
 	}
 
 	bool Element::isVisible() const

@@ -38,14 +38,14 @@ namespace OrbitEngine { namespace UI {
 		if (m_Font == nullptr || m_Text.size() == 0)
 			return;
 
-		auto bbox = getBoundingBox();
+		auto box = getContentRect();
 
 		Graphics::TextSettings textSettings;
 		textSettings.size = m_ComputedStyle->fontSize.value.number; // TODO: units
 		textSettings.wordWrap = true;
-		textSettings.wordWrapWidth = bbox.width;
+		textSettings.wordWrapWidth = box.width;
 
-		painter->drawText(getTextLayout(textSettings, false), bbox.position, m_ComputedStyle->color.value);
+		painter->drawText(getTextLayout(textSettings, false), box.position, m_ComputedStyle->color.value);
 	}
 
 	Math::Vec2f Text::measureContent(float width, MeasureMode widthMode, float height, MeasureMode heightMode)

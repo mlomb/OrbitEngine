@@ -53,7 +53,7 @@ namespace OrbitEngine { namespace UI {
 		if (!root->isVisible())
 			return nullptr;
 
-		const auto& bbox = root->getBoundingBox();
+		const auto& bbox = root->getBoundingRect();
 
 		if (bbox.contains(point)) {
 			if (found)
