@@ -29,6 +29,10 @@ namespace OrbitEngine { namespace UI {
 	struct RoundedRectParams {
 		Math::Vec2f cornerRadii[4];
 	};
+	struct RoundedBordersParams {
+		RoundedRectParams rectParams;
+		float widths[4];
+	};
 
 	// TODO: move from immediate to retained eventually
 	class Painter {
@@ -39,7 +43,9 @@ namespace OrbitEngine { namespace UI {
 
 		void drawRectangle(const Math::Rectf& rect, const Math::Color4f& color);
 		void drawRoundedCorner(const Math::Vec2f& center, const Math::Vec2f& radii, const Corner corner, const Math::Color4f& color);
+		void drawRoundedCornerCarved(const Math::Vec2f& pivot, const Math::Vec2f& outerRadii, const Math::Vec2f& innerRadii, const Corner corner, const Math::Color4f& color);
 		void drawRoundedRectangle(const Math::Rectf& rect, const Math::Color4f& color, const RoundedRectParams& params);
+		void drawRoundedBorders(const Math::Rectf& rect, const Math::Color4f& color, const RoundedBordersParams& params);
 
 		void drawText(const Graphics::TextLayout& textLayout, const Math::Vec2f& position, const Math::Color4f& color);
 

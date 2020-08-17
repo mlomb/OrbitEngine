@@ -25,6 +25,7 @@
 #include <OE/UI/Components/Text.hpp>
 #include <OE/UI/Components/Button.hpp>
 #include <OE/UI/Components/Slider.hpp>
+#include <OE/UI/Components/Scrollbar.hpp>
 #include <OE/UI/Events/Events.hpp>
 #include <OE/UI/Events/EventsController.hpp>
 
@@ -106,6 +107,9 @@ void GenerateDemoPanel(UI::Element* root, Graphics::Font* tmp_font) {
 
 	UI::Slider* slider = new UI::Slider();
 	container->addElement(slider);
+
+	UI::Scrollbar* scrollbar = new UI::Scrollbar();
+	container->addElement(scrollbar);
 
 	root->addElement(container, 0);
 }
@@ -206,6 +210,13 @@ Sed fringilla lacus sed eros molestie tristique. Nullam vitae tortor pharetra, b
 
 	GenerateDemoPanel(root, font);
     generateRandomUI(root);
+
+	UI::Element* testBorder = new UI::Element();
+	testBorder->setID("border");
+	UI::Element* spacer = new UI::Element();
+	spacer->addClass("spacer");
+	testBorder->addElement(spacer);
+	root->addElement(testBorder);
 
 	OE_LOG_DEBUG("UI ELEMENTS GENERATED: " << generated);
 
@@ -484,10 +495,10 @@ Button:active {
 
 Slider {
 	background: red;
+	flex-grow: 1;
 }
 
 Slider .tracker {
-	width: 200px;
 	height: 20px;
 }
 
@@ -501,6 +512,9 @@ Slider .thumb:hover {
 	background: black;
 }
 
+Scrollbar Slider {
+	flex-grow: 1;
+}
 /* DEMO */
 
 #demo {
@@ -513,6 +527,21 @@ Slider .thumb:hover {
 
 #demo:hover {
     background-color: transparent;
+}
+
+#border {
+	border-width: 10px;
+	border-radius: 50px;
+	border-color: orange;
+	border-left-width: 25px;
+	border-right-width: 0px;
+    border-bottom-width: 60px;
+	background-color: red;
+}
+#border .spacer {
+	/*background-color: green;*/
+	width: 200px;
+	height: 200px;
 }
 
 )";

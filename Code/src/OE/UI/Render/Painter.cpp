@@ -9,7 +9,9 @@
 #endif
 
 namespace OrbitEngine { namespace UI {
+
 	const float UI_EPS = 0.0001f;
+	const int UI_SUBDIVISIONS = 6;
 
 	bool almostEqual(const float a, const float b) {
 		return abs(a - b) < UI_EPS;
@@ -92,32 +94,34 @@ namespace OrbitEngine { namespace UI {
 		m_VertexCount += 4;
 	}
 
-	void Painter::drawRoundedCorner(const Math::Vec2f& center, const Math::Vec2f& radii, const Corner corner, const Math::Color4f& color)
+	void Painter::drawRoundedCorner(const Math::Vec2f& pivot, const Math::Vec2f& radii, const Corner corner, const Math::Color4f& color)
 	{
 		if (radii.x < UI_EPS || radii.y < UI_EPS) {
 			// No radius, nothing to do
 			return;
 		}
 
-		const int subdivisions = 6;
+		const int subdivisions = UI_SUBDIVISIONS;
 		const float stepAngle = 0.5f * PI / (float)subdivisions; // quarter / subdivisions
 		const float startAngle = 0.5f * PI * static_cast<int>(corner);
 
 		// Top left reference
-		//          A
+		// X        A
 		//        * |
 		//     *    |
 		//   *      | radii.y
 		//  *       |
-		// |--------X
+		// |--------C
 		//   radii.x
 		// 
-		// X = center
+		// X = pivot
+		// C = center
 		// A = first in chain
 		// * = a offset
 
+		Math::Vec2f center = pivot + radii;
 		int centerIndex = m_VertexCount;
-		*m_pVertex = { center, color, Math::Vec2f(0, 0), 0 }; m_pVertex++; // X
+		*m_pVertex = { center, color, Math::Vec2f(0, 0), 0 }; m_pVertex++; // C
 		m_VertexCount += 1;
 
 		for (int i = 0; i <= subdivisions; i++) {
@@ -135,6 +139,55 @@ namespace OrbitEngine { namespace UI {
 			*m_pIndex = m_VertexCount - 1; m_pIndex++;
 			*m_pIndex = m_VertexCount - 2; m_pIndex++;
 			m_IndexCount += 3;
+		}
+	}
+
+	void Painter::drawRoundedCornerCarved(const Math::Vec2f& pivot, const Math::Vec2f& outerRadii, const Math::Vec2f& innerRadii, const Corner corner, const Math::Color4f& color)
+	{
+		if (innerRadii.x < UI_EPS || innerRadii.y < UI_EPS)
+			drawRoundedCorner(pivot, outerRadii, corner, color);
+
+		// See https://drafts.csswg.org/css-backgrounds-3/#corner-shaping
+
+		// Top left reference
+		// pivot
+		//  X                      * outer.x
+		//                    *    |
+		//                *        | 
+		//            *            |
+		//         *               * inner.x
+		//       *               *
+		//     *               * 
+		//   *               *
+		//  * ------------- *
+		// outer.y       inner.y
+
+		const int subdivisions = UI_SUBDIVISIONS;
+		const float stepAngle = 0.5f * PI / (float)subdivisions; // quarter / subdivisions
+		const float startAngle = 0.5f * PI * static_cast<int>(corner);
+
+		for (int i = 0; i <= subdivisions; i++) {
+			float angle = startAngle + i * stepAngle;
+
+			Math::Vec2f offset(cos(angle), -sin(angle));
+			Math::Vec2f out = outerRadii * offset;
+			Math::Vec2f in = innerRadii * offset;
+
+			*m_pVertex = { pivot + out, color, Math::Vec2f(0, 0), 0 }; m_pVertex++;
+			*m_pVertex = { pivot + in, color, Math::Vec2f(0, 0), 0 }; m_pVertex++;
+			m_VertexCount += 2;
+
+			// first iteration is to generate the initial two vertexs
+			if (i == 0)
+				continue;
+
+			*m_pIndex = m_VertexCount - 4; m_pIndex++;
+			*m_pIndex = m_VertexCount - 3; m_pIndex++;
+			*m_pIndex = m_VertexCount - 2; m_pIndex++;
+			*m_pIndex = m_VertexCount - 3; m_pIndex++;
+			*m_pIndex = m_VertexCount - 2; m_pIndex++;
+			*m_pIndex = m_VertexCount - 1; m_pIndex++;
+			m_IndexCount += 6;
 		}
 	}
 
@@ -255,6 +308,54 @@ namespace OrbitEngine { namespace UI {
 			// B
 			drawRectangle(Math::Rectf(rect.x + rect.width - maxRightRadii, rect.y, maxRightRadii - minRightRadii, rect.height - bottomRightRadii.y), color);
 		}
+	}
+
+	void Painter::drawRoundedBorders(const Math::Rectf& rect, const Math::Color4f& color, const RoundedBordersParams& params)
+	{
+		//    __--------------__   
+		//   *  |            |  *  
+		//  *   |      A     |   * 
+		// *____|____________|____*
+		// |    |            |    |
+		// | B  |            |  D |
+		// |____|____________|____|
+		// *    |            |    *
+		//  *   |      C     |   * 
+		//   *__|____________|__* 
+		
+		const Math::Vec2f halfSize = rect.size * 0.5f;
+		/*const */Math::Vec2f& topLeftRadii = Math::Vec2f::Min(params.rectParams.cornerRadii[0], halfSize);
+		const Math::Vec2f& topRightRadii = Math::Vec2f::Min(params.rectParams.cornerRadii[1], halfSize);
+		const Math::Vec2f& bottomRightRadii = Math::Vec2f::Min(params.rectParams.cornerRadii[2], halfSize);
+		const Math::Vec2f& bottomLeftRadii = Math::Vec2f::Min(params.rectParams.cornerRadii[3], halfSize);
+
+		float leftWidth = params.widths[0];
+		float topWidth = params.widths[1];
+		float rightWidth = params.widths[2];
+		float bottomWidth = params.widths[3];
+
+		// A
+		drawRectangle(Math::Rectf(rect.x + topLeftRadii.x, rect.y, rect.width - topLeftRadii.x - topRightRadii.x, topWidth), color);
+		// C
+		drawRectangle(Math::Rectf(rect.x + bottomLeftRadii.x, rect.y + rect.height - bottomWidth, rect.width - bottomLeftRadii.x - bottomRightRadii.x, bottomWidth), color);
+		// B
+		drawRectangle(Math::Rectf(rect.x, rect.y + topLeftRadii.y, leftWidth, rect.height - topLeftRadii.y - bottomLeftRadii.y), color);
+		// D
+		drawRectangle(Math::Rectf(rect.x + rect.width - rightWidth, rect.y + topRightRadii.y, rightWidth, rect.height - topRightRadii.y - bottomRightRadii.y), color);
+
+		/*
+			From https://drafts.csswg.org/css-backgrounds-3/#corner-shaping:
+
+			The padding edge (inner border) radius is the outer border radius minus the corresponding border thickness.
+			In the case where this results in a negative value, the inner radius is zero.
+
+			outer edge = cornerRadii
+			inner edge = cornerRadii - sidesBorderWidths
+		*/
+		
+		drawRoundedCornerCarved(rect.position + topLeftRadii, topLeftRadii, topLeftRadii - Math::Vec2f(leftWidth, topWidth), Corner::TOP_LEFT, color);
+
+		// TODO: other corners
 	}
 
 	void Painter::drawText(const Graphics::TextLayout& textLayout, const Math::Vec2f& position, const Math::Color4f& color)

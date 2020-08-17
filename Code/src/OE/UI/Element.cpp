@@ -76,17 +76,29 @@ namespace OrbitEngine { namespace UI {
 		if (!m_ComputedStyle)
 			return;
 
-		auto color = m_ComputedStyle->backgroundColor.value;
-		if (color.a > 0.01) {
-			//painter->drawRectangle(m_BoundingBox, color);
+		//painter->drawRectangle(m_BoundingBox, color);
 
-			// TODO: % unit
-			RoundedRectParams roundedParams;
-			roundedParams.cornerRadii[0].x = roundedParams.cornerRadii[0].y = m_ComputedStyle->borderTopLeftRadius.value.number;
-			roundedParams.cornerRadii[1].x = roundedParams.cornerRadii[1].y = m_ComputedStyle->borderTopRightRadius.value.number;
-			roundedParams.cornerRadii[2].x = roundedParams.cornerRadii[2].y = m_ComputedStyle->borderBottomLeftRadius.value.number;
-			roundedParams.cornerRadii[3].x = roundedParams.cornerRadii[3].y = m_ComputedStyle->borderBottomRightRadius.value.number;
+		// TODO: % unit
+		RoundedRectParams roundedParams;
+		roundedParams.cornerRadii[0].x = roundedParams.cornerRadii[0].y = m_ComputedStyle->borderTopLeftRadius.value.number;
+		roundedParams.cornerRadii[1].x = roundedParams.cornerRadii[1].y = m_ComputedStyle->borderTopRightRadius.value.number;
+		roundedParams.cornerRadii[2].x = roundedParams.cornerRadii[2].y = m_ComputedStyle->borderBottomLeftRadius.value.number;
+		roundedParams.cornerRadii[3].x = roundedParams.cornerRadii[3].y = m_ComputedStyle->borderBottomRightRadius.value.number;
+
+		auto color = m_ComputedStyle->backgroundColor.value;
+		auto border_color = m_ComputedStyle->borderColor.value;
+
+		if (color.a > 0.01)
 			painter->drawRoundedRectangle(m_BoundingRect, color, roundedParams);
+		if (border_color.a > 0.01) {
+			RoundedBordersParams borderParams;
+			borderParams.rectParams = roundedParams;
+			// TODO: units
+			borderParams.widths[0] = m_ComputedStyle->borderLeftWidth.value.number;
+			borderParams.widths[1] = m_ComputedStyle->borderTopWidth.value.number;
+			borderParams.widths[2] = m_ComputedStyle->borderRightWidth.value.number;
+			borderParams.widths[3] = m_ComputedStyle->borderBottomWidth.value.number;
+			painter->drawRoundedBorders(m_BoundingRect, border_color, borderParams);
 		}
 	}
 
