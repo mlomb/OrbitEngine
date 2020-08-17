@@ -214,6 +214,23 @@ namespace OrbitEngine { namespace UI {
 		return m_Depth;
 	}
 
+	std::string Element::getQualifiedName() const
+	{
+		// Note: this is slow, use only for debugging
+
+		std::string result = m_Parent ? m_Parent->getQualifiedName() + " " : "";
+		result += m_Tag.text;
+		for (auto& a : m_Classes)
+			result += "." + a.text;
+		using PS = StylePseudoStates;
+		if ((PS::HOVER    & m_PseudoStates) == PS::HOVER)    result += ":hover";
+		if ((PS::DISABLED & m_PseudoStates) == PS::DISABLED) result += ":disabled";
+		if ((PS::CHECKED  & m_PseudoStates) == PS::CHECKED)  result += ":checked";
+		if ((PS::ACTIVE   & m_PseudoStates) == PS::ACTIVE)   result += ":active";
+		if ((PS::FOCUS    & m_PseudoStates) == PS::FOCUS)    result += ":focus";
+		return result;
+	}
+
 	MeasureMode YogaMeasureModeToMeasureMode(YGMeasureMode mode) {
 		switch (mode)
 		{

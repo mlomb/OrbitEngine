@@ -49,11 +49,12 @@ namespace OrbitEngine { namespace UI {
 		int getDepth() const;
 		Surface* getSurface() const;
 		EventsController* getEventsController() const;
+		std::string getQualifiedName() const;
 
 		virtual void paintContent(Painter* painter);
 		virtual Math::Vec2f measureContent(float width, MeasureMode widthMode, float height, MeasureMode heightMode);
 		virtual void executeDefault(EventBase* evt);
-		
+
 	protected:
 		StyleComputed* m_ComputedStyle;
 

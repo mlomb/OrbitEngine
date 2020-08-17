@@ -3,6 +3,8 @@
 #include "OE/UI/Events/Events.hpp"
 #include "OE/UI/Events/EventsController.hpp"
 
+#include <iostream>
+
 namespace OrbitEngine { namespace UI {
 	Draggable::Draggable()
 		: m_Dragging(false)
@@ -15,11 +17,15 @@ namespace OrbitEngine { namespace UI {
 
 	void Draggable::executeDefault(EventBase* evt)
 	{
+		MouseEvent* mevt = static_cast<MouseEvent*>(evt);
+
 		Element::executeDefault(evt);
 
 		switch (evt->type) {
 		case EventTypeID::MOUSE_DOWN:
 			m_Dragging = true;
+			m_DragStart = mevt->mousePosition;
+			m_DragOffset = mevt->mousePosition - getBoundingRect().position;
 			getEventsController()->captureElement(this);
 			break;
 		case EventTypeID::MOUSE_UP:
@@ -30,7 +36,8 @@ namespace OrbitEngine { namespace UI {
 			break;
 		case EventTypeID::MOUSE_MOVE:
 			if (m_Dragging) {
-				printf("AAA\n");
+				auto delta = mevt->mousePosition - m_DragStart;
+				std::cout << delta.x << ", " << delta.y << std::endl;
 			}
 			break;
 		}

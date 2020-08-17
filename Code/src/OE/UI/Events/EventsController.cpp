@@ -1,5 +1,7 @@
 #include "OE/UI/Events/EventsController.hpp"
 
+#include <iostream>
+
 #include "OE/UI/Element.hpp"
 #include "OE/UI/Surface.hpp"
 
@@ -97,6 +99,8 @@ namespace OrbitEngine { namespace UI {
 				std::reverse(evt->path.begin(), evt->path.end());
 			}
 		}
+		//if (evt->target)
+		//	std::cout << evt->target->getQualifiedName() << std::endl;
 		m_EventQueue.push(evt);
 	}
 
