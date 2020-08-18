@@ -32,8 +32,8 @@ namespace OrbitEngine { namespace UI {
 		m_Shader = Graphics::ShaderLoader::UI();
 		m_Shader->matchLayout(m_Mesh);
 
-		m_Mesh->getVBO()->resize(4 * 5000 * sizeof(Vertex));
-		m_Mesh->getIBO()->resize(6 * 5000 * sizeof(uint16_t));
+		m_Mesh->getVBO()->resize(4 * 10000 * sizeof(Vertex));
+		m_Mesh->getIBO()->resize(6 * 10000 * sizeof(uint16_t));
 		
 		m_ConstantBuffer = Graphics::UniformsPack<ConstantBuffer>::Create();
 
@@ -142,8 +142,10 @@ namespace OrbitEngine { namespace UI {
 
 	void Painter::drawRoundedCornerCarved(const Math::Vec2f& center, const Math::Vec2f& outerRadii, const Math::Vec2f& innerRadii, const Corner corner, const Math::Color4f& color)
 	{
-		if (innerRadii.x < UI_EPS || innerRadii.y < UI_EPS)
+		if (innerRadii.x < UI_EPS || innerRadii.y < UI_EPS) {
 			drawRoundedCorner(center, outerRadii, corner, color);
+			return;
+		}
 
 		// See https://drafts.csswg.org/css-backgrounds-3/#corner-shaping
 
@@ -321,16 +323,16 @@ namespace OrbitEngine { namespace UI {
 		//   *__|____________|__* 
 		
 		const Math::Vec2f halfSize = rect.size * 0.5f;
-		const Math::Vec2f& topLeftRadii = Math::Vec2f::Min(params.rectParams.cornerRadii[0], halfSize);
-		const Math::Vec2f& topRightRadii = Math::Vec2f::Min(params.rectParams.cornerRadii[1], halfSize);
+		const Math::Vec2f& topLeftRadii     = Math::Vec2f::Min(params.rectParams.cornerRadii[0], halfSize);
+		const Math::Vec2f& topRightRadii    = Math::Vec2f::Min(params.rectParams.cornerRadii[1], halfSize);
 		const Math::Vec2f& bottomRightRadii = Math::Vec2f::Min(params.rectParams.cornerRadii[2], halfSize);
-		const Math::Vec2f& bottomLeftRadii = Math::Vec2f::Min(params.rectParams.cornerRadii[3], halfSize);
+		const Math::Vec2f& bottomLeftRadii  = Math::Vec2f::Min(params.rectParams.cornerRadii[3], halfSize);
 
-		float leftWidth = params.widths[0];
-		float topWidth = params.widths[1];
-		float rightWidth = params.widths[2];
-		float bottomWidth = params.widths[3];
-		
+		const float leftWidth   = params.widths[0];
+		const float topWidth    = params.widths[1];
+		const float rightWidth  = params.widths[2];
+		const float bottomWidth = params.widths[3];
+
 		// A
 		drawRectangle(Math::Rectf(rect.x + topLeftRadii.x, rect.y, rect.width - topLeftRadii.x - topRightRadii.x, topWidth), color);
 		// C
@@ -348,6 +350,9 @@ namespace OrbitEngine { namespace UI {
 
 			outer edge = cornerRadii
 			inner edge = cornerRadii - sidesBorderWidths
+
+			if inner edge (x or y) < 0 then inner edge = 0,0
+			(handled in drawRoundedCornerCarved, which fall back to drawRoundedCorner)
 		*/
 
 		const Math::Vec2f topRightCorner = rect.position + Math::Vec2f(rect.size.x - topRightRadii.x, topRightRadii.y); // A
@@ -355,10 +360,28 @@ namespace OrbitEngine { namespace UI {
 		const Math::Vec2f bottomLeftCorner = rect.position + Math::Vec2f(bottomLeftRadii.x, rect.size.y - bottomLeftRadii.y); // C
 		const Math::Vec2f bottomRightCorner = rect.position + rect.size - bottomRightRadii; // D
 
-		drawRoundedCornerCarved(topLeftCorner, topLeftRadii, topLeftRadii - Math::Vec2f(leftWidth, topWidth), Corner::TOP_LEFT, color);
-		drawRoundedCornerCarved(topRightCorner, topRightRadii, topRightRadii - Math::Vec2f(rightWidth, topWidth), Corner::TOP_RIGHT, color);
-		drawRoundedCornerCarved(bottomLeftCorner, bottomLeftRadii, bottomLeftRadii - Math::Vec2f(leftWidth, bottomWidth), Corner::BOTTOM_LEFT, color);
-		drawRoundedCornerCarved(bottomRightCorner, bottomRightRadii, bottomRightRadii - Math::Vec2f(rightWidth, bottomWidth), Corner::BOTTOM_RIGHT, color);
+		const Math::Vec2f topLeftInnerRadii = topLeftRadii - Math::Vec2f(leftWidth, topWidth);
+		const Math::Vec2f topRightInnerRadii = topRightRadii - Math::Vec2f(rightWidth, topWidth);
+		const Math::Vec2f bottomLeftInnerRadii = bottomLeftRadii - Math::Vec2f(leftWidth, bottomWidth);
+		const Math::Vec2f bottomRightInnerRadii = bottomRightRadii - Math::Vec2f(rightWidth, bottomWidth);
+
+		drawRoundedCornerCarved(topLeftCorner, topLeftRadii, topLeftInnerRadii, Corner::TOP_LEFT, color);
+		drawRoundedCornerCarved(topRightCorner, topRightRadii, topRightInnerRadii, Corner::TOP_RIGHT, color);
+		drawRoundedCornerCarved(bottomLeftCorner, bottomLeftRadii, bottomLeftInnerRadii, Corner::BOTTOM_LEFT, color);
+		drawRoundedCornerCarved(bottomRightCorner, bottomRightRadii, bottomRightInnerRadii, Corner::BOTTOM_RIGHT, color);
+
+		// TODO: make rectangles where radius < border width
+		//       i.e. bottomLeftInnerRadii.y (bottomRightRadii.y - bottomWidth) < 0 
+		// *******************
+		// |  |            |
+		// |  |   CENTER   |
+		// |LW|    ________|
+		// |  |XXX|        |
+		// |  |XXX|        |
+		// |__|___|   BW   |
+		//  *     |        |
+		//   *    |        |
+		//    *___|________|
 	}
 
 	void Painter::drawText(const Graphics::TextLayout& textLayout, const Math::Vec2f& position, const Math::Color4f& color)
@@ -465,7 +488,7 @@ namespace OrbitEngine { namespace UI {
 		states->setBlending(Graphics::BlendState::SRC_ALPHA);
 		states->setDepthTest(Graphics::FunctionMode::DISABLED);
 		states->setStencil(Graphics::FunctionMode::DISABLED);
-		states->setCullMode(Graphics::CullMode::NONE);
+		states->setCullMode(Graphics::CullMode::WIREFRAME);
 
 		m_Shader->bind();
 		m_ConstantBuffer->bind("PVMatrices", m_Shader);

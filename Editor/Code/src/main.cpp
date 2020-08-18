@@ -220,6 +220,7 @@ Sed fringilla lacus sed eros molestie tristique. Nullam vitae tortor pharetra, b
 
 	OE_LOG_DEBUG("UI ELEMENTS GENERATED: " << generated);
 
+	/*
 	Graphics::SpriteBatcher* renderer = new Graphics::SpriteBatcher();
 	Graphics::TextRenderer2D* tr2d = new Graphics::TextRenderer2D();
 
@@ -238,7 +239,7 @@ Sed fringilla lacus sed eros molestie tristique. Nullam vitae tortor pharetra, b
 	float time = 0.0f;
 
 	//UI::Composer* ui_composer = new UI::Composer();
-
+	
 	Graphics::FrameBuffer* tmp_fb = Graphics::FrameBuffer::Create(4096, 4096);
 	Graphics::TextureFormatProperties props;
 	props.format = Graphics::RGBA;
@@ -252,7 +253,7 @@ Sed fringilla lacus sed eros molestie tristique. Nullam vitae tortor pharetra, b
 
 	Graphics::TextureBlitter* blitter = new Graphics::TextureBlitter();
 	Graphics::DynamicAtlasAllocator* atlas_alloc = new Graphics::DynamicAtlasAllocator();
-	
+	*/
 	/*
 	for (int i = 0; i < 70; i++) {
 		unsigned int lx, ly;
@@ -293,8 +294,8 @@ Sed fringilla lacus sed eros molestie tristique. Nullam vitae tortor pharetra, b
 	gen_texs.clear();
 	*/
 
-	Graphics::DynamicAtlas* da = new Graphics::DynamicAtlas();
-	Graphics::ImGuiRenderer* igr = new Graphics::ImGuiRenderer();
+	//Graphics::DynamicAtlas* da = new Graphics::DynamicAtlas();
+	//Graphics::ImGuiRenderer* igr = new Graphics::ImGuiRenderer();
 
 	auto im = InputManager::Get();
 	im->onMouseMoveEvent.AddListener([&](const MouseMoveInputEvent& mme) {
@@ -311,7 +312,7 @@ Sed fringilla lacus sed eros molestie tristique. Nullam vitae tortor pharetra, b
 		ctx->prepare();
 
 		float dt = t.getFrameDelta();
-		time += dt;
+		//time += dt;
 
 		// render
 		auto proj = Math::Mat4::Orthographic(0, window->getSize().w, window->getSize().h, 0, 0, 1);
@@ -342,7 +343,7 @@ Sed fringilla lacus sed eros molestie tristique. Nullam vitae tortor pharetra, b
 		//textA->setSize(16);
 		//textLong->setSize(12 + abs(sin(3 * time)) * 12);
 
-		igr->begin();
+		//igr->begin();
 
 		//ui_composer->render(root, proj, window->getSize());
 	
@@ -362,7 +363,7 @@ Sed fringilla lacus sed eros molestie tristique. Nullam vitae tortor pharetra, b
 		}
 		window->setCursor(appCursor);
 		
-		igr->end();
+		//igr->end();
 		
 		/*
 		renderer->begin();
