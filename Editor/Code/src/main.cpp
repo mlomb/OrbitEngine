@@ -530,13 +530,14 @@ Scrollbar Slider {
 }
 
 #border {
-	border-width: 10px;
 	border-radius: 50px;
+	border-width: 10px;
 	border-color: orange;
 	border-left-width: 25px;
 	border-right-width: 0px;
     border-bottom-width: 60px;
 	background-color: red;
+	margin: 5px;
 }
 #border .spacer {
 	/*background-color: green;*/
