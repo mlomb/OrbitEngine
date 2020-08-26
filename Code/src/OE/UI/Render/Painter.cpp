@@ -438,12 +438,12 @@ namespace OrbitEngine { namespace UI {
 			*m_pVertex = { pos + size,                   color, Math::Vec2f(u1, v0), 1 }; m_pVertex++;
 			*m_pVertex = { pos + Math::Vec2f(size.x, 0), color, Math::Vec2f(u1, v1), 1 }; m_pVertex++;
 
-			*m_pIndex = m_VertexCount + 2; m_pIndex++;
+			*m_pIndex = m_VertexCount + 0; m_pIndex++;
 			*m_pIndex = m_VertexCount + 1; m_pIndex++;
-			*m_pIndex = m_VertexCount + 0; m_pIndex++;
-			*m_pIndex = m_VertexCount + 0; m_pIndex++;
-			*m_pIndex = m_VertexCount + 3; m_pIndex++;
 			*m_pIndex = m_VertexCount + 2; m_pIndex++;
+			*m_pIndex = m_VertexCount + 2; m_pIndex++;
+			*m_pIndex = m_VertexCount + 3; m_pIndex++;
+			*m_pIndex = m_VertexCount + 0; m_pIndex++;
 
 			m_IndexCount += 6;
 			m_VertexCount += 4;
@@ -488,7 +488,7 @@ namespace OrbitEngine { namespace UI {
 		states->setBlending(Graphics::BlendState::SRC_ALPHA);
 		states->setDepthTest(Graphics::FunctionMode::DISABLED);
 		states->setStencil(Graphics::FunctionMode::DISABLED);
-		states->setCullMode(Graphics::CullMode::WIREFRAME);
+		states->setCullMode(Graphics::CullMode::NONE);
 
 		m_Shader->bind();
 		m_ConstantBuffer->bind("PVMatrices", m_Shader);
