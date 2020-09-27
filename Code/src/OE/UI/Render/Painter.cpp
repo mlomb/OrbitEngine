@@ -2,6 +2,7 @@
 
 #include "OE/Misc/Log.hpp"
 #include "OE/Graphics/API/VertexLayout.hpp"
+#include "OE/Graphics/API/States.hpp"
 #include "OE/Graphics/ShaderLoader.hpp"
 
 #if OE_OPENGL_ANY
