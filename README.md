@@ -2,29 +2,17 @@
 [![Build Status](https://img.shields.io/appveyor/ci/mlomb/OrbitEngine.svg?label=Windows/Linux%20build)](https://ci.appveyor.com/project/mlomb/orbitengine)
 
 # OrbitEngine
-OrbitEngine is a Cross-Platform and multi-API Graphics Engine.
-The main objective is that you can use the Engine in different ways and different platforms and it just works.
+OrbitEngine is a cross-platform and multi-API graphics engine. It is a personal project.
 
-These ways are:
-* API specific classes like `GLShader`, `D3DBuffer`, `GLTexture`, `D3DMesh`.
-* API agnostic interfaces like `Buffer`, `Mesh`, `Texture` that will instantiate the corresponding one depending on the active context.
-* Renderers like `BatchRenderer2D`, `PathRenderer2D`, `DeferredRenderer`, `ForwardRenderer`.
-* Engine high-level stuff like `Scene`, `SceneObject`.
-
-The current supported APIs are:
+Supported APIs:
 * OpenGL & OpenGLES
 * Direct3D11
 
-And we have plans to implement Vulkan and maybe Direct3D12.
-
-The current supported platforms are:
+Supported platforms:
 * Android
 * Emscripten
 * Linux
 * Windows
-
-## Documentation
-Currently we have none. This is something that take some time, but you can see some samples on the [samples repositry]().
 
 ## Dependencies
 Currently, OrbitEngine is making use of this libraries:
